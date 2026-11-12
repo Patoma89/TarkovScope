@@ -1,0 +1,2198 @@
+[
+  {
+    "key": "air_filtering_unit_lv1",
+    "station": "Air Filtering Unit",
+    "level": 1,
+    "max_level": 1,
+    "construction_time": "48 hours",
+    "prereq_modules": [
+      {
+        "station": "Generator",
+        "level": 3
+      },
+      {
+        "station": "Vents",
+        "level": 3
+      }
+    ],
+    "requirements_lines": [
+      "• 25,000 Dollars",
+      "• 5 Gas mask air filter found in raid",
+      "• 5 Military power filter",
+      "• 10 Military corrugated tube",
+      "• Level 3 Generator",
+      "• Level 3 Vents"
+    ],
+    "function_lines": [
+      "• Additional FP-100 filter absorber slots +3",
+      "• Group of skills leveling boost: Physical +40%"
+    ]
+  },
+  {
+    "key": "bitcoin_farm_lv1",
+    "station": "Bitcoin Farm",
+    "level": 1,
+    "max_level": 3,
+    "construction_time": "34 hours",
+    "prereq_modules": [
+      {
+        "station": "Intelligence Center",
+        "level": 2
+      }
+    ],
+    "requirements_lines": [
+      "• 10 T-Shaped plug",
+      "• 2 VPX Flash Storage Module",
+      "• 15 Power cord",
+      "• 10 Power supply unit found in raid",
+      "• 15 CPU fan",
+      "• Level 2 Intelligence Center"
+    ],
+    "function_lines": [
+      "• Farm Physical Bitcoin",
+      "• Additional Graphics card slots +10"
+    ]
+  },
+  {
+    "key": "bitcoin_farm_lv2",
+    "station": "Bitcoin Farm",
+    "level": 2,
+    "max_level": 3,
+    "construction_time": "50 hours",
+    "prereq_modules": [
+      {
+        "station": "Bitcoin Farm",
+        "level": 1
+      },
+      {
+        "station": "Generator",
+        "level": 3
+      }
+    ],
+    "requirements_lines": [
+      "• 15 CPU fan",
+      "• 10 Power supply unit",
+      "• 15 Printed circuit board found in raid",
+      "• 10 Phase control relay",
+      "• 5 Military power filter",
+      "• Level 3 Generator"
+    ],
+    "function_lines": [
+      "• Farm Physical Bitcoin",
+      "• Additional Graphics card slots +15 (25 in total)"
+    ]
+  },
+  {
+    "key": "bitcoin_farm_lv3",
+    "station": "Bitcoin Farm",
+    "level": 3,
+    "max_level": 3,
+    "construction_time": "106 hours",
+    "prereq_modules": [
+      {
+        "station": "Bitcoin Farm",
+        "level": 2
+      },
+      {
+        "station": "Solar Power",
+        "level": 1
+      },
+      {
+        "station": "Water Collector",
+        "level": 3
+      }
+    ],
+    "requirements_lines": [
+      "• 25 CPU fan found in raid",
+      "• 15 Silicone tube",
+      "• 10 Electric motor",
+      "• 10 Pressure gauge",
+      "• 2 6-STEN-140-M military battery",
+      "• Level 1 Solar Power",
+      "• Level 3 Water Collector"
+    ],
+    "function_lines": [
+      "• Farm Physical Bitcoin",
+      "• Additional Graphics card slots +25 (50 in total)"
+    ]
+  },
+  {
+    "key": "booze_generator_lv1",
+    "station": "Booze Generator",
+    "level": 1,
+    "max_level": 1,
+    "construction_time": "48 hours",
+    "prereq_modules": [
+      {
+        "station": "Water Collector",
+        "level": 3
+      },
+      {
+        "station": "Nutrition Unit",
+        "level": 3
+      }
+    ],
+    "requirements_lines": [
+      "• 5 Metal spare parts",
+      "• 2 Pressure gauge found in raid",
+      "• 5 Radiator helix",
+      "• 10 Silicone tube",
+      "• 1 Pipe grip wrench found in raid",
+      "• 2 Analog thermometer found in raid",
+      "• 10 Corrugated hose",
+      "• Level 3 Water Collector",
+      "• Level 3 Nutrition Unit"
+    ],
+    "function_lines": [
+      "• Craft Bottle of Fierce Hatchling moonshine"
+    ]
+  },
+  {
+    "key": "cultist_circle_lv1",
+    "station": "Cultist Circle",
+    "level": 1,
+    "max_level": 1,
+    "construction_time": "6 hours",
+    "prereq_modules": [
+      {
+        "station": "Security",
+        "level": 1
+      }
+    ],
+    "requirements_lines": [
+      "• Owning \"The Unheard\" game edition",
+      "• 1 PAID AntiRoach spray found in raid",
+      "• 5 Light bulb found in raid",
+      "• 3 Can of white salt found in raid",
+      "• 1 SurvL Survivor Lighter found in raid",
+      "• 1 Construction measuring tape found in raid",
+      "• 1 WI-FI Camera",
+      "• Level 1 Security"
+    ],
+    "function_lines": [
+      "• Ability to sacrifice up to 5 items in a 9x6 grid to receive gifts",
+      "• Additional Sacred Amulet sacrifice slots +1"
+    ]
+  },
+  {
+    "key": "defective_wall_lv1",
+    "station": "Defective Wall",
+    "level": 1,
+    "max_level": 6,
+    "construction_time": "Instant",
+    "prereq_modules": [
+      {
+        "station": "Medstation",
+        "level": 1
+      },
+      {
+        "station": "Water Collector",
+        "level": 1
+      }
+    ],
+    "requirements_lines": [
+      "• Level 1 Medstation",
+      "• Level 1 Water Collector",
+      "• Wait ~30 minutes after construction"
+    ],
+    "function_lines": []
+  },
+  {
+    "key": "defective_wall_lv2",
+    "station": "Defective Wall",
+    "level": 2,
+    "max_level": 6,
+    "construction_time": "12 hours",
+    "prereq_modules": [
+      {
+        "station": "Defective Wall",
+        "level": 1
+      }
+    ],
+    "requirements_lines": [
+      "• Optional Task:",
+      "• 1 Fleece fabric",
+      "• Mop the floor for 2 mins to reduce penalties. Effects:",
+      "• Fuel consumption -2%",
+      "• Energy regeneration rate +1.2 EP/hr",
+      "• Health regeneration rate +9.1 HP/hr",
+      "• Additional Raid EXP +2%",
+      "• Group of skills leveling boost: Physical +2%"
+    ],
+    "function_lines": [
+      "• Fuel consumption +5%",
+      "• Energy regeneration rate -3 EP/hr",
+      "• Health regeneration rate -22.8 HP/hr",
+      "• Additional Raid EXP -3%",
+      "• Group of skills leveling boost: Physical -3%"
+    ]
+  },
+  {
+    "key": "defective_wall_lv3",
+    "station": "Defective Wall",
+    "level": 3,
+    "max_level": 6,
+    "construction_time": "24 hours",
+    "prereq_modules": [
+      {
+        "station": "Defective Wall",
+        "level": 2
+      }
+    ],
+    "requirements_lines": [
+      "• Optional Task:",
+      "• 1 Fleece fabric",
+      "• Mop the floor for 5 mins to reduce penalties. Effects:",
+      "• Fuel consumption -5%",
+      "• Energy regeneration rate +3 EP/hr",
+      "• Health regeneration rate +22.8 HP/hr",
+      "• Additional Raid EXP +3%",
+      "• Group of skills leveling boost: Physical +3%"
+    ],
+    "function_lines": [
+      "• Fuel consumption +5%",
+      "• Energy regeneration rate -3 EP/hr",
+      "• Health regeneration rate -22.8 HP/hr",
+      "• Additional Raid EXP -3%",
+      "• Group of skills leveling boost: Physical -3%"
+    ]
+  },
+  {
+    "key": "defective_wall_lv4",
+    "station": "Defective Wall",
+    "level": 4,
+    "max_level": 6,
+    "construction_time": "3 hours",
+    "prereq_modules": [
+      {
+        "station": "Defective Wall",
+        "level": 3
+      }
+    ],
+    "requirements_lines": [
+      "• 1 Fierce Blow sledgehammer",
+      "• Optional Task:",
+      "• 1 Fleece fabric",
+      "• Mop the floor for 5 mins to reduce penalties. Effects:",
+      "• Fuel consumption -8%",
+      "• Energy regeneration rate +4.8 EP/hr",
+      "• Health regeneration rate +35.6 HP/hr",
+      "• Additional Raid EXP +5%",
+      "• Group of skills leveling boost: Physical +5%"
+    ],
+    "function_lines": [
+      "• Fuel consumption +5%",
+      "• Energy regeneration rate -3 EP/hr",
+      "• Health regeneration rate -22.8 HP/hr",
+      "• Additional Raid EXP -3%",
+      "• Group of skills leveling boost: Physical -3%"
+    ]
+  },
+  {
+    "key": "defective_wall_lv5",
+    "station": "Defective Wall",
+    "level": 5,
+    "max_level": 6,
+    "construction_time": "3 hours",
+    "prereq_modules": [
+      {
+        "station": "Defective Wall",
+        "level": 4
+      }
+    ],
+    "requirements_lines": [
+      "• 1 Metal cutting scissors",
+      "• 1 Toolset",
+      "• Optional Task:",
+      "• 1 Fleece fabric",
+      "• Mop the floor for 5 mins to reduce penalties. Effects:",
+      "• Fuel consumption -10%",
+      "• Energy regeneration rate +6 EP/hr",
+      "• Health regeneration rate +45.7 HP/hr",
+      "• Additional Raid EXP +6%",
+      "• Group of skills leveling boost: Physical +6%"
+    ],
+    "function_lines": [
+      "• Fuel consumption +5%",
+      "• Energy regeneration rate -3 EP/hr",
+      "• Health regeneration rate -22.8 HP/hr",
+      "• Additional Raid EXP -3%",
+      "• Group of skills leveling boost: Physical -3%"
+    ]
+  },
+  {
+    "key": "defective_wall_lv6",
+    "station": "Defective Wall",
+    "level": 6,
+    "max_level": 6,
+    "construction_time": "12 hours",
+    "prereq_modules": [
+      {
+        "station": "Defective Wall",
+        "level": 5
+      }
+    ],
+    "requirements_lines": [
+      "• 2 Corrugated hose",
+      "• 1 Duct tape",
+      "• 1 Toolset",
+      "• 1 Pliers Elite",
+      "• 5 Metal spare parts",
+      "• 1 Xenomorph sealing foam",
+      "• 2 Bundle of wires",
+      "• 2 Light bulb"
+    ],
+    "function_lines": [
+      "• Fuel consumption -20%",
+      "• Energy regeneration rate +12 EP/hr",
+      "• Health regeneration rate +91.4 HP/hr",
+      "• Additional Raid EXP +12%",
+      "• Group of skills leveling boost: Physical +12%"
+    ]
+  },
+  {
+    "key": "gear_rack_lv1",
+    "station": "Gear Rack",
+    "level": 1,
+    "max_level": 3,
+    "construction_time": "6 hours",
+    "prereq_modules": [
+      {
+        "station": "Defective Wall",
+        "level": 6
+      },
+      {
+        "station": "Illumination",
+        "level": 2
+      }
+    ],
+    "requirements_lines": [
+      "• 300,000 Roubles",
+      "• 1 Electric drill found in raid",
+      "• 1 Sewing kit found in raid",
+      "• 1 Awl found in raid",
+      "• 1 Leatherman Multitool",
+      "• 15 Bolts",
+      "• 10 Fleece fabric",
+      "• 8 Energy-saving lamp",
+      "• Ragman LL2",
+      "• Level 6 Defective Wall",
+      "• Level 2 Illumination"
+    ],
+    "function_lines": [
+      "• Ability to display equipment on a mannequin"
+    ]
+  },
+  {
+    "key": "gear_rack_lv2",
+    "station": "Gear Rack",
+    "level": 2,
+    "max_level": 3,
+    "construction_time": "12 hours",
+    "prereq_modules": [
+      {
+        "station": "Gear Rack",
+        "level": 1
+      },
+      {
+        "station": "Hall of Fame",
+        "level": 1
+      }
+    ],
+    "requirements_lines": [
+      "• 800,000 Roubles",
+      "• 1 Electric drill found in raid",
+      "• 5 Duct tape",
+      "• 5 Shustrilo sealing foam",
+      "• 8 Pack of nails",
+      "• 12 Energy-saving lamp",
+      "• 10 Aramid fiber fabric",
+      "• 1 Wrench found in raid",
+      "• Ragman LL3",
+      "• Level 1 Hall of Fame"
+    ],
+    "function_lines": [
+      "• Additional mannequin +1"
+    ]
+  },
+  {
+    "key": "gear_rack_lv3",
+    "station": "Gear Rack",
+    "level": 3,
+    "max_level": 3,
+    "construction_time": "24 hours",
+    "prereq_modules": [
+      {
+        "station": "Gear Rack",
+        "level": 2
+      },
+      {
+        "station": "Hall of Fame",
+        "level": 2
+      }
+    ],
+    "requirements_lines": [
+      "• 1,200,000 Roubles",
+      "• 1 Body armor repair kit found in raid",
+      "• 10 Cordura polyamide fabric",
+      "• 15 Metal spare parts",
+      "• 10 KEKTAPE duct tape",
+      "• 15 Energy-saving lamp",
+      "• 1 Set of files \"Master\" found in raid",
+      "• 1 Ratchet wrench found in raid",
+      "• Ragman LL4",
+      "• Level 2 Hall of Fame"
+    ],
+    "function_lines": [
+      "• Additional mannequin +1"
+    ]
+  },
+  {
+    "key": "generator_lv1",
+    "station": "Generator",
+    "level": 1,
+    "max_level": 3,
+    "construction_time": "Instant",
+    "prereq_modules": [
+      {
+        "station": "Security",
+        "level": 1
+      }
+    ],
+    "requirements_lines": [
+      "• 100,000 Roubles",
+      "• 1 Spark plug",
+      "• Level 1 Security"
+    ],
+    "function_lines": [
+      "• Additional fuel slots +2"
+    ]
+  },
+  {
+    "key": "generator_lv2",
+    "station": "Generator",
+    "level": 2,
+    "max_level": 3,
+    "construction_time": "1 hour",
+    "prereq_modules": [
+      {
+        "station": "Generator",
+        "level": 1
+      },
+      {
+        "station": "Security",
+        "level": 1
+      },
+      {
+        "station": "Vents",
+        "level": 1
+      }
+    ],
+    "requirements_lines": [
+      "• 1 Bulbex cable cutter",
+      "• 10 Phase control relay",
+      "• 1 Electric motor",
+      "• 15 Bundle of wires",
+      "• Level 1 Security",
+      "• Level 1 Vents"
+    ],
+    "function_lines": [
+      "• Additional fuel slots +2 (4 in total)"
+    ]
+  },
+  {
+    "key": "generator_lv3",
+    "station": "Generator",
+    "level": 3,
+    "max_level": 3,
+    "construction_time": "16 hours",
+    "prereq_modules": [
+      {
+        "station": "Generator",
+        "level": 2
+      },
+      {
+        "station": "Security",
+        "level": 3
+      },
+      {
+        "station": "Vents",
+        "level": 3
+      }
+    ],
+    "requirements_lines": [
+      "• 5 Power supply unit found in raid",
+      "• 12 Phase control relay",
+      "• 3 Electric motor found in raid",
+      "• 16 Spark plug",
+      "• 10 Metal spare parts",
+      "• Level 3 Security",
+      "• Level 3 Vents"
+    ],
+    "function_lines": [
+      "• Additional fuel slots +2 (6 in total)"
+    ]
+  },
+  {
+    "key": "gym_lv1",
+    "station": "Gym",
+    "level": 1,
+    "max_level": 1,
+    "construction_time": "4 hours",
+    "prereq_modules": [
+      {
+        "station": "Defective Wall",
+        "level": 6
+      },
+      {
+        "station": "Illumination",
+        "level": 2
+      },
+      {
+        "station": "Vents",
+        "level": 2
+      }
+    ],
+    "requirements_lines": [
+      "• 5 Insulating tape",
+      "• 1 Metal cutting scissors found in raid",
+      "• 1 WD-40 (100ml)",
+      "• 1 Toolset found in raid",
+      "• 5 Screw nuts",
+      "• 1 Electric drill found in raid",
+      "• 5 Bolts",
+      "• Level 6 Defective Wall",
+      "• Level 2 Illumination",
+      "• Level 2 Vents"
+    ],
+    "function_lines": [
+      "• Unlocks training area to level up Strength and Endurance skills"
+    ]
+  },
+  {
+    "key": "hall_of_fame_lv1",
+    "station": "Hall of Fame",
+    "level": 1,
+    "max_level": 3,
+    "construction_time": "12 hours",
+    "prereq_modules": [
+      {
+        "station": "Defective Wall",
+        "level": 6
+      },
+      {
+        "station": "Illumination",
+        "level": 2
+      }
+    ],
+    "requirements_lines": [
+      "• 5 Insulating tape",
+      "• 5 Pack of nails",
+      "• 5 Light bulb",
+      "• 1 Cat figurine found in raid",
+      "• 5 Fleece fabric",
+      "• 1 Round pliers found in raid"
+    ],
+    "function_lines": [
+      "• Ability to store 3 Dogtags and 6 small + 6 large trophies of the following items:",
+      "  ◦ Valuables",
+      "  ◦ Most items required for Collector",
+      "  ◦ Colored keycards",
+      "  ◦ Tetriz portable game console",
+      "  ◦ Gas analyzer",
+      "• Group of skills leveling boost: Combat",
+      "• Ability to display up to 7 favorite items on player profile"
+    ]
+  },
+  {
+    "key": "hall_of_fame_lv2",
+    "station": "Hall of Fame",
+    "level": 2,
+    "max_level": 3,
+    "construction_time": "18 hours",
+    "prereq_modules": [
+      {
+        "station": "Hall of Fame",
+        "level": 1
+      },
+      {
+        "station": "Workbench",
+        "level": 2
+      },
+      {
+        "station": "Illumination",
+        "level": 2
+      }
+    ],
+    "requirements_lines": [
+      "• 1 Tech manual found in raid",
+      "• 1 Pliers Elite found in raid",
+      "• 1 Toolset found in raid",
+      "• 1 Golden rooster figurine found in raid",
+      "• 10 Energy-saving lamp",
+      "• 6 Pack of screws",
+      "• 3 Duct tape",
+      "• 5 Xenomorph sealing foam",
+      "• 2 Tube of Poxeram cold welding"
+    ],
+    "function_lines": [
+      "• Ability to store 6 Dogtags and 12 small + 12 large trophies of the following items:",
+      "  ◦ Valuables",
+      "  ◦ Most items required for Collector",
+      "  ◦ Colored keycards",
+      "  ◦ Tetriz portable game console",
+      "  ◦ Gas analyzer",
+      "• Group of skills leveling boost: Combat",
+      "• Ability to display up to 7 favorite items on player profile"
+    ]
+  },
+  {
+    "key": "hall_of_fame_lv3",
+    "station": "Hall of Fame",
+    "level": 3,
+    "max_level": 3,
+    "construction_time": "24 hours",
+    "prereq_modules": [
+      {
+        "station": "Hall of Fame",
+        "level": 2
+      },
+      {
+        "station": "Workbench",
+        "level": 3
+      },
+      {
+        "station": "Illumination",
+        "level": 3
+      }
+    ],
+    "requirements_lines": [
+      "• 1 Set of files \"Master\" found in raid",
+      "• 1 Electric drill found in raid",
+      "• 1 Bronze lion figurine found in raid",
+      "• 15 Energy-saving lamp",
+      "• 3 KEKTAPE duct tape found in raid",
+      "• 6 T-Shaped plug",
+      "• 15 Metal spare parts",
+      "• 5 Power cord"
+    ],
+    "function_lines": [
+      "• Ability to store 10 Dogtags and 24 small + 24 large trophies of the following items:",
+      "  ◦ Valuables",
+      "  ◦ Most items required for Collector",
+      "  ◦ Colored keycards",
+      "  ◦ Tetriz portable game console",
+      "  ◦ Gas analyzer",
+      "• Group of skills leveling boost: Combat",
+      "• Ability to display up to 7 favorite items on player profile"
+    ]
+  },
+  {
+    "key": "heating_lv1",
+    "station": "Heating",
+    "level": 1,
+    "max_level": 3,
+    "construction_time": "Instant",
+    "prereq_modules": [],
+    "requirements_lines": [
+      "• 25,000 Roubles",
+      "• 2 Classic matches"
+    ],
+    "function_lines": [
+      "• Energy regeneration rate +2.4 EP/hr"
+    ]
+  },
+  {
+    "key": "heating_lv2",
+    "station": "Heating",
+    "level": 2,
+    "max_level": 3,
+    "construction_time": "1 hour",
+    "prereq_modules": [
+      {
+        "station": "Heating",
+        "level": 1
+      },
+      {
+        "station": "Vents",
+        "level": 1
+      }
+    ],
+    "requirements_lines": [
+      "• 50,000 Roubles",
+      "• 5 Dry fuel",
+      "• 2 Hunting matches",
+      "• 5 Crickent lighter",
+      "• Endurance skill level 1",
+      "• Level 1 Vents"
+    ],
+    "function_lines": [
+      "• Energy regeneration rate +4.8 EP/hr (7.2 in total)"
+    ]
+  },
+  {
+    "key": "heating_lv3",
+    "station": "Heating",
+    "level": 3,
+    "max_level": 3,
+    "construction_time": "8 hours",
+    "prereq_modules": [
+      {
+        "station": "Heating",
+        "level": 2
+      },
+      {
+        "station": "Generator",
+        "level": 2
+      },
+      {
+        "station": "Workbench",
+        "level": 2
+      }
+    ],
+    "requirements_lines": [
+      "• 2 Military corrugated tube found in raid",
+      "• 10 Radiator helix",
+      "• 10 Bundle of wires",
+      "• 4 Phase control relay found in raid",
+      "• Ragman LL2",
+      "• Level 2 Generator",
+      "• Level 2 Workbench"
+    ],
+    "function_lines": [
+      "• Energy regeneration rate +7.2 EP/hr (14.4 in total)",
+      "• Negative effects removal rate -50%"
+    ]
+  },
+  {
+    "key": "illumination_lv1",
+    "station": "Illumination",
+    "level": 1,
+    "max_level": 3,
+    "construction_time": "Instant",
+    "prereq_modules": [],
+    "requirements_lines": [
+      "• 10,000 Roubles",
+      "• 1 Crickent lighter"
+    ],
+    "function_lines": [
+      "• Adds the candles illumination option"
+    ]
+  },
+  {
+    "key": "illumination_lv2",
+    "station": "Illumination",
+    "level": 2,
+    "max_level": 3,
+    "construction_time": "Instant",
+    "prereq_modules": [
+      {
+        "station": "Illumination",
+        "level": 1
+      },
+      {
+        "station": "Generator",
+        "level": 1
+      }
+    ],
+    "requirements_lines": [
+      "• 14 Light bulb",
+      "• 10 Bundle of wires",
+      "• Level 1 Generator"
+    ],
+    "function_lines": [
+      "• Adds the light bulbs illumination option"
+    ]
+  },
+  {
+    "key": "illumination_lv3",
+    "station": "Illumination",
+    "level": 3,
+    "max_level": 3,
+    "construction_time": "6 hours",
+    "prereq_modules": [
+      {
+        "station": "Illumination",
+        "level": 2
+      },
+      {
+        "station": "Generator",
+        "level": 2
+      },
+      {
+        "station": "Workbench",
+        "level": 1
+      }
+    ],
+    "requirements_lines": [
+      "• 50,000 Roubles",
+      "• 12 Energy-saving lamp",
+      "• 7 Capacitors found in raid",
+      "• 12 Bundle of wires",
+      "• Level 2 Generator",
+      "• Level 1 Workbench"
+    ],
+    "function_lines": [
+      "• Adds the gas lamps illumination option"
+    ]
+  },
+  {
+    "key": "intelligence_center_lv1",
+    "station": "Intelligence Center",
+    "level": 1,
+    "max_level": 3,
+    "construction_time": "Instant",
+    "prereq_modules": [
+      {
+        "station": "Security",
+        "level": 1
+      },
+      {
+        "station": "Vents",
+        "level": 1
+      },
+      {
+        "station": "Generator",
+        "level": 1
+      },
+      {
+        "station": "Workbench",
+        "level": 1
+      }
+    ],
+    "requirements_lines": [
+      "• 1 Power cord",
+      "• 1 Intelligence folder",
+      "• 1 Topographic survey maps",
+      "• 1 Factory plan map",
+      "• 1 Working LCD",
+      "• Level 1 Security",
+      "• Level 1 Vents",
+      "• Level 1 Generator",
+      "• Level 1 Workbench"
+    ],
+    "function_lines": [
+      "• Craft Activated Kruglov's RFID keycard",
+      "• Craft Decrypted Sliderkey flash drive marked with A.P.",
+      "• Craft Hard drive printout",
+      "• Craft Reprogrammed RFID keycard with Mr. Kerman's hash codes",
+      "• Craft Reprogrammed RFID keycard with Prapor's hash codes",
+      "• Craft Reprogrammed keycard for A.P.'s apartment lock (Blue)",
+      "• Craft Reprogrammed keycard for A.P.'s apartment lock (Green)",
+      "• Craft Reprogrammed keycard for A.P.'s apartment lock (Red)",
+      "• Craft SAS drive",
+      "• Craft SSD with TerraGroup evidence",
+      "• Craft Secure Flash drive",
+      "• Craft Secure magnetic tape cassette",
+      "• Craft Station 14-4 KORD Arshavin K. pass (Restored)",
+      "• Craft Topographic survey maps",
+      "• Scav cooldown timer -15%",
+      "• Quest money reward boost +5%",
+      "• Unlocks Scav Tasks from Fence"
+    ]
+  },
+  {
+    "key": "intelligence_center_lv2",
+    "station": "Intelligence Center",
+    "level": 2,
+    "max_level": 3,
+    "construction_time": "1 hour",
+    "prereq_modules": [
+      {
+        "station": "Intelligence Center",
+        "level": 1
+      },
+      {
+        "station": "Security",
+        "level": 2
+      },
+      {
+        "station": "Medstation",
+        "level": 2
+      },
+      {
+        "station": "Nutrition Unit",
+        "level": 2
+      }
+    ],
+    "requirements_lines": [
+      "• 3 Intelligence folder",
+      "• 3 Secure Flash drive",
+      "• 7 Power cord",
+      "• 8 Damaged hard drive",
+      "• Attention skill level 3",
+      "• Level 2 Security",
+      "• Level 2 Medstation",
+      "• Level 2 Nutrition Unit"
+    ],
+    "function_lines": [
+      "• Craft TerraGroup Labs access keycard",
+      "• Craft Digital secure DSP radio transmitter",
+      "• Craft TerraGroup \"Blue Folders\" materials",
+      "• Craft UHF RFID Reader",
+      "• Craft Virtex programmable processor",
+      "• Craft Military COFDM Wireless Signal Transmitter",
+      "• Craft VPX Flash Storage Module",
+      "• Craft Object 11SR keycard",
+      "• Quest money reward boost +10% (+15% in total)",
+      "• Insurance return time -20%"
+    ]
+  },
+  {
+    "key": "intelligence_center_lv3",
+    "station": "Intelligence Center",
+    "level": 3,
+    "max_level": 3,
+    "construction_time": "24 hours",
+    "prereq_modules": [
+      {
+        "station": "Intelligence Center",
+        "level": 2
+      },
+      {
+        "station": "Workbench",
+        "level": 3
+      },
+      {
+        "station": "Generator",
+        "level": 3
+      }
+    ],
+    "requirements_lines": [
+      "• 8 Military cable",
+      "• 2 Military COFDM Wireless Signal Transmitter found in raid",
+      "• 1 Far-forward GPS Signal Amplifier Unit",
+      "• 2 VPX Flash Storage Module",
+      "• 8 Military flash drive",
+      "• 2 Secure magnetic tape cassette",
+      "• Level 3 Workbench",
+      "• Level 3 Generator"
+    ],
+    "function_lines": [
+      "• Craft Military flash drive",
+      "• Craft Graphics card",
+      "• Craft TerraGroup Labs keycard (Green)",
+      "• Craft TerraGroup Labs keycard (Red)",
+      "• Craft Intelligence folder",
+      "• Craft TerraGroup Labs keycard (Violet)",
+      "• Scav cooldown timer -20% (-35% in total)",
+      "• Flea market commission -30%"
+    ]
+  },
+  {
+    "key": "lavatory_lv1",
+    "station": "Lavatory",
+    "level": 1,
+    "max_level": 3,
+    "construction_time": "Instant",
+    "prereq_modules": [],
+    "requirements_lines": [
+      "• 2,000 Roubles",
+      "• 1 Toilet paper",
+      "• 1 Toothpaste",
+      "• 1 Soap",
+      "• 1 Awl"
+    ],
+    "function_lines": [
+      "• Craft AK-74 5.45x39 6L31 60-round magazine",
+      "• Craft Gas mask air filter",
+      "• Craft Army bandage",
+      "• Craft 6B47 Ratnik-BSh helmet (EMR cover)",
+      "• Craft Scav backpack",
+      "• Craft Toilet paper",
+      "• Craft Aseptic bandage",
+      "• Craft Aramid fiber fabric",
+      "• Craft Schaman shampoo",
+      "• Craft Ripstop fabric",
+      "• Craft Cordura polyamide fabric",
+      "• Craft Soap",
+      "• Craft BNTI Module-3M body armor",
+      "• Craft 6B23-2 body armor (Mountain Flora)",
+      "• Craft BNTI Zhuk body armor (Press)",
+      "• Craft Corrugated hose",
+      "• Craft RDG-2B smoke grenade",
+      "• Unlocks armor repair via repair kits"
+    ]
+  },
+  {
+    "key": "lavatory_lv2",
+    "station": "Lavatory",
+    "level": 2,
+    "max_level": 3,
+    "construction_time": "1 hour",
+    "prereq_modules": [
+      {
+        "station": "Lavatory",
+        "level": 1
+      },
+      {
+        "station": "Water Collector",
+        "level": 1
+      },
+      {
+        "station": "Vents",
+        "level": 1
+      }
+    ],
+    "requirements_lines": [
+      "• 3 KEKTAPE duct tape",
+      "• 6 Corrugated hose",
+      "• 6 Pack of screws",
+      "• 1 Electric drill",
+      "• 2 Sewing kit",
+      "• Level 1 Water Collector",
+      "• Level 1 Vents"
+    ],
+    "function_lines": [
+      "• Craft 6B13 custom ballistic plates (Back)",
+      "• Craft First Spear Strandhogg plate carrier (Ranger Green)",
+      "• Craft Ox bleach",
+      "• Craft Clin window cleaner",
+      "• Craft Eberlestock F5 Switchblade backpack (Dry Earth)",
+      "• Craft Fleece fabric",
+      "• Craft BlackHawk! Commando chest harness (Black)",
+      "• Craft BlackRock chest rig (Gray)",
+      "• Craft Expeditionary fuel tank",
+      "• Craft MSA ACH TC-2002 MICH Series helmet (Olive Drab)",
+      "• Craft KEKTAPE duct tape",
+      "• Craft Water filter",
+      "• Craft WD-40 (100ml)",
+      "• Craft Ars Arma A18 Skanda plate carrier (MultiCam)",
+      "• Craft Magazine case",
+      "• Craft Paracord",
+      "• Craft Lucky Scav Junk box",
+      "• Craft Grenade case",
+      "• Reduces armor repair cost using repair kits -3%"
+    ]
+  },
+  {
+    "key": "lavatory_lv3",
+    "station": "Lavatory",
+    "level": 3,
+    "max_level": 3,
+    "construction_time": "7 hours",
+    "prereq_modules": [
+      {
+        "station": "Lavatory",
+        "level": 2
+      },
+      {
+        "station": "Vents",
+        "level": 2
+      },
+      {
+        "station": "Water Collector",
+        "level": 2
+      }
+    ],
+    "requirements_lines": [
+      "• 6 Xenomorph sealing foam",
+      "• 10 Corrugated hose",
+      "• 2 Pressure gauge found in raid",
+      "• 1 Toolset found in raid",
+      "• Level 2 Vents",
+      "• Level 2 Water Collector"
+    ],
+    "function_lines": [
+      "• Craft Pilgrim tourist backpack",
+      "• Craft Rys-T assault helmet (Black)",
+      "• Craft ANA Tactical M2 plate carrier (OD Green)",
+      "• Craft NPP KlASS Bagariy plate carrier (EMR)",
+      "• Craft FP-100 filter absorber",
+      "• Craft 5.11 Tactical TacTec plate carrier (Ranger Green)",
+      "• Reduces armor repair cost using repair kits -6% (-9% in total)"
+    ]
+  },
+  {
+    "key": "library_lv1",
+    "station": "Library",
+    "level": 1,
+    "max_level": 1,
+    "construction_time": "54 hours",
+    "prereq_modules": [
+      {
+        "station": "Rest Space",
+        "level": 3
+      }
+    ],
+    "requirements_lines": [
+      "• 400,000 Roubles",
+      "• 1 BakeEzy cook book found in raid",
+      "• 5 Slim diary",
+      "• 5 Diary",
+      "• 8 Tech manual",
+      "• 2 Chainlet found in raid",
+      "• 1 Horse figurine found in raid",
+      "• Hideout Management skill level 5",
+      "• Level 3 Rest Space"
+    ],
+    "function_lines": [
+      "• Additional raid experience +15%",
+      "• Group of skills leveling boost: Practical +30%"
+    ]
+  },
+  {
+    "key": "medstation_lv1",
+    "station": "Medstation",
+    "level": 1,
+    "max_level": 3,
+    "construction_time": "Instant",
+    "prereq_modules": [],
+    "requirements_lines": [
+      "• 50,000 Roubles",
+      "• 1 Disposable syringe",
+      "• 1 Pile of meds",
+      "• 2 Aseptic bandage",
+      "• 1 Bottle of OLOLO Multivitamins"
+    ],
+    "function_lines": [
+      "• Craft AI-2 medkit",
+      "• Craft CALOK-B hemostatic applicator",
+      "• Craft Salewa first aid kit",
+      "• Craft CMS surgical kit",
+      "• Craft Disposable syringe",
+      "• Health regeneration rate +27.4 HP/hr"
+    ]
+  },
+  {
+    "key": "medstation_lv2",
+    "station": "Medstation",
+    "level": 2,
+    "max_level": 3,
+    "construction_time": "1 hour",
+    "prereq_modules": [
+      {
+        "station": "Medstation",
+        "level": 1
+      },
+      {
+        "station": "Generator",
+        "level": 1
+      }
+    ],
+    "requirements_lines": [
+      "• 150,000 Roubles",
+      "• 6 Bottle of saline solution",
+      "• 3 Medical tools",
+      "• 2 Medical bloodset",
+      "• 10 Esmarch tourniquet",
+      "• Health skill level 2",
+      "• Level 1 Generator"
+    ],
+    "function_lines": [
+      "• Craft Medical bloodset",
+      "• Craft AHF1-M stimulant injector",
+      "• Craft Pile of meds",
+      "• Craft IFAK individual first aid kit",
+      "• Craft Aluminum splint",
+      "• Craft Vaseline balm",
+      "• Craft PNB (Product 16) stimulant injector",
+      "• Craft xTG-12 antidote injector",
+      "• Craft Morphine",
+      "• Craft 2A2-(b-TG) stimulant injector",
+      "• Craft ETG-change regenerative stimulant injector",
+      "• Craft SJ1 TGLabs combat stimulant injector",
+      "• Craft M.U.L.E. stimulant injector",
+      "• Craft Portable defibrillator",
+      "• Health regeneration rate +54.8 HP/hr (82.2 HP/hr in total)"
+    ]
+  },
+  {
+    "key": "medstation_lv3",
+    "station": "Medstation",
+    "level": 3,
+    "max_level": 3,
+    "construction_time": "12 hours",
+    "prereq_modules": [
+      {
+        "station": "Medstation",
+        "level": 2
+      },
+      {
+        "station": "Generator",
+        "level": 2
+      },
+      {
+        "station": "Lavatory",
+        "level": 2
+      }
+    ],
+    "requirements_lines": [
+      "• 500,000 Roubles",
+      "• 1 Ophthalmoscope found in raid",
+      "• 10 Bottle of saline solution",
+      "• 1 LEDX Skin Transilluminator",
+      "• Vitality skill level 3",
+      "• Level 2 Generator",
+      "• Level 2 Lavatory"
+    ],
+    "function_lines": [
+      "• Craft AFAK tactical individual first aid kit",
+      "• Craft Perfotoran (Blue Blood) stimulant injector",
+      "• Craft Grizzly medical kit",
+      "• Craft Surv12 field surgical kit",
+      "• Craft SJ6 TGLabs combat stimulant injector",
+      "• Craft Zagustin hemostatic drug injector",
+      "• Craft Propital regenerative stimulant injector",
+      "• Craft LEDX Skin Transilluminator",
+      "• Health regeneration rate +91.3 HP/hr (173.5 HP/hr in total)"
+    ]
+  },
+  {
+    "key": "nutrition_unit_lv1",
+    "station": "Nutrition Unit",
+    "level": 1,
+    "max_level": 3,
+    "construction_time": "Instant",
+    "prereq_modules": [
+      {
+        "station": "Generator",
+        "level": 1
+      }
+    ],
+    "requirements_lines": [
+      "• 25,000 Roubles",
+      "• 1 Can of white salt",
+      "• 1 Power cord",
+      "• 2 Phase control relay",
+      "• Level 1 Generator"
+    ],
+    "function_lines": [
+      "• Craft Salty Dog beef sausage",
+      "• Craft MRE ration pack",
+      "• Craft Iskra ration pack",
+      "• Craft Bottle of Norvinsky Yadreniy premium kvass (0.6L)",
+      "• Craft Emergency Water Ration",
+      "• Craft Can of beef stew (Small)",
+      "• Craft Can of Max Energy energy drink",
+      "• Energy regeneration rate +6 EP/hr"
+    ]
+  },
+  {
+    "key": "nutrition_unit_lv2",
+    "station": "Nutrition Unit",
+    "level": 2,
+    "max_level": 3,
+    "construction_time": "Instant",
+    "prereq_modules": [
+      {
+        "station": "Nutrition Unit",
+        "level": 1
+      },
+      {
+        "station": "Lavatory",
+        "level": 2
+      }
+    ],
+    "requirements_lines": [
+      "• 2 Alkaline cleaner for heat exchangers",
+      "• 4 Wrench",
+      "• 4 Corrugated hose",
+      "• 3 Phase control relay",
+      "• Level 2 Lavatory"
+    ],
+    "function_lines": [
+      "• Craft Slickers chocolate bar",
+      "• Craft Can of Majaica coffee beans",
+      "• Craft Can of beef stew (Large)",
+      "• Craft Can of condensed milk",
+      "• Craft Pack of sugar",
+      "• Craft Wilston cigarettes",
+      "• Craft Aquamari water bottle with filter",
+      "• Energy regeneration rate +12 EP/hr (18 EP/hr in total)",
+      "• Health regeneration rate +32 HP/hr"
+    ]
+  },
+  {
+    "key": "nutrition_unit_lv3",
+    "station": "Nutrition Unit",
+    "level": 3,
+    "max_level": 3,
+    "construction_time": "14 hours",
+    "prereq_modules": [
+      {
+        "station": "Nutrition Unit",
+        "level": 2
+      },
+      {
+        "station": "Generator",
+        "level": 2
+      },
+      {
+        "station": "Lavatory",
+        "level": 2
+      },
+      {
+        "station": "Stash",
+        "level": 2
+      }
+    ],
+    "requirements_lines": [
+      "• 125,000 Roubles",
+      "• 5 Can of Majaica coffee beans",
+      "• 5 Pack of sodium bicarbonate",
+      "• 2 Smoked Chimney drain cleaner found in raid",
+      "• Metabolism skill level 3",
+      "• Level 2 Generator",
+      "• Level 2 Lavatory",
+      "• Level 2 Stash"
+    ],
+    "function_lines": [
+      "• Craft Bottle of Tarkovskaya vodka",
+      "• Craft Bottle of Dan Jackiel whiskey",
+      "• Craft Bottle of water (0.6L)",
+      "• Craft Bottle of Pevko Light beer",
+      "• Craft Can of Hot Rod energy drink",
+      "• Energy regeneration rate +18 EP/hr (36 EP/hr in total)",
+      "• Hydration regeneration rate +12 WP/hr"
+    ]
+  },
+  {
+    "key": "rest_space_lv1",
+    "station": "Rest Space",
+    "level": 1,
+    "max_level": 3,
+    "construction_time": "Instant",
+    "prereq_modules": [
+      {
+        "station": "Vents",
+        "level": 1
+      }
+    ],
+    "requirements_lines": [
+      "• 10,000 Roubles",
+      "• 1 Classic matches",
+      "• 1 Duct tape",
+      "• Level 1 Vents"
+    ],
+    "function_lines": [
+      "• Negative effects removal rate -10%"
+    ]
+  },
+  {
+    "key": "rest_space_lv2",
+    "station": "Rest Space",
+    "level": 2,
+    "max_level": 3,
+    "construction_time": "2 hours",
+    "prereq_modules": [
+      {
+        "station": "Rest Space",
+        "level": 1
+      },
+      {
+        "station": "Generator",
+        "level": 1
+      }
+    ],
+    "requirements_lines": [
+      "• 75,000 Roubles",
+      "• 1 Magnet",
+      "• 1 DVD drive",
+      "• 5 Energy-saving lamp",
+      "• Level 1 Generator"
+    ],
+    "function_lines": [
+      "• Energy regeneration rate +3 EP/hr",
+      "• Health regeneration rate +22.8 HP/hr"
+    ]
+  },
+  {
+    "key": "rest_space_lv3",
+    "station": "Rest Space",
+    "level": 3,
+    "max_level": 3,
+    "construction_time": "10 hours",
+    "prereq_modules": [
+      {
+        "station": "Rest Space",
+        "level": 2
+      },
+      {
+        "station": "Generator",
+        "level": 2
+      },
+      {
+        "station": "Heating",
+        "level": 2
+      }
+    ],
+    "requirements_lines": [
+      "• 4 GreenBat lithium battery",
+      "• 10 Bundle of wires",
+      "• 5 Capacitors",
+      "• 5 Power cord"
+    ],
+    "function_lines": [
+      "• Health regeneration rate +45.7 HP/hr (68.5 HP/hr in total)",
+      "• Maximum energy reserve +10 points"
+    ]
+  },
+  {
+    "key": "scav_case_lv1",
+    "station": "Scav Case",
+    "level": 1,
+    "max_level": 1,
+    "construction_time": "80 hours",
+    "prereq_modules": [
+      {
+        "station": "Intelligence Center",
+        "level": 2
+      }
+    ],
+    "requirements_lines": [
+      "• 1 Golden rooster figurine found in raid",
+      "• 1 Lucky Scav Junk box",
+      "• 3 Bottle of Fierce Hatchling moonshine found in raid",
+      "• 4 Roler Submariner gold wrist watch found in raid",
+      "• 8 Golden neck chain found in raid",
+      "• 6 Gold skull ring found in raid",
+      "• 3 Bronze lion figurine found in raid",
+      "• Level 2 Intelligence Center"
+    ],
+    "function_lines": [
+      "• Scavs will try to find various items for you if you pay properly, of course. There are multiple Tier costs, each returning roughly the amount invested (results can vary drastically). Each case brings you items with found in raid status, with different rarities depending on the case selected. Your turnaround time is affected by your Fence reputation.",
+      "• 2,500 Roubles - 41min 40sec turnaround - 1-3 Items",
+      "• 15,000 Roubles - 2h 8min 20sec turnaround - 2-4 Items",
+      "• 95,000 Roubles - 2h 15min turnaround - 2-5 Items",
+      "• 1x Bottle of Fierce Hatchling moonshine - 4h 40min turnaround - 4-6 Items",
+      "• 1x Intelligence folder - 5h 20min turnaround - 4-7 Items"
+    ]
+  },
+  {
+    "key": "security_lv1",
+    "station": "Security",
+    "level": 1,
+    "max_level": 3,
+    "construction_time": "Instant",
+    "prereq_modules": [],
+    "requirements_lines": [
+      "• 20,000 Roubles",
+      "• 1 Construction measuring tape"
+    ],
+    "function_lines": []
+  },
+  {
+    "key": "security_lv2",
+    "station": "Security",
+    "level": 2,
+    "max_level": 3,
+    "construction_time": "1 hour",
+    "prereq_modules": [
+      {
+        "station": "Security",
+        "level": 1
+      },
+      {
+        "station": "Illumination",
+        "level": 1
+      }
+    ],
+    "requirements_lines": [
+      "• 45,000 Roubles",
+      "• 2 WD-40 (100ml)",
+      "• 1 Pliers Elite",
+      "• 2 TP-200 TNT brick",
+      "• Endurance skill level 2",
+      "• Level 1 Illumination"
+    ],
+    "function_lines": []
+  },
+  {
+    "key": "security_lv3",
+    "station": "Security",
+    "level": 3,
+    "max_level": 3,
+    "construction_time": "17 hours",
+    "prereq_modules": [
+      {
+        "station": "Security",
+        "level": 2
+      },
+      {
+        "station": "Illumination",
+        "level": 3
+      }
+    ],
+    "requirements_lines": [
+      "• 8 NIXXOR lens",
+      "• 2 Working LCD found in raid",
+      "• 10 Bundle of wires",
+      "• 1 SSD drive found in raid",
+      "• Level 3 Illumination"
+    ],
+    "function_lines": []
+  },
+  {
+    "key": "shooting_range_lv1",
+    "station": "Shooting Range",
+    "level": 1,
+    "max_level": 3,
+    "construction_time": "1 Hour",
+    "prereq_modules": [
+      {
+        "station": "Illumination",
+        "level": 1
+      }
+    ],
+    "requirements_lines": [
+      "• 20,000 Roubles",
+      "• 1 Metal spare parts",
+      "• 1 Bolts",
+      "• 1 Screw nuts",
+      "• Level 1 Illumination"
+    ],
+    "function_lines": [
+      "• The ability to test out your firearms",
+      "• Metal targets and paper targets"
+    ]
+  },
+  {
+    "key": "shooting_range_lv2",
+    "station": "Shooting Range",
+    "level": 2,
+    "max_level": 3,
+    "construction_time": "24 hours",
+    "prereq_modules": [
+      {
+        "station": "Shooting Range",
+        "level": 1
+      },
+      {
+        "station": "Illumination",
+        "level": 3
+      },
+      {
+        "station": "Workbench",
+        "level": 2
+      }
+    ],
+    "requirements_lines": [
+      "• 3 Electric motor found in raid",
+      "• 1 Construction measuring tape found in raid",
+      "• 3 Tube of Poxeram cold welding",
+      "• 1 Toolset found in raid",
+      "• 3 Pack of screws",
+      "• 1 Electric drill found in raid",
+      "• 8 Metal spare parts",
+      "• 3 WI-FI Camera",
+      "• 6 Bundle of wires",
+      "• 6 Energy-saving lamp",
+      "• Level 3 Illumination",
+      "• Level 2 Workbench"
+    ],
+    "function_lines": [
+      "• Ceiling targets with 3 speed levels"
+    ]
+  },
+  {
+    "key": "shooting_range_lv3",
+    "station": "Shooting Range",
+    "level": 3,
+    "max_level": 3,
+    "construction_time": "24 hours",
+    "prereq_modules": [
+      {
+        "station": "Shooting Range",
+        "level": 2
+      },
+      {
+        "station": "Generator",
+        "level": 3
+      },
+      {
+        "station": "Workbench",
+        "level": 3
+      }
+    ],
+    "requirements_lines": [
+      "• 1 Set of files \"Master\" found in raid",
+      "• 5 Printed circuit board",
+      "• 10 Bundle of wires",
+      "• 5 Metal spare parts",
+      "• 5 Capacitors",
+      "• 5 Phase control relay",
+      "• 5 Power cord",
+      "• 1 Leatherman Multitool",
+      "• 1 Tech manual found in raid"
+    ],
+    "function_lines": [
+      "• Group of skills leveling boost: Combat +10%",
+      "• Popper targets and training program activated from laptop"
+    ]
+  },
+  {
+    "key": "solar_power_lv1",
+    "station": "Solar Power",
+    "level": 1,
+    "max_level": 1,
+    "construction_time": "72 hours",
+    "prereq_modules": [
+      {
+        "station": "Generator",
+        "level": 3
+      },
+      {
+        "station": "Workbench",
+        "level": 3
+      }
+    ],
+    "requirements_lines": [
+      "• 25,000 Euros",
+      "• 6 Phased array element",
+      "• 1 Advanced current converter",
+      "• 3 Working LCD found in raid",
+      "• 10 Military cable",
+      "• 10 Military power filter",
+      "• Level 3 Generator",
+      "• Level 3 Workbench"
+    ],
+    "function_lines": [
+      "• Fuel consumption -50%"
+    ]
+  },
+  {
+    "key": "stash_lv1",
+    "station": "Stash",
+    "level": 1,
+    "max_level": 4,
+    "construction_time": "N/A",
+    "prereq_modules": [],
+    "requirements_lines": [
+      "• Owning standard game edition"
+    ],
+    "function_lines": [
+      "• Stash size 10x30"
+    ]
+  },
+  {
+    "key": "stash_lv2",
+    "station": "Stash",
+    "level": 2,
+    "max_level": 4,
+    "construction_time": "1 hour",
+    "prereq_modules": [
+      {
+        "station": "Stash",
+        "level": 1
+      },
+      {
+        "station": "Vents",
+        "level": 1
+      }
+    ],
+    "requirements_lines": [
+      "• Owning \"Left Behind\" game edition",
+      "• 2,500,000 Roubles",
+      "• 4 WD-40 (100ml)",
+      "• 1 Hand drill",
+      "• 5 Pack of nails",
+      "• 10 Pack of screws",
+      "• Level 1 Vents"
+    ],
+    "function_lines": [
+      "• Stash size 10x40"
+    ]
+  },
+  {
+    "key": "stash_lv3",
+    "station": "Stash",
+    "level": 3,
+    "max_level": 4,
+    "construction_time": "12 hours",
+    "prereq_modules": [
+      {
+        "station": "Stash",
+        "level": 2
+      },
+      {
+        "station": "Vents",
+        "level": 2
+      },
+      {
+        "station": "Heating",
+        "level": 2
+      }
+    ],
+    "requirements_lines": [
+      "• Owning \"Prepare for Escape\" game edition",
+      "• 8,500,000 Roubles",
+      "• 2 Electric drill",
+      "• 15 Pack of screws",
+      "• 7 Pack of nails",
+      "• Level 2 Vents",
+      "• Level 2 Heating"
+    ],
+    "function_lines": [
+      "• Stash size 10x50"
+    ]
+  },
+  {
+    "key": "stash_lv4",
+    "station": "Stash",
+    "level": 4,
+    "max_level": 4,
+    "construction_time": "96 hours",
+    "prereq_modules": [
+      {
+        "station": "Stash",
+        "level": 3
+      },
+      {
+        "station": "Generator",
+        "level": 3
+      },
+      {
+        "station": "Workbench",
+        "level": 3
+      },
+      {
+        "station": "Heating",
+        "level": 3
+      },
+      {
+        "station": "Intelligence Center",
+        "level": 2
+      }
+    ],
+    "requirements_lines": [
+      "• Owning \"Edge of Darkness\" or \"The Unheard\" game edition",
+      "• 200,000 Euros",
+      "• 10 Screw nuts",
+      "• 10 Bolts",
+      "• 8 Shustrilo sealing foam",
+      "• 2 Ratchet wrench found in raid",
+      "• Level 3 Generator",
+      "• Level 3 Workbench",
+      "• Level 3 Heating",
+      "• Level 2 Intelligence Center"
+    ],
+    "function_lines": [
+      "• Stash size 10x68"
+    ]
+  },
+  {
+    "key": "vents_lv1",
+    "station": "Vents",
+    "level": 1,
+    "max_level": 3,
+    "construction_time": "Instant",
+    "prereq_modules": [],
+    "requirements_lines": [
+      "• 25,000 Roubles"
+    ],
+    "function_lines": []
+  },
+  {
+    "key": "vents_lv2",
+    "station": "Vents",
+    "level": 2,
+    "max_level": 3,
+    "construction_time": "1 hour",
+    "prereq_modules": [
+      {
+        "station": "Vents",
+        "level": 1
+      },
+      {
+        "station": "Generator",
+        "level": 1
+      }
+    ],
+    "requirements_lines": [
+      "• 5 Metal spare parts",
+      "• 5 CPU fan",
+      "• 1 Car battery",
+      "• 1 Electric motor"
+    ],
+    "function_lines": []
+  },
+  {
+    "key": "vents_lv3",
+    "station": "Vents",
+    "level": 3,
+    "max_level": 3,
+    "construction_time": "10 hours",
+    "prereq_modules": [
+      {
+        "station": "Vents",
+        "level": 2
+      },
+      {
+        "station": "Generator",
+        "level": 1
+      }
+    ],
+    "requirements_lines": [
+      "• 5 Printed circuit board",
+      "• 4 Electric motor found in raid",
+      "• 10 Metal spare parts",
+      "• 14 Bundle of wires",
+      "• 4 Car battery found in raid",
+      "• Strength skill level 2",
+      "• Level 1 Generator"
+    ],
+    "function_lines": []
+  },
+  {
+    "key": "water_collector_lv1",
+    "station": "Water Collector",
+    "level": 1,
+    "max_level": 3,
+    "construction_time": "Instant",
+    "prereq_modules": [],
+    "requirements_lines": [
+      "• 3 Duct tape",
+      "• 5 Screw nuts",
+      "• 5 Bolts",
+      "• 4 Corrugated hose"
+    ],
+    "function_lines": [
+      "• Craft Bottle of water (0.6L)",
+      "• Hydration regeneration rate +6 WP/hr"
+    ]
+  },
+  {
+    "key": "water_collector_lv2",
+    "station": "Water Collector",
+    "level": 2,
+    "max_level": 3,
+    "construction_time": "2 hours",
+    "prereq_modules": [
+      {
+        "station": "Water Collector",
+        "level": 1
+      },
+      {
+        "station": "Workbench",
+        "level": 1
+      }
+    ],
+    "requirements_lines": [
+      "• 2 Toolset",
+      "• 6 Corrugated hose",
+      "• 2 Electric motor",
+      "• 5 KEKTAPE duct tape",
+      "• Attention skill level 3",
+      "• Level 1 Workbench"
+    ],
+    "function_lines": [
+      "• Craft Emergency Water Ration",
+      "• Craft Aquamari water bottle with filter",
+      "• Hydration regeneration rate +12 WP/hr (+18 WP/hr in total)"
+    ]
+  },
+  {
+    "key": "water_collector_lv3",
+    "station": "Water Collector",
+    "level": 3,
+    "max_level": 3,
+    "construction_time": "16 hours",
+    "prereq_modules": [
+      {
+        "station": "Water Collector",
+        "level": 2
+      },
+      {
+        "station": "Generator",
+        "level": 3
+      },
+      {
+        "station": "Heating",
+        "level": 2
+      }
+    ],
+    "requirements_lines": [
+      "• 20,000 Roubles",
+      "• 1 Ratchet wrench found in raid",
+      "• 2 Pliers Elite found in raid",
+      "• 10 Shustrilo sealing foam",
+      "• Level 3 Generator",
+      "• Level 2 Heating"
+    ],
+    "function_lines": [
+      "• Craft Canister with purified water",
+      "• Additional Water filter slots +1",
+      "• Hydration regeneration rate +18 WP/hr (+36 WP/hr in total)"
+    ]
+  },
+  {
+    "key": "weapon_rack_lv1",
+    "station": "Weapon Rack",
+    "level": 1,
+    "max_level": 3,
+    "construction_time": "12 hours",
+    "prereq_modules": [
+      {
+        "station": "Illumination",
+        "level": 3
+      },
+      {
+        "station": "Stash",
+        "level": 2
+      }
+    ],
+    "requirements_lines": [
+      "• 5 Pack of nails",
+      "• 5 Energy-saving lamp",
+      "• 5 Insulating tape",
+      "• 1 Hand drill found in raid",
+      "• 15 Bolts",
+      "• 1 Metal cutting scissors found in raid",
+      "• 5 Xenomorph sealing foam",
+      "• Mechanic LL2",
+      "• Level 3 Illumination",
+      "• Level 2 Stash"
+    ],
+    "function_lines": [
+      "• Ability to stash functional weapons on a new inventory space",
+      "• Stash size 9x6 x2",
+      "• Ability to display up to 3 favorite weapons on player profile"
+    ]
+  },
+  {
+    "key": "weapon_rack_lv2",
+    "station": "Weapon Rack",
+    "level": 2,
+    "max_level": 3,
+    "construction_time": "18 hours",
+    "prereq_modules": [
+      {
+        "station": "Weapon Rack",
+        "level": 1
+      },
+      {
+        "station": "Shooting Range",
+        "level": 2
+      },
+      {
+        "station": "Workbench",
+        "level": 2
+      },
+      {
+        "station": "Stash",
+        "level": 3
+      }
+    ],
+    "requirements_lines": [
+      "• 10 Metal spare parts",
+      "• 10 Pack of screws",
+      "• 1 Electric drill found in raid",
+      "• 10 Bundle of wires",
+      "• 1 Set of files \"Master\" found in raid",
+      "• 3 Tube of Poxeram cold welding",
+      "• 10 Energy-saving lamp",
+      "• 10 Duct tape",
+      "• 5 Weapon parts",
+      "• Level 2 Shooting Range",
+      "• Level 2 Workbench",
+      "• Level 3 Stash"
+    ],
+    "function_lines": [
+      "• Ability to stash functional weapons on a new inventory space",
+      "• Stash size 11x6 x2",
+      "• Ability to display up to 3 favorite weapons on player profile"
+    ]
+  },
+  {
+    "key": "weapon_rack_lv3",
+    "station": "Weapon Rack",
+    "level": 3,
+    "max_level": 3,
+    "construction_time": "24 hours",
+    "prereq_modules": [
+      {
+        "station": "Weapon Rack",
+        "level": 2
+      },
+      {
+        "station": "Shooting Range",
+        "level": 3
+      },
+      {
+        "station": "Workbench",
+        "level": 3
+      }
+    ],
+    "requirements_lines": [
+      "• 1 Electric drill found in raid",
+      "• 15 Energy-saving lamp",
+      "• 10 Metal spare parts",
+      "• 5 KEKTAPE duct tape found in raid",
+      "• 15 Bundle of wires",
+      "• 5 Shustrilo sealing foam",
+      "• 1 Tech manual found in raid",
+      "• 1 #FireKlean gun lube found in raid",
+      "• Level 3 Shooting Range",
+      "• Level 3 Workbench"
+    ],
+    "function_lines": [
+      "• Ability to stash functional weapons on a new inventory space",
+      "• Stash size 13x7 x2",
+      "• Ability to display up to 3 favorite weapons on player profile"
+    ]
+  },
+  {
+    "key": "workbench_lv1",
+    "station": "Workbench",
+    "level": 1,
+    "max_level": 3,
+    "construction_time": "Instant",
+    "prereq_modules": [],
+    "requirements_lines": [
+      "• 2 Screw nuts",
+      "• 2 Bolts",
+      "• 1 Leatherman Multitool"
+    ],
+    "function_lines": [
+      "• Craft .366 TKM AP-M",
+      "• Craft 12/70 Piranha",
+      "• Craft 12/70 flechette",
+      "• Craft 7.62x39mm FMJ",
+      "• Craft 9x18mm PM SP8 gzh",
+      "• Craft 9x18mm PMM PstM gzh",
+      "• Craft 9x21mm P gzh",
+      "• Craft Broken GPhone smartphone",
+      "• Craft Broken LCD",
+      "• Craft Bundle of wires",
+      "• Craft Capacitors",
+      "• Craft Gas analyzer",
+      "• Craft Gunpowder \"Hawk\"",
+      "• Craft Gunpowder \"Kite\"",
+      "• Craft Hand drill",
+      "• Craft Kalashnikov AK-74N 5.45x39 assault rifle",
+      "• Craft Kalashnikov AKM 7.62x39 assault rifle",
+      "• Craft Light bulb",
+      "• Craft Magnet",
+      "• Craft Moreman's audio tape #1",
+      "• Craft Moreman's audio tape #2",
+      "• Craft PM 9x18PM 84-round makeshift drum magazine",
+      "• Craft PP-9 Klin 9x18PMM submachine gun",
+      "• Craft Piece of plexiglass",
+      "• Craft Power cord",
+      "• Craft Printed circuit board",
+      "• Craft Printed circuit board",
+      "• Craft RGD-5 hand grenade",
+      "• Craft Radio repeater",
+      "• Craft Round pliers",
+      "• Craft Secure container Gamma",
+      "• Craft Secure container Gamma (Battle-worn)",
+      "• Craft T-Shaped plug",
+      "• Craft Toolset",
+      "• Craft Unlocked equipment crate (BattlePass 0)",
+      "• Craft Unlocked equipment crate (Rare)",
+      "• Craft Unlocked supply crate (Rare)",
+      "• Craft Unlocked valuables crate (Rare)",
+      "• Craft Unlocked weapon crate (Rare)",
+      "• Craft Weapon parts",
+      "• Craft Weapon parts",
+      "• Craft Zarya stun grenade",
+      "• Unlocks weapon repair via repair kits"
+    ]
+  },
+  {
+    "key": "workbench_lv2",
+    "station": "Workbench",
+    "level": 2,
+    "max_level": 3,
+    "construction_time": "1 hour",
+    "prereq_modules": [
+      {
+        "station": "Workbench",
+        "level": 1
+      },
+      {
+        "station": "Illumination",
+        "level": 1
+      }
+    ],
+    "requirements_lines": [
+      "• 10 Bolts",
+      "• 3 Toolset",
+      "• 1 Set of files \"Master\"",
+      "• 2 Electric drill",
+      "• 3 Weapon parts",
+      "• Level 1 Illumination"
+    ],
+    "function_lines": [
+      "• Craft Working LCD",
+      "• Craft 5.7x28mm L191",
+      "• Craft 12/70 makeshift .50 BMG slug",
+      "• Craft Rechargeable battery",
+      "• Craft Electric motor",
+      "• Craft VOG-17 Khattabka improvised hand grenade",
+      "• Craft Kalashnikov AK-74M 5.45x39 assault rifle",
+      "• Craft Geiger-Muller counter",
+      "• Craft 9x19mm Luger CCI",
+      "• Craft Gunpowder \"Eagle\"",
+      "• Craft 7.62x51mm BCP FMJ",
+      "• Craft VOG-25 Khattabka improvised hand grenade",
+      "• Craft 5.56x45mm MK 318 Mod 0 (SOST)",
+      "• Craft Gunpowder \"Hawk\"",
+      "• Craft Spark plug",
+      "• Craft 9x39mm PAB-9 gs",
+      "• Craft Military circuit board",
+      "• Craft 5.45x39mm PP gs",
+      "• Craft GreenBat lithium battery",
+      "• Craft NIXXOR lens",
+      "• Craft Car battery",
+      "• Craft Can of thermite",
+      "• Craft 7.62x54mm R LPS gzh",
+      "• Craft Bulbex cable cutter",
+      "• Reduces weapon repair cost using repair kits -3%"
+    ]
+  },
+  {
+    "key": "workbench_lv3",
+    "station": "Workbench",
+    "level": 3,
+    "max_level": 3,
+    "construction_time": "11 hours",
+    "prereq_modules": [
+      {
+        "station": "Workbench",
+        "level": 2
+      },
+      {
+        "station": "Generator",
+        "level": 2
+      },
+      {
+        "station": "Stash",
+        "level": 2
+      }
+    ],
+    "requirements_lines": [
+      "• 395,000 Roubles",
+      "• 5 Can of thermite",
+      "• 2 Pliers Elite found in raid",
+      "• 1 #FireKlean gun lube found in raid",
+      "• Level 2 Generator",
+      "• Level 2 Stash"
+    ],
+    "function_lines": [
+      "• Craft Body armor repair kit",
+      "• Craft Weapon repair kit",
+      "• Craft 9x19mm AP 6.3",
+      "• Craft 7.62x51mm M80A1",
+      "• Craft 12/70 AP-20 armor-piercing slug",
+      "• Craft 5.56x45mm M855A1",
+      "• Craft 5.7x28mm SS190",
+      "• Craft 7.62x39mm BP gzh",
+      "• Craft 7.62x54mm R BT gzh",
+      "• Craft 4.6x30mm AP SX",
+      "• Craft .45 ACP AP",
+      "• Craft .300 Blackout AP",
+      "• Craft .338 Lapua Magnum FMJ",
+      "• Craft 23x75mm Zvezda flashbang round",
+      "• Craft Trijicon REAP-IR thermal scope",
+      "• Craft .300 Blackout M62 Tracer",
+      "• Craft FLIR RS-32 2.25-9x 35mm 60Hz thermal riflescope",
+      "• Craft 5.45x39mm BP gs",
+      "• Craft OFZ 30x165mm shell",
+      "• Craft Microcontroller board",
+      "• Craft TheAKGuy AK-50 .50 BMG anti-materiel rifle",
+      "• Reduces weapon repair cost using repair kits -6% (-9% in total)"
+    ]
+  }
+]

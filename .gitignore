@@ -1,0 +1,15 @@
+﻿__pycache__/
+*.py[cod]
+*$py.class
+*.spec
+build/
+dist/
+*.rar
+*.zip
+.vscode/
+.idea/
+cache/thumbs/
+cache/boss_maps/
+*.db-wal
+*.db-shm
+*.log
