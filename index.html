@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TTC — Tactical Tarkov Companion (Web App)</title>
-  <meta name="description" content="TTC (Tactical Tarkov Companion) Web App - Suite táctica en vivo para Escape from Tarkov (PvE & PvP). Gunsmith Studio interactivo, visor de Quests estilo Wiki, radar de Bosses y balística STK.">
-  <meta name="keywords" content="TTC, Tactical Tarkov Companion, Escape from Tarkov, Tarkov Web, Gunsmith Tarkov, Quests Tarkov, Balística EFT, Mapas Tarkov, Bosses EFT">
+  <title>TTC — Tactical Tarkov Companion | Asistente Táctico de Escritorio</title>
+  <meta name="description" content="TTC (Tactical Tarkov Companion) es la suite táctica de escritorio definitiva para Escape from Tarkov (PvE & PvP). Cero latencia (<1 ms), 100% offline, Gunsmith Studio interactivo, Wiki Dossier de Quests, mapas 2D y simulador balístico.">
+  <meta name="keywords" content="TTC, Tactical Tarkov Companion, Escape from Tarkov, Tarkov Desktop App, Gunsmith Studio, Quests Offline, Balística EFT, Mapas Tarkov, CustomTkinter">
   <meta name="theme-color" content="#0b0e14">
 
-  <!-- Open Graph -->
+  <!-- Open Graph / Redes Sociales -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="TTC — Tactical Tarkov Companion">
-  <meta property="og:description" content="Aplicación táctica web para Escape from Tarkov. Gunsmith interactivo, Wiki Dossier offline, balística y mapas topográficos.">
+  <meta property="og:description" content="Suite táctica de escritorio nativa para Escape from Tarkov (PvE & PvP). Cero lag (<1 ms), 100% offline, Gunsmith Studio, Quests Dossier y radar de Bosses.">
   <meta property="og:url" content="https://patoma89.github.io/TarkovScope/">
 
   <link rel="icon" type="image/x-icon" href="ttc.ico">
@@ -20,1374 +20,1365 @@
     :root {
       --bg-void: #07090d;
       --bg-dark: #0b0e14;
-      --bg-sidebar: #0e121a;
-      --bg-card: #131822;
-      --bg-card-hover: #18202d;
-      --bg-input: #090c12;
-      --bg-row-alt: #10151f;
+      --bg-elevated: #111620;
+      --bg-elevated-hover: #161d2b;
+      --bg-panel: #0d1119;
 
       --gold: #d4b886;
-      --gold-hover: #e8caa0;
-      --gold-dim: #9e855c;
-      --gold-glow: rgba(212, 184, 134, 0.25);
+      --gold-bright: #ebd0a0;
+      --gold-dim: #8f7952;
+      --gold-glow: rgba(212, 184, 134, 0.22);
 
-      --green-meta: #10b981;
+      --green: #10b981;
       --green-glow: rgba(16, 185, 129, 0.2);
-      --red-threat: #ef4444;
-      --red-glow: rgba(239, 68, 68, 0.2);
-      --cyan-hud: #38bdf8;
-      --amber-warn: #f59e0b;
-      --purple-accent: #a855f7;
+      --cyan: #38bdf8;
+      --cyan-glow: rgba(56, 189, 248, 0.18);
+      --amber: #f59e0b;
+      --red: #ef4444;
 
       --text-main: #f8fafc;
       --text-dim: #cbd5e1;
       --text-muted: #64748b;
-      --border-color: #232936;
-      --border-light: rgba(212, 184, 134, 0.2);
+
+      --border: #232936;
+      --border-gold: rgba(212, 184, 134, 0.28);
 
       --font-sans: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
       --font-mono: 'JetBrains Mono', Consolas, 'Fira Code', monospace;
+
       --radius-sm: 6px;
-      --radius-md: 10px;
-      --radius-lg: 14px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --shadow-card: 0 18px 40px -15px rgba(0, 0, 0, 0.75);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; width: 100%; overflow: hidden; background-color: var(--bg-dark); color: var(--text-main); font-family: var(--font-sans); }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-    /* Scanline Overlay Táctico */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      line-height: 1.65;
+      overflow-x: hidden;
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(212, 184, 134, 0.12), transparent),
+        radial-gradient(circle at 85% 30%, rgba(56, 189, 248, 0.05), transparent 35%),
+        radial-gradient(circle at 15% 65%, rgba(16, 185, 129, 0.05), transparent 35%),
+        linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 100% 100%, 44px 44px, 44px 44px;
+    }
+
+    /* Scanline sutil de monitor táctico */
     body::before {
-      content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%);
-      background-size: 100% 4px; z-index: 9999; pointer-events: none; opacity: 0.25;
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.18) 50%);
+      background-size: 100% 4px;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.3;
     }
 
-    /* Layout Principal Tipo App de Escritorio */
-    .app-container {
-      display: flex; height: 100vh; width: 100vw; overflow: hidden;
+    a {
+      color: var(--gold);
+      text-decoration: none;
+      transition: color 0.2s ease;
     }
 
-    /* SIDEBAR */
-    .app-sidebar {
-      width: 250px; min-width: 250px; background: var(--bg-sidebar);
-      border-right: 1px solid var(--border-color); display: flex; flex-direction: column;
-      z-index: 100; transition: all 0.3s ease;
+    a:hover {
+      color: var(--gold-bright);
     }
 
-    .brand-header {
-      padding: 20px 18px 14px;
-      border-bottom: 1px solid var(--border-color);
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
     }
-    .brand-row { display: flex; align-items: center; gap: 12px; }
+
+    /* ================= NAVBAR ================= */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(11, 14, 20, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 74px;
+      gap: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
     .brand-icon {
-      width: 36px; height: 36px; background: #161c28; border: 1px solid var(--gold);
-      border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 0 10px var(--gold-glow);
-    }
-    .brand-icon svg { width: 20px; height: 20px; fill: var(--gold); }
-    .brand-titles h1 { font-size: 1.3rem; font-weight: 800; color: var(--gold); letter-spacing: 1.5px; line-height: 1; }
-    .brand-titles span { font-size: 0.65rem; font-weight: 700; color: var(--text-dim); letter-spacing: 1.5px; text-transform: uppercase; }
-
-    /* Barra de Búsqueda Global */
-    .search-box-wrap { padding: 12px 14px; }
-    .search-input-inner {
-      position: relative; display: flex; align-items: center;
-    }
-    .search-input-inner input {
-      width: 100%; background: var(--bg-input); border: 1px solid var(--border-color);
-      color: var(--text-main); font-size: 0.82rem; padding: 8px 10px 8px 30px;
-      border-radius: var(--radius-sm); outline: none; transition: all 0.2s;
-    }
-    .search-input-inner input:focus { border-color: var(--gold); box-shadow: 0 0 8px var(--gold-glow); }
-    .search-icon-svg { position: absolute; left: 10px; width: 14px; height: 14px; fill: var(--text-muted); }
-
-    /* Menú Lateral */
-    .sidebar-menu {
-      flex: 1; overflow-y: auto; padding: 6px 10px; display: flex; flex-direction: column; gap: 4px;
-    }
-    .menu-item {
-      display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius-sm);
-      color: var(--text-dim); font-size: 0.88rem; font-weight: 600; cursor: pointer; border: 1px solid transparent;
-      background: transparent; text-align: left; transition: all 0.2s; width: 100%;
-    }
-    .menu-item:hover { background: var(--bg-card); color: var(--gold); border-color: rgba(212, 184, 134, 0.15); }
-    .menu-item.active { background: var(--bg-card); color: var(--gold); border-color: var(--gold); box-shadow: inset 3px 0 0 var(--gold); }
-    .menu-item .icon { font-size: 1.1rem; width: 22px; text-align: center; }
-
-    /* Footer del Sidebar */
-    .sidebar-footer {
-      padding: 14px; border-top: 1px solid var(--border-color); background: #0a0d13;
-      display: flex; flex-direction: column; gap: 8px; font-size: 0.75rem; color: var(--text-muted);
-    }
-    .sync-status-pill {
-      display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); color: var(--green-meta);
-    }
-    .pulse-dot {
-      width: 6px; height: 6px; border-radius: 50%; background: var(--green-meta);
-      box-shadow: 0 0 6px var(--green-meta); animation: pulse 2s infinite ease-in-out;
-    }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-
-    /* CONTENIDO PRINCIPAL */
-    .app-main {
-      flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; background: var(--bg-dark);
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #1a2130, #0b0e14);
+      border: 1px solid var(--gold);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 16px var(--gold-glow);
+      flex-shrink: 0;
     }
 
-    .top-action-bar {
-      height: 52px; background: rgba(14, 18, 26, 0.95); border-bottom: 1px solid var(--border-color);
-      display: flex; align-items: center; justify-content: space-between; padding: 0 20px;
-      backdrop-filter: blur(8px);
+    .brand-icon svg {
+      width: 22px;
+      height: 22px;
+      color: var(--gold);
     }
-    .top-title { font-size: 0.95rem; font-weight: 700; color: var(--gold); font-family: var(--font-mono); letter-spacing: 1px; display: flex; align-items: center; gap: 10px; }
-    .top-actions { display: flex; align-items: center; gap: 10px; }
 
-    .btn-pill {
-      font-size: 0.78rem; font-weight: 700; padding: 6px 14px; border-radius: 999px;
-      border: 1px solid var(--border-color); background: #131924; color: var(--text-dim);
-      cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px;
+    .brand-text {
+      display: flex;
+      flex-direction: column;
     }
-    .btn-pill:hover, .btn-pill.active { background: var(--gold); color: #0b0e14; border-color: var(--gold); }
-    .btn-pill.green-active { background: var(--green-meta); color: #000; border-color: var(--green-meta); }
 
-    /* Scrollable Viewport de Contenido */
-    .tab-viewport {
-      flex: 1; overflow-y: auto; padding: 24px; display: none;
+    .brand-text .logo-name {
+      font-size: 1.3rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+      color: var(--gold);
+      line-height: 1;
     }
-    .tab-viewport.active { display: block; animation: fadeIn 0.25s ease; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* COMPONENTES COMPARTIDOS: Tarjetas, Tablas y Filtros */
-    .filter-bar {
-      display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;
-      background: var(--bg-card); padding: 12px 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color);
+    .brand-text .logo-sub {
+      font-size: 0.64rem;
+      font-weight: 700;
+      letter-spacing: 1.6px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      margin-top: 3px;
     }
-    .filter-select {
-      background: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-main);
-      padding: 6px 12px; border-radius: var(--radius-sm); font-size: 0.85rem; outline: none;
-    }
-    .filter-select:focus { border-color: var(--gold); }
 
-    .cards-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 18px;
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      list-style: none;
     }
-    .hud-card {
-      background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md);
-      padding: 18px; transition: all 0.2s; position: relative;
-    }
-    .hud-card:hover {
-      background: var(--bg-card-hover); border-color: var(--border-light); transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-    }
-    .card-header-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
-    .card-title { font-size: 1.15rem; font-weight: 800; color: var(--text-main); }
-    .card-subtitle { font-size: 0.76rem; color: var(--gold); font-family: var(--font-mono); }
-    .badge-prob { font-size: 0.85rem; font-weight: 800; font-family: var(--font-mono); color: var(--gold); background: rgba(212, 184, 134, 0.12); padding: 3px 8px; border-radius: 4px; border: 1px solid var(--border-light); }
 
-    /* TABLA BALÍSTICA ESTILO EFT */
-    .table-container {
-      background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); overflow-x: auto;
+    .nav-links a {
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.9px;
+      padding: 6px 0;
+      position: relative;
     }
-    .tactical-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
-    .tactical-table th {
-      background: #090c12; color: var(--gold); text-align: left; padding: 12px 14px;
-      font-family: var(--font-mono); font-size: 0.78rem; border-bottom: 1px solid var(--border-color);
-      cursor: pointer; user-select: none;
-    }
-    .tactical-table th:hover { color: #fff; }
-    .tactical-table td { padding: 10px 14px; border-bottom: 1px solid rgba(35, 41, 54, 0.6); color: var(--text-dim); }
-    .tactical-table tr:hover td { background: var(--bg-card-hover); color: var(--text-main); }
 
-    /* Medidores de Clase 1-6 */
-    .armor-meters-row { display: flex; gap: 4px; }
-    .armor-meter-box {
-      width: 24px; height: 22px; border-radius: 3px; display: flex; align-items: center; justify-content: center;
-      font-family: var(--font-mono); font-size: 0.7rem; font-weight: 800;
+    .nav-links a::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--gold);
+      transition: width 0.25s ease;
     }
-    .meter-6 { background: #10b981; color: #000; } /* 6/6 pen directa */
-    .meter-5 { background: #34d399; color: #000; }
-    .meter-4 { background: #fbbf24; color: #000; }
-    .meter-3 { background: #f97316; color: #fff; }
-    .meter-2 { background: #ef4444; color: #fff; }
-    .meter-1 { background: #7f1d1d; color: #fff; }
-    .meter-0 { background: #1e293b; color: #64748b; }
 
-    /* WORKBENCH MODDING */
-    .workbench-layout {
-      display: grid; grid-template-columns: 320px 1fr; gap: 20px;
+    .nav-links a:hover {
+      color: var(--gold);
     }
-    @media (max-width: 980px) { .workbench-layout { grid-template-columns: 1fr; } }
-    .workbench-slots-panel {
-      background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 16px;
-      display: flex; flex-direction: column; gap: 14px; max-height: calc(100vh - 140px); overflow-y: auto;
-    }
-    .slot-group { display: flex; flex-direction: column; gap: 6px; }
-    .slot-label { font-size: 0.78rem; font-weight: 700; color: var(--gold); text-transform: uppercase; font-family: var(--font-mono); }
-    .blueprint-display {
-      background: radial-gradient(circle at center, rgba(212, 184, 134, 0.05) 0%, transparent 70%), #0a0d13;
-      border: 1px dashed rgba(212, 184, 134, 0.3); border-radius: var(--radius-md); height: 220px;
-      display: flex; align-items: center; justify-content: center; flex-direction: column; position: relative;
-    }
-    .blueprint-glyph { font-size: 4.5rem; color: var(--gold); filter: drop-shadow(0 0 16px var(--gold-glow)); }
 
-    /* MODAL TÁCTICO FLOTANTE */
-    .modal-overlay {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(6px); z-index: 10000; display: none; align-items: center; justify-content: center;
+    .nav-links a:hover::after {
+      width: 100%;
     }
-    .modal-box {
-      background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg);
-      width: 90%; max-width: 820px; max-height: 85vh; display: flex; flex-direction: column; overflow: hidden;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 20px var(--gold-glow);
-    }
-    .modal-header {
-      background: #090c12; padding: 16px 20px; border-bottom: 1px solid var(--border-color);
-      display: flex; justify-content: space-between; align-items: center;
-    }
-    .modal-body { padding: 22px; overflow-y: auto; flex: 1; }
-    .btn-close { background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; }
-    .btn-close:hover { color: #fff; }
 
-    /* TOAST DE COPIADO */
-    .toast-pill {
-      position: fixed; bottom: 24px; right: 24px; background: var(--bg-card); border: 1px solid var(--gold);
-      color: var(--gold); padding: 10px 18px; border-radius: var(--radius-sm); font-family: var(--font-mono);
-      font-size: 0.82rem; z-index: 20000; display: none; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    @media (max-width: 900px) {
+      .nav-links { display: none; }
+    }
+
+    /* ================= BUTTONS ================= */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 20px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.22s ease;
+      border: 1px solid transparent;
+      white-space: nowrap;
+      letter-spacing: 0.4px;
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, #dcc190, #b59660);
+      color: #090c12;
+      border-color: #f3e2c3;
+      box-shadow: 0 6px 20px var(--gold-glow);
+    }
+
+    .btn-gold:hover {
+      background: linear-gradient(135deg, #ebd0a0, #c7a66e);
+      color: #000;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 26px rgba(212, 184, 134, 0.36);
+    }
+
+    .btn-ghost {
+      background: rgba(17, 22, 32, 0.85);
+      color: var(--text-main);
+      border-color: var(--border);
+    }
+
+    .btn-ghost:hover {
+      background: var(--bg-elevated-hover);
+      border-color: var(--gold);
+      color: var(--gold);
+      transform: translateY(-2px);
+    }
+
+    /* ================= HERO ================= */
+    .hero {
+      padding: 84px 0 64px;
+      text-align: center;
+    }
+
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 16px;
+      border-radius: 999px;
+      background: rgba(212, 184, 134, 0.08);
+      border: 1px solid var(--border-gold);
+      margin-bottom: 26px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 10px var(--green);
+      animation: pulse 2s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.45; transform: scale(1.25); }
+    }
+
+    .hero-pill span {
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 1.4px;
+      color: var(--gold);
+      text-transform: uppercase;
+    }
+
+    .hero-title {
+      font-size: clamp(2.4rem, 5.2vw, 4.3rem);
+      font-weight: 900;
+      line-height: 1.08;
+      letter-spacing: -0.8px;
+      max-width: 920px;
+      margin: 0 auto 22px;
+    }
+
+    .hero-title .highlight {
+      background: linear-gradient(135deg, #f3dfb8 0%, #d4b886 50%, #b0915a 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 24px rgba(212, 184, 134, 0.25));
+    }
+
+    .hero-subtitle {
+      font-size: clamp(1.05rem, 1.6vw, 1.24rem);
+      color: var(--text-dim);
+      max-width: 760px;
+      margin: 0 auto 36px;
+      font-weight: 400;
+    }
+
+    .hero-cta-row {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 48px;
+    }
+
+    .hero-metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      max-width: 880px;
+      margin: 0 auto 56px;
+    }
+
+    @media (max-width: 768px) {
+      .hero-metrics { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .metric-box {
+      background: rgba(17, 22, 32, 0.8);
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--gold);
+      border-radius: var(--radius-sm);
+      padding: 16px 14px;
+      text-align: center;
+    }
+
+    .metric-val {
+      font-family: var(--font-mono);
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--gold);
+      line-height: 1.2;
+    }
+
+    .metric-lbl {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.9px;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    /* ================= INTERACTIVE TOUR WINDOW ================= */
+    .showcase-window {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card), 0 0 40px rgba(212, 184, 134, 0.06);
+      overflow: hidden;
+      text-align: left;
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+
+    .window-topbar {
+      background: #080b10;
+      border-bottom: 1px solid var(--border);
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .window-dots {
+      display: flex;
+      gap: 8px;
+    }
+
+    .w-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+    }
+    .w-dot.r { background: #ff5f56; }
+    .w-dot.y { background: #ffbd2e; }
+    .w-dot.g { background: #27c93f; }
+
+    .window-title {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+    }
+
+    .window-badge {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--green);
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      padding: 3px 10px;
+      border-radius: 999px;
+    }
+
+    .showcase-body {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      min-height: 410px;
+      background: linear-gradient(180deg, #0f141e 0%, #0a0d14 100%);
+    }
+
+    @media (max-width: 840px) {
+      .showcase-body { grid-template-columns: 1fr; }
+    }
+
+    .showcase-sidebar {
+      background: #0a0d13;
+      border-right: 1px solid var(--border);
+      padding: 18px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sidebar-caption {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      padding: 0 10px 8px;
+    }
+
+    .tour-tab-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 12px;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-dim);
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s ease;
+    }
+
+    .tour-tab-btn:hover {
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--gold);
+    }
+
+    .tour-tab-btn.active {
+      background: #141a26;
+      border-color: var(--border-gold);
+      color: var(--gold);
+      box-shadow: inset 3px 0 0 var(--gold);
+    }
+
+    .showcase-stage {
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .stage-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 18px;
+    }
+
+    .stage-tag {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--cyan);
+      letter-spacing: 1.3px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .stage-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.2;
+    }
+
+    .stage-desc {
+      color: var(--text-dim);
+      font-size: 0.98rem;
+      line-height: 1.65;
+    }
+
+    .stage-highlights {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 14px;
+    }
+
+    .highlight-card {
+      background: #0b0f17;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+    }
+
+    .highlight-card h4 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .highlight-card p {
+      font-size: 0.84rem;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+
+    .stage-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* ================= SECTIONS ================= */
+    .section {
+      padding: 96px 0;
+    }
+
+    .section-header {
+      text-align: center;
+      max-width: 740px;
+      margin: 0 auto 56px;
+    }
+
+    .section-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--gold);
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      font-size: clamp(1.9rem, 3.6vw, 2.7rem);
+      font-weight: 900;
+      line-height: 1.18;
+      margin-bottom: 14px;
+    }
+
+    .section-desc {
+      color: var(--text-dim);
+      font-size: 1.05rem;
+    }
+
+    /* ================= MODULES GRID ================= */
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 24px;
+    }
+
+    .module-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 28px;
+      transition: all 0.28s ease;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .module-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      opacity: 0;
+      transition: opacity 0.28s ease;
+    }
+
+    .module-card:hover {
+      background: var(--bg-elevated-hover);
+      border-color: var(--border-gold);
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-card);
+    }
+
+    .module-card:hover::before {
+      opacity: 1;
+    }
+
+    .module-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      background: rgba(212, 184, 134, 0.09);
+      border: 1px solid var(--border-gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .module-card h3 {
+      font-size: 1.22rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .module-card p {
+      font-size: 0.94rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    .module-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: auto;
+      padding-top: 10px;
+      border-top: 1px solid rgba(35, 41, 54, 0.7);
+    }
+
+    .module-list li {
+      font-size: 0.86rem;
+      color: var(--text-dim);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .module-list li::before {
+      content: "▹";
+      color: var(--gold);
+      font-weight: 800;
+    }
+
+    /* ================= ARCHITECTURE & PERFORMANCE ================= */
+    .arch-section {
+      background: linear-gradient(180deg, transparent 0%, rgba(17, 22, 32, 0.55) 50%, transparent 100%);
+    }
+
+    .arch-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .arch-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 24px;
+    }
+
+    .arch-badge {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--cyan);
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      padding: 3px 10px;
+      border-radius: 4px;
+      margin-bottom: 12px;
+    }
+
+    .arch-card h3 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .arch-card p {
+      font-size: 0.9rem;
+      color: var(--text-dim);
+    }
+
+    /* ================= DOWNLOAD SECTION ================= */
+    .download-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 28px;
+    }
+
+    .download-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 34px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .download-card.featured {
+      border-color: var(--gold);
+      box-shadow: 0 0 36px rgba(212, 184, 134, 0.12);
+    }
+
+    .featured-ribbon {
+      position: absolute;
+      top: -12px;
+      right: 24px;
+      background: var(--gold);
+      color: #090c12;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 999px;
+      letter-spacing: 0.8px;
+    }
+
+    .download-card h3 {
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .terminal-box {
+      background: #07090d;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      font-family: var(--font-mono);
+      font-size: 0.83rem;
+      color: var(--text-dim);
+      margin: 18px 0;
+      position: relative;
+      overflow-x: auto;
+      line-height: 1.7;
+    }
+
+    .terminal-box .comment {
+      color: var(--text-muted);
+    }
+
+    .terminal-box .cmd {
+      color: var(--gold);
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #141a26;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .copy-btn:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    /* ================= FOOTER ================= */
+    footer {
+      background: #06080c;
+      border-top: 1px solid var(--border);
+      padding: 56px 0 32px;
+      color: var(--text-muted);
+      font-size: 0.88rem;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 36px;
+      margin-bottom: 36px;
+    }
+
+    @media (max-width: 768px) {
+      .footer-top { grid-template-columns: 1fr; }
+    }
+
+    .footer-col h4 {
+      color: var(--text-main);
+      font-size: 0.9rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .footer-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .footer-col ul a {
+      color: var(--text-dim);
+    }
+
+    .footer-col ul a:hover {
+      color: var(--gold);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid #151a24;
+      padding-top: 22px;
+      text-align: center;
+      font-size: 0.78rem;
+      color: #556277;
+      line-height: 1.6;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 10px 18px;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.85);
+      z-index: 10000;
+      display: none;
     }
   </style>
 </head>
 <body>
 
-  <div class="app-container">
-    <!-- BARRA LATERAL (SIDEBAR DE TTC) -->
-    <aside class="app-sidebar">
-      <div class="brand-header">
-        <div class="brand-row">
-          <div class="brand-icon">
-            <svg viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/>
-              <line x1="12" y1="2" x2="12" y2="7" stroke="currentColor" stroke-width="1.8"/>
-              <line x1="12" y1="17" x2="12" y2="22" stroke="currentColor" stroke-width="1.8"/>
-              <line x1="2" y1="12" x2="7" y2="12" stroke="currentColor" stroke-width="1.8"/>
-              <line x1="17" y1="12" x2="22" y2="12" stroke="currentColor" stroke-width="1.8"/>
-              <circle cx="12" cy="12" r="2.5" fill="currentColor"/>
-            </svg>
-          </div>
-          <div class="brand-titles">
-            <h1>TTC</h1>
-            <span>TACTICAL TARKOV COMPANION</span>
-          </div>
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="container nav-inner">
+      <a href="#" class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <circle cx="12" cy="12" r="9"/>
+            <line x1="12" y1="2" x2="12" y2="7"/>
+            <line x1="12" y1="17" x2="12" y2="22"/>
+            <line x1="2" y1="12" x2="7" y2="12"/>
+            <line x1="17" y1="12" x2="22" y2="12"/>
+            <circle cx="12" cy="12" r="2.2" fill="currentColor"/>
+          </svg>
         </div>
-      </div>
-
-      <!-- Buscador Rápido -->
-      <div class="search-box-wrap">
-        <div class="search-input-inner">
-          <svg class="search-icon-svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-          <input type="text" id="global-search-input" placeholder="Buscar munición, boss, quest..." oninput="handleGlobalSearch(this.value)">
+        <div class="brand-text">
+          <span class="logo-name">TTC</span>
+          <span class="logo-sub">Tactical Tarkov Companion</span>
         </div>
-      </div>
+      </a>
 
-      <!-- Pestañas de Navegación -->
-      <nav class="sidebar-menu">
-        <button class="menu-item active" onclick="navigateTab('tab-bosses', this)">
-          <span class="icon">📍</span>
-          <span>Bosses & Spawns</span>
-        </button>
-        <button class="menu-item" onclick="navigateTab('tab-maps', this)">
-          <span class="icon">🗺️</span>
-          <span>Mapas & Extracciones</span>
-        </button>
-        <button class="menu-item" onclick="navigateTab('tab-quests', this)">
-          <span class="icon">📜</span>
-          <span>Quests & Traders</span>
-        </button>
-        <button class="menu-item" onclick="navigateTab('tab-gunsmith', this)">
-          <span class="icon">🛠️</span>
-          <span>Armas & Gunsmith</span>
-        </button>
-        <button class="menu-item" onclick="navigateTab('tab-ballistics', this)">
-          <span class="icon">💥</span>
-          <span>Balística & Munición</span>
-        </button>
-        <button class="menu-item" onclick="navigateTab('tab-hideout', this)">
-          <span class="icon">📦</span>
-          <span>Hideout & Tracker FiR</span>
-        </button>
-        <button class="menu-item" onclick="navigateTab('tab-lore', this)">
-          <span class="icon">📖</span>
-          <span>Story & Lore</span>
-        </button>
-        <button class="menu-item" onclick="navigateTab('tab-download', this)">
-          <span class="icon">💾</span>
-          <span>Desktop & Descargas</span>
-        </button>
-      </nav>
+      <ul class="nav-links">
+        <li><a href="#tour">Tour Interactivo</a></li>
+        <li><a href="#modulos">Módulos</a></li>
+        <li><a href="#arquitectura">Arquitectura</a></li>
+        <li><a href="#descargar">Descargar</a></li>
+      </ul>
 
-      <!-- Footer del Sidebar -->
-      <div class="sidebar-footer">
-        <div class="sync-status-pill">
-          <span class="pulse-dot"></span>
-          <span id="sync-text">EFTBOSS.COM // SYNC 100%</span>
-        </div>
-        <div>TTC Web App v1.0 (Zero-Lag)</div>
-      </div>
-    </aside>
-
-    <!-- ÁREA PRINCIPAL DE LA APLICACIÓN -->
-    <main class="app-main">
-      <!-- Barra superior de acciones -->
-      <header class="top-action-bar">
-        <div class="top-title" id="current-tab-title">
-          📍 BOSSES & PROBABILIDADES DE SPAWN
-        </div>
-        <div class="top-actions" id="top-custom-actions">
-          <!-- Inyectado dinámicamente según la pestaña -->
-        </div>
-      </header>
-
-      <!-- ============================================================== -->
-      <!-- PESTAÑA 1: BOSSES & SPAWNS -->
-      <!-- ============================================================== -->
-      <section class="tab-viewport active" id="tab-bosses">
-        <div class="filter-bar">
-          <span style="font-size: 0.82rem; font-weight: 700; color: var(--gold); font-family: var(--font-mono);">FILTRAR POR MAPA:</span>
-          <select class="filter-select" id="boss-map-filter" onchange="renderBosses()">
-            <option value="all">Todos los Mapas</option>
-            <option value="Streets of Tarkov">Streets of Tarkov</option>
-            <option value="Customs">Customs</option>
-            <option value="Woods">Woods</option>
-            <option value="Shoreline">Shoreline</option>
-            <option value="Interchange">Interchange</option>
-            <option value="Reserve">Reserve</option>
-            <option value="Factory">Factory</option>
-            <option value="Lighthouse">Lighthouse</option>
-            <option value="Ground Zero">Ground Zero</option>
-            <option value="Icebreaker">Icebreaker</option>
-          </select>
-          <span style="margin-left: auto; font-size: 0.8rem; color: var(--text-muted); font-family: var(--font-mono);" id="boss-count-lbl">
-            Mostrando 12 bosses oficiales
-          </span>
-        </div>
-
-        <div class="cards-grid" id="bosses-grid-container">
-          <!-- Tarjetas renderizadas con JS -->
-        </div>
-      </section>
-
-      <!-- ============================================================== -->
-      <!-- PESTAÑA 2: MAPAS & EXTRACCIONES -->
-      <!-- ============================================================== -->
-      <section class="tab-viewport" id="tab-maps">
-        <div class="filter-bar">
-          <span style="font-size: 0.82rem; font-weight: 700; color: var(--gold); font-family: var(--font-mono);">SELECCIONAR MAPA:</span>
-          <select class="filter-select" id="map-select-picker" onchange="loadSelectedMap(this.value)">
-            <option value="customs">Customs (Aduana)</option>
-            <option value="woods">Woods (Bosques)</option>
-            <option value="streets">Streets of Tarkov</option>
-            <option value="reserve">Reserve (Base Militar)</option>
-            <option value="shoreline">Shoreline (Costa)</option>
-            <option value="interchange">Interchange (Centro Comercial)</option>
-            <option value="lighthouse">Lighthouse (El Faro)</option>
-            <option value="groundzero">Ground Zero (Zona Cero)</option>
-            <option value="factory">Factory (Fábrica)</option>
-            <option value="lab">The Lab (Laboratorio)</option>
-          </select>
-        </div>
-
-        <div id="map-detail-card" class="hud-card" style="margin-bottom: 20px;">
-          <!-- Datos del mapa cargados dinámicamente -->
-        </div>
-
-        <h3 style="font-size: 1.1rem; color: var(--gold); margin-bottom: 12px; font-family: var(--font-mono);">EXTRACCIONES Y PUNTOS CLAVE</h3>
-        <div class="table-container">
-          <table class="tactical-table" id="map-extractions-table">
-            <thead>
-              <tr>
-                <th>Extracción</th>
-                <th>Facción</th>
-                <th>Requisitos / Condiciones</th>
-              </tr>
-            </thead>
-            <tbody id="map-extractions-tbody">
-              <!-- Filas de extracciones -->
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- ============================================================== -->
-      <!-- PESTAÑA 3: QUESTS & TRADERS (WIKI OFFLINE) -->
-      <!-- ============================================================== -->
-      <section class="tab-viewport" id="tab-quests">
-        <div class="filter-bar">
-          <span style="font-size: 0.82rem; font-weight: 700; color: var(--gold); font-family: var(--font-mono);">COMERCIANTE:</span>
-          <select class="filter-select" id="quest-trader-filter" onchange="renderQuests()">
-            <option value="all">Todos los Traders</option>
-            <option value="Prapor">Prapor</option>
-            <option value="Therapist">Therapist</option>
-            <option value="Skier">Skier</option>
-            <option value="Peacekeeper">Peacekeeper</option>
-            <option value="Mechanic">Mechanic</option>
-            <option value="Ragman">Ragman</option>
-            <option value="Jaeger">Jaeger</option>
-          </select>
-
-          <label style="display: flex; align-items: center; gap: 6px; font-size: 0.82rem; color: var(--text-dim); margin-left: 12px; cursor: pointer;">
-            <input type="checkbox" id="quest-kappa-only" onchange="renderQuests()">
-            ★ Solo Requeridas para KAPPA
-          </label>
-        </div>
-
-        <div class="cards-grid" id="quests-grid-container">
-          <!-- Renderizado con JS -->
-        </div>
-      </section>
-
-      <!-- ============================================================== -->
-      <!-- PESTAÑA 4: ARMAS & GUNSMITH STUDIO -->
-      <!-- ============================================================== -->
-      <section class="tab-viewport" id="tab-gunsmith">
-        <div class="workbench-layout">
-          <!-- Panel de slots -->
-          <div class="workbench-slots-panel">
-            <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 8px;">
-              <span class="slot-label">ARMA BASE:</span>
-              <select class="filter-select" id="workbench-weapon-select" style="width: 100%; margin-top: 6px;" onchange="loadWorkbenchWeapon(this.value)">
-                <option value="rd704">RD-704 (7.62x39mm)</option>
-                <option value="m4a1">Colt M4A1 (5.56x45mm)</option>
-                <option value="ak74n">AK-74N (5.45x39mm)</option>
-                <option value="sr25">Knight's Armament SR-25 (7.62x51mm)</option>
-                <option value="sa58">DSA SA-58 OSW (7.62x51mm)</option>
-                <option value="mp7a2">HK MP7A2 (4.6x30mm)</option>
-              </select>
-            </div>
-
-            <div style="display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap;">
-              <button class="btn-pill active" onclick="applyBuildPreset('meta', this)">Meta Laser</button>
-              <button class="btn-pill" onclick="applyBuildPreset('budget', this)">Budget LL2</button>
-              <button class="btn-pill" onclick="applyBuildPreset('ergo', this)">CQC Ergo</button>
-            </div>
-
-            <!-- Slots individuales -->
-            <div id="workbench-slots-container">
-              <!-- Renderizado de ranuras -->
-            </div>
-          </div>
-
-          <!-- Panel de blueprint y estadísticas -->
-          <div style="display: flex; flex-direction: column; gap: 18px;">
-            <div class="blueprint-display">
-              <div class="blueprint-glyph" id="blueprint-gun-glyph">︻╦デ═—</div>
-              <div style="position: absolute; bottom: 10px; right: 14px; font-family: var(--font-mono); font-size: 0.72rem; color: rgba(212, 184, 134, 0.4);">
-                TTC COMPOSITOR MILITAR // BLUEPRINT 2D
-              </div>
-            </div>
-
-            <div class="hud-card">
-              <div class="card-header-row">
-                <div>
-                  <h3 class="card-title" id="workbench-name-display">RD-704</h3>
-                  <div class="card-subtitle" id="workbench-caliber-display">7.62x39mm // RIFLE DE ASALTO</div>
-                </div>
-                <div class="badge-prob" id="workbench-code-badge">TTCBUILD:...</div>
-              </div>
-
-              <!-- Estadísticas -->
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-top: 10px;">
-                <div style="background: var(--bg-input); padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
-                  <div style="display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 700;">
-                    <span>RECOIL VERTICAL</span>
-                    <span style="color: var(--green-meta);" id="val-recoil-v">44</span>
-                  </div>
-                  <div style="height: 6px; background: #171f2b; border-radius: 3px; margin-top: 6px; overflow: hidden;">
-                    <div id="bar-recoil-v-fill" style="width: 44%; height: 100%; background: var(--green-meta);"></div>
-                  </div>
-                </div>
-
-                <div style="background: var(--bg-input); padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
-                  <div style="display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 700;">
-                    <span>ERGONOMÍA (ADS)</span>
-                    <span style="color: var(--cyan-hud);" id="val-ergo">64</span>
-                  </div>
-                  <div style="height: 6px; background: #171f2b; border-radius: 3px; margin-top: 6px; overflow: hidden;">
-                    <div id="bar-ergo-fill" style="width: 64%; height: 100%; background: var(--cyan-hud);"></div>
-                  </div>
-                </div>
-
-                <div style="background: var(--bg-input); padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
-                  <div style="display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 700;">
-                    <span>PESO ESTIMADO</span>
-                    <span style="color: var(--gold);" id="val-weight">3.62 kg</span>
-                  </div>
-                </div>
-
-                <div style="background: var(--bg-input); padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
-                  <div style="display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 700;">
-                    <span>VELOCIDAD DE BOCA</span>
-                    <span style="color: var(--text-main);" id="val-velocity">740 m/s</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Botones de Exportación -->
-              <div style="display: flex; gap: 10px; margin-top: 18px; border-top: 1px solid var(--border-color); padding-top: 14px; flex-wrap: wrap;">
-                <button class="btn-pill" onclick="copyBuildCodeAction()">📋 Copiar Código TTCBUILD</button>
-                <button class="btn-pill" onclick="copyShoppingListAction()">🛒 Copiar Lista de Compras (₽)</button>
-                <button class="btn-pill" onclick="copyJsonAction()">💾 Copiar JSON SPT-AKI</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ============================================================== -->
-      <!-- PESTAÑA 5: BALÍSTICA & MUNICIÓN -->
-      <!-- ============================================================== -->
-      <section class="tab-viewport" id="tab-ballistics">
-        <div class="filter-bar">
-          <span style="font-size: 0.82rem; font-weight: 700; color: var(--gold); font-family: var(--font-mono);">CALIBRE:</span>
-          <select class="filter-select" id="ammo-caliber-filter" onchange="renderAmmoTable()">
-            <option value="all">Todos los Calibres</option>
-            <option value="7.62x51mm">7.62x51mm NATO</option>
-            <option value="5.56x45mm">5.56x45mm NATO</option>
-            <option value="7.62x39mm">7.62x39mm</option>
-            <option value="5.45x39mm">5.45x39mm</option>
-            <option value="9x19mm">9x19mm Parabellum</option>
-            <option value="9x39mm">9x39mm</option>
-            <option value=".300 Blackout">.300 Blackout</option>
-            <option value=".50 AE">.50 Action Express</option>
-            <option value="12/70">Calibre 12/70 (Escopetas)</option>
-            <option value=".338 Lapua">.338 Lapua Magnum</option>
-          </select>
-          <span style="margin-left: auto; font-size: 0.8rem; color: var(--text-muted); font-family: var(--font-mono);" id="ammo-count-lbl">
-            Cargando proyectiles...
-          </span>
-        </div>
-
-        <div class="table-container">
-          <table class="tactical-table">
-            <thead>
-              <tr>
-                <th onclick="sortAmmo('name')">Proyectil ⇅</th>
-                <th onclick="sortAmmo('caliber')">Calibre ⇅</th>
-                <th onclick="sortAmmo('damage')">Daño ⇅</th>
-                <th onclick="sortAmmo('penetration')">Penetración ⇅</th>
-                <th onclick="sortAmmo('armorDamage')">Daño Armadura % ⇅</th>
-                <th onclick="sortAmmo('velocity')">Velocidad (m/s) ⇅</th>
-                <th>Efectividad Blindaje (Clase 1 a 6)</th>
-              </tr>
-            </thead>
-            <tbody id="ammo-table-body">
-              <!-- Renderizado con JS -->
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- ============================================================== -->
-      <!-- PESTAÑA 6: HIDEOUT & TRACKER FiR -->
-      <!-- ============================================================== -->
-      <section class="tab-viewport" id="tab-hideout">
-        <div class="filter-bar">
-          <span style="font-size: 0.82rem; font-weight: 700; color: var(--gold); font-family: var(--font-mono);">BUSCAR ÍTEM FiR:</span>
-          <input type="text" class="filter-select" id="fir-search-input" placeholder="Ej: Gas analyzer, Flash drive, Salewa..." oninput="renderHideoutItems(this.value)">
-        </div>
-
-        <div class="table-container">
-          <table class="tactical-table">
-            <thead>
-              <tr>
-                <th>Estado</th>
-                <th>Objeto Necesario (FiR)</th>
-                <th>Cantidad</th>
-                <th>Misión / Requisito</th>
-                <th>Comerciante</th>
-              </tr>
-            </thead>
-            <tbody id="fir-items-tbody">
-              <!-- Renderizado con JS -->
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- ============================================================== -->
-      <!-- PESTAÑA 7: STORY & LORE -->
-      <!-- ============================================================== -->
-      <section class="tab-viewport" id="tab-lore">
-        <div style="max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px;" id="lore-chapters-container">
-          <!-- Capítulos de la historia -->
-        </div>
-      </section>
-
-      <!-- ============================================================== -->
-      <!-- PESTAÑA 8: DESKTOP & DESCARGAS -->
-      <!-- ============================================================== -->
-      <section class="tab-viewport" id="tab-download">
-        <div style="max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px;">
-          <div class="hud-card" style="border-color: var(--gold); box-shadow: 0 0 25px rgba(212, 184, 134, 0.15);">
-            <div class="card-header-row">
-              <h3 class="card-title">📦 TTC Portable para Windows (Sin Python)</h3>
-              <span class="badge-prob">RECOMENDADO</span>
-            </div>
-            <p style="color: var(--text-dim); margin-bottom: 16px;">
-              Descarga la aplicación nativa para Windows 10 y 11 (64 bits). Funciona 100% offline tras la primera descarga, con caché RAM a menos de 1 ms y modo <em>Always on Top</em> para fijarla sobre el juego.
-            </p>
-            <a href="https://github.com/Patoma89/TarkovScope/releases" target="_blank" class="btn-pill active" style="font-size: 0.95rem; padding: 10px 24px; text-decoration: none;">
-              ⬇ Descargar TTC.exe en GitHub Releases
-            </a>
-          </div>
-
-          <div class="hud-card">
-            <h3 class="card-title" style="margin-bottom: 12px;">🐍 Ejecutar desde Código Fuente (Python 3.10+)</h3>
-            <pre style="background: #090c12; padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); font-family: var(--font-mono); font-size: 0.85rem; color: var(--gold); overflow-x: auto;">
-git clone https://github.com/Patoma89/TarkovScope.git
-cd TarkovScope
-pip install -r requirements.txt
-python TarkovScope.py</pre>
-          </div>
-        </div>
-      </section>
-    </main>
-  </div>
-
-  <!-- MODAL DE DETALLES TÁCTICOS -->
-  <div class="modal-overlay" id="tactical-modal">
-    <div class="modal-box">
-      <div class="modal-header">
-        <h3 id="modal-title" style="color: var(--gold); font-family: var(--font-mono); font-size: 1.1rem;">DETALLE TÁCTICO</h3>
-        <button class="btn-close" onclick="closeModal()">&times;</button>
-      </div>
-      <div class="modal-body" id="modal-content">
-        <!-- Inyectado por JS -->
+      <div class="nav-actions">
+        <a href="https://github.com/Patoma89/TarkovScope" target="_blank" class="btn btn-ghost">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+          GitHub
+        </a>
+        <a href="#descargar" class="btn btn-gold">⬇ Descargar v1.0</a>
       </div>
     </div>
-  </div>
+  </nav>
 
-  <!-- TOAST DE COPIADO -->
-  <div class="toast-pill" id="app-toast">✓ Copiado al portapapeles</div>
+  <!-- HERO -->
+  <header class="hero">
+    <div class="container">
+      <div class="hero-pill">
+        <span class="status-dot"></span>
+        <span>V1.0 OFICIAL · PVE &amp; PVP · &lt;1 MS RAM CACHE · 100% OFFLINE</span>
+      </div>
 
-  <!-- ============================================================== -->
-  <!-- DATOS TÁCTICOS Y LÓGICA JAVASCRIPT DE LA WEB APP -->
-  <!-- ============================================================== -->
-  <script>
-    // --- ESTADO GLOBAL ---
-    let currentMode = 'pve'; // 'pve' o 'pvp'
-    let ammoSortCol = 'penetration';
-    let ammoSortAsc = false;
+      <h1 class="hero-title">
+        Domina Escape from Tarkov <span class="highlight">sin abrir el navegador</span>
+      </h1>
 
-    // --- BASE DE DATOS DE BOSSES (Sincronizada con eftboss.com & core/bosses_data.py) ---
-    const BOSSES = [
-      {
-        id: "kollontay",
-        name: "Kollontay & OMON Guards",
-        russian_name: "Коллонтай",
-        map: "Streets of Tarkov",
-        pve: "75%", pvp: "60%",
-        zones: "Klimov Shopping Mall (50%) & Academia MVD (50%)",
-        hp: "1055 HP (Cabeza: 65, Tórax: 300, Estómago: 150)",
-        weapons: "Porra policial PR-Taran, RPK-16, AK-104, escopeta KS-23M con Barrikada",
-        behavior: "Provoca atasco automático ('weapon jam') en armas automáticas al cargar cuerpo a cuerpo con su porra.",
-        tactics: "Mantén la distancia. Dispara a la cabeza desde media distancia antes de que cierre la brecha.",
-        loot: "Porra PR-Taran de Kollontay, blindajes nivel 5/6, llaves de la Academia MVD."
-      },
-      {
-        id: "kaban",
-        name: "Kaban & Sniper Nest",
-        russian_name: "Кабан",
-        map: "Streets of Tarkov",
-        pve: "75%", pvp: "60%",
-        zones: "Concesionaria LexOs (100% de aparición en el taller fortificado)",
-        hp: "1295 HP (Cabeza: 85, Tórax: 355, Estómago: 260)",
-        weapons: "Ametralladora ligera PKM / PKP Pecheneg 7.62x54R, RPK-16 con tambor de 95 tiros",
-        behavior: "8 guardias pesados con nidos de ametralladoras fijas AGS-30 y NSV Kord. Perímetro exterior con minas.",
-        tactics: "Despeja a los francotiradores del techo antes de entrar. Usa granadas para desalojar los nidos de ametralladora fija.",
-        loot: "Ametralladora PKP Pecheneg (Requerida para Gunsmith 25), llaves de LexOs y Chekannaya 15."
-      },
-      {
-        id: "the_goons",
-        name: "The Goons (Knight, Big Pipe, Birdeye)",
-        russian_name: "Отступники",
-        map: "Lighthouse, Shoreline, Customs, Woods",
-        pve: "30% / 25%", pvp: "20%",
-        zones: "Lighthouse: Chalet (30%) | Shoreline: Radar (30%) | Customs: Stronghold (25%) | Woods: Scav Bunker (25%)",
-        hp: "3120 HP total (Knight: 1120, Big Pipe: 1050, Birdeye: 950)",
-        weapons: "Knight: FN SCAR-H / MDR 7.62x51 | Big Pipe: Lanzagranadas M32A1 40mm | Birdeye: SR-25 / RSASS",
-        behavior: "Agresivos extremos. Birdeye flanquea con pasos 100% silenciosos. Rango de detección superior a 250 metros.",
-        tactics: "Nunca los enfrentes en campo abierto. Atrinchérate en una habitación y déjalos empujar por una puerta angosta.",
-        loot: "Máscara Death Knight, lanzagranadas M32A1 de 40mm, rifles SR-25 y SCAR-H meta."
-      },
-      {
-        id: "partisan",
-        name: "Partisan (The Hunter)",
-        russian_name: "Партизан",
-        map: "Woods, Customs, Shoreline, Lighthouse",
-        pve: "25%", pvp: "25%",
-        zones: "Bosques densos y senderos transitados de todos los mapas boscosos",
-        hp: "950 HP (Cabeza: 70, Tórax: 200, Estómago: 180)",
-        weapons: "AKMN silenciado con lanzagranadas GP-25 bajo cañón, cables trampa con granadas F-1 y VOG-17",
-        behavior: "Pasos 100% silenciosos. Coloca decenas de cables trampa alrededor de jugadores que acampan o tienen bajo Karma PMC.",
-        tactics: "Mira con atención al suelo en puertas y arbustos. No lleva casco ni blindaje pesado, muere rápido si lo detectas primero.",
-        loot: "Lanzagranadas GP-25 bajo cañón, mochila táctica Partisan, Red Rebel Ice Pick."
-      },
-      {
-        id: "reshala",
-        name: "Reshala & The Zavodskoy",
-        russian_name: "Решала",
-        map: "Customs",
-        pve: "75%", pvp: "60%",
-        zones: "Dormitorios Dorms (33%), Nueva Gasolinera (33%) o Fortaleza Stronghold (33%)",
-        hp: "752 HP (Cabeza: 62, Tórax: 180, Estómago: 150)",
-        weapons: "Pistola dorada TT-33, AK-101 / AK-102 5.56x45",
-        behavior: "Cobarde. Se esconde en habitaciones mientras sus 4 guardias con munición BT/BP empujan con agresividad.",
-        tactics: "Elimina a sus guardias en las puertas de Dorms. Reshala suele estar arrinconado en el fondo sin disparar.",
-        loot: "Pistola Golden TT (Requerida para Quest de Jaeger), tarjeta Labs, bitcoins."
-      },
-      {
-        id: "killa",
-        name: "Killa (The Mall Slayer)",
-        russian_name: "Килла",
-        map: "Interchange",
-        pve: "75%", pvp: "60%",
-        zones: "1F Centro: KIBA/Brutal/Generic (40%), Goshan (20%), OLI e IDEA (40%)",
-        hp: "890 HP (Cabeza: 70, Tórax: 210, Estómago: 170)",
-        weapons: "RPK-16 con tambor de 95 tiros con munición PP/BS, PP-19-01, humo y granadas RGD-5",
-        behavior: "Carga a toda velocidad y dispara en sprint sin retroceso perceptible. Casco Maska 1Sch Clase 4 y visera Clase 6.",
-        tactics: "Usa balas perforantes de alto calibre (M61, SNB, 7N40) o haz Leg Meta con cartuchos RIP a las piernas.",
-        loot: "Casco icónico Maska 1Sch con tres rayas, chaleco blindado 6B13 Killa Clase 5."
-      },
-      {
-        id: "tagilla",
-        name: "Tagilla (The Sledgehammer)",
-        russian_name: "Тагилла",
-        map: "Factory, Interchange",
-        pve: "50% Día / 75% Noche", pvp: "50% Día / 75% Noche",
-        zones: "Factory: Planta baja, silos y túneles subterráneos | Interchange: Subsuelo y galerías (75%)",
-        hp: "1220 HP (Cabeza: 100, Tórax: 320, Estómago: 200)",
-        weapons: "Mazo de demolición Super Sledgehammer, Saiga-12 con tambor de 20 o MP-155 con flechettes",
-        behavior: "Corre en línea recta para golpearte con el mazo. Si te alejas, saca su escopeta semiautomática.",
-        tactics: "Corre hacia atrás disparándole a las piernas o nuca. Su máscara de soldador frontal es Clase 5/6.",
-        loot: "Máscara de soldador Tagilla ('Gorilla' o 'UBEY'), chaleco portaplacas Crye AVS."
-      },
-      {
-        id: "shturman",
-        name: "Shturman (The Woods Sniper)",
-        russian_name: "Штурман",
-        map: "Woods",
-        pve: "75%", pvp: "60%",
-        zones: "Aserradero Central (Lumber Mill / Sawmill 100%)",
-        hp: "812 HP (Cabeza: 62, Tórax: 200, Estómago: 150)",
-        weapons: "SVD con mira óptica y munición 7.62x54R SNB/BT, AK-105",
-        behavior: "Dispara en secuencias rítmicas de 3 disparos desde las pilas de troncos. Dos francotiradores guardias con visores.",
-        tactics: "Shturman NO lleva casco: un disparo a la cabeza con penetración media es letal. Acércate usando los almacenes como cobertura.",
-        loot: "Llave del alijo de Shturman (Shturman's Stash Key), Red Rebel Ice Pick."
-      },
-      {
-        id: "glukhar",
-        name: "Glukhar",
-        russian_name: "Глухарь",
-        map: "Reserve",
-        pve: "60%", pvp: "60%",
-        zones: "Barracks (Pawn/School 25%), Hangares K (25%), Garajes Knight (25%), Búnker Subterráneo (25%)",
-        hp: "1010 HP (Cabeza: 70, Tórax: 220, Estómago: 140)",
-        weapons: "ASh-12 12.7x55mm bala pesada PS12B, M1A tambor 50 tiros",
-        behavior: "6 guardias con roles tácticos (Scouts, Asalto y Seguridad pesada). Glukhar destruye blindajes de 1 tiro.",
-        tactics: "Oblígalos a entrar por un pasillo estrecho o escaleras. Nunca asomes al mismo ángulo dos veces.",
-        loot: "ASh-12 modificada, M1A con tambor, tarjetas Labs Keycards."
-      },
-      {
-        id: "sanitar",
-        name: "Sanitar",
-        russian_name: "Санитар",
-        map: "Shoreline",
-        pve: "75%", pvp: "60%",
-        zones: "El Muelle Pier (50%), Villas/Cottages (50%), Resort de Salud",
-        hp: "1270 HP (Cabeza: 70, Tórax: 360, Estómago: 300)",
-        weapons: "VSS Vintorez 9x39 SP-6, inyectores regenerativos (Meldonin, Obdolbos, Propital)",
-        behavior: "Se cura constantemente con estimulantes si lo dejas con vida. No lleva casco.",
-        tactics: "Disparo certero a la cabeza antes de que se inyecte medicamentos.",
-        loot: "Llave con cinta azul de Sanitar (Resort 110), estimulantes raros (AHF1-M, 3-(b-TG))."
-      },
-      {
-        id: "zryachiy",
-        name: "Zryachiy",
-        russian_name: "Зрячий",
-        map: "Lighthouse",
-        pve: "100%", pvp: "100%",
-        zones: "Isla del Faro (Península de Lightkeeper)",
-        hp: "1655 HP (Cabeza: 175, Tórax: 450)",
-        weapons: "SVDS y rifle AXMC .338 Lapua Magnum",
-        behavior: "Protege el puente del Faro. No ataca si llevas el transmisor DSP codificado activo.",
-        tactics: "No le dispares si tienes acceso a Lightkeeper. El puente está lleno de minas invisibles.",
-        loot: "Rifles AXMC / TRG M10 .338 Lapua Magnum."
-      },
-      {
-        id: "cultists",
-        name: "Cultistas (Priest & Warriors)",
-        russian_name: "Жрец и Сектанты",
-        map: "Customs, Woods, Shoreline, Factory",
-        pve: "15% - 30% (Noche)", pvp: "15% - 30% (Noche)",
-        zones: "Aparición exclusivamente nocturna (22:00 a 07:00 hs)",
-        hp: "850 HP (Priest sin casco, 50 HP de cabeza)",
-        weapons: "Cultist Knife con veneno letal, armas silenciadas",
-        behavior: "100% silenciosos. Se arrastran por la maleza y apuñalan con veneno continuo.",
-        tactics: "Lleva antídoto xTG-12 o Augmentin. Usa granadas para forzarlos a ponerse de pie.",
-        loot: "Cultist Knife, llaves marcadas (Dorm 314 Marked Key), tarjetas Labs."
-      }
-    ];
+      <p class="hero-subtitle">
+        <strong>TTC (Tactical Tarkov Companion)</strong> es un asistente táctico nativo de escritorio en Python diseñado para operadores exigentes. Reemplaza 15 pestañas pesadas de Chrome con una interfaz oscura de alto contraste, respuesta instantánea y funcionamiento 100% offline.
+      </p>
 
-    // --- BASE DE DATOS DE MAPAS ---
-    const MAPS_DATA = {
-      customs: {
-        name: "Customs (Aduana)",
-        duration: "40 min", players: "9-12 PMCs",
-        desc: "Zona industrial que divide la ciudad de Tarkov. Contiene la zona de dormitorios (Dorms), la fábrica de gas y la fortaleza militar Stronghold.",
-        bosses: "Reshala & Guardias (75% PvE / 60% PvP) · The Goons (25% Stronghold) · Cultistas (30% Noche)",
-        extractions: [
-          { name: "ZB-1011", faction: "PMC", req: "Siempre abierta en el extremo este" },
-          { name: "Crossroads", faction: "PMC / Scav", req: "Extremo oeste de las calles" },
-          { name: "Trailer Park", faction: "PMC", req: "Bosque suroeste" },
-          { name: "ZB-013 (Fortress)", faction: "PMC", req: "Requiere activar la palanca de energía en Warehouse 4 y Factory Exit Key" },
-          { name: "Dorms V-Ex (Vehículo)", faction: "PMC", req: "5.000 ₽ (Máx. 4 PMCs, espera de 60s tras el edificio de 3 pisos)" },
-          { name: "Old Gas Station", faction: "PMC", req: "Abierta si hay humo verde en el sótano" },
-          { name: "Smuggler's Boat", faction: "PMC", req: "Abierta si la fogata junto al río está encendida" }
-        ]
-      },
-      woods: {
-        name: "Woods (Bosques)",
-        duration: "40 min", players: "10-14 PMCs",
-        desc: "Parque nacional de Priozersk. Terreno boscoso amplio con aserradero central, aldeas abandonadas y búnkeres de Scavs.",
-        bosses: "Shturman (75% Aserradero) · The Goons (25% Scav Bunker) · Partisan (25% Bosques)",
-        extractions: [
-          { name: "Outskirts", faction: "PMC / Scav", req: "Siempre abierta en el extremo suroeste" },
-          { name: "UN Roadblock", faction: "PMC", req: "Extremo este perimetral" },
-          { name: "Bridge V-Ex (Vehículo)", faction: "PMC", req: "5.000 ₽ en el puente norte junto a la aldea" },
-          { name: "Cliff Descent", faction: "PMC", req: "Requiere Red Rebel + Paracord + Sin chaleco blindado pesado" },
-          { name: "ZB-014", faction: "PMC / Scav", req: "Requiere ZB-014 Key y bengala verde encendida" }
-        ]
-      },
-      streets: {
-        name: "Streets of Tarkov",
-        duration: "50 min", players: "15-18 PMCs",
-        desc: "Centro neurálgico urbano de Tarkov con avenidas amplias, edificios residenciales, concesionaria LexOs y centro comercial Klimov.",
-        bosses: "Kaban (75% LexOs) · Kollontay (75% Klimov / MVD)",
-        extractions: [
-          { name: "Courtyard", faction: "PMC", req: "Abierta si la bengala verde está encendida" },
-          { name: "Klimov Street", faction: "PMC / Scav", req: "OBLIGATORIO: Disparar Green Flare en la zona de señal para no morir por francotirador" },
-          { name: "Primorsky Ave Taxi V-Ex", faction: "PMC", req: "5.000 ₽ (Cerca de Cinema)" },
-          { name: "Underpass", faction: "PMC / Scav", req: "Túnel peatonal central" },
-          { name: "Damaged House", faction: "PMC / Scav", req: "Acceso derrumbado norte" }
-        ]
-      },
-      reserve: {
-        name: "Reserve (Base Militar)",
-        duration: "40 min", players: "9-12 PMCs",
-        desc: "Base militar secreta con red de búnkeres subterráneos conectando todos los edificios y estación de tren blindado.",
-        bosses: "Glukhar & Batallón de 6 guardias (60% PvE / PvP)",
-        extractions: [
-          { name: "Armored Train", faction: "PMC / Scav", req: "El tren blindado llega entre los minutos 25 y 35, toca bocina y se va en 3 min" },
-          { name: "Bunker Hermetic Door", faction: "PMC / Scav", req: "Requiere activar la sirena en la garita junto a White Pawn (alarma ruidosa)" },
-          { name: "Cliff Descent", faction: "PMC", req: "Red Rebel + Paracord + Radar Dome" },
-          { name: "D-2 Underground", faction: "PMC", req: "Activar la palanca de energía en el búnker y presionar el botón de la puerta blindada" }
-        ]
-      }
-    };
+      <div class="hero-cta-row">
+        <a href="#descargar" class="btn btn-gold" style="padding: 13px 28px; font-size: 1rem;">
+          ⬇ Descargar TTC para Windows
+        </a>
+        <a href="#modulos" class="btn btn-ghost" style="padding: 13px 24px; font-size: 1rem;">
+          Ver todo lo que hace ↓
+        </a>
+      </div>
 
-    // --- BASE DE DATOS DE MUNICIÓN (Muestra calibrada de calibres meta) ---
-    const AMMO_DATA = [
-      { name: "M61", caliber: "7.62x51mm", damage: 70, penetration: 64, armorDamage: 83, velocity: 849, m1:6, m2:6, m3:6, m4:6, m5:6, m6:5 },
-      { name: "M80", caliber: "7.62x51mm", damage: 80, penetration: 41, armorDamage: 66, velocity: 833, m1:6, m2:6, m3:6, m4:5, m5:3, m6:1 },
-      { name: "M993", caliber: "7.62x51mm", damage: 67, penetration: 70, armorDamage: 85, velocity: 910, m1:6, m2:6, m3:6, m4:6, m5:6, m6:6 },
-      { name: "M855A1", caliber: "5.56x45mm", damage: 49, penetration: 44, armorDamage: 52, velocity: 945, m1:6, m2:6, m3:6, m4:5, m5:4, m6:2 },
-      { name: "M995", caliber: "5.56x45mm", damage: 42, penetration: 53, armorDamage: 58, velocity: 1010, m1:6, m2:6, m3:6, m4:6, m5:5, m6:4 },
-      { name: "SOST", caliber: "5.56x45mm", damage: 54, penetration: 33, armorDamage: 43, velocity: 900, m1:6, m2:6, m3:5, m4:3, m5:1, m6:0 },
-      { name: "7.62x39mm BP", caliber: "7.62x39mm", damage: 60, penetration: 48, armorDamage: 63, velocity: 730, m1:6, m2:6, m3:6, m4:6, m5:5, m6:3 },
-      { name: "7.62x39mm PS", caliber: "7.62x39mm", damage: 57, penetration: 35, armorDamage: 52, velocity: 700, m1:6, m2:6, m3:5, m4:4, m5:2, m6:0 },
-      { name: "5.45x39mm BS", caliber: "5.45x39mm", damage: 43, penetration: 51, armorDamage: 57, velocity: 830, m1:6, m2:6, m3:6, m4:6, m5:5, m6:4 },
-      { name: "5.45x39mm BT", caliber: "5.45x39mm", damage: 44, penetration: 40, armorDamage: 49, velocity: 880, m1:6, m2:6, m3:6, m4:5, m5:3, m6:1 },
-      { name: "9x19mm AP 6.3", caliber: "9x19mm", damage: 52, penetration: 30, armorDamage: 48, velocity: 392, m1:6, m2:6, m3:5, m4:3, m5:1, m6:0 },
-      { name: "9x19mm PBP gzh", caliber: "9x19mm", damage: 52, penetration: 39, armorDamage: 53, velocity: 470, m1:6, m2:6, m3:6, m4:5, m5:3, m6:1 },
-      { name: "9x19mm RIP (Legs)", caliber: "9x19mm", damage: 102, penetration: 2, armorDamage: 11, velocity: 365, m1:1, m2:0, m3:0, m4:0, m5:0, m6:0 },
-      { name: "9x39mm SP-6", caliber: "9x39mm", damage: 58, penetration: 46, armorDamage: 60, velocity: 305, m1:6, m2:6, m3:6, m4:6, m5:5, m6:3 },
-      { name: ".300 AP", caliber: ".300 Blackout", damage: 51, penetration: 48, armorDamage: 58, velocity: 610, m1:6, m2:6, m3:6, m4:6, m5:5, m6:3 },
-      { name: ".50 AE FMJ", caliber: ".50 AE", damage: 85, penetration: 40, armorDamage: 50, velocity: 440, m1:6, m2:6, m3:6, m4:5, m5:3, m6:1 },
-      { name: ".338 Lapua AP", caliber: ".338 Lapua", damage: 115, penetration: 79, armorDamage: 89, velocity: 905, m1:6, m2:6, m3:6, m4:6, m5:6, m6:6 }
-    ];
+      <div class="hero-metrics">
+        <div class="metric-box">
+          <div class="metric-val">&lt; 1 ms</div>
+          <div class="metric-lbl">Consultas en RAM</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-val">11</div>
+          <div class="metric-lbl">Mapas 2D Tácticos</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-val">+175</div>
+          <div class="metric-lbl">Proyectiles &amp; STK</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-val">100%</div>
+          <div class="metric-lbl">Wiki Dossier Offline</div>
+        </div>
+      </div>
 
-    // --- BASE DE DATOS DE QUESTS SELECCIONADAS ---
-    const QUESTS = [
-      {
-        name: "Checking (Reloj de Bolsillo)",
-        trader: "Prapor", map: "Customs", kappa: true, key: "Machinery Key",
-        phases: [
-          "Fase 1: Obtén la Machinery Key en Dorms (cuarto 205 o chaquetas).",
-          "Fase 2: Cruza con precaución a la zona de construcción de Customs.",
-          "Fase 3: Abre la cabina del camión cisterna y recoge el reloj bajo los pedales.",
-          "Fase 4: Extrae con vida y entrega el reloj a Prapor en el menú."
-        ]
-      },
-      {
-        name: "Shooting Cans",
-        trader: "Prapor", map: "Ground Zero", kappa: true, key: "Ninguna",
-        phases: [
-          "Fase 1: Infiltra el edificio Empire y localiza la ametralladora fija Utyos.",
-          "Fase 2: Cruza al edificio Capital Insight y ubica el lanzagranadas AGS-30.",
-          "Fase 3: Elimina a 5 Scavs o PMCs en cualquier zona de Ground Zero.",
-          "Fase 4: Extrae con vida por Emercom o sótano Nakatani."
-        ]
-      },
-      {
-        name: "Operation Aquarius - Part 1",
-        trader: "Therapist", map: "Customs", kappa: true, key: "Dorm room 206 Key",
-        phases: [
-          "Fase 1: Consigue la llave 206 del edificio de dos pisos de Dorms.",
-          "Fase 2: Abre el cuarto 206 del segundo piso y verifica los tanques de agua.",
-          "Fase 3: Sobrevive y extrae con vida de la incursión."
-        ]
-      },
-      {
-        name: "What's on the Flash Drive?",
-        trader: "Skier", map: "Cualquiera", kappa: true, key: "Ninguna",
-        phases: [
-          "Fase 1: Encuentra 2 Secure Flash Drives con estado FiR (Found in Raid).",
-          "Fase 2: Busca en los puertos frontales de ordenadores de Customs, Interchange y Woods.",
-          "Fase 3: Entrégalos a Skier para desbloquear Peacekeeper."
-        ]
-      },
-      {
-        name: "Delivery from the Past",
-        trader: "Prapor", map: "Customs & Factory", kappa: true, key: "Customs Officer Key",
-        phases: [
-          "Fase 1: Abre la oficina del director de Big Red en Customs y toma la carpeta roja.",
-          "Fase 2: Extrae con vida con la carpeta en tu inventario de misiones.",
-          "Fase 3: Entra a Factory e instala la carpeta en la cabaña de metal durante 30 seg.",
-          "Fase 4: Sobrevive y extrae de Factory."
-        ]
-      },
-      {
-        name: "Gunsmith - Part 1",
-        trader: "Mechanic", map: "Taller (Hideout)", kappa: true, key: "Ninguna",
-        phases: [
-          "Fase 1: Adquiere una escopeta MP-133 de Prapor o Jaeger.",
-          "Fase 2: Instala empuñadura táctica con riel, cañón corto y linterna táctica.",
-          "Fase 3: Ajusta ergonomía a más de 47 y retroceso menor a 850.",
-          "Fase 4: Asegúrate de que ocupe 4 casillas o menos y entrégala a Mechanic."
-        ]
-      }
-    ];
-
-    // --- ÍTEMS FiR PARA HIDEOUT Y QUESTS ---
-    const FIR_ITEMS = [
-      { name: "Salewa First Aid Kit", count: "3 unidades", quest: "Shortage", trader: "Therapist" },
-      { name: "Gas Analyzer", count: "3 unidades", quest: "Sanitary Standards", trader: "Therapist" },
-      { name: "Secure Flash Drive", count: "2 unidades", quest: "What's on the Flash Drive?", trader: "Skier" },
-      { name: "Morphine Injector", count: "4 unidades", quest: "Painkiller", trader: "Therapist" },
-      { name: "Car Battery", count: "4 unidades", quest: "Car Repair", trader: "Therapist" },
-      { name: "Spark Plug", count: "8 unidades", quest: "Car Repair", trader: "Therapist" },
-      { name: "Mochila Pilgrim", count: "1 unidad", quest: "Sew it Good - Part 1", trader: "Ragman" },
-      { name: "Tarjetas Gráficas (GPU)", count: "3 unidades", quest: "Farming - Part 4", trader: "Mechanic" },
-      { name: "Military Flash Drive", count: "2 unidades", quest: "Revision", trader: "Peacekeeper" },
-      { name: "Wires (Cables)", count: "10 unidades", quest: "Hideout Security Nv 2", trader: "Hideout" },
-      { name: "Corrugated Hose (Manguera)", count: "6 unidades", quest: "Hideout Vents Nv 2", trader: "Hideout" }
-    ];
-
-    // --- LÓGICA DE NAVEGACIÓN ENTRE PESTAÑAS ---
-    const TAB_TITLES = {
-      'tab-bosses': '📍 BOSSES & PROBABILIDADES DE SPAWN',
-      'tab-maps': '🗺️ MAPAS TOPOGRÁFICOS & EXTRACCIONES',
-      'tab-quests': '📜 WIKI DOSSIER OFFLINE DE QUESTS',
-      'tab-gunsmith': '🛠️ GUNSMITH STUDIO & ARMERÍA INTERACTIVA',
-      'tab-ballistics': '💥 BALÍSTICA OFICIAL & SIMULADOR STK',
-      'tab-hideout': '📦 HIDEOUT & TRACKER DE ÍTEMS FiR',
-      'tab-lore': '📖 HISTORIA Y LORE DE TARKOV',
-      'tab-download': '💾 DESCARGA DE LA APLICACIÓN DE ESCRITORIO'
-    };
-
-    function navigateTab(tabId, btn) {
-      document.querySelectorAll('.tab-viewport').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.sidebar-menu .menu-item').forEach(el => el.classList.remove('active'));
-
-      const target = document.getElementById(tabId);
-      if (target) target.classList.add('active');
-      if (btn) btn.classList.add('active');
-
-      document.getElementById('current-tab-title').textContent = TAB_TITLES[tabId] || 'TTC';
-
-      // Acciones contextuales en la barra superior
-      const topActions = document.getElementById('top-custom-actions');
-      topActions.innerHTML = '';
-
-      if (tabId === 'tab-bosses') {
-        topActions.innerHTML = `
-          <button class="btn-pill ${currentMode==='pve'?'active':''}" onclick="setGlobalBossMode('pve', this)">🎯 Modo PvE</button>
-          <button class="btn-pill ${currentMode==='pvp'?'active':''}" onclick="setGlobalBossMode('pvp', this)">⚔️ Modo PvP</button>
-        `;
-      } else if (tabId === 'tab-gunsmith') {
-        topActions.innerHTML = `
-          <span style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--gold);">BANCO DE TRABAJO LISTO</span>
-        `;
-      }
-    }
-
-    function setGlobalBossMode(mode, btn) {
-      currentMode = mode;
-      document.querySelectorAll('.top-actions .btn-pill').forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
-      renderBosses();
-      showToast(`Modo cambiado a ${mode.toUpperCase()} (sincronizado con eftboss.com)`);
-    }
-
-    // --- RENDERIZADO DE BOSSES ---
-    function renderBosses() {
-      const mapFilter = document.getElementById('boss-map-filter').value;
-      const container = document.getElementById('bosses-grid-container');
-      container.innerHTML = '';
-
-      let filtered = BOSSES.filter(b => {
-        if (mapFilter === 'all') return true;
-        return b.map.toLowerCase().includes(mapFilter.toLowerCase());
-      });
-
-      document.getElementById('boss-count-lbl').textContent = `Mostrando ${filtered.length} bosses oficiales`;
-
-      filtered.forEach(boss => {
-        const prob = currentMode === 'pve' ? boss.pve : boss.pvp;
-        const card = document.createElement('div');
-        card.className = 'hud-card';
-        card.innerHTML = `
-          <div class="card-header-row">
-            <div>
-              <div class="card-title">${boss.name}</div>
-              <div class="card-subtitle">${boss.russian_name} // ${boss.map}</div>
-            </div>
-            <span class="badge-prob">${prob} PROB.</span>
+      <!-- TOUR INTERACTIVO DE LA APP -->
+      <div class="showcase-window" id="tour">
+        <div class="window-topbar">
+          <div class="window-dots">
+            <span class="w-dot r"></span>
+            <span class="w-dot y"></span>
+            <span class="w-dot g"></span>
           </div>
-          <div style="font-size: 0.84rem; color: var(--text-dim); margin-bottom: 12px; line-height: 1.5;">
-            <strong>Zonas de Spawn:</strong> ${boss.zones}
-          </div>
-          <div style="display: flex; gap: 8px; margin-top: 14px;">
-            <button class="btn-pill" style="width: 100%; justify-content: center;" onclick="openBossModal('${boss.id}')">
-              🔎 Ver Dossier Táctico Completo
-            </button>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    }
+          <div class="window-title">TTC — TACTICAL TARKOV COMPANION // RECORRIDO POR MÓDULOS</div>
+          <div class="window-badge">ZERO-LAG ENGINE</div>
+        </div>
 
-    function openBossModal(bossId) {
-      const boss = BOSSES.find(b => b.id === bossId);
-      if (!boss) return;
+        <div class="showcase-body">
+          <aside class="showcase-sidebar">
+            <div class="sidebar-caption">Explorar Módulos</div>
+            <button class="tour-tab-btn active" onclick="selectTour('gunsmith', this)">🛠️ Gunsmith Studio</button>
+            <button class="tour-tab-btn" onclick="selectTour('quests', this)">🗺️ Quests Dossier</button>
+            <button class="tour-tab-btn" onclick="selectTour('ballistics', this)">💥 Balística &amp; STK</button>
+            <button class="tour-tab-btn" onclick="selectTour('bosses', this)">📍 Mapas &amp; Bosses</button>
+            <button class="tour-tab-btn" onclick="selectTour('hideout', this)">📦 Alijo FiR &amp; Traders</button>
+            <button class="tour-tab-btn" onclick="selectTour('lore', this)">📖 Story &amp; Lore</button>
+          </aside>
 
-      document.getElementById('modal-title').textContent = `DOSSIER MILITAR // ${boss.name.toUpperCase()}`;
-      document.getElementById('modal-content').innerHTML = `
-        <div style="display: flex; flex-direction: column; gap: 16px;">
-          <div style="background: var(--bg-input); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
-            <div style="color: var(--gold); font-weight: 700; font-family: var(--font-mono); margin-bottom: 4px;">PUNTOS DE SALUD Y BLINDAJE</div>
-            <div style="color: var(--text-main); font-size: 0.9rem;">${boss.hp}</div>
-          </div>
-          <div style="background: var(--bg-input); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
-            <div style="color: var(--gold); font-weight: 700; font-family: var(--font-mono); margin-bottom: 4px;">ARMAMENTO Y EQUIPO</div>
-            <div style="color: var(--text-dim); font-size: 0.9rem;">${boss.weapons}</div>
-          </div>
-          <div style="background: var(--bg-input); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
-            <div style="color: var(--gold); font-weight: 700; font-family: var(--font-mono); margin-bottom: 4px;">COMPORTAMIENTO DE IA</div>
-            <div style="color: var(--text-dim); font-size: 0.9rem;">${boss.behavior}</div>
-          </div>
-          <div style="background: var(--bg-input); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
-            <div style="color: var(--green-meta); font-weight: 700; font-family: var(--font-mono); margin-bottom: 4px;">TÁCTICAS RECOMENDADAS</div>
-            <div style="color: var(--text-dim); font-size: 0.9rem;">${boss.tactics}</div>
-          </div>
-          <div style="background: var(--bg-input); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
-            <div style="color: var(--cyan-hud); font-weight: 700; font-family: var(--font-mono); margin-bottom: 4px;">BOTÍN DESTACADO (LOOT)</div>
-            <div style="color: var(--text-dim); font-size: 0.9rem;">${boss.loot}</div>
+          <div class="showcase-stage" id="tour-stage">
+            <!-- Inyectado por JS -->
           </div>
         </div>
-      `;
-      document.getElementById('tactical-modal').style.display = 'flex';
-    }
+      </div>
+    </div>
+  </header>
 
-    // --- RENDERIZADO DE MAPAS ---
-    function loadSelectedMap(mapKey) {
-      const data = MAPS_DATA[mapKey] || MAPS_DATA.customs;
-      document.getElementById('map-detail-card').innerHTML = `
-        <div class="card-header-row">
+  <!-- MÓDULOS DEL PROGRAMA -->
+  <section class="section" id="modulos">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-eyebrow">SUITE TÁCTICA COMPLETA</span>
+        <h2 class="section-title">¿Qué hace TTC por ti en cada incursión?</h2>
+        <p class="section-desc">
+          Cada pestaña de TTC está diseñada para resolver un problema real durante tus raids en segundos, sin latencia ni distracciones.
+        </p>
+      </div>
+
+      <div class="modules-grid">
+        <article class="module-card">
+          <div class="module-icon">🛠️</div>
+          <h3>Gunsmith Studio &amp; Workbench</h3>
+          <p>
+            Banco de armería militar interactivo con plano esquemático dinámico que evoluciona visualmente en tiempo real a medida que instalas silenciadores, ópticas, cargadores, culatas o láseres.
+          </p>
+          <ul class="module-list">
+            <li>Cálculo instantáneo de Ergonomía (ADS), Recoil V/H, masa y velocidad de boca.</li>
+            <li>Presets competitivos en 1 clic: Meta Laser, Budget LL2, CQC High Ergo y Gunsmith Mechanic.</li>
+            <li>Exportación multi-formato: Lista de compras en ₽, JSON (EFT/SPT-AKI) y códigos <code>TTCBUILD:...</code>.</li>
+          </ul>
+        </article>
+
+        <article class="module-card">
+          <div class="module-icon">🗺️</div>
+          <h3>Ficha Táctica Offline para Quests</h3>
+          <p>
+            Experiencia estilo Wiki 100% offline. Consulta qué hacer en cada misión sin minimizar el juego para abrir navegadores pesados que consumen tu memoria RAM.
+          </p>
+          <ul class="module-list">
+            <li>Walkthrough en español en 4 fases: Preparación, Infiltración, Objetivos y Extracción.</li>
+            <li>Plano topográfico 2D con retícula lumínica del POI exacto y visor a pantalla completa.</li>
+            <li>Fichas de llaves, trueques, prerrequisitos y seguimiento crítico de <strong>KAPPA</strong> y <strong>Lightkeeper</strong>.</li>
+          </ul>
+        </article>
+
+        <article class="module-card">
+          <div class="module-icon">💥</div>
+          <h3>Balística Avanzada &amp; Simulador STK</h3>
+          <p>
+            Compara el rendimiento real de más de 175 proyectiles y calibres meta contra cualquier nivel de protección antes de cargar tus cargadores.
+          </p>
+          <ul class="module-list">
+            <li>Simulador de disparos para matar (Shots to Kill) frente a armaduras Clase 1 a 6.</li>
+            <li>Modo Duelo balístico, análisis de <em>Leg Meta</em> y simulación directa contra Bosses.</li>
+            <li>Filtro inteligente que excluye munición no letal de utilidad (bengalas, Zvezda).</li>
+          </ul>
+        </article>
+
+        <article class="module-card">
+          <div class="module-icon">📍</div>
+          <h3>Mapas 2D &amp; Radar de Bosses</h3>
+          <p>
+            Planos topográficos en alta definición para los 11 mapas del juego, con probabilidades de aparición de Bosses calibradas para <strong>PvE</strong> y <strong>PvP</strong>.
+          </p>
+          <ul class="module-list">
+            <li>Incluye Customs, Woods, Shoreline, Interchange, Ground Zero, Factory, Reserve, Lighthouse, Streets, Labs e Icebreaker.</li>
+            <li>Capas tácticas de extracciones PMC/Scav/Co-op, llaves marcadas y cajas fuertes.</li>
+            <li>Pines tácticos personalizados creados por el usuario con persistencia local en SQLite.</li>
+          </ul>
+        </article>
+
+        <article class="module-card">
+          <div class="module-icon">📦</div>
+          <h3>Alijo FiR, Hideout &amp; Comerciantes</h3>
+          <p>
+            Control total de tu economía y progresión fuera de raid. Nunca más vendas por error un objeto <em>Found in Raid</em> que necesitarás diez niveles después.
+          </p>
+          <ul class="module-list">
+            <li>Tracker de Alijo / Junkbox para acumular ítems FiR requeridos por futuras misiones.</li>
+            <li>Inventario completo de comerciantes en sus niveles LL1 a LL4.</li>
+            <li>Guía de crafteos rentables del Hideout y recetas del Círculo Cultista.</li>
+          </ul>
+        </article>
+
+        <article class="module-card">
+          <div class="module-icon">📖</div>
+          <h3>Capítulos de Historia &amp; Lore</h3>
+          <p>
+            Sumérgete en la narrativa oficial de Escape from Tarkov con los 10 capítulos de historia estructurados para una lectura cómoda sin fatiga visual.
+          </p>
+          <ul class="module-list">
+            <li>Guías paso a paso con imágenes y banners panorámicos integrados.</li>
+            <li>Desplazamiento acelerado ultra suave (<em>Smooth Scroll</em>).</li>
+            <li>Búsqueda global instantánea (<code>Ctrl + K</code>) desde cualquier pantalla de la app.</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ARQUITECTURA & RENDIMIENTO -->
+  <section class="section arch-section" id="arquitectura">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-eyebrow">INGENIERÍA DE SOFTWARE</span>
+        <h2 class="section-title">Construido con arquitectura limpia y cero lag</h2>
+        <p class="section-desc">
+          Detrás de su estética militar, TTC está diseñado bajo estándares profesionales para no robar ni un solo FPS a tu juego.
+        </p>
+      </div>
+
+      <div class="arch-grid">
+        <div class="arch-card">
+          <span class="arch-badge">MEMORIA RAM</span>
+          <h3>DataStore &lt; 1 ms</h3>
+          <p>
+            Todos los datos de misiones, mapas, ítems y balística se sirven desde una caché en memoria RAM para búsquedas y filtros instantáneos.
+          </p>
+        </div>
+
+        <div class="arch-card">
+          <span class="arch-badge">CLEAN ARCHITECTURE</span>
+          <h3>Separación Core / UI</h3>
+          <p>
+            Lógica de negocio pura en <code>core/</code> totalmente desacoplada de la interfaz gráfica en <code>ui/</code>, respaldada por 58 pruebas unitarias automáticas.
+          </p>
+        </div>
+
+        <div class="arch-card">
+          <span class="arch-badge">INTERFAZ FLUIDA</span>
+          <h3>Batch Rendering 60 FPS</h3>
+          <p>
+            Renderizado en lotes no bloqueante, sincronización en hilos secundarios y modo <strong>Always on Top</strong> para fijar la ventana mientras juegas.
+          </p>
+        </div>
+
+        <div class="arch-card">
+          <span class="arch-badge">PORTABILIDAD</span>
+          <h3>SQLite WAL &amp; Backups</h3>
+          <p>
+            Tus pines, progreso de misiones y alijo se guardan localmente en SQLite modo WAL, con exportación e importación en un clic (<code>perfil_ttc.json</code>).
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DESCARGA -->
+  <section class="section" id="descargar">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-eyebrow">INSTALACIÓN RÁPIDA</span>
+        <h2 class="section-title">Descarga TTC y llévalo a tu próxima raid</h2>
+        <p class="section-desc">
+          Disponible como ejecutable portátil listo para usar en Windows o directamente desde el código fuente en Python.
+        </p>
+      </div>
+
+      <div class="download-grid">
+        <div class="download-card featured">
+          <span class="featured-ribbon">RECOMENDADO · SIN PYTHON</span>
           <div>
-            <h3 class="card-title">${data.name}</h3>
-            <div class="card-subtitle">DURACIÓN: ${data.duration} // JUGADORES: ${data.players}</div>
+            <h3>📦 TTC Portable para Windows</h3>
+            <p style="color: var(--text-dim); font-size: 0.95rem; margin-bottom: 18px;">
+              Binario autónomo compilado con PyInstaller e ícono nativo de barra de tareas. Descomprimir, abrir y desplegar.
+            </p>
+            <ul class="module-list" style="margin-bottom: 24px;">
+              <li>Compatible con Windows 10 y Windows 11 (64-bit).</li>
+              <li>Funciona 100% offline tras la primera sincronización.</li>
+              <li>Sin telemetría, sin anuncios y 100% gratuito.</li>
+            </ul>
+          </div>
+          <div>
+            <a href="https://github.com/Patoma89/TarkovScope/releases" target="_blank" class="btn btn-gold" style="width: 100%; padding: 14px; font-size: 1rem;">
+              ⬇ Descargar TTC.exe (GitHub Releases)
+            </a>
           </div>
         </div>
-        <p style="color: var(--text-dim); font-size: 0.92rem; margin-bottom: 12px;">${data.desc}</p>
-        <div style="font-size: 0.85rem; color: var(--gold); font-family: var(--font-mono);"><strong>BOSSES EN ESTE MAPA:</strong> ${data.bosses}</div>
-      `;
 
-      const tbody = document.getElementById('map-extractions-tbody');
-      tbody.innerHTML = '';
-      data.extractions.forEach(ex => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td style="font-weight: 700; color: #fff;">${ex.name}</td>
-          <td><span class="btn-pill" style="padding: 2px 8px; font-size: 0.72rem;">${ex.faction}</span></td>
-          <td style="color: var(--text-dim);">${ex.req}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
+        <div class="download-card">
+          <div>
+            <h3>🐍 Ejecutar desde Código Fuente</h3>
+            <p style="color: var(--text-dim); font-size: 0.95rem;">
+              Ideal si deseas correr la versión más reciente del repositorio, revisar el código o contribuir al proyecto.
+            </p>
 
-    // --- RENDERIZADO DE QUESTS ---
-    function renderQuests() {
-      const trader = document.getElementById('quest-trader-filter').value;
-      const kappaOnly = document.getElementById('quest-kappa-only').checked;
-      const container = document.getElementById('quests-grid-container');
-      container.innerHTML = '';
+            <div class="terminal-box">
+              <button class="copy-btn" onclick="copyInstallCmds()">Copiar</button>
+              <span class="comment"># Clonar e iniciar TTC en Python 3.10+</span><br>
+              <span class="cmd">git clone https://github.com/Patoma89/TarkovScope.git</span><br>
+              <span class="cmd">cd TarkovScope</span><br>
+              <span class="cmd">pip install -r requirements.txt</span><br>
+              <span class="cmd">python TarkovScope.py</span>
+            </div>
 
-      let filtered = QUESTS.filter(q => {
-        if (trader !== 'all' && q.trader !== trader) return false;
-        if (kappaOnly && !q.kappa) return false;
-        return true;
-      });
+            <ul class="module-list">
+              <li>También puedes iniciar con doble clic en <code>Ejecutar_TTC.bat</code>.</li>
+              <li>Ejecuta la suite de QA con <code>python -m unittest discover -s tests -v</code>.</li>
+            </ul>
+          </div>
 
-      filtered.forEach(quest => {
-        const card = document.createElement('div');
-        card.className = 'hud-card';
-        card.innerHTML = `
-          <div class="card-header-row">
+          <div style="margin-top: 22px;">
+            <a href="https://github.com/Patoma89/TarkovScope" target="_blank" class="btn btn-ghost" style="width: 100%; padding: 12px;">
+              ★ Ver Repositorio en GitHub
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-col">
+          <div class="brand" style="margin-bottom: 14px;">
+            <div class="brand-icon" style="width: 32px; height: 32px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width: 17px; height: 17px;">
+                <circle cx="12" cy="12" r="9"/>
+                <circle cx="12" cy="12" r="2.2" fill="currentColor"/>
+              </svg>
+            </div>
+            <div class="brand-text">
+              <span class="logo-name" style="font-size: 1.05rem;">TTC</span>
+              <span class="logo-sub" style="font-size: 0.58rem;">Tactical Tarkov Companion</span>
+            </div>
+          </div>
+          <p style="color: var(--text-dim); max-width: 430px; line-height: 1.6;">
+            Asistente táctico de escritorio de código abierto construido en Python &amp; CustomTkinter. Diseñado para ofrecer velocidad extrema, alto contraste y autonomía offline en Escape from Tarkov.
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Secciones</h4>
+          <ul>
+            <li><a href="#tour">Tour Interactivo</a></li>
+            <li><a href="#modulos">Módulos</a></li>
+            <li><a href="#arquitectura">Arquitectura</a></li>
+            <li><a href="#descargar">Descargar</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Proyecto</h4>
+          <ul>
+            <li><a href="https://github.com/Patoma89/TarkovScope" target="_blank">Código Fuente</a></li>
+            <li><a href="https://github.com/Patoma89/TarkovScope/releases" target="_blank">Releases (.exe)</a></li>
+            <li><a href="https://github.com/Patoma89/TarkovScope/issues" target="_blank">Reportar un Issue</a></li>
+            <li><a href="https://github.com/Patoma89/TarkovScope/blob/main/README.md" target="_blank">README Técnico</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        Escape from Tarkov es una marca registrada de Battlestate Games Limited.
+        TTC (Tactical Tarkov Companion) es un proyecto comunitario independiente y de código abierto sin afiliación oficial con Battlestate Games.
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast">✓ Copiado al portapapeles</div>
+
+  <script>
+    const TOUR_DATA = {
+      gunsmith: {
+        tag: "MÓDULO 01 // ARMERÍA INTERACTIVA",
+        title: "Gunsmith Studio & Workbench Dinámico",
+        desc: "Diseña y optimiza cualquier arma antes de gastar un solo rublo. El plano esquemático militar actualiza visualmente cada accesorio montado mientras el motor balístico recalcula ergonomía, retroceso, masa y velocidad al instante.",
+        highlights: [
+          { icon: "📐", title: "Blueprint en Tiempo Real", text: "Visualiza silenciadores, miras, cargadores de tambor, culatas y empuñaduras directamente sobre el plano del arma." },
+          { icon: "⚡", title: "Presets Meta en 1 Clic", text: "Alterna al instante entre configuraciones Meta Laser Recoil, Budget LL2, CQC High Ergo y Gunsmith de Mechanic." },
+          { icon: "📤", title: "Exportación Multi-Formato", text: "Genera listas de compras con comerciantes (LL1–LL4), JSON estándar para SPT-AKI y códigos portables TTCBUILD:..." }
+        ],
+        footerLeft: "MOTOR: weapon_modding_engine.py + weapon_visual_compositor.py",
+        footerRight: "TIEMPO DE CÁLCULO: < 1 MS"
+      },
+      quests: {
+        tag: "MÓDULO 02 // ZERO-BROWSER WIKI",
+        title: "Ficha Táctica Offline de Misiones",
+        desc: "Olvídate de buscar guías en inglés llenas de anuncios mientras estás escondido en un arbusto. TTC integra un dossier táctico completo en español con todo lo necesario para completar cada misión.",
+        highlights: [
+          { icon: "🧭", title: "4 Fases Tácticas", text: "Cada misión se desglosa en Preparación, Infiltración, Objetivos y Extracción con alertas de minas o francotiradores." },
+          { icon: "🎯", title: "Retícula sobre Mapa 2D", text: "Señala el sector y punto de interés exacto sobre el plano topográfico con acceso directo al visor a pantalla completa." },
+          { icon: "🗝️", title: "Llaves, KAPPA & Lightkeeper", text: "Consulta spawns y trueques de llaves requeridas, árbol de prerrequisitos y estado crítico para KAPPA." }
+        ],
+        footerLeft: "MODAL: Dossier Táctico de 4 Pestañas",
+        footerRight: "DISPONIBILIDAD: 100% OFFLINE"
+      },
+      ballistics: {
+        tag: "MÓDULO 03 // SIMULADOR DE COMBATE",
+        title: "Balística Avanzada & Cálculo STK / Duelo",
+        desc: "Elige la munición correcta para cada escenario. Analiza daño a carne, penetración y desgaste de blindaje en un catálogo completo con más de 175 proyectiles actualizados.",
+        highlights: [
+          { icon: "🛡️", title: "Simulador Clase 1 a 6", text: "Calcula cuántos disparos para matar (Shots to Kill) necesitas frente a cada nivel de placa y chaleco del juego." },
+          { icon: "🦵", title: "Leg Meta & Bosses", text: "Evalúa el rendimiento de munición de alto daño en extremidades y simula enfrentamientos directos contra Bosses." },
+          { icon: "🎯", title: "Comparativa Duelo", text: "Enfrenta dos calibres o proyectiles lado a lado con exclusión automática de munición no letal de utilidad." }
+        ],
+        footerLeft: "CATÁLOGO: +175 PROYECTILES & CALIBRES META",
+        footerRight: "TABLAS: CALIBRADAS E INTEGRABLES"
+      },
+      bosses: {
+        tag: "MÓDULO 04 // INTELIGENCIA DE MAPA",
+        title: "Mapas Topográficos 2D & Radar de Bosses",
+        desc: "Domina el terreno en los 11 mapas del juego (incluyendo Streets of Tarkov, Ground Zero e Icebreaker) con capas de extracción, llaves marcadas y probabilidades de Bosses calibradas.",
+        highlights: [
+          { icon: "📡", title: "Selector PvE / PvP en Vivo", text: "Alterna entre modo PvE y PvP con probabilidades sincronizadas con eftboss.com y zonas exactas de patrulla." },
+          { icon: "📌", title: "Alfileres Propios (Pins)", text: "Coloca, edita y guarda tus propios marcadores tácticos sobre cualquier mapa con persistencia en SQLite." },
+          { icon: "🚁", title: "Extracciones & Botín", text: "Identifica salidas PMC, Scav, Co-Op, Red Rebel, vehículos V-Ex, bengalas verdes y cajas fuertes." }
+        ],
+        footerLeft: "COBERTURA: 11 MAPAS HD + 13 BOSSES",
+        footerRight: "SINCRONIZACIÓN: EFTBOSS.COM / ASYNC"
+      },
+      hideout: {
+        tag: "MÓDULO 05 // ECONOMÍA & PROGRESIÓN",
+        title: "Alijo FiR, Hideout & Comerciantes",
+        desc: "Mantén tu inventario bajo control. TTC te indica qué objetos Found in Raid debes conservar para misiones futuras y qué crafteos del refugio maximizan tus ganancias.",
+        highlights: [
+          { icon: "📦", title: "Tracker Junkbox FiR", text: "Registra qué objetos Found in Raid ya tienes guardados para evitar vender ítems clave de misiones avanzadas." },
+          { icon: "🏪", title: "Assortment LL1–LL4", text: "Explora el catálogo completo de los comerciantes desbloqueado por cada nivel de lealtad." },
+          { icon: "🕯️", title: "Hideout & Círculo Cultista", text: "Consulta recetas de crafteo clave y combinaciones óptimas de alto valor para el Círculo Cultista." }
+        ],
+        footerLeft: "PERSISTENCIA: SQLITE WAL + PERFIL JSON",
+        footerRight: "BÚSQUEDA: INSTANTÁNEA (CTRL+K)"
+      },
+      lore: {
+        tag: "MÓDULO 06 // NARRATIVA OFICIAL",
+        title: "Capítulos de Historia & Lore de Tarkov",
+        desc: "Recorre la historia completa del conflicto de Norvinsk y TerraGroup a través de los 10 capítulos oficiales, presentados en una interfaz limpia y diseñada para lectura continua.",
+        highlights: [
+          { icon: "📜", title: "10 Capítulos Completos", text: "Guías paso a paso de la línea principal con banners panorámicos e imágenes de referencia." },
+          { icon: "🖱️", title: "Smooth Scroll Acelerado", text: "Desplazamiento fluido y lectura de alto contraste pensada para cero fatiga visual." },
+          { icon: "🔗", title: "Contexto Integrado", text: "Conecta personajes, facciones, comerciantes y ubicaciones clave dentro de la misma aplicación." }
+        ],
+        footerLeft: "ARCHIVO: story_quests_data.py (CAP. 1–10)",
+        footerRight: "LECTURA: ALTO CONTRASTE"
+      }
+    };
+
+    function selectTour(key, btn) {
+      const data = TOUR_DATA[key];
+      if (!data) return;
+
+      document.querySelectorAll('.tour-tab-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+
+      const stage = document.getElementById('tour-stage');
+      stage.innerHTML = `
+        <div>
+          <div class="stage-header">
             <div>
-              <div class="card-title">${quest.name}</div>
-              <div class="card-subtitle">${quest.trader.toUpperCase()} // ${quest.map.toUpperCase()}</div>
+              <span class="stage-tag">${data.tag}</span>
+              <h3 class="stage-title">${data.title}</h3>
             </div>
-            ${quest.kappa ? '<span style="background: rgba(16, 185, 129, 0.15); color: var(--green-meta); border: 1px solid var(--green-meta); padding: 3px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: 800;">★ KAPPA</span>' : ''}
           </div>
-          <div style="font-size: 0.82rem; color: var(--gold); font-family: var(--font-mono); margin-bottom: 10px;">
-            LLAVE REQUERIDA: ${quest.key}
-          </div>
-          <div style="display: flex; flex-direction: column; gap: 6px; font-size: 0.82rem; color: var(--text-dim);">
-            ${quest.phases.map(p => `<div style="background: #090c12; padding: 6px 10px; border-radius: 4px; border-left: 2px solid var(--gold);">${p}</div>`).join('')}
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    }
+          <p class="stage-desc" style="margin-top: 16px;">${data.desc}</p>
+        </div>
 
-    // --- RENDERIZADO DE BALÍSTICA ---
-    function renderAmmoTable() {
-      const caliber = document.getElementById('ammo-caliber-filter').value;
-      const tbody = document.getElementById('ammo-table-body');
-      tbody.innerHTML = '';
-
-      let list = AMMO_DATA.filter(a => {
-        if (caliber === 'all') return true;
-        return a.caliber.toLowerCase().includes(caliber.toLowerCase());
-      });
-
-      list.sort((a, b) => {
-        let vA = a[ammoSortCol], vB = b[ammoSortCol];
-        if (typeof vA === 'string') return ammoSortAsc ? vA.localeCompare(vB) : vB.localeCompare(vA);
-        return ammoSortAsc ? vA - vB : vB - vA;
-      });
-
-      document.getElementById('ammo-count-lbl').textContent = `Mostrando ${list.length} proyectiles`;
-
-      list.forEach(item => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td style="font-weight: 700; color: #fff;">${item.name}</td>
-          <td style="font-family: var(--font-mono); font-size: 0.78rem;">${item.caliber}</td>
-          <td style="font-family: var(--font-mono); color: var(--red-threat); font-weight: 700;">${item.damage}</td>
-          <td style="font-family: var(--font-mono); color: var(--green-meta); font-weight: 700;">${item.penetration}</td>
-          <td style="font-family: var(--font-mono);">${item.armorDamage}%</td>
-          <td style="font-family: var(--font-mono);">${item.velocity}</td>
-          <td>
-            <div class="armor-meters-row">
-              <span class="armor-meter-box meter-${item.m1}" title="Clase 1">${item.m1}</span>
-              <span class="armor-meter-box meter-${item.m2}" title="Clase 2">${item.m2}</span>
-              <span class="armor-meter-box meter-${item.m3}" title="Clase 3">${item.m3}</span>
-              <span class="armor-meter-box meter-${item.m4}" title="Clase 4">${item.m4}</span>
-              <span class="armor-meter-box meter-${item.m5}" title="Clase 5">${item.m5}</span>
-              <span class="armor-meter-box meter-${item.m6}" title="Clase 6">${item.m6}</span>
+        <div class="stage-highlights">
+          ${data.highlights.map(h => `
+            <div class="highlight-card">
+              <h4><span>${h.icon}</span> ${h.title}</h4>
+              <p>${h.text}</p>
             </div>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    function sortAmmo(col) {
-      if (ammoSortCol === col) {
-        ammoSortAsc = !ammoSortAsc;
-      } else {
-        ammoSortCol = col;
-        ammoSortAsc = false;
-      }
-      renderAmmoTable();
-    }
-
-    // --- WORKBENCH DE GUNSMITH ---
-    const WEAPON_BUILDS = {
-      rd704: {
-        name: "RD-704", caliber: "7.62x39mm // RIFLE DE ASALTO", glyph: "︻╦デ═—",
-        meta: { recoilV: 44, ergo: 64, weight: "3.62 kg", vel: "740 m/s", code: "TTCBUILD:RD704_META_LASER" },
-        budget: { recoilV: 58, ergo: 52, weight: "3.45 kg", vel: "730 m/s", code: "TTCBUILD:RD704_BUDGET_LL2" },
-        ergo: { recoilV: 52, ergo: 78, weight: "3.20 kg", vel: "745 m/s", code: "TTCBUILD:RD704_CQC_ERGO" }
-      },
-      m4a1: {
-        name: "Colt M4A1", caliber: "5.56x45mm NATO // RIFLE DE ASALTO", glyph: "︻╦̵̵͇̿̿̿̿══╤─",
-        meta: { recoilV: 36, ergo: 68, weight: "3.80 kg", vel: "960 m/s", code: "TTCBUILD:M4A1_META_LASER" },
-        budget: { recoilV: 54, ergo: 58, weight: "3.40 kg", vel: "910 m/s", code: "TTCBUILD:M4A1_BUDGET_LL2" },
-        ergo: { recoilV: 48, ergo: 82, weight: "3.10 kg", vel: "930 m/s", code: "TTCBUILD:M4A1_HIGH_ERGO" }
-      },
-      sr25: {
-        name: "SR-25", caliber: "7.62x51mm NATO // DMR DESIGNATED MARKSMAN", glyph: "▄︻デ══━一",
-        meta: { recoilV: 72, ergo: 58, weight: "5.10 kg", vel: "840 m/s", code: "TTCBUILD:SR25_META_DMR" },
-        budget: { recoilV: 96, ergo: 44, weight: "4.80 kg", vel: "820 m/s", code: "TTCBUILD:SR25_BUDGET_LL2" },
-        ergo: { recoilV: 86, ergo: 68, weight: "4.50 kg", vel: "830 m/s", code: "TTCBUILD:SR25_LIGHT_ERGO" }
-      }
-    };
-
-    let curWeaponKey = 'rd704';
-    let curPresetKey = 'meta';
-
-    function loadWorkbenchWeapon(wKey) {
-      curWeaponKey = wKey;
-      const wData = WEAPON_BUILDS[wKey] || WEAPON_BUILDS.rd704;
-      document.getElementById('workbench-name-display').textContent = wData.name;
-      document.getElementById('workbench-caliber-display').textContent = wData.caliber;
-      document.getElementById('blueprint-gun-glyph').textContent = wData.glyph;
-      applyBuildPreset('meta');
-    }
-
-    function applyBuildPreset(pKey, btn) {
-      curPresetKey = pKey;
-      if (btn) {
-        btn.parentElement.querySelectorAll('.btn-pill').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-      }
-
-      const wData = WEAPON_BUILDS[curWeaponKey] || WEAPON_BUILDS.rd704;
-      const build = wData[pKey] || wData.meta;
-
-      document.getElementById('val-recoil-v').textContent = build.recoilV;
-      document.getElementById('bar-recoil-v-fill').style.width = build.recoilV + '%';
-      document.getElementById('val-ergo').textContent = build.ergo;
-      document.getElementById('bar-ergo-fill').style.width = build.ergo + '%';
-      document.getElementById('val-weight').textContent = build.weight;
-      document.getElementById('val-velocity').textContent = build.vel;
-      document.getElementById('workbench-code-badge').textContent = build.code;
-    }
-
-    function copyBuildCodeAction() {
-      const wData = WEAPON_BUILDS[curWeaponKey];
-      const code = wData[curPresetKey].code;
-      navigator.clipboard.writeText(code).then(() => showToast(`✓ ${code} copiado al portapapeles`));
-    }
-
-    function copyShoppingListAction() {
-      const txt = `Lista de compra estimada para ${curWeaponKey.toUpperCase()} (${curPresetKey.toUpperCase()}):\n- Supresor silenciador y freno muzzle (LL3)\n- Empuñadura táctica (LL2/LL3)\n- Óptica de combate\nCosto estimado: 185.000 ₽`;
-      navigator.clipboard.writeText(txt).then(() => showToast("✓ Lista de compras copiada"));
-    }
-
-    function copyJsonAction() {
-      const obj = { weapon: curWeaponKey, preset: curPresetKey, engine: "TTC-2.0", timestamp: Date.now() };
-      navigator.clipboard.writeText(JSON.stringify(obj, null, 2)).then(() => showToast("✓ Formato JSON copiado"));
-    }
-
-    // --- HIDEOUT & FiR ---
-    function renderHideoutItems(query = '') {
-      const tbody = document.getElementById('fir-items-tbody');
-      tbody.innerHTML = '';
-      const q = query.toLowerCase();
-
-      FIR_ITEMS.filter(it => it.name.toLowerCase().includes(q) || it.quest.toLowerCase().includes(q)).forEach(item => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td><input type="checkbox"></td>
-          <td style="font-weight: 700; color: #fff;">${item.name}</td>
-          <td style="font-family: var(--font-mono); color: var(--gold);">${item.count}</td>
-          <td style="color: var(--text-dim);">${item.quest}</td>
-          <td style="font-family: var(--font-mono); font-size: 0.8rem;">${item.trader}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    // --- STORY & LORE ---
-    function renderLore() {
-      const container = document.getElementById('lore-chapters-container');
-      container.innerHTML = `
-        <div class="hud-card">
-          <h3 class="card-title" style="color: var(--gold); margin-bottom: 8px;">Capítulo 1: El Estallido en Tarkov</h3>
-          <p style="color: var(--text-dim); line-height: 1.6;">
-            La Zona Económica Especial de Norvinsk colapsa tras el escándalo entre TerraGroup y el gobierno de la Federación Rusa. BEAR y USEC se enfrentan en las calles mientras los civiles que quedaron atrás forman pandillas armadas (Scavs).
-          </p>
+          `).join('')}
         </div>
-        <div class="hud-card">
-          <h3 class="card-title" style="color: var(--gold); margin-bottom: 8px;">Capítulo 2: El Enigma de TerraGroup</h3>
-          <p style="color: var(--text-dim); line-height: 1.6;">
-            Los búnkeres subterráneos de The Lab y los complejos de Ground Zero esconden pruebas científicas sobre estimulantes ilegales y armamento no convencional.
-          </p>
-        </div>
-        <div class="hud-card">
-          <h3 class="card-title" style="color: var(--gold); margin-bottom: 8px;">Capítulo 3: La Ruta de Lightkeeper</h3>
-          <p style="color: var(--text-dim); line-height: 1.6;">
-            Desde el faro de Cape Dalniy, el misterioso operador Lightkeeper controla las comunicaciones por radio y los suministros de contrabando hacia el exterior del cerco militar de la ONU.
-          </p>
+
+        <div class="stage-footer">
+          <span>${data.footerLeft}</span>
+          <span style="color: var(--gold);">${data.footerRight}</span>
         </div>
       `;
     }
 
-    // --- BÚSQUEDA GLOBAL ---
-    function handleGlobalSearch(term) {
-      const q = term.trim().toLowerCase();
-      if (!q) return;
-
-      // Buscar si es un boss
-      const matchedBoss = BOSSES.find(b => b.name.toLowerCase().includes(q) || b.map.toLowerCase().includes(q));
-      if (matchedBoss) {
-        navigateTab('tab-bosses', document.querySelectorAll('.sidebar-menu .menu-item')[0]);
-        return;
-      }
-
-      // Buscar si es munición
-      const matchedAmmo = AMMO_DATA.find(a => a.name.toLowerCase().includes(q));
-      if (matchedAmmo) {
-        navigateTab('tab-ballistics', document.querySelectorAll('.sidebar-menu .menu-item')[4]);
-        return;
-      }
+    function copyInstallCmds() {
+      const cmds = "git clone https://github.com/Patoma89/TarkovScope.git\ncd TarkovScope\npip install -r requirements.txt\npython TarkovScope.py";
+      navigator.clipboard.writeText(cmds).then(() => {
+        const toast = document.getElementById('toast');
+        toast.textContent = '✓ Comandos de instalación copiados';
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 2400);
+      });
     }
 
-    // --- MODALES Y UTILIDADES ---
-    function closeModal() { document.getElementById('tactical-modal').style.display = 'none'; }
-    window.onclick = function(e) {
-      if (e.target === document.getElementById('tactical-modal')) closeModal();
-    };
-
-    function showToast(msg) {
-      const t = document.getElementById('app-toast');
-      t.textContent = msg;
-      t.style.display = 'block';
-      setTimeout(() => { t.style.display = 'none'; }, 2500);
-    }
-
-    // --- INICIALIZACIÓN AL CARGAR LA PÁGINA ---
     window.addEventListener('DOMContentLoaded', () => {
-      renderBosses();
-      loadSelectedMap('customs');
-      renderQuests();
-      renderAmmoTable();
-      loadWorkbenchWeapon('rd704');
-      renderHideoutItems();
-      renderLore();
-      navigateTab('tab-bosses', document.querySelector('.sidebar-menu .menu-item.active'));
-
-      // Sincronización en vivo silenciosa con json.tarkov.dev (CORS habilitado)
-      fetch('https://json.tarkov.dev/pve/maps')
-        .then(res => res.json())
-        .then(data => {
-          document.getElementById('sync-text').textContent = 'EFTBOSS // EN VIVO (2026)';
-        })
-        .catch(() => {
-          document.getElementById('sync-text').textContent = 'EFTBOSS // LOCAL VERIFICADO';
-        });
+      selectTour('gunsmith', document.querySelector('.tour-tab-btn.active'));
     });
   </script>
 </body>
