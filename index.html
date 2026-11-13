@@ -1484,56 +1484,106 @@
 
       <!-- Tab 3: Bosses & Spawns -->
       <div class="tab-display-card" id="tab-bosses-demo">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 14px; flex-wrap: wrap; gap: 12px;">
           <div>
             <h3 style="font-size: 1.4rem; font-weight: 800;">Radar Táctico de Spawns de Bosses (PvE / PvP)</h3>
-            <p style="color: var(--text-dim); font-size: 0.9rem;">Porcentajes oficiales calibrados y zonas calientes de patrulla.</p>
+            <p style="color: var(--text-dim); font-size: 0.9rem;">Porcentajes oficiales calibrados en tiempo real (sincronizados con <code>eftboss.com</code>).</p>
           </div>
-          <div class="code-chip">MOTOR BALÍSTICO DE PROBABILIDADES</div>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <button class="preset-pill active" id="btn-boss-pve" onclick="setBossMode('pve', this)">🎯 Modo PvE</button>
+            <button class="preset-pill" id="btn-boss-pvp" onclick="setBossMode('pvp', this)">⚔️ Modo PvP</button>
+            <div class="code-chip" style="margin-left: 6px;">EFTBOSS.COM SYNC</div>
+          </div>
         </div>
 
         <div class="quest-phase-grid" style="margin-top: 20px;">
+          <!-- Kollontay -->
           <div class="quest-phase-card">
-            <div style="display: flex; justify-content: space-between;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
               <span class="quest-phase-num">STREETS OF TARKOV</span>
-              <span style="color: var(--gold); font-weight: 700; font-family: var(--font-mono);">30% PROB.</span>
+              <span id="rate-kollontay" style="color: var(--gold); font-weight: 800; font-family: var(--font-mono); font-size: 0.95rem;">75% PROB.</span>
             </div>
-            <div class="quest-phase-title">Kollontay & Guardias</div>
+            <div class="quest-phase-title">Kollontay & Guardias OMON</div>
             <div class="quest-phase-desc">
-              Patrulla activa en el Hotel Klimov y la Academia MVD. Provoca atascos automáticos en armas automáticas en combate CQC.
+              Patrulla en <strong>Klimov Shopping Mall (50%)</strong> y la <strong>Academia MVD (50%)</strong>. Su porra táctica provoca pánico y encasquillamiento de armas a corta distancia.
+            </div>
+            <div style="margin-top: 10px; font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono);">
+              PVE: 75% | PVP: 60%
             </div>
           </div>
 
+          <!-- Kaban -->
           <div class="quest-phase-card">
-            <div style="display: flex; justify-content: space-between;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
               <span class="quest-phase-num">STREETS OF TARKOV</span>
-              <span style="color: var(--gold); font-weight: 700; font-family: var(--font-mono);">35% PROB.</span>
+              <span id="rate-kaban" style="color: var(--gold); font-weight: 800; font-family: var(--font-mono); font-size: 0.95rem;">75% PROB.</span>
             </div>
             <div class="quest-phase-title">Kaban & Nido de Francotiradores</div>
             <div class="quest-phase-desc">
-              Emplazado en el taller de reparación de LexOs. Protegido por guardias pesados con ametralladoras fijas PKP y AGS-30.
+              Emplazado en el complejo fortificado de <strong>LexOs (100%)</strong>. Protegido por 8 guardias pesados con nidos de ametralladora fija PKP y AGS-30 y perímetro minado.
+            </div>
+            <div style="margin-top: 10px; font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono);">
+              PVE: 75% | PVP: 60%
             </div>
           </div>
 
+          <!-- The Goons -->
           <div class="quest-phase-card">
-            <div style="display: flex; justify-content: space-between;">
-              <span class="quest-phase-num">CUSTOMS / WOODS / SHORELINE</span>
-              <span style="color: var(--gold); font-weight: 700; font-family: var(--font-mono);">28% PROB.</span>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="quest-phase-num">LIGHTHOUSE / SHORELINE / CUSTOMS / WOODS</span>
+              <span id="rate-goons" style="color: var(--gold); font-weight: 800; font-family: var(--font-mono); font-size: 0.95rem;">30% / 25%</span>
             </div>
             <div class="quest-phase-title">The Goons (Knight, Big Pipe, Birdeye)</div>
             <div class="quest-phase-desc">
-              Escuadrón cazador errante sin pasos audibles. Ataques de francotirador coordinados a más de 300 metros con proyectiles M993/M61.
+              Escuadrón cazador USEC errante. Rango de visión de 250m+, Birdeye con pasos 100% silenciosos y Big Pipe con lanzagranadas M32A1 de 40mm.
+            </div>
+            <div style="margin-top: 10px; font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono);">
+              PVE: 30% (Light/Shore) · 25% (Cust/Woods) | PVP: 20%
             </div>
           </div>
 
+          <!-- Partisan -->
           <div class="quest-phase-card">
-            <div style="display: flex; justify-content: space-between;">
-              <span class="quest-phase-num">MAPAS BOSCOSOS</span>
-              <span style="color: var(--gold); font-weight: 700; font-family: var(--font-mono);">25% PROB.</span>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="quest-phase-num">WOODS / CUSTOMS / SHORELINE / LIGHTHOUSE</span>
+              <span id="rate-partisan" style="color: var(--gold); font-weight: 800; font-family: var(--font-mono); font-size: 0.95rem;">25% PROB.</span>
             </div>
-            <div class="quest-phase-title">Partisan (El Trampero del Karma)</div>
+            <div class="quest-phase-title">Partisan (The Hunter / Karma)</div>
             <div class="quest-phase-desc">
-              Caza operadores con bajo nivel de karma. Coloca trampas explosivas y minas de cable con granadas F-1 y VOG-25 en arbustos.
+              Caza operadores con bajo nivel de karma en zonas boscosas. Coloca trampas trampa explosivas con granadas F-1 y VOG-25 en arbustos y caminos.
+            </div>
+            <div style="margin-top: 10px; font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono);">
+              PVE: 25% | PVP: 25%
+            </div>
+          </div>
+
+          <!-- Reshala -->
+          <div class="quest-phase-card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="quest-phase-num">CUSTOMS</span>
+              <span id="rate-reshala" style="color: var(--gold); font-weight: 800; font-family: var(--font-mono); font-size: 0.95rem;">75% PROB.</span>
+            </div>
+            <div class="quest-phase-title">Reshala & Los Zavodskoy</div>
+            <div class="quest-phase-desc">
+              Spawns en <strong>Dorms (33%)</strong>, <strong>New Gas (33%)</strong> o <strong>Stronghold (33%)</strong>. Escoltado por 4 guardias con munición BT/BP.
+            </div>
+            <div style="margin-top: 10px; font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono);">
+              PVE: 75% | PVP: 60%
+            </div>
+          </div>
+
+          <!-- Killa -->
+          <div class="quest-phase-card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="quest-phase-num">INTERCHANGE</span>
+              <span id="rate-killa" style="color: var(--gold); font-weight: 800; font-family: var(--font-mono); font-size: 0.95rem;">75% PROB.</span>
+            </div>
+            <div class="quest-phase-title">Killa (El Terror del Mall)</div>
+            <div class="quest-phase-desc">
+              Patrulla en <strong>KIBA / Brutal (40%)</strong>, <strong>Goshan (20%)</strong> y <strong>OLI/IDEA (40%)</strong>. Casco Maska 1Sch Clase 4 y RPK con tambor de 95 tiros.
+            </div>
+            <div style="margin-top: 10px; font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono);">
+              PVE: 75% | PVP: 60%
             </div>
           </div>
         </div>
@@ -1787,6 +1837,29 @@
       } else if (mod === 'flea') {
         showDemoTab('tab-hideout-demo', document.querySelectorAll('.tab-pill-btn')[3]);
         document.getElementById('dossier').scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    // Cambiar modo PvE / PvP en el Radar de Bosses
+    function setBossMode(mode, btn) {
+      document.getElementById('btn-boss-pve').classList.remove('active');
+      document.getElementById('btn-boss-pvp').classList.remove('active');
+      btn.classList.add('active');
+
+      if (mode === 'pve') {
+        document.getElementById('rate-kollontay').textContent = '75% PROB.';
+        document.getElementById('rate-kaban').textContent = '75% PROB.';
+        document.getElementById('rate-goons').textContent = '30% / 25%';
+        document.getElementById('rate-partisan').textContent = '25% PROB.';
+        document.getElementById('rate-reshala').textContent = '75% PROB.';
+        document.getElementById('rate-killa').textContent = '75% PROB.';
+      } else {
+        document.getElementById('rate-kollontay').textContent = '60% PROB.';
+        document.getElementById('rate-kaban').textContent = '60% PROB.';
+        document.getElementById('rate-goons').textContent = '20% PROB.';
+        document.getElementById('rate-partisan').textContent = '25% PROB.';
+        document.getElementById('rate-reshala').textContent = '60% PROB.';
+        document.getElementById('rate-killa').textContent = '60% PROB.';
       }
     }
 
