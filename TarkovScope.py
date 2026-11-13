@@ -30,6 +30,7 @@ from ui.update_modal import UpdateDialog
 from ui.tab_bosses import TabBosses
 from ui.tab_weapons import TabWeapons
 from ui.tab_ballistics import TabBallistics
+from ui.tab_containers import TabContainers
 from ui.tab_quests import TabQuests
 from ui.tab_maps import TabMaps
 from ui.tab_flea import TabFlea
@@ -37,6 +38,7 @@ from ui.tab_lore import TabLore
 from ui.tab_story_quests import TabStoryQuests
 from ui.tab_keys import TabKeys
 from ui.tab_medical import TabMedical
+from ui.tab_pmc_systems import TabPMCSystems
 from ui.global_search_modal import GlobalSearchModal
 from ui.theme import C_AMBER, C_BG_DEEP, C_BG_ROW, C_BORDER, C_BORDER_ALT, C_GREEN, C_RED, C_TEXT, C_TEXT_DIM, C_TEXT_MUTED, C_WHITE
 
@@ -102,9 +104,11 @@ class TarkovScopeApp(ctk.CTk):
             "story_quests": TabStoryQuests,
             "weapons": TabWeapons,
             "ballistics": TabBallistics,
+            "containers": TabContainers,
             "flea": TabFlea,
             "keys": TabKeys,
             "medical": TabMedical,
+            "pmc_systems": TabPMCSystems,
             "lore": TabLore,
         }
 
@@ -129,7 +133,7 @@ class TarkovScopeApp(ctk.CTk):
 
         # 1. Bloque de Marca / Título
         logo_frame = ctk.CTkFrame(self.sidebar, fg_color="transparent")
-        logo_frame.grid(row=0, column=0, padx=18, pady=(22, 14), sticky="ew")
+        logo_frame.grid(row=0, column=0, padx=18, pady=(14, 8), sticky="ew")
         logo_frame.grid_columnconfigure(0, weight=1)
 
         ctk.CTkLabel(
@@ -229,10 +233,12 @@ class TarkovScopeApp(ctk.CTk):
             ("quests", "Quests & Traders"),
             ("story_quests", "Quests de la Historia"),
             ("weapons", "Armas & Gunsmith"),
-            ("ballistics", "Balística & Munición"),
-            ("flea", "Hideout & Ítems FiR"),
+            ("ballistics", "Balística & Blindaje"),
+            ("containers", "Rigs, Mochilas & Cajas"),
+            ("flea", "Hideout, Barters & FiR"),
             ("keys", "Llaves & Intel"),
             ("medical", "Medicina & Stims"),
+            ("pmc_systems", "PMC, Skills & Sistemas"),
             ("lore", "Story & Lore"),
         ]
 
@@ -240,18 +246,18 @@ class TarkovScopeApp(ctk.CTk):
             btn = ctk.CTkButton(
                 nav_container,
                 text=f"  {label_text}",
-                font=ui_font(14, "bold"),
+                font=ui_font(13, "bold"),
                 fg_color="transparent",
                 text_color=C_TEXT_MUTED,
                 hover_color=C_BG_ROW,
                 border_width=1,
                 border_color=C_BG_DEEP,
                 anchor="w",
-                height=44,
+                height=34,
                 corner_radius=6,
                 command=lambda k=tab_key: self.switch_tab(k)
             )
-            btn.grid(row=idx, column=0, padx=0, pady=4, sticky="ew")
+            btn.grid(row=idx, column=0, padx=0, pady=2, sticky="ew")
             self.nav_buttons[tab_key] = btn
 
         # 4. Pie de Barra Lateral
@@ -423,7 +429,7 @@ class TarkovScopeApp(ctk.CTk):
 
     def _warmup_remaining_tabs(self):
         """Pre-construye todas las pestañas restantes en idle sin interrumpir la pestaña activa."""
-        tabs_to_warm = ["bosses", "maps", "weapons", "ballistics", "flea", "story_quests", "lore"]
+        tabs_to_warm = ["bosses", "maps", "weapons", "ballistics", "containers", "flea", "pmc_systems", "story_quests", "lore"]
 
         def _warm_step(idx: int = 0):
             if not self.winfo_exists() or idx >= len(tabs_to_warm):
@@ -519,13 +525,36 @@ class TarkovScopeApp(ctk.CTk):
             if hasattr(tab_frame, "_select_boss"):
                 tab_frame._select_boss(target)
         elif tab_key == "ballistics":
-            if hasattr(tab_frame, "search_entry"):
-                tab_frame.search_entry.delete(0, "end")
-                tab_frame.search_entry.insert(0, target)
-                tab_frame._reset_and_filter()
+            if target.startswith("ARMOR:") and hasattr(tab_frame, "_open_armor_from_search"):
+                tab_frame._open_armor_from_search(target.split(":", 1)[1])
+            else:
+                if hasattr(tab_frame, "_exit_armor_mode"):
+                    tab_frame._exit_armor_mode()
+                if hasattr(tab_frame, "search_entry"):
+                    tab_frame.search_entry.delete(0, "end")
+                    tab_frame.search_entry.insert(0, target)
+                    tab_frame._reset_and_filter()
+        elif tab_key == "containers":
+            if hasattr(tab_frame, "open_from_search"):
+                tab_frame.open_from_search(target)
         elif tab_key == "flea":
             if hasattr(tab_frame, "_quick_search"):
                 tab_frame._quick_search(target)
+        elif tab_key == "keys":
+            if hasattr(tab_frame, "entry_search"):
+                tab_frame.entry_search.delete(0, "end")
+                tab_frame.entry_search.insert(0, target)
+                if hasattr(tab_frame, "_schedule_render_keys"):
+                    tab_frame._schedule_render_keys()
+        elif tab_key == "medical":
+            if hasattr(tab_frame, "entry_search"):
+                tab_frame.entry_search.delete(0, "end")
+                tab_frame.entry_search.insert(0, target)
+                if hasattr(tab_frame, "_schedule_render_items"):
+                    tab_frame._schedule_render_items()
+        elif tab_key == "pmc_systems":
+            if hasattr(tab_frame, "open_from_search"):
+                tab_frame.open_from_search(target)
 
     # --- Modo Ventana Siempre Visible (Always on Top) ---
 

@@ -1,9 +1,9 @@
-; Script de instalador Inno Setup para TTC (Tactical Tarkov Companion) v1.2.0
+; Script de instalador Inno Setup para TTC (Tactical Tarkov Companion) v1.3.0
 [Setup]
 AppId={{8E9A3F21-6C4D-4F18-9A1E-7C52B8D3E110}
 AppName=TTC (Tactical Tarkov Companion)
-AppVersion=1.2.0
-AppVerName=TTC (Tactical Tarkov Companion) v1.2
+AppVersion=1.3.0
+AppVerName=TTC (Tactical Tarkov Companion) v1.3
 AppPublisher=Patoma89
 AppPublisherURL=https://github.com/Patoma89/TarkovScope
 AppSupportURL=https://github.com/Patoma89/TarkovScope/issues
@@ -13,7 +13,7 @@ DefaultGroupName=TTC (Tactical Tarkov Companion)
 DisableProgramGroupPage=yes
 PrivilegesRequired=lowest
 OutputDir=dist_installer
-OutputBaseFilename=TTC_Setup_v1.2
+OutputBaseFilename=TTC_Setup_v1.3
 SetupIconFile=ttc.ico
 UninstallDisplayIcon={app}\TTC.exe
 Compression=lzma2/normal
@@ -31,6 +31,10 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 Source: "dist\TTC.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "ttc.ico"; DestDir: "{app}"; Flags: ignoreversion
+Source: "cache\gear\*"; DestDir: "{app}\cache\gear"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "cache\keys\*"; DestDir: "{app}\cache\keys"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "cache\medical\*"; DestDir: "{app}\cache\medical"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "cache\weapons\*"; DestDir: "{app}\cache\weapons"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{autoprograms}\TTC (Tactical Tarkov Companion)"; Filename: "{app}\TTC.exe"; IconFilename: "{app}\ttc.ico"

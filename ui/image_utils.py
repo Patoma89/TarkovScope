@@ -373,4 +373,53 @@ def get_dynamic_weapon_composite_ctk_image(
     return ctk.CTkImage(light_image=pil_img, dark_image=pil_img, size=target_size)
 
 
+def get_gear_ctk_icon(
+    cache_key: str,
+    icon_url: str = "",
+    max_size: Tuple[int, int] = (54, 42),
+    on_ready: Optional[Callable[[ctk.CTkImage], None]] = None,
+) -> Optional[ctk.CTkImage]:
+    """
+    Carga en O(1) un ícono de blindaje, casco, contenedor, mochila o trueque desde cache/gear/
+    manteniendo relación de aspecto. Si falta localmente y se pasa callback, lo descarga en segundo plano.
+    """
+    if not cache_key:
+        return None
+    mw, mh = max_size
+    ram_key = f"gear:{cache_key}:{mw}x{mh}"
+    if ram_key in _CTK_IMAGE_RAM_CACHE:
+        return _CTK_IMAGE_RAM_CACHE[ram_key]
+
+    from core.gear_cache import get_gear_icon_path, ensure_gear_icon_async
+
+    def _build_ctk_from_path(path: str) -> Optional[ctk.CTkImage]:
+        try:
+            with Image.open(path) as img:
+                rgba = img.convert("RGBA")
+                iw, ih = rgba.size
+                scale = min(mw / max(1, iw), mh / max(1, ih))
+                tw = max(1, int(round(iw * scale)))
+                th = max(1, int(round(ih * scale)))
+                resized = rgba.resize((tw, th), Image.Resampling.LANCZOS)
+                ctk_img = ctk.CTkImage(light_image=resized, dark_image=resized, size=(tw, th))
+                _CTK_IMAGE_RAM_CACHE[ram_key] = ctk_img
+                return ctk_img
+        except Exception:
+            return None
+
+    local_path = get_gear_icon_path(cache_key)
+    if local_path:
+        return _build_ctk_from_path(local_path)
+
+    if icon_url and on_ready:
+        def _after_dl(downloaded_path: str):
+            built = _build_ctk_from_path(downloaded_path)
+            if built:
+                on_ready(built)
+
+        ensure_gear_icon_async(cache_key, icon_url, on_ready=_after_dl)
+    return None
+
+
+
 

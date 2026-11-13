@@ -80,7 +80,7 @@ class GlobalSearchModal(ctk.CTkToplevel):
 
         self.search_entry = ctk.CTkEntry(
             search_box,
-            placeholder_text="Escribe para buscar quests, bosses, mapas, municiones, armas o ítems...",
+            placeholder_text="Buscar quests, bosses, mapas, munición, blindaje, llaves, stims, barters o skills...",
             font=ui_font(15),
             height=46,
             fg_color=C_BG_PANEL_ALT,

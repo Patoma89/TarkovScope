@@ -214,6 +214,8 @@ class DuelMixin:
         self.duel_scroll.grid_columnconfigure(1, weight=1)
 
     def _toggle_duel_mode(self):
+        if getattr(self, "is_armor_mode", False):
+            self._exit_armor_mode()
         self.is_duel_mode = not self.is_duel_mode
         if self.is_duel_mode:
             self.legend_frame.grid_remove()

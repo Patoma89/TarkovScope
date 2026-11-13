@@ -644,9 +644,150 @@ class DataStore:
                     "target": mod.get("station", "")
                 })
 
-        # Ordenar por score decreciente y limitar a los 35 mejores resultados
+        # 7. Llaves & Keycards
+        from core.keys_data import KEYS_CATALOG
+        for ky in KEYS_CATALOG:
+            k_name = ky.get("name", "")
+            k_map = ky.get("map", "")
+            if q in k_name.lower() or q in k_map.lower() or q in ky.get("opens", "").lower():
+                score = 102 if k_name.lower().startswith(q) else (84 if q in k_name.lower() else 45)
+                results.append({
+                    "score": score,
+                    "category": f"Llave ({k_map})",
+                    "badge_color": "#0284C7",
+                    "title": k_name,
+                    "subtitle": f"{ky.get('category', 'Llave')}  •  {ky.get('verdict', '')}",
+                    "tab": "keys",
+                    "target": k_name,
+                })
+
+        # 8. Medicina & Stims
+        from core.medical_data import MEDICAL_CATALOG
+        for med in MEDICAL_CATALOG:
+            m_name = med.get("name", "")
+            if q in m_name.lower() or q in med.get("cures_label", "").lower():
+                score = 104 if m_name.lower().startswith(q) else (82 if q in m_name.lower() else 45)
+                results.append({
+                    "score": score,
+                    "category": med.get("category", "Medicina"),
+                    "badge_color": "#DC2626",
+                    "title": m_name,
+                    "subtitle": f"{med.get('uses', '')}  •  {med.get('cures_label', '')[:70]}",
+                    "tab": "medical",
+                    "target": m_name,
+                })
+
+        # 9. Blindaje, Placas, Cascos & Auriculares
+        from core.armor_data import get_all_protection_items
+        for prot in get_all_protection_items():
+            p_name = prot.get("name", "")
+            if q in p_name.lower() or q in prot.get("material", "").lower():
+                score = 98 if p_name.lower().startswith(q) else (76 if q in p_name.lower() else 42)
+                cls_lbl = f"Clase {prot.get('armor_class', 0)}" if prot.get("armor_class") else f"{prot.get('hearing_distance_m', '')}m"
+                results.append({
+                    "score": score,
+                    "category": prot.get("category", "Protección"),
+                    "badge_color": "#0D9488",
+                    "title": p_name,
+                    "subtitle": f"{cls_lbl}  •  {prot.get('areas', prot.get('audio_profile', ''))[:65]}",
+                    "tab": "ballistics",
+                    "target": f"ARMOR:{p_name}",
+                })
+
+        # 10. Contenedores, Mochilas & Rigs
+        from core.containers_data import get_all_storage_items
+        for stg in get_all_storage_items():
+            s_name = stg.get("name", "")
+            if q in s_name.lower() or q in stg.get("holds", "").lower():
+                score = 96 if s_name.lower().startswith(q) else (74 if q in s_name.lower() else 40)
+                results.append({
+                    "score": score,
+                    "category": stg.get("category", "Almacenamiento"),
+                    "badge_color": "#6366F1",
+                    "title": s_name,
+                    "subtitle": f"{stg.get('slots', 0)} slots  •  {stg.get('holds', '')[:65]}",
+                    "tab": "containers",
+                    "target": s_name,
+                })
+
+        # 11. Trueques Clave (Barters) & Cultist Circle
+        from core.barters_data import BARTERS_CATALOG, CULTIST_UNIQUE_SACRIFICES, CULTIST_REPEATABLE_SACRIFICES
+        for bar in BARTERS_CATALOG:
+            rew = bar.get("reward", "")
+            inps = bar.get("inputs_text", "")
+            if q in rew.lower() or q in inps.lower():
+                bonus = 10 if bar.get("is_essential") else 0
+                score = (92 if q in rew.lower() else 65) + bonus
+                results.append({
+                    "score": score,
+                    "category": f"Trueque ({bar.get('trader', '')} LL{bar.get('ll', 1)})",
+                    "badge_color": "#EA580C",
+                    "title": rew,
+                    "subtitle": f"Pide: {inps[:70]}",
+                    "tab": "flea",
+                    "target": f"BARTER:{rew}",
+                })
+        if "cultist" in q or "circle" in q or "amulet" in q:
+            results.append({
+                "score": 105,
+                "category": "Cultist Circle",
+                "badge_color": "#9333EA",
+                "title": "Cultist Circle — Umbrales & Recetas",
+                "subtitle": "350k+ (14h) · 400k+ (25% 6h FiR) · Sacrificios Únicos y Repetibles",
+                "tab": "flea",
+                "target": "CULTIST:",
+            })
+        for sac in CULTIST_UNIQUE_SACRIFICES + CULTIST_REPEATABLE_SACRIFICES:
+            if q in sac.get("input", "").lower() or q in sac.get("outcome", "").lower():
+                results.append({
+                    "score": 88,
+                    "category": "Cultist Circle",
+                    "badge_color": "#9333EA",
+                    "title": f"{sac['input']} -> {sac['outcome']}",
+                    "subtitle": f"Duración: {sac['duration']}",
+                    "tab": "flea",
+                    "target": "CULTIST:",
+                })
+
+        # 12. PMC Skills, BTR, Karma & Transits
+        from core.pmc_systems_data import PMC_SKILLS_CATALOG, TRANSITS_CATALOG
+        for sk in PMC_SKILLS_CATALOG:
+            sk_name = sk.get("name", "")
+            if q in sk_name.lower() or q in sk.get("requirements", "").lower():
+                results.append({
+                    "score": 94 if q in sk_name.lower() else 70,
+                    "category": f"Skill ({sk.get('category', '')})",
+                    "badge_color": "#16A34A",
+                    "title": sk_name,
+                    "subtitle": f"Req: {sk.get('requirements', '')[:70]}",
+                    "tab": "pmc_systems",
+                    "target": f"SKILL:{sk_name}",
+                })
+        if any(w in q for w in ("btr", "karma", "fence", "transit")):
+            results.append({
+                "score": 100,
+                "category": "Sistemas PMC / Raid",
+                "badge_color": "#0EA5E9",
+                "title": "Scav Karma, Servicio BTR & Red de Transits",
+                "subtitle": "Tarifas BTR, tramos Fence LL2 (+6.0) y viajes entre mapas",
+                "tab": "pmc_systems",
+                "target": "BTR:" if "btr" in q or "transit" in q else "KARMA:",
+            })
+        for tr in TRANSITS_CATALOG:
+            if q in tr.get("to_map", "").lower() or q in tr.get("from_map", "").lower():
+                results.append({
+                    "score": 68,
+                    "category": f"Transit ({tr.get('from_map', '')})",
+                    "badge_color": "#0EA5E9",
+                    "title": f"{tr['from_map']} -> {tr['to_map']}",
+                    "subtitle": tr.get("notes", "")[:72],
+                    "tab": "pmc_systems",
+                    "target": f"TRANSIT:{tr['from_map']}",
+                })
+
+        # Ordenar por score decreciente y limitar a los 45 mejores resultados
         results.sort(key=lambda r: r["score"], reverse=True)
-        return results[:35]
+        return results[:45]
 
     def search_fir_items(self, query: str = "", trader_filter: str = "TODOS") -> List[Dict[str, Any]]:
         self.ensure_loaded()

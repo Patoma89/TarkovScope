@@ -15,6 +15,7 @@ from core.ballistics import calculate_armor_effectiveness, simulate_shots_to_kil
 from ui.theme import C_AMBER, C_BG_DARKEST, C_BG_INSET, C_BG_PANEL, C_RED_DARK, C_SLATE_700, C_SLATE_800, C_TEXT, C_TEXT_DIM, C_TEXT_SOFT, C_WHITE
 from ui.ballistics_common import CALIBER_CLEAN_MAP, format_caliber_dropdown, format_caliber_short, COLUMNS_SPEC, CLASS_SCORE_COLORS
 from ui.tab_ballistics_duel import DuelMixin
+from ui.tab_ballistics_armor import ArmorMixin
 
 # Mapa de nombres limpios y profesionales para cada código de calibre de la API
 # Formato: raw_api_caliber -> (Etiqueta en el selector desplegable, Etiqueta corta en la tabla)
@@ -25,7 +26,7 @@ from ui.tab_ballistics_duel import DuelMixin
 # Colores sólidos de la matriz balística (estilo tabla oficial de efectividad 1 a 6)
 
 
-class TabBallistics(DuelMixin, ctk.CTkFrame):
+class TabBallistics(ArmorMixin, DuelMixin, ctk.CTkFrame):
     PAGE_SIZE = 28
 
     def __init__(self, master, **kwargs):
@@ -42,6 +43,7 @@ class TabBallistics(DuelMixin, ctk.CTkFrame):
         self.duel_ammo_b: Optional[Dict[str, Any]] = None
         self._render_token: int = 0
         self._debounce_job: Optional[str] = None
+        self._init_armor_state()
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(2, weight=1)
@@ -145,7 +147,7 @@ class TabBallistics(DuelMixin, ctk.CTkFrame):
         self.btn_duel = ctk.CTkButton(
             presets_frame,
             text="⚔️ Comparador Versus",
-            width=175,
+            width=165,
             height=32,
             fg_color=C_SLATE_800,
             hover_color=THEME["accent_gold"],
@@ -153,6 +155,18 @@ class TabBallistics(DuelMixin, ctk.CTkFrame):
             command=self._toggle_duel_mode
         )
         self.btn_duel.pack(side="left", padx=3)
+
+        self.btn_armor = ctk.CTkButton(
+            presets_frame,
+            text="🛡️ Blindaje & Cascos",
+            width=160,
+            height=32,
+            fg_color=C_SLATE_800,
+            hover_color=THEME["accent_gold"],
+            font=ui_font(size=12, weight="bold"),
+            command=self._toggle_armor_mode
+        )
+        self.btn_armor.pack(side="left", padx=3)
 
     def _build_legend_bar(self):
         """Barra de referencia rápida de efectividad contra blindajes Clases 1 a 6."""
@@ -296,6 +310,8 @@ class TabBallistics(DuelMixin, ctk.CTkFrame):
         self._reset_and_filter()
 
     def _set_preset(self, mode: str):
+        if getattr(self, "is_armor_mode", False):
+            self._exit_armor_mode()
         self.preset_mode = mode
         self.btn_all.configure(fg_color=THEME["accent_orange"] if mode == "ALL" else THEME["bg_dark"])
         self.btn_meta.configure(fg_color=THEME["accent_orange"] if mode == "META_PEN" else THEME["bg_dark"])

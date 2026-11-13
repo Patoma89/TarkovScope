@@ -18,22 +18,25 @@ from core.hideout_crafts_data import HIDEOUT_CRAFTS_DATA
 from ui.theme import ui_font
 from ui.theme import C_AMBER, C_BG_DARKEST, C_BG_DEEP, C_BG_PANEL, C_BG_ROW, C_BG_ROW_ALT, C_BLUE, C_BORDER, C_BORDER_ALT, C_BORDER_SOFT, C_EMERALD, C_GREEN, C_GREEN_LIGHT, C_RED, C_RED_DARK, C_SLATE_700, C_TEXT, C_TEXT_DIM, C_TEXT_MUTED, C_TEXT_SOFT, C_WHITE
 from ui.tab_flea_hideout import FleaHideoutMixin
+from ui.tab_flea_barters import FleaBartersMixin
 
 
-class TabFleaAndItems(FleaHideoutMixin, ctk.CTkFrame):
+class TabFleaAndItems(FleaBartersMixin, FleaHideoutMixin, ctk.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, fg_color="transparent", **kwargs)
-        self.view_mode = "HIDEOUT"  # "HIDEOUT", "FIR" o "KAPPA"
+        self.view_mode = "HIDEOUT"  # "HIDEOUT", "FIR", "KAPPA", "CRAFTS", "BARTERS", "CULTIST", "KEEP_SELL"
         self.hideout_progression = "CORRELATIVE"  # "CORRELATIVE" o "ALL"
         self.filter_only_missing = ctk.BooleanVar(value=False)
         self._debounce_job: Optional[str] = None
         self._render_token: int = 0
+        self._init_barters_state()
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(2, weight=1)
 
         self._build_top_bar()
         self._build_hideout_controls_bar()
+        self._build_barters_controls_bar()
         self._build_results_area()
         self._run_search("")
 
@@ -54,19 +57,19 @@ class TabFleaAndItems(FleaHideoutMixin, ctk.CTkFrame):
 
         ctk.CTkLabel(
             header_row,
-            text="HIDEOUT (PROGRESIÓN CORRELATIVA) & RASTREADOR DE ÍTEMS FiR",
+            text="HIDEOUT, TRUEQUES (BARTERS), CULTIST CIRCLE & ÍTEMS FiR",
             font=ui_font(16, "bold"),
             text_color=C_TEXT
         ).grid(row=0, column=0, sticky="w")
 
-        mode_bar = ctk.CTkFrame(header_row, fg_color="transparent")
-        mode_bar.grid(row=0, column=1, sticky="e")
+        mode_bar = ctk.CTkFrame(box, fg_color="transparent")
+        mode_bar.grid(row=1, column=0, padx=14, pady=(0, 8), sticky="ew")
 
         self.btn_mode_hideout = ctk.CTkButton(
             mode_bar,
             text="Hideout & Estaciones",
-            width=175,
-            height=32,
+            width=155,
+            height=30,
             corner_radius=5,
             border_width=1,
             border_color=THEME["accent_gold"],
@@ -76,13 +79,13 @@ class TabFleaAndItems(FleaHideoutMixin, ctk.CTkFrame):
             font=ui_font(12, "bold"),
             command=lambda: self._switch_mode("HIDEOUT")
         )
-        self.btn_mode_hideout.pack(side="left", padx=4)
+        self.btn_mode_hideout.pack(side="left", padx=(0, 4))
 
         self.btn_mode_fir = ctk.CTkButton(
             mode_bar,
-            text="Ítems de Misión (FiR)",
-            width=170,
-            height=32,
+            text="Ítems FiR",
+            width=105,
+            height=30,
             corner_radius=5,
             border_width=1,
             border_color=C_BORDER,
@@ -97,8 +100,8 @@ class TabFleaAndItems(FleaHideoutMixin, ctk.CTkFrame):
         self.btn_mode_kappa = ctk.CTkButton(
             mode_bar,
             text="Collector (Kappa)",
-            width=155,
-            height=32,
+            width=135,
+            height=30,
             corner_radius=5,
             border_width=1,
             border_color=C_BORDER,
@@ -112,9 +115,9 @@ class TabFleaAndItems(FleaHideoutMixin, ctk.CTkFrame):
 
         self.btn_mode_crafts = ctk.CTkButton(
             mode_bar,
-            text="⚗️ Crafteos FiR & Culto",
-            width=185,
-            height=32,
+            text="⚗️ Crafteos",
+            width=105,
+            height=30,
             corner_radius=5,
             border_width=1,
             border_color=C_BORDER,
@@ -126,8 +129,56 @@ class TabFleaAndItems(FleaHideoutMixin, ctk.CTkFrame):
         )
         self.btn_mode_crafts.pack(side="left", padx=4)
 
+        self.btn_mode_barters = ctk.CTkButton(
+            mode_bar,
+            text="🔄 Trueques (Barters)",
+            width=155,
+            height=30,
+            corner_radius=5,
+            border_width=1,
+            border_color=C_BORDER,
+            fg_color=C_BG_PANEL,
+            hover_color=C_BORDER_ALT,
+            text_color=C_TEXT_MUTED,
+            font=ui_font(12, "bold"),
+            command=lambda: self._switch_mode("BARTERS")
+        )
+        self.btn_mode_barters.pack(side="left", padx=4)
+
+        self.btn_mode_cultist = ctk.CTkButton(
+            mode_bar,
+            text="🌀 Cultist Circle",
+            width=130,
+            height=30,
+            corner_radius=5,
+            border_width=1,
+            border_color=C_BORDER,
+            fg_color=C_BG_PANEL,
+            hover_color=C_BORDER_ALT,
+            text_color=C_TEXT_MUTED,
+            font=ui_font(12, "bold"),
+            command=lambda: self._switch_mode("CULTIST")
+        )
+        self.btn_mode_cultist.pack(side="left", padx=4)
+
+        self.btn_mode_keep_sell = ctk.CTkButton(
+            mode_bar,
+            text="🚦 ¿Vender o Guardar?",
+            width=165,
+            height=30,
+            corner_radius=5,
+            border_width=1,
+            border_color=C_BORDER,
+            fg_color=C_BG_PANEL,
+            hover_color=C_BORDER_ALT,
+            text_color=C_TEXT_MUTED,
+            font=ui_font(12, "bold"),
+            command=lambda: self._switch_mode("KEEP_SELL")
+        )
+        self.btn_mode_keep_sell.pack(side="left", padx=4)
+
         search_row = ctk.CTkFrame(box, fg_color="transparent")
-        search_row.grid(row=1, column=0, padx=14, pady=(0, 10), sticky="ew")
+        search_row.grid(row=2, column=0, padx=14, pady=(0, 10), sticky="ew")
         search_row.grid_columnconfigure(0, weight=1)
 
         self.search_entry = ctk.CTkEntry(
@@ -288,6 +339,9 @@ class TabFleaAndItems(FleaHideoutMixin, ctk.CTkFrame):
             ("FIR", self.btn_mode_fir),
             ("KAPPA", self.btn_mode_kappa),
             ("CRAFTS", self.btn_mode_crafts),
+            ("BARTERS", self.btn_mode_barters),
+            ("CULTIST", self.btn_mode_cultist),
+            ("KEEP_SELL", self.btn_mode_keep_sell),
         ]:
             is_act = (m_key == mode)
             btn.configure(
@@ -296,12 +350,33 @@ class TabFleaAndItems(FleaHideoutMixin, ctk.CTkFrame):
                 text_color=C_WHITE if is_act else C_TEXT_MUTED
             )
         if mode == "HIDEOUT":
+            if self._barters_bar is not None:
+                self._barters_bar.grid_remove()
             self.hideout_bar.grid(row=1, column=0, padx=0, pady=(0, 6), sticky="ew")
+        elif mode == "BARTERS":
+            self.hideout_bar.grid_remove()
+            if self._barters_bar is not None:
+                self._barters_bar.grid(row=1, column=0, padx=0, pady=(0, 6), sticky="ew")
         else:
             self.hideout_bar.grid_remove()
+            if self._barters_bar is not None:
+                self._barters_bar.grid_remove()
         self._run_search(self.search_entry.get())
 
     def _quick_search(self, term: str):
+        if term.startswith("BARTER:"):
+            clean_term = term[len("BARTER:"):]
+            self.search_entry.delete(0, "end")
+            self.search_entry.insert(0, clean_term)
+            if self.view_mode != "BARTERS":
+                self._switch_mode("BARTERS")
+            else:
+                self._run_search(clean_term)
+            return
+        if term.startswith("CULTIST:"):
+            self.search_entry.delete(0, "end")
+            self._switch_mode("CULTIST")
+            return
         self.search_entry.delete(0, "end")
         if term:
             self.search_entry.insert(0, term)
@@ -354,6 +429,18 @@ class TabFleaAndItems(FleaHideoutMixin, ctk.CTkFrame):
 
         if self.view_mode == "CRAFTS":
             self._render_hideout_crafts(query)
+            return
+
+        if self.view_mode == "BARTERS":
+            self._render_barters_view(query, token)
+            return
+
+        if self.view_mode == "CULTIST":
+            self._render_cultist_circle_view(query)
+            return
+
+        if self.view_mode == "KEEP_SELL":
+            self._render_keep_or_sell_view(query)
             return
 
         results: List[Dict[str, Any]] = ds.search_fir_items(query)[:60]

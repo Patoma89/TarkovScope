@@ -227,3 +227,62 @@ def simulate_boss_targets(damage: int, penetration_power: float, armor_damage: i
     ]
 
 
+def simulate_plate_and_aramid(
+    damage: int,
+    penetration_power: float,
+    armor_damage: int,
+    plate_class: int,
+    plate_effective_durability: float = 55.0,
+    aramid_class: int = 2,
+    target_hp: float = 85.0,
+    rpm: int = 700,
+) -> Dict[str, Any]:
+    """
+    Simula impacto real del sistema multicapa de Tarkov: Placa Balística + Aramid interno (Clase 2 o 3).
+    Si una bala penetra la placa dura, pierde parte de su penetración/daño al cruzar el aramid blando.
+    """
+    if aramid_class <= 0 or plate_class <= 0:
+        effective_cls = max(plate_class, aramid_class)
+        return simulate_shots_to_kill(
+            damage=damage,
+            penetration_power=penetration_power,
+            armor_damage=armor_damage,
+            armor_class=effective_cls,
+            target_hp=target_hp,
+            max_durability=max(20.0, float(plate_effective_durability)),
+            rpm=rpm,
+        )
+
+    # El aramid blando añade mitigación de daño residual (~10-18% cuando la bala entra justa)
+    plate_sim = simulate_shots_to_kill(
+        damage=damage,
+        penetration_power=penetration_power,
+        armor_damage=armor_damage,
+        armor_class=plate_class,
+        target_hp=target_hp,
+        max_durability=max(25.0, float(plate_effective_durability)),
+        rpm=rpm,
+    )
+    if plate_sim.get("is_utility"):
+        return plate_sim
+
+    # Si la penetración supera holgadamente la placa + aramid, casi no se frena
+    pen_over_plate = float(penetration_power) - (plate_class * 10.0)
+    extra_shots = 0
+    if aramid_class >= 3 and pen_over_plate < 6.0:
+        extra_shots = 1 if plate_sim["stk"] <= 8 else 2
+    elif aramid_class == 2 and pen_over_plate < 2.0 and float(damage) < 55.0:
+        extra_shots = 1
+
+    final_stk = min(30, plate_sim["stk"] + extra_shots)
+    ttk_ms = int(round((final_stk - 1) * (60000.0 / max(1, rpm))))
+    return {
+        "stk": final_stk,
+        "ttk_ms": ttk_ms,
+        "first_shot_pen_pct": plate_sim["first_shot_pen_pct"],
+        "plate_class": plate_class,
+        "aramid_class": aramid_class,
+    }
+
+
+
