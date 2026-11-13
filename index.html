@@ -6,7 +6,7 @@
   <title>TTC — Tactical Tarkov Companion | Asistente Táctico de Escritorio</title>
   <meta name="description" content="TTC (Tactical Tarkov Companion) es la suite táctica de escritorio definitiva para Escape from Tarkov (PvE & PvP). Cero latencia (<1 ms), 100% offline, Gunsmith Studio interactivo, Wiki Dossier de Quests, mapas 2D y simulador balístico.">
   <meta name="keywords" content="TTC, Tactical Tarkov Companion, Escape from Tarkov, Tarkov Desktop App, Gunsmith Studio, Quests Offline, Balística EFT, Mapas Tarkov, CustomTkinter">
-  <meta name="theme-color" content="#0b0e14">
+  <meta name="theme-color" content="#0d0e0c">
 
   <!-- Open Graph / Redes Sociales -->
   <meta property="og:type" content="website">
@@ -15,41 +15,45 @@
   <meta property="og:url" content="https://patoma89.github.io/TarkovScope/">
 
   <link rel="icon" type="image/x-icon" href="ttc.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Inter:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --bg-void: #07090d;
-      --bg-dark: #0b0e14;
-      --bg-elevated: #111620;
-      --bg-elevated-hover: #161d2b;
-      --bg-panel: #0d1119;
+      --bg-void: #070807;
+      --bg-dark: #0d0e0c;
+      --bg-elevated: #141612;
+      --bg-elevated-hover: #1c1f19;
+      --bg-panel: #10120e;
 
-      --gold: #d4b886;
-      --gold-bright: #ebd0a0;
-      --gold-dim: #8f7952;
-      --gold-glow: rgba(212, 184, 134, 0.22);
+      --gold: #c7b082;
+      --gold-bright: #e4cfa3;
+      --gold-dim: #8a7957;
+      --gold-glow: rgba(199, 176, 130, 0.22);
 
-      --green: #10b981;
-      --green-glow: rgba(16, 185, 129, 0.2);
-      --cyan: #38bdf8;
-      --cyan-glow: rgba(56, 189, 248, 0.18);
-      --amber: #f59e0b;
-      --red: #ef4444;
+      --green: #72a350;
+      --green-glow: rgba(114, 163, 80, 0.22);
+      --cyan: #94a38b;
+      --cyan-glow: rgba(148, 163, 139, 0.16);
+      --amber: #c97b2e;
+      --red: #b84239;
 
-      --text-main: #f8fafc;
-      --text-dim: #cbd5e1;
-      --text-muted: #64748b;
+      --text-main: #eae6dc;
+      --text-dim: #b4afa2;
+      --text-muted: #6f6b60;
 
-      --border: #232936;
-      --border-gold: rgba(212, 184, 134, 0.28);
+      --border: #2a2c25;
+      --border-gold: rgba(199, 176, 130, 0.34);
 
-      --font-sans: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
-      --font-mono: 'JetBrains Mono', Consolas, 'Fira Code', monospace;
+      --font-display: 'Chakra Petch', 'Segoe UI', sans-serif;
+      --font-sans: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'Share Tech Mono', Consolas, monospace;
 
-      --radius-sm: 6px;
-      --radius-md: 12px;
-      --radius-lg: 18px;
-      --shadow-card: 0 18px 40px -15px rgba(0, 0, 0, 0.75);
+      --radius-sm: 3px;
+      --radius-md: 5px;
+      --radius-lg: 8px;
+      --shadow-card: 0 18px 40px -15px rgba(0, 0, 0, 0.85);
     }
 
     * {
@@ -69,11 +73,11 @@
       line-height: 1.65;
       overflow-x: hidden;
       background-image:
-        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(212, 184, 134, 0.12), transparent),
-        radial-gradient(circle at 85% 30%, rgba(56, 189, 248, 0.05), transparent 35%),
-        radial-gradient(circle at 15% 65%, rgba(16, 185, 129, 0.05), transparent 35%),
-        linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(199, 176, 130, 0.13), transparent),
+        radial-gradient(circle at 85% 30%, rgba(114, 163, 80, 0.06), transparent 35%),
+        radial-gradient(circle at 15% 65%, rgba(154, 136, 102, 0.05), transparent 35%),
+        linear-gradient(to right, rgba(234, 230, 220, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(234, 230, 220, 0.02) 1px, transparent 1px);
       background-size: 100% 100%, 100% 100%, 100% 100%, 44px 44px, 44px 44px;
     }
 
@@ -177,12 +181,16 @@
       list-style: none;
     }
 
+    h1, h2, h3, h4, .nav-links a, .btn {
+      font-family: var(--font-display);
+    }
+
     .nav-links a {
-      font-size: 0.86rem;
-      font-weight: 600;
+      font-size: 0.88rem;
+      font-weight: 700;
       color: var(--text-dim);
       text-transform: uppercase;
-      letter-spacing: 0.9px;
+      letter-spacing: 1.1px;
       padding: 6px 0;
       position: relative;
     }
@@ -223,32 +231,33 @@
       justify-content: center;
       gap: 8px;
       padding: 10px 20px;
-      font-size: 0.9rem;
+      font-size: 0.92rem;
       font-weight: 700;
+      text-transform: uppercase;
       border-radius: var(--radius-sm);
       cursor: pointer;
       transition: all 0.22s ease;
       border: 1px solid transparent;
       white-space: nowrap;
-      letter-spacing: 0.4px;
+      letter-spacing: 0.9px;
     }
 
     .btn-gold {
-      background: linear-gradient(135deg, #dcc190, #b59660);
-      color: #090c12;
-      border-color: #f3e2c3;
+      background: linear-gradient(135deg, #d8c295, #9a8356);
+      color: #0b0c09;
+      border-color: #ead7b0;
       box-shadow: 0 6px 20px var(--gold-glow);
     }
 
     .btn-gold:hover {
-      background: linear-gradient(135deg, #ebd0a0, #c7a66e);
+      background: linear-gradient(135deg, #e8d4ab, #b39966);
       color: #000;
       transform: translateY(-2px);
-      box-shadow: 0 10px 26px rgba(212, 184, 134, 0.36);
+      box-shadow: 0 10px 26px rgba(199, 176, 130, 0.36);
     }
 
     .btn-ghost {
-      background: rgba(17, 22, 32, 0.85);
+      background: rgba(20, 22, 18, 0.9);
       color: var(--text-main);
       border-color: var(--border);
     }
@@ -920,7 +929,7 @@
           </svg>
           GitHub
         </a>
-        <a href="#descargar" class="btn btn-gold">⬇ Descargar v1.1</a>
+        <a href="#descargar" class="btn btn-gold">⬇ Descargar</a>
       </div>
     </div>
   </nav>
@@ -930,7 +939,7 @@
     <div class="container">
       <div class="hero-pill">
         <span class="status-dot"></span>
-        <span>V1.1 OFICIAL · PVE &amp; PVP · &lt;1 MS RAM CACHE · AUTO-UPDATER</span>
+        <span>TACTICAL TARKOV COMPANION · PVE &amp; PVP · &lt;1 MS RAM CACHE · AUTO-UPDATER</span>
       </div>
 
       <h1 class="hero-title">
@@ -1155,7 +1164,7 @@
         <div class="download-card featured">
           <span class="featured-ribbon">RECOMENDADO · SIN PYTHON</span>
           <div>
-            <h3>📦 Instalador TTC v1.1 para Windows</h3>
+            <h3>📦 Instalador Oficial para Windows</h3>
             <p style="color: var(--text-dim); font-size: 0.95rem; margin-bottom: 18px;">
               Instalador oficial con acceso directo, ícono nativo, optimización de rendimiento 4x y verificador de actualizaciones integrado.
             </p>
@@ -1167,7 +1176,7 @@
           </div>
           <div>
             <a href="https://github.com/Patoma89/TarkovScope/releases/latest" target="_blank" class="btn btn-gold" style="width: 100%; padding: 14px; font-size: 1rem;">
-              ⬇ Descargar TTC_Setup_v1.1.exe (GitHub Releases)
+              ⬇ Descargar Instalador (GitHub Releases)
             </a>
           </div>
         </div>
