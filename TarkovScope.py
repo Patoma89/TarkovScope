@@ -17,12 +17,14 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 if current_dir not in sys.path:
     sys.path.insert(0, current_dir)
 
-from core.config import APP_NAME, THEME, BUNDLE_DIR, BASE_DIR
+from core.config import APP_NAME, APP_VERSION, THEME, BUNDLE_DIR, BASE_DIR
 from core.database import init_db, is_db_populated
 from core.datastore import get_datastore
 from core.sync_service import SyncService
+from core.updater import check_github_release
 from ui.image_utils import clear_image_ram_cache
 from ui.theme import THEME_SETTINGS, ui_font
+from ui.update_modal import UpdateDialog
 from ui.tab_bosses import TabBosses
 from ui.tab_weapons import TabWeapons
 from ui.tab_ballistics import TabBallistics
@@ -88,6 +90,7 @@ class TarkovScopeApp(ctk.CTk):
         # Lazy Tab Loading & Pipeline de Pre-calentamiento en Idle
         self.tabs: Dict[str, ctk.CTkFrame] = {}
         self._current_tab_key: str = "quests"
+        self._active_nav_key: str = ""
         self._tab_classes = {
             "bosses": TabBosses,
             "maps": TabMaps,
@@ -101,7 +104,7 @@ class TarkovScopeApp(ctk.CTk):
 
         self.switch_tab("quests")
         self._check_initial_sync()
-        self.after(80, self._warmup_remaining_tabs)
+        self.after(300, self._warmup_remaining_tabs)
 
     def _build_sidebar(self):
         """Barra de navegación lateral limpia, tipográfica y con alto contraste."""
@@ -278,7 +281,22 @@ class TarkovScopeApp(ctk.CTk):
             corner_radius=6,
             command=self.start_sync_in_background
         )
-        self.sync_btn.grid(row=3, column=0, sticky="ew")
+        self.sync_btn.grid(row=3, column=0, pady=(0, 6), sticky="ew")
+
+        self.update_btn = ctk.CTkButton(
+            footer_frame,
+            text=f"🔄 Buscar Actualización (v{APP_VERSION})",
+            font=ui_font(11, "bold"),
+            fg_color="#141824",
+            hover_color="#242E42",
+            border_width=1,
+            border_color="#2E3748",
+            text_color=C_TEXT_MUTED,
+            height=28,
+            corner_radius=5,
+            command=self.check_for_app_updates
+        )
+        self.update_btn.grid(row=4, column=0, sticky="ew")
 
     def _build_content_area(self):
         self.content_frame = ctk.CTkFrame(self, fg_color="transparent")
@@ -286,42 +304,56 @@ class TarkovScopeApp(ctk.CTk):
         self.content_frame.grid_columnconfigure(0, weight=1)
         self.content_frame.grid_rowconfigure(0, weight=1)
 
-    def _get_or_create_tab(self, tab_key: str) -> ctk.CTkFrame:
+    def _get_or_create_tab(self, tab_key: str, background: bool = False) -> ctk.CTkFrame:
         if tab_key not in self.tabs:
             cls = self._tab_classes[tab_key]
             frame = cls(self.content_frame)
-            frame.grid(row=0, column=0, sticky="nsew")
+            if not background:
+                frame.grid(row=0, column=0, sticky="nsew")
+            else:
+                # Gridear y ocultar de inmediato para que no participe en redimensionados (maximizar/restaurar)
+                frame.grid(row=0, column=0, sticky="nsew")
+                frame.grid_remove()
             self.tabs[tab_key] = frame
         return self.tabs[tab_key]
 
     def switch_tab(self, selected_key: str):
-        """Muestra la pestaña seleccionada de forma instantánea (<1 ms si ya está en RAM)."""
+        """Muestra la pestaña seleccionada manteniendo solo 1 pestaña mapeada (maximizar/resize 4x más rápido)."""
         if not self.winfo_exists():
             return
+        if selected_key == self._active_nav_key and selected_key in self.tabs:
+            return
+
+        prev_key = self._active_nav_key
+        if prev_key and prev_key != selected_key and prev_key in self.tabs:
+            self.tabs[prev_key].grid_remove()
 
         self._current_tab_key = selected_key
+        self._active_nav_key = selected_key
+
         target_frame = self._get_or_create_tab(selected_key)
+        target_frame.grid(row=0, column=0, sticky="nsew")
         target_frame.tkraise()
         if hasattr(target_frame, "_refresh_scrollregion"):
             self.after(20, target_frame._refresh_scrollregion)
 
-        for k, btn in self.nav_buttons.items():
-            if k == selected_key:
-                btn.configure(
-                    fg_color="#1E2536",
-                    border_color=THEME["accent_gold"],
-                    text_color=C_WHITE
-                )
-            else:
-                btn.configure(
-                    fg_color="transparent",
-                    border_color=C_BG_DEEP,
-                    text_color=C_TEXT_MUTED
-                )
+        # Actualizar solo los 2 botones que cambian de estado (evita redibujar los 8 canvas)
+        if prev_key and prev_key != selected_key and prev_key in self.nav_buttons:
+            self.nav_buttons[prev_key].configure(
+                fg_color="transparent",
+                border_color=C_BG_DEEP,
+                text_color=C_TEXT_MUTED
+            )
+        if selected_key in self.nav_buttons:
+            self.nav_buttons[selected_key].configure(
+                fg_color="#1E2536",
+                border_color=THEME["accent_gold"],
+                text_color=C_WHITE
+            )
 
     def _warmup_remaining_tabs(self):
-        """Pre-construye las pestañas ligeras en idle para que al hacer clic cambien en 0 ms."""
-        tabs_to_warm = ["bosses", "maps", "weapons", "ballistics", "flea"]
+        """Pre-construye todas las pestañas restantes en idle sin interrumpir la pestaña activa."""
+        tabs_to_warm = ["bosses", "maps", "weapons", "ballistics", "flea", "story_quests", "lore"]
 
         def _warm_step(idx: int = 0):
             if not self.winfo_exists() or idx >= len(tabs_to_warm):
@@ -329,15 +361,12 @@ class TarkovScopeApp(ctk.CTk):
             key = tabs_to_warm[idx]
             if key not in self.tabs:
                 try:
-                    self._get_or_create_tab(key)
+                    self._get_or_create_tab(key, background=True)
                 except Exception as e:
                     logger.warning("Fallo pre-calentando pestaña %s: %s", key, e)
-            # Asegurar que la pestaña activa se mantenga arriba
-            if self._current_tab_key in self.tabs:
-                self.tabs[self._current_tab_key].tkraise()
-            self.after(90, lambda: _warm_step(idx + 1))
+            self.after(120, lambda: _warm_step(idx + 1))
 
-        self.after(150, lambda: _warm_step(0))
+        _warm_step(0)
 
     def _check_initial_sync(self):
         if not is_db_populated():
@@ -373,6 +402,27 @@ class TarkovScopeApp(ctk.CTk):
                     self.db_status_lbl.configure(text="● Error al sincronizar", text_color=C_RED)
 
             self.after(0, on_finish)
+
+        threading.Thread(target=worker, daemon=True).start()
+
+    # --- Verificación de Actualizaciones en GitHub ---
+
+    def check_for_app_updates(self):
+        self.update_btn.configure(state="disabled", text="⏳ Buscando actualización...")
+
+        def worker():
+            info = check_github_release()
+
+            def on_done():
+                if not self.winfo_exists():
+                    return
+                self.update_btn.configure(state="normal", text=f"🔄 Buscar Actualización (v{APP_VERSION})")
+                UpdateDialog(self, info)
+
+            try:
+                self.after(0, on_done)
+            except RuntimeError:
+                pass
 
         threading.Thread(target=worker, daemon=True).start()
 

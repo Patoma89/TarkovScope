@@ -5,6 +5,7 @@ y celdas), nombres de calibres formateados prolijamente ("Calibre 5.56x45 NATO",
 columnas compactas CLASS 1 a CLASS 6 con número único sobre celda sólida (estilo Wiki),
 y renderizado directo sin contenedores anidados.
 """
+import tkinter as tk
 import customtkinter as ctk
 from typing import List, Dict, Any, Optional
 from core.config import THEME
@@ -451,6 +452,7 @@ class TabBallistics(DuelMixin, ctk.CTkFrame):
 
     def _create_aligned_ammo_row(self, grid_row: int, a: Dict[str, Any]):
         row_bg = "#141820" if grid_row % 2 == 1 else "#0F1218"
+        self.table_grid.grid_rowconfigure(grid_row, minsize=32)
 
         pen = float(a.get("penetration_power", 0))
         dmg = int(a.get("damage", 0))
@@ -460,71 +462,78 @@ class TabBallistics(DuelMixin, ctk.CTkFrame):
         tracer_str = " [T]" if a.get("tracer") else ""
 
         # Col 0: Calibre (formateado y separado prolijamente)
-        ctk.CTkLabel(
+        tk.Label(
             self.table_grid,
             text=f"  {cal_clean}  ",
-            width=132,
-            height=32,
-            fg_color=row_bg,
+            bg=row_bg,
+            fg=THEME["accent_gold"],
             font=ui_font(size=12, weight="bold"),
-            text_color=THEME["accent_gold"],
-            anchor="w"
+            anchor="w",
+            bd=0,
+            highlightthickness=0,
+            padx=4,
         ).grid(row=grid_row, column=0, padx=(0, 1), pady=(0, 1), sticky="nsew")
 
         # Col 1: Proyectil
-        ctk.CTkLabel(
+        tk.Label(
             self.table_grid,
             text=f"  {a['name']}{tracer_str}",
-            height=32,
-            fg_color=row_bg,
+            bg=row_bg,
+            fg=THEME["text_main"],
             font=ui_font(size=13, weight="bold"),
-            text_color=THEME["text_main"],
-            anchor="w"
+            anchor="w",
+            bd=0,
+            highlightthickness=0,
+            padx=4,
         ).grid(row=grid_row, column=1, padx=(0, 1), pady=(0, 1), sticky="nsew")
 
         # Col 2: Daño
         is_utility = (dmg <= 0 and pen <= 0)
         dmg_col = C_TEXT_DIM if is_utility else (THEME["accent_green"] if dmg >= 75 else THEME["text_main"])
         dmg_txt = "0 (Utilidad)" if is_utility else str(dmg)
-        ctk.CTkLabel(
+        tk.Label(
             self.table_grid,
             text=dmg_txt,
-            height=32,
-            fg_color=row_bg,
+            bg=row_bg,
+            fg=dmg_col,
             font=ui_font(size=11 if is_utility else 13, weight="bold"),
-            text_color=dmg_col
+            bd=0,
+            highlightthickness=0,
         ).grid(row=grid_row, column=2, padx=(0, 1), pady=(0, 1), sticky="nsew")
 
         # Col 3: Penetración
         pen_col = C_TEXT_DIM if is_utility else (THEME["accent_orange"] if pen >= 40 else (THEME["accent_yellow"] if pen >= 28 else THEME["text_main"]))
         pen_txt = "—" if is_utility else f"{pen:.0f}"
-        ctk.CTkLabel(
+        tk.Label(
             self.table_grid,
             text=pen_txt,
-            height=32,
-            fg_color=row_bg,
+            bg=row_bg,
+            fg=pen_col,
             font=ui_font(size=13, weight="bold"),
-            text_color=pen_col
+            bd=0,
+            highlightthickness=0,
         ).grid(row=grid_row, column=3, padx=(0, 1), pady=(0, 1), sticky="nsew")
 
         # Col 4: Daño Armadura %
-        ctk.CTkLabel(
+        tk.Label(
             self.table_grid,
             text="—" if is_utility else f"{admg}%",
-            height=32,
-            fg_color=row_bg,
+            bg=row_bg,
+            fg=THEME["text_muted"],
             font=ui_font(size=12),
-            text_color=THEME["text_muted"]
+            bd=0,
+            highlightthickness=0,
         ).grid(row=grid_row, column=4, padx=(0, 1), pady=(0, 1), sticky="nsew")
 
         # Col 5: Velocidad m/s
-        ctk.CTkLabel(
+        tk.Label(
             self.table_grid,
             text=f"{spd}" if spd > 0 else "—",
-            height=32,
-            fg_color=row_bg,
+            bg=row_bg,
+            fg=THEME["text_muted"],
             font=ui_font(size=12),
-            text_color=THEME["text_muted"]
+            bd=0,
+            highlightthickness=0,
         ).grid(row=grid_row, column=5, padx=(0, 1), pady=(0, 1), sticky="nsew")
 
         # Cols 6..11: CLASS 1 a CLASS 6 — Celdas sólidas compactas mostrando Score (1..6) o STK (Tiros al Tórax)
@@ -547,13 +556,12 @@ class TabBallistics(DuelMixin, ctk.CTkFrame):
                     cell_txt = str(score)
                     f_size = 14
 
-            ctk.CTkLabel(
+            tk.Label(
                 self.table_grid,
                 text=cell_txt,
-                width=44,
-                height=32,
-                fg_color=bg_cell,
-                text_color=fg_cell,
+                bg=bg_cell,
+                fg=fg_cell,
                 font=ui_font(size=f_size, weight="bold"),
-                corner_radius=0
+                bd=0,
+                highlightthickness=0,
             ).grid(row=grid_row, column=5 + ac, padx=(0, 1), pady=(0, 1), sticky="nsew")

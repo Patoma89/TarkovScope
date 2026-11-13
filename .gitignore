@@ -4,6 +4,7 @@
 *.spec
 build/
 dist/
+dist_installer/
 *.rar
 *.zip
 .vscode/

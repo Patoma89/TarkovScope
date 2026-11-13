@@ -6,8 +6,9 @@ import sys
 
 APP_NAME = "TTC (Tactical Tarkov Companion)"
 APP_FULL_NAME = "TTC (Tactical Tarkov Companion)"
-APP_VERSION = "2.0.0"
+APP_VERSION = "1.1.0"
 APP_AUTHOR = "Patoma89"
+GITHUB_REPO = "Patoma89/TarkovScope"
 
 # Directorio raíz del proyecto
 if getattr(sys, 'frozen', False):

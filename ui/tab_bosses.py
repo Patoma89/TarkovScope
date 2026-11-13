@@ -167,8 +167,6 @@ class TabBosses(ctk.CTkFrame):
 
         def worker():
             ok, _msg = sync_live_boss_spawns_from_eftboss()
-            if not self.winfo_exists():
-                return
 
             def on_done():
                 if not self.winfo_exists():
@@ -189,7 +187,10 @@ class TabBosses(ctk.CTkFrame):
                         text_color=THEME["accent_green"]
                     )
 
-            self.after(0, on_done)
+            try:
+                self.after(0, on_done)
+            except RuntimeError:
+                pass
 
         threading.Thread(target=worker, daemon=True).start()
 

@@ -22,13 +22,15 @@ class TabWeapons(ctk.CTkFrame, WeaponBuilderMixin):
         self.weapon_buttons: Dict[str, ctk.CTkButton] = {}
 
         self._init_builder_state()
+        self._mode_views: Dict[str, ctk.CTkFrame] = {}
+        self._gs_search_debounce: Optional[str] = None
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=1)
 
         self._build_top_switcher()
         self._build_body_container()
-        self._render_arsenal_view()
+        self._mode_views["ARSENAL"] = self._render_arsenal_view()
 
     def _build_top_switcher(self):
         bar = ctk.CTkFrame(
@@ -95,20 +97,24 @@ class TabWeapons(ctk.CTkFrame, WeaponBuilderMixin):
     def _switch_mode(self, new_mode: str):
         if self.mode == new_mode:
             return
+        prev_mode = self.mode
         self.mode = new_mode
         self.btn_arsenal.configure(fg_color=THEME["accent_orange"] if new_mode == "ARSENAL" else THEME["bg_dark"])
         self.btn_gunsmith.configure(fg_color=THEME["accent_orange"] if new_mode == "GUNSMITH" else THEME["bg_dark"])
         self.btn_builder.configure(fg_color=THEME["accent_orange"] if new_mode == "BUILDER" else THEME["bg_dark"])
 
-        for w in self.body_frame.winfo_children():
-            w.destroy()
+        if prev_mode in self._mode_views:
+            self._mode_views[prev_mode].grid_remove()
 
-        if new_mode == "ARSENAL":
-            self._render_arsenal_view()
-        elif new_mode == "GUNSMITH":
-            self._render_gunsmith_view()
-        elif new_mode == "BUILDER":
-            self._render_builder_view()
+        if new_mode in self._mode_views:
+            self._mode_views[new_mode].grid(row=0, column=0, sticky="nsew")
+        else:
+            if new_mode == "ARSENAL":
+                self._mode_views["ARSENAL"] = self._render_arsenal_view()
+            elif new_mode == "GUNSMITH":
+                self._mode_views["GUNSMITH"] = self._render_gunsmith_view()
+            elif new_mode == "BUILDER":
+                self._mode_views["BUILDER"] = self._render_builder_view()
 
     # --- VISTA 1: ARSENAL & BUILDS META ---
 
@@ -168,6 +174,7 @@ class TabWeapons(ctk.CTkFrame, WeaponBuilderMixin):
 
         self._populate_weapons_sidebar()
         self._select_weapon(self.selected_weapon)
+        return container
 
     def _on_category_change(self, cat: str):
         self.selected_category = cat
@@ -442,7 +449,7 @@ class TabWeapons(ctk.CTkFrame, WeaponBuilderMixin):
         self.gs_search_entry.grid(row=0, column=1, padx=8, pady=10, sticky="ew")
         if self._gs_search_query:
             self.gs_search_entry.insert(0, self._gs_search_query)
-        self.gs_search_entry.bind("<KeyRelease>", lambda e: self._refresh_gunsmith_list())
+        self.gs_search_entry.bind("<KeyRelease>", self._on_gs_search_debounced)
 
         ctk.CTkCheckBox(
             ctrl_bar,
@@ -465,6 +472,12 @@ class TabWeapons(ctk.CTkFrame, WeaponBuilderMixin):
         self.gs_scroll.grid_columnconfigure(0, weight=1)
 
         self._refresh_gunsmith_list()
+        return outer
+
+    def _on_gs_search_debounced(self, _=None):
+        if self._gs_search_debounce is not None:
+            self.after_cancel(self._gs_search_debounce)
+        self._gs_search_debounce = self.after(150, self._refresh_gunsmith_list)
 
     def _refresh_gunsmith_list(self):
         self._render_token_gunsmith = getattr(self, "_render_token_gunsmith", 0) + 1

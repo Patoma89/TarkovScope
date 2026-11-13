@@ -280,6 +280,7 @@ class WeaponBuilderMixin:
 
         # Refrescar todo el estado visual inicial
         self._refresh_pro_builder_ui()
+        return container
 
     # -------------------------------------------------------------
     # 1. BARRA SUPERIOR PRO (SELECTOR, PRESETS DIRECTOS Y ACCIONES)
@@ -588,7 +589,10 @@ class WeaponBuilderMixin:
         self._render_parts_for_active_slot()
 
     def _render_parts_for_active_slot(self):
-        """Renderiza los accesorios en formato lista vertical táctica con imágenes oficiales de alta definición."""
+        """Renderiza los accesorios en lotes (batch rendering) con imágenes oficiales de alta definición."""
+        self._parts_render_token = getattr(self, "_parts_render_token", 0) + 1
+        token = self._parts_render_token
+
         for w in self.parts_palette_scroll.winfo_children():
             w.destroy()
 
@@ -617,136 +621,146 @@ class WeaponBuilderMixin:
             text_color=C_TEXT_MUTED
         ).pack(side="right")
 
-        # Filas de la lista
-        for part in parts:
-            p_id = part["id"]
-            is_equipped = (p_id == cur_equipped_id)
+        def _render_batch(start_idx: int = 0, batch_size: int = 6):
+            if not self.winfo_exists() or token != self._parts_render_token:
+                return
+            end_idx = min(start_idx + batch_size, len(parts))
+            for part in parts[start_idx:end_idx]:
+                self._create_builder_part_row(part, cur_equipped_id)
+            if end_idx < len(parts):
+                self.after(6, lambda: _render_batch(end_idx, batch_size))
 
-            row_card = ctk.CTkFrame(
-                self.parts_palette_scroll,
-                fg_color="#121A26" if is_equipped else C_BG_PANEL,
-                corner_radius=6,
-                border_width=2 if is_equipped else 1,
-                border_color=THEME["accent_gold"] if is_equipped else "#1E293B"
-            )
-            row_card.pack(fill="x", padx=6, pady=3)
-            row_card.grid_columnconfigure(1, weight=1)
+        _render_batch(0, 6)
 
-            # Col 0: Marco de Imagen con Miniatura Oficial de EFT
-            img_box = ctk.CTkFrame(
-                row_card,
-                width=80,
-                height=52,
-                fg_color="#080C14",
-                corner_radius=4,
-                border_width=1,
-                border_color="#1F2937"
-            )
-            img_box.grid(row=0, column=0, rowspan=2, padx=(8, 10), pady=6)
-            img_box.grid_propagate(False)
+    def _create_builder_part_row(self, part: Dict[str, Any], cur_equipped_id: str):
+        p_id = part["id"]
+        is_equipped = (p_id == cur_equipped_id)
 
-            img_key = get_attachment_image_key(p_id)
-            thumb_lbl = ctk.CTkLabel(img_box, text="")
-            ctk_img = get_weapon_or_part_ctk_image(img_key, size=(72, 44), label_fallback=part["name"])
-            if ctk_img:
-                thumb_lbl.configure(image=ctk_img)
-            thumb_lbl.pack(expand=True)
+        row_card = ctk.CTkFrame(
+            self.parts_palette_scroll,
+            fg_color="#121A26" if is_equipped else C_BG_PANEL,
+            corner_radius=6,
+            border_width=2 if is_equipped else 1,
+            border_color=THEME["accent_gold"] if is_equipped else "#1E293B"
+        )
+        row_card.pack(fill="x", padx=6, pady=3)
+        row_card.grid_columnconfigure(1, weight=1)
 
-            # Col 1: Información Principal (Nombre + Badges de Stats + Comerciante + Costo)
-            name_lbl = ctk.CTkLabel(
-                row_card,
-                text=part["name"],
-                font=ui_font(13, "bold"),
-                text_color=THEME["accent_gold"] if is_equipped else C_WHITE,
-                anchor="w"
-            )
-            name_lbl.grid(row=0, column=1, sticky="w", padx=2, pady=(7, 2))
+        # Col 0: Marco de Imagen con Miniatura Oficial de EFT
+        img_box = ctk.CTkFrame(
+            row_card,
+            width=80,
+            height=52,
+            fg_color="#080C14",
+            corner_radius=4,
+            border_width=1,
+            border_color="#1F2937"
+        )
+        img_box.grid(row=0, column=0, rowspan=2, padx=(8, 10), pady=6)
+        img_box.grid_propagate(False)
 
-            # Fila de Badges y Metadatos
-            badges_row = ctk.CTkFrame(row_card, fg_color="transparent")
-            badges_row.grid(row=1, column=1, sticky="w", padx=2, pady=(0, 7))
+        img_key = get_attachment_image_key(p_id)
+        thumb_lbl = ctk.CTkLabel(img_box, text="")
+        ctk_img = get_weapon_or_part_ctk_image(img_key, size=(72, 44), label_fallback=part["name"])
+        if ctk_img:
+            thumb_lbl.configure(image=ctk_img)
+        thumb_lbl.pack(expand=True)
 
-            if p_id != "none":
-                e_d = part.get("ergo_delta", 0.0)
-                r_d = part.get("recoil_pct_delta", 0.0)
-                w_d = part.get("weight_delta_kg", 0.0)
-                cost = part.get("price_rubles", 0)
-                trader = part.get("trader", "—")
-                ll = part.get("loyalty_level", 1)
+        # Col 1: Información Principal (Nombre + Badges de Stats + Comerciante + Costo)
+        name_lbl = ctk.CTkLabel(
+            row_card,
+            text=part["name"],
+            font=ui_font(13, "bold"),
+            text_color=THEME["accent_gold"] if is_equipped else C_WHITE,
+            anchor="w"
+        )
+        name_lbl.grid(row=0, column=1, sticky="w", padx=2, pady=(7, 2))
 
-                if e_d != 0:
-                    ctk.CTkLabel(
-                        badges_row,
-                        text=f" {e_d:+g} Ergo ",
-                        font=ui_font(10, "bold"),
-                        fg_color="#166534" if e_d > 0 else "#991B1B",
-                        text_color=C_WHITE,
-                        corner_radius=4
-                    ).pack(side="left", padx=(0, 4))
+        # Fila de Badges y Metadatos
+        badges_row = ctk.CTkFrame(row_card, fg_color="transparent")
+        badges_row.grid(row=1, column=1, sticky="w", padx=2, pady=(0, 7))
 
-                if r_d != 0:
-                    ctk.CTkLabel(
-                        badges_row,
-                        text=f" {r_d:+g}% Recoil ",
-                        font=ui_font(10, "bold"),
-                        fg_color="#0369A1" if r_d < 0 else "#991B1B",
-                        text_color=C_WHITE,
-                        corner_radius=4
-                    ).pack(side="left", padx=2)
+        if p_id != "none":
+            e_d = part.get("ergo_delta", 0.0)
+            r_d = part.get("recoil_pct_delta", 0.0)
+            w_d = part.get("weight_delta_kg", 0.0)
+            cost = part.get("price_rubles", 0)
+            trader = part.get("trader", "—")
+            ll = part.get("loyalty_level", 1)
 
-                if w_d != 0:
-                    ctk.CTkLabel(
-                        badges_row,
-                        text=f" {w_d:+.2f} kg ",
-                        font=ui_font(10),
-                        fg_color="#1E293B",
-                        text_color=C_TEXT_SOFT,
-                        corner_radius=4
-                    ).pack(side="left", padx=2)
-
-                t_txt = f"🛡️ {trader} LL{ll}" if trader != "—" else "🛒 Flea Market"
+            if e_d != 0:
                 ctk.CTkLabel(
                     badges_row,
-                    text=t_txt,
-                    font=ui_font(11, "bold"),
-                    text_color="#38BDF8"
-                ).pack(side="left", padx=(6, 4))
+                    text=f" {e_d:+g} Ergo ",
+                    font=ui_font(10, "bold"),
+                    fg_color="#166534" if e_d > 0 else "#991B1B",
+                    text_color=C_WHITE,
+                    corner_radius=4
+                ).pack(side="left", padx=(0, 4))
 
-                cost_txt = f"💰 ~{cost:,} ₽".replace(",", ".") if cost > 0 else "0 ₽"
+            if r_d != 0:
                 ctk.CTkLabel(
                     badges_row,
-                    text=cost_txt,
-                    font=ui_font(11, "bold"),
-                    text_color=C_GREEN_LIGHT
-                ).pack(side="left", padx=4)
-            else:
-                ctk.CTkLabel(
-                    badges_row,
-                    text="Desmontar accesorio (deja la ranura vacía o con pieza estándar)",
-                    font=ui_font(11),
-                    text_color=C_TEXT_DIM
+                    text=f" {r_d:+g}% Recoil ",
+                    font=ui_font(10, "bold"),
+                    fg_color="#0369A1" if r_d < 0 else "#991B1B",
+                    text_color=C_WHITE,
+                    corner_radius=4
                 ).pack(side="left", padx=2)
 
-            # Col 2: Botón de Estado / Instalación
-            btn_state = ctk.CTkButton(
-                row_card,
-                text="✓ INSTALADO" if is_equipped else "Equipar",
-                width=110,
-                height=30,
-                corner_radius=5,
-                fg_color="#15803D" if is_equipped else C_SLATE_800,
-                hover_color="#16A34A" if is_equipped else THEME["accent_gold"],
-                text_color=C_WHITE if is_equipped else C_TEXT,
-                font=ui_font(11, "bold"),
-                command=lambda pid=p_id: self._equip_part_in_active_slot(pid)
-            )
-            btn_state.grid(row=0, column=2, rowspan=2, padx=12, pady=8)
+            if w_d != 0:
+                ctk.CTkLabel(
+                    badges_row,
+                    text=f" {w_d:+.2f} kg ",
+                    font=ui_font(10),
+                    fg_color="#1E293B",
+                    text_color=C_TEXT_SOFT,
+                    corner_radius=4
+                ).pack(side="left", padx=2)
 
-            # Hacer que hacer clic en la fila también equipe la pieza
-            row_card.bind("<Button-1>", lambda e, pid=p_id: self._equip_part_in_active_slot(pid))
-            name_lbl.bind("<Button-1>", lambda e, pid=p_id: self._equip_part_in_active_slot(pid))
-            img_box.bind("<Button-1>", lambda e, pid=p_id: self._equip_part_in_active_slot(pid))
-            thumb_lbl.bind("<Button-1>", lambda e, pid=p_id: self._equip_part_in_active_slot(pid))
+            t_txt = f"🛡️ {trader} LL{ll}" if trader != "—" else "🛒 Flea Market"
+            ctk.CTkLabel(
+                badges_row,
+                text=t_txt,
+                font=ui_font(11, "bold"),
+                text_color="#38BDF8"
+            ).pack(side="left", padx=(6, 4))
+
+            cost_txt = f"💰 ~{cost:,} ₽".replace(",", ".") if cost > 0 else "0 ₽"
+            ctk.CTkLabel(
+                badges_row,
+                text=cost_txt,
+                font=ui_font(11, "bold"),
+                text_color=C_GREEN_LIGHT
+            ).pack(side="left", padx=4)
+        else:
+            ctk.CTkLabel(
+                badges_row,
+                text="Desmontar accesorio (deja la ranura vacía o con pieza estándar)",
+                font=ui_font(11),
+                text_color=C_TEXT_DIM
+            ).pack(side="left", padx=2)
+
+        # Col 2: Botón de Estado / Instalación
+        btn_state = ctk.CTkButton(
+            row_card,
+            text="✓ INSTALADO" if is_equipped else "Equipar",
+            width=110,
+            height=30,
+            corner_radius=5,
+            fg_color="#15803D" if is_equipped else C_SLATE_800,
+            hover_color="#16A34A" if is_equipped else THEME["accent_gold"],
+            text_color=C_WHITE if is_equipped else C_TEXT,
+            font=ui_font(11, "bold"),
+            command=lambda pid=p_id: self._equip_part_in_active_slot(pid)
+        )
+        btn_state.grid(row=0, column=2, rowspan=2, padx=12, pady=8)
+
+        # Hacer que hacer clic en la fila también equipe la pieza
+        row_card.bind("<Button-1>", lambda e, pid=p_id: self._equip_part_in_active_slot(pid))
+        name_lbl.bind("<Button-1>", lambda e, pid=p_id: self._equip_part_in_active_slot(pid))
+        img_box.bind("<Button-1>", lambda e, pid=p_id: self._equip_part_in_active_slot(pid))
+        thumb_lbl.bind("<Button-1>", lambda e, pid=p_id: self._equip_part_in_active_slot(pid))
 
     def _equip_part_in_active_slot(self, part_id: str):
         """Instala la pieza seleccionada y actualiza instantáneamente el blueprint y los stats."""

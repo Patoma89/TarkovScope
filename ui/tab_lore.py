@@ -429,14 +429,32 @@ class TabLore(ctk.CTkFrame):
         lbl_intro.grid(row=1, column=0, padx=22, pady=(0, 16), sticky="w")
         self._narrative_labels.append(lbl_intro)
 
-        # Renderizar los 10 capítulos en flujo continuo tipo libro
-        for idx, ch in enumerate(LORE_NARRATIVE_CHAPTERS, start=1):
-            sec = self._create_chapter_article_section(self.reader_scroll, ch, row_idx=idx)
-            self.chapter_section_frames[ch["id"]] = sec
-
-        # Habilitar rueda del ratón sobre todos los elementos del documento para que siempre desplace suave
+        # Renderizar los primeros 2 capítulos de inmediato y diferir el resto en lotes para 0 lag
         self._bind_mousewheel_recursive(self.reader_scroll)
-        self.after(60, self._refresh_scrollregion)
+        self._pending_chapter_idx = 0
+        self._render_next_chapters_batch(count=2)
+
+    def _render_next_chapters_batch(self, count: int = 2):
+        if not self.winfo_exists():
+            return
+        total = len(LORE_NARRATIVE_CHAPTERS)
+        end = min(self._pending_chapter_idx + count, total)
+        for idx in range(self._pending_chapter_idx, end):
+            ch = LORE_NARRATIVE_CHAPTERS[idx]
+            if ch["id"] not in self.chapter_section_frames:
+                sec = self._create_chapter_article_section(self.reader_scroll, ch, row_idx=idx + 1)
+                self.chapter_section_frames[ch["id"]] = sec
+                self._bind_mousewheel_recursive(sec)
+        self._pending_chapter_idx = end
+        if end < total:
+            self.after(16, lambda: self._render_next_chapters_batch(2))
+        else:
+            self.after(40, self._refresh_scrollregion)
+
+    def _ensure_all_chapters_built(self):
+        total = len(LORE_NARRATIVE_CHAPTERS)
+        while self._pending_chapter_idx < total:
+            self._render_next_chapters_batch(count=total)
 
     def _refresh_scrollregion(self):
         if not self.winfo_exists():
@@ -464,10 +482,14 @@ class TabLore(ctk.CTkFrame):
         alta resolución (delta menor) escalan proporcionalmente."""
         try:
             canvas = self.reader_scroll._parent_canvas
-            bbox = canvas.bbox("all")
-            if bbox:
-                canvas.configure(scrollregion=bbox)
-            total_h = max(1, (bbox[3] - bbox[1]) if bbox else 1)
+            sr = str(canvas.cget("scrollregion") or "").split()
+            if len(sr) == 4:
+                total_h = max(1.0, float(sr[3]) - float(sr[1]))
+            else:
+                bbox = canvas.bbox("all")
+                if bbox:
+                    canvas.configure(scrollregion=bbox)
+                total_h = max(1.0, float((bbox[3] - bbox[1]) if bbox else 1))
             delta_px = -event.delta * LORE_WHEEL_PX_PER_NOTCH / 120.0
             if abs(delta_px) < 1:
                 delta_px = -1.0 if event.delta > 0 else 1.0
@@ -604,6 +626,8 @@ class TabLore(ctk.CTkFrame):
                 font=ui_font(13, "bold" if is_act else "normal")
             )
 
+        if chapter_id not in self.chapter_section_frames:
+            self._ensure_all_chapters_built()
         target_widget = self.chapter_section_frames.get(chapter_id)
         if not target_widget:
             return
