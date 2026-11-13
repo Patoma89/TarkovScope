@@ -13,7 +13,7 @@ git config user.email "patoma89@users.noreply.github.com"
 echo.
 echo [2/3] Creando commit con los cambios...
 git add .
-git commit -m "feat: Renombrar a TTC y anadir sitio web interactivo para GitHub Pages"
+git commit -m "feat: Convertir sitio a aplicacion web interactiva completa TTC para GitHub Pages"
 
 echo.
 echo [3/3] Subiendo a GitHub (git push origin main)...
