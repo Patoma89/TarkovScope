@@ -433,10 +433,10 @@ class TarkovScopeApp(ctk.CTk):
         from tkinter import filedialog
         file_path = filedialog.asksaveasfilename(
             parent=self,
-            title="Guardar Respaldo de Progreso TarkovScope",
+            title="Guardar Respaldo de Progreso TTC",
             defaultextension=".json",
-            filetypes=[("Perfil TarkovScope (*.json)", "*.json")],
-            initialfile="perfil_tarkovscope.json"
+            filetypes=[("Perfil TTC (*.json)", "*.json")],
+            initialfile="perfil_ttc.json"
         )
         if not file_path:
             return
@@ -453,8 +453,8 @@ class TarkovScopeApp(ctk.CTk):
         from tkinter import filedialog
         file_path = filedialog.askopenfilename(
             parent=self,
-            title="Cargar Respaldo de Progreso TarkovScope",
-            filetypes=[("Perfil TarkovScope (*.json)", "*.json")]
+            title="Cargar Respaldo de Progreso TTC",
+            filetypes=[("Perfil TTC (*.json)", "*.json")]
         )
         if not file_path or not os.path.exists(file_path):
             return

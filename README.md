@@ -1,8 +1,8 @@
-# 🎯 TarkovScope (v1.0) — Asistente Táctico de Escritorio para Escape from Tarkov
+# 🎯 TTC (Tactical Tarkov Companion) — Asistente Táctico de Escritorio para Escape from Tarkov
 
 <p align="center">
   <strong>Aplicación de escritorio nativa en Python diseñada para operadores de Escape from Tarkov (PvE & PvP).</strong><br>
-  Cero latencia (<1 ms), 100% offline tras primera sincronización, arquitectura limpia y diseño táctico de alto contraste.
+  Cero latencia (&lt;1 ms), 100% offline tras primera sincronización, arquitectura limpia y diseño táctico de alto contraste.
 </p>
 
 ---
@@ -62,21 +62,28 @@ El proyecto sigue una separación estricta de responsabilidades (Clean Architect
 
 ## 💻 Instalación y Uso
 
-### 1. Requisitos Previos
+### 1. Opción A: Ejecutable Portátil Windows (Sin Python)
+Descarga la última versión precompilada desde la sección de **Releases** de GitHub:
+- Descomprime y ejecuta `TTC.exe`.
+
+### 2. Opción B: Ejecutar desde Código Fuente (Python)
+
+#### Requisitos Previos
 - Python 3.10 o superior instalado.
 
-### 2. Clonar el Repositorio
+#### Clonar el Repositorio
 ```bash
-git clone https://github.com/TU_USUARIO/TarkovScope.git
+git clone https://github.com/Patoma89/TarkovScope.git
 cd TarkovScope
 ```
 
-### 3. Instalar Dependencias
+#### Instalar Dependencias
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Iniciar la Aplicación
+#### Iniciar la Aplicación
+Haz doble clic en `Ejecutar_TTC.bat` o ejecuta:
 ```bash
 python TarkovScope.py
 ```

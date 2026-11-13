@@ -1,0 +1,1839 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TTC — Tactical Tarkov Companion | Asistente Táctico de Escritorio</title>
+  <meta name="description" content="TTC (Tactical Tarkov Companion) es el asistente de escritorio definitivo para Escape from Tarkov (PvE & PvP). Cero latencia (<1 ms), 100% offline, Gunsmith Studio interactivo, visor de Quests estilo Wiki y balística avanzada.">
+  <meta name="keywords" content="TTC, Tactical Tarkov Companion, Escape from Tarkov, Tarkov, Gunsmith, Quests Tarkov, Balística EFT, Mapas Tarkov, Bosses EFT, CustomTkinter, Python">
+  <meta name="theme-color" content="#0b0e14">
+
+  <!-- Open Graph / Redes Sociales -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="TTC — Tactical Tarkov Companion">
+  <meta property="og:description" content="Asistente táctico de escritorio nativo para Escape from Tarkov. Gunsmith interactivo, Wiki Dossier 100% offline, balística y mapas topográficos. Cero lag.">
+  <meta property="og:url" content="https://patoma89.github.io/TarkovScope/">
+
+  <link rel="icon" type="image/x-icon" href="ttc.ico">
+
+  <style>
+    :root {
+      --bg-void: #07090d;
+      --bg-dark: #0b0e14;
+      --bg-card: #111620;
+      --bg-card-hover: #161c28;
+      --bg-row: #141a25;
+      --bg-accent-subtle: rgba(212, 184, 134, 0.08);
+
+      --gold: #d4b886;
+      --gold-hover: #e8caa0;
+      --gold-glow: rgba(212, 184, 134, 0.28);
+
+      --green-meta: #10b981;
+      --green-glow: rgba(16, 185, 129, 0.25);
+      --red-threat: #ef4444;
+      --red-glow: rgba(239, 68, 68, 0.25);
+      --cyan-hud: #38bdf8;
+      --amber-warn: #f59e0b;
+
+      --text-main: #f8fafc;
+      --text-dim: #cbd5e1;
+      --text-muted: #64748b;
+      --border-color: #232936;
+      --border-light: rgba(212, 184, 134, 0.22);
+
+      --font-sans: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', Consolas, 'Fira Code', monospace;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --shadow-hud: 0 10px 30px -10px rgba(0, 0, 0, 0.7), 0 0 15px rgba(212, 184, 134, 0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      overflow-x: hidden;
+      background-image:
+        radial-gradient(circle at 50% 0%, rgba(212, 184, 134, 0.09) 0%, transparent 50%),
+        radial-gradient(circle at 10% 40%, rgba(56, 189, 248, 0.04) 0%, transparent 40%),
+        radial-gradient(circle at 90% 70%, rgba(16, 185, 129, 0.04) 0%, transparent 40%),
+        linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+    }
+
+    /* Scanline Overlay Táctico */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+      background-size: 100% 4px;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0.35;
+    }
+
+    a {
+      color: var(--gold);
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    a:hover {
+      color: var(--gold-hover);
+    }
+
+    /* Container */
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Barra de Navegación */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(11, 14, 20, 0.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border-color);
+      transition: all 0.3s ease;
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 72px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, #1b212d, #0b0e14);
+      border: 1px solid var(--gold);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 12px var(--gold-glow);
+    }
+
+    .brand-icon svg {
+      width: 22px;
+      height: 22px;
+      fill: var(--gold);
+    }
+
+    .brand-text h1 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: var(--gold);
+      line-height: 1;
+    }
+
+    .brand-text span {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 1.8px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 26px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 6px 4px;
+      position: relative;
+    }
+
+    .nav-links a:hover {
+      color: var(--gold);
+    }
+
+    .nav-links a::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--gold);
+      transition: width 0.25s ease;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .nav-cta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 20px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      letter-spacing: 0.5px;
+      border: 1px solid transparent;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, #d4b886, #b09460);
+      color: #0b0e14;
+      border-color: #f1dfbc;
+      box-shadow: 0 4px 14px var(--gold-glow);
+    }
+
+    .btn-gold:hover {
+      background: linear-gradient(135deg, #e5c590, #c4a56c);
+      color: #000;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px var(--gold-glow);
+    }
+
+    .btn-ghost {
+      background: rgba(20, 26, 37, 0.7);
+      color: var(--text-main);
+      border-color: var(--border-color);
+    }
+
+    .btn-ghost:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--gold);
+      color: var(--gold);
+      transform: translateY(-2px);
+    }
+
+    /* HERO SECTION */
+    .hero {
+      padding: 90px 0 60px;
+      position: relative;
+    }
+
+    .hero-badge-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 14px;
+      background: rgba(212, 184, 134, 0.08);
+      border: 1px solid var(--border-light);
+      border-radius: 999px;
+      margin-bottom: 24px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--green-meta);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--green-meta);
+      animation: pulse-dot 2s infinite ease-in-out;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.3); }
+    }
+
+    .hero-badge-wrap span {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      color: var(--gold);
+      text-transform: uppercase;
+      font-family: var(--font-mono);
+    }
+
+    .hero-title {
+      font-size: clamp(2.4rem, 5.2vw, 4.4rem);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.5px;
+      margin-bottom: 20px;
+    }
+
+    .hero-title .text-gold {
+      color: var(--gold);
+      text-shadow: 0 0 25px var(--gold-glow);
+    }
+
+    .hero-lead {
+      font-size: 1.25rem;
+      color: var(--text-dim);
+      max-width: 780px;
+      margin-bottom: 34px;
+      font-weight: 400;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 40px;
+    }
+
+    .hero-stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      max-width: 900px;
+      margin-bottom: 50px;
+    }
+
+    .stat-chip {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-left: 3px solid var(--gold);
+      padding: 12px 18px;
+      border-radius: var(--radius-sm);
+    }
+
+    .stat-chip .val {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--gold);
+      font-family: var(--font-mono);
+    }
+
+    .stat-chip .lbl {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      font-weight: 600;
+    }
+
+    /* MOCKUP INTERACTIVO DEL WORKBENCH / HUD */
+    .hud-window {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-hud);
+      overflow: hidden;
+      margin-top: 30px;
+      position: relative;
+    }
+
+    .hud-titlebar {
+      background: #090c12;
+      border-bottom: 1px solid var(--border-color);
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .hud-dots {
+      display: flex;
+      gap: 8px;
+    }
+
+    .hud-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #272f3d;
+    }
+
+    .hud-dot.red { background: #ff5f56; }
+    .hud-dot.yellow { background: #ffbd2e; }
+    .hud-dot.green { background: #27c93f; }
+
+    .hud-titlebar-text {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+    }
+
+    .hud-body {
+      padding: 24px;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 24px;
+      min-height: 480px;
+      background: linear-gradient(180deg, #10151f 0%, #0b0e14 100%);
+    }
+
+    @media (max-width: 900px) {
+      .hud-body {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Sidebar del HUD */
+    .hud-sidebar {
+      background: #0d1118;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .hud-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      background: transparent;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+    }
+
+    .hud-nav-item:hover, .hud-nav-item.active {
+      background: var(--bg-row);
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .hud-nav-item.active {
+      box-shadow: inset 3px 0 0 var(--gold);
+    }
+
+    /* Contenido activo del HUD */
+    .hud-content-panel {
+      background: #0f141d;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .weapon-hud-card {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .weapon-hud-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 14px;
+    }
+
+    .weapon-title {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .weapon-subtitle {
+      font-size: 0.8rem;
+      color: var(--gold);
+      font-family: var(--font-mono);
+      letter-spacing: 0.8px;
+    }
+
+    .preset-selector {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .preset-pill {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: #141b26;
+      border: 1px solid var(--border-color);
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .preset-pill:hover, .preset-pill.active {
+      background: var(--gold);
+      color: #0b0e14;
+      border-color: var(--gold);
+    }
+
+    /* Plano esquemático */
+    .blueprint-canvas {
+      height: 180px;
+      border: 1px dashed rgba(212, 184, 134, 0.35);
+      background: radial-gradient(circle at center, rgba(212, 184, 134, 0.04) 0%, transparent 70%), #0a0d13;
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .blueprint-grid-lines {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image: linear-gradient(to right, rgba(212, 184, 134, 0.06) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(212, 184, 134, 0.06) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+
+    .blueprint-weapon-icon {
+      font-size: 4rem;
+      color: var(--gold);
+      z-index: 2;
+      filter: drop-shadow(0 0 15px var(--gold-glow));
+    }
+
+    .blueprint-watermark {
+      position: absolute;
+      bottom: 8px;
+      right: 12px;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: rgba(212, 184, 134, 0.4);
+      letter-spacing: 1px;
+    }
+
+    /* Barras de estadísticas balísticas */
+    .stat-bars-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .stat-bar-box {
+      background: #090c12;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+    }
+
+    .stat-bar-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .stat-bar-header .name {
+      color: var(--text-dim);
+      text-transform: uppercase;
+    }
+
+    .stat-bar-header .val {
+      color: var(--gold);
+      font-family: var(--font-mono);
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 6px;
+      background: #171f2b;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--gold);
+      border-radius: 3px;
+      transition: width 0.4s ease;
+    }
+
+    .progress-fill.green { background: var(--green-meta); }
+    .progress-fill.cyan { background: var(--cyan-hud); }
+
+    /* Acciones del HUD */
+    .hud-export-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      border-top: 1px solid var(--border-color);
+      padding-top: 16px;
+      margin-top: 20px;
+    }
+
+    .code-chip {
+      background: #090c12;
+      border: 1px solid var(--border-color);
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      color: var(--cyan-hud);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* SECCIÓN DE CARACTERÍSTICAS TÁCTICAS */
+    .features-section {
+      padding: 100px 0;
+      position: relative;
+    }
+
+    .section-header {
+      text-align: center;
+      max-width: 760px;
+      margin: 0 auto 60px;
+    }
+
+    .section-tag {
+      font-size: 0.8rem;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 3.5vw, 2.8rem);
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+
+    .section-desc {
+      color: var(--text-dim);
+      font-size: 1.05rem;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 26px;
+    }
+
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 30px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-light);
+      transform: translateY(-4px);
+      box-shadow: 0 14px 30px -10px rgba(0, 0, 0, 0.7), 0 0 15px rgba(212, 184, 134, 0.08);
+    }
+
+    .feature-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 3px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .feature-card:hover::before {
+      opacity: 1;
+    }
+
+    .feature-icon-box {
+      width: 52px;
+      height: 52px;
+      border-radius: var(--radius-sm);
+      background: rgba(212, 184, 134, 0.09);
+      border: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      margin-bottom: 22px;
+      color: var(--gold);
+    }
+
+    .feature-card h3 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      color: var(--text-main);
+    }
+
+    .feature-card p {
+      font-size: 0.95rem;
+      color: var(--text-dim);
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+
+    .feature-bullet-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .feature-bullet-list li {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .feature-bullet-list li::before {
+      content: "▹";
+      color: var(--gold);
+      font-weight: 700;
+    }
+
+    /* DEMOS INTERACTIVAS POR PESTAÑAS */
+    .interactive-section {
+      padding: 90px 0;
+      background: linear-gradient(180deg, transparent 0%, rgba(17, 22, 32, 0.6) 50%, transparent 100%);
+    }
+
+    .tab-pills-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+
+    .tab-pill-btn {
+      background: #0f141d;
+      border: 1px solid var(--border-color);
+      color: var(--text-dim);
+      padding: 10px 22px;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .tab-pill-btn:hover, .tab-pill-btn.active {
+      background: var(--gold);
+      color: #0b0e14;
+      border-color: var(--gold);
+      box-shadow: 0 4px 14px var(--gold-glow);
+    }
+
+    .tab-display-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 36px;
+      box-shadow: var(--shadow-hud);
+      display: none;
+    }
+
+    .tab-display-card.active {
+      display: block;
+      animation: fadeInTab 0.3s ease;
+    }
+
+    @keyframes fadeInTab {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Sub-componentes interactivos de pestañas */
+    /* Quests Dossier */
+    .quest-phase-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .quest-phase-card {
+      background: #0d1118;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 18px;
+    }
+
+    .quest-phase-num {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--gold);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .quest-phase-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin: 6px 0 10px;
+      color: var(--text-main);
+    }
+
+    .quest-phase-desc {
+      font-size: 0.88rem;
+      color: var(--text-dim);
+    }
+
+    /* Balística STK Matrix */
+    .ballistics-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      font-size: 0.9rem;
+    }
+
+    .ballistics-table th {
+      background: #090c12;
+      color: var(--gold);
+      text-align: left;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-color);
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      letter-spacing: 1px;
+    }
+
+    .ballistics-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #19202c;
+      color: var(--text-dim);
+    }
+
+    .ballistics-table tr:hover td {
+      background: #141b26;
+      color: var(--text-main);
+    }
+
+    .pen-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 0.82rem;
+    }
+
+    .pen-high { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid #10b981; }
+    .pen-mid { background: rgba(245, 158, 11, 0.2); color: #f59e0b; border: 1px solid #f59e0b; }
+    .pen-low { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444; }
+
+    /* SECCIÓN DE INSTALACIÓN & DESCARGA */
+    .download-section {
+      padding: 100px 0;
+      position: relative;
+    }
+
+    .download-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 30px;
+    }
+
+    .download-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 36px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .download-card.highlight {
+      border-color: var(--gold);
+      box-shadow: 0 0 30px rgba(212, 184, 134, 0.12);
+    }
+
+    .badge-top-card {
+      position: absolute;
+      top: -12px;
+      right: 24px;
+      background: var(--gold);
+      color: #0b0e14;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 999px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .download-card h3 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      color: var(--text-main);
+    }
+
+    .terminal-box {
+      background: #090c12;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      margin: 18px 0;
+      position: relative;
+      overflow-x: auto;
+    }
+
+    .terminal-box .cmd {
+      color: var(--gold);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #141a24;
+      border: 1px solid var(--border-color);
+      color: var(--text-dim);
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      font-family: var(--font-sans);
+    }
+
+    .copy-btn:hover {
+      color: var(--gold);
+      border-color: var(--gold);
+    }
+
+    /* FOOTER */
+    footer {
+      background: #07090d;
+      border-top: 1px solid var(--border-color);
+      padding: 60px 0 30px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+
+    @media (max-width: 768px) {
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .footer-col h4 {
+      color: var(--text-main);
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .footer-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-col ul a {
+      color: var(--text-dim);
+    }
+
+    .footer-col ul a:hover {
+      color: var(--gold);
+    }
+
+    .disclaimer {
+      font-size: 0.78rem;
+      line-height: 1.6;
+      border-top: 1px solid #161b24;
+      padding-top: 24px;
+      text-align: center;
+      color: #556277;
+    }
+
+    /* Notificación Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--bg-card);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 12px 20px;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+      z-index: 10000;
+      display: none;
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BARRA DE NAVEGACIÓN -->
+  <nav class="navbar">
+    <div class="container nav-inner">
+      <a href="#" class="brand">
+        <div class="brand-icon">
+          <!-- Mira / Retícula táctica SVG -->
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/>
+            <line x1="12" y1="2" x2="12" y2="7" stroke="currentColor" stroke-width="1.8"/>
+            <line x1="12" y1="17" x2="12" y2="22" stroke="currentColor" stroke-width="1.8"/>
+            <line x1="2" y1="12" x2="7" y2="12" stroke="currentColor" stroke-width="1.8"/>
+            <line x1="17" y1="12" x2="22" y2="12" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="12" cy="12" r="2.5" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>TTC</h1>
+          <span>Tactical Tarkov Companion</span>
+        </div>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#features">Características</a></li>
+        <li><a href="#workbench">Gunsmith</a></li>
+        <li><a href="#dossier">Quests</a></li>
+        <li><a href="#ballistics">Balística</a></li>
+        <li><a href="#download">Descargar</a></li>
+      </ul>
+
+      <div class="nav-cta">
+        <a href="https://github.com/Patoma89/TarkovScope" target="_blank" class="btn btn-ghost">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+          GitHub
+        </a>
+        <a href="#download" class="btn btn-gold">
+          ⬇ Descargar v1.0
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO SECTION -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-badge-wrap">
+        <span class="status-dot"></span>
+        <span>V1.0 OFICIAL // CERO LATENCIA (<1 MS) // 100% OFFLINE</span>
+      </div>
+
+      <h1 class="hero-title">
+        El Asistente Táctico Definitivo para <span class="text-gold">Escape from Tarkov</span>
+      </h1>
+
+      <p class="hero-lead">
+        <strong>TTC (Tactical Tarkov Companion)</strong> es una suite táctica de escritorio de nivel militar para PvE y PvP. Banco de armería interactivo en tiempo real, fichas de misiones offline estilo wiki sin navegadores pesados, radar de bosses y simulador balístico contra blindajes.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#download" class="btn btn-gold" style="font-size: 1.05rem; padding: 12px 28px;">
+          ⬇ Descargar Ejecutable Portátil (.exe)
+        </a>
+        <a href="https://github.com/Patoma89/TarkovScope" target="_blank" class="btn btn-ghost" style="font-size: 1.05rem; padding: 12px 24px;">
+          ★ Ver Código Fuente en GitHub
+        </a>
+      </div>
+
+      <div class="hero-stats-row">
+        <div class="stat-chip">
+          <div class="val">&lt; 1 ms</div>
+          <div class="lbl">Caché RAM Zero-Lag</div>
+        </div>
+        <div class="stat-chip">
+          <div class="val">100%</div>
+          <div class="lbl">Dossier Quests Offline</div>
+        </div>
+        <div class="stat-chip">
+          <div class="val">+175</div>
+          <div class="lbl">Proyectiles & Balística STK</div>
+        </div>
+        <div class="stat-chip">
+          <div class="val">11</div>
+          <div class="lbl">Mapas 2D & Spawns Bosses</div>
+        </div>
+      </div>
+
+      <!-- MOCKUP VIRTUAL INTERACTIVO DE TTC -->
+      <div class="hud-window" id="workbench">
+        <div class="hud-titlebar">
+          <div class="hud-dots">
+            <span class="hud-dot red"></span>
+            <span class="hud-dot yellow"></span>
+            <span class="hud-dot green"></span>
+          </div>
+          <div class="hud-titlebar-text">TTC // WORKBENCH & MODDING STUDIO v1.0</div>
+          <div class="code-chip">PRESET: RD-704 META COMPETITIVO</div>
+        </div>
+
+        <div class="hud-body">
+          <!-- Sidebar del HUD -->
+          <div class="hud-sidebar">
+            <div style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--gold); letter-spacing: 1px; margin-bottom: 6px;">
+              MÓDULOS ACTIVOS
+            </div>
+            <button class="hud-nav-item active" onclick="switchHudModule('gunsmith', this)">
+              🛠️ Armas & Gunsmith
+            </button>
+            <button class="hud-nav-item" onclick="switchHudModule('quests', this)">
+              🗺️ Quests & Traders
+            </button>
+            <button class="hud-nav-item" onclick="switchHudModule('ballistics', this)">
+              💥 Balística & STK
+            </button>
+            <button class="hud-nav-item" onclick="switchHudModule('maps', this)">
+              📍 Mapas & Bosses
+            </button>
+            <button class="hud-nav-item" onclick="switchHudModule('flea', this)">
+              📦 Hideout & FiR
+            </button>
+          </div>
+
+          <!-- Contenido dinámico del HUD -->
+          <div class="hud-content-panel" id="hud-panel-content">
+            <div class="weapon-hud-card">
+              <div class="weapon-hud-header">
+                <div>
+                  <h3 class="weapon-title" id="hud-weapon-name">RD-704 (7.62x39mm)</h3>
+                  <div class="weapon-subtitle" id="hud-weapon-class">CARABINA DE ASALTO // CALIBRE 7.62x39 // RANGO OPERATIVO META</div>
+                </div>
+                <div class="preset-selector">
+                  <button class="preset-pill active" onclick="setPreset('meta', this)">Meta Recoil</button>
+                  <button class="preset-pill" onclick="setPreset('budget', this)">Budget LL2</button>
+                  <button class="preset-pill" onclick="setPreset('ergo', this)">CQC High Ergo</button>
+                </div>
+              </div>
+
+              <!-- Plano Esquemático Militar -->
+              <div class="blueprint-canvas">
+                <div class="blueprint-grid-lines"></div>
+                <div class="blueprint-weapon-icon" id="hud-weapon-glyph">︻╦デ═—</div>
+                <div class="blueprint-watermark">TTC COMPOSITOR V2 // ESQUEMÁTICO MILITAR DINÁMICO</div>
+              </div>
+
+              <!-- Medidores de Estadísticas Balísticas -->
+              <div class="stat-bars-grid">
+                <div class="stat-bar-box">
+                  <div class="stat-bar-header">
+                    <span class="name">Retroceso Vertical</span>
+                    <span class="val" id="stat-recoil-v">44 (-52%)</span>
+                  </div>
+                  <div class="progress-track">
+                    <div class="progress-fill green" id="bar-recoil-v" style="width: 44%;"></div>
+                  </div>
+                </div>
+
+                <div class="stat-bar-box">
+                  <div class="stat-bar-header">
+                    <span class="name">Ergonomía (ADS)</span>
+                    <span class="val" id="stat-ergo">64 (+32)</span>
+                  </div>
+                  <div class="progress-track">
+                    <div class="progress-fill cyan" id="bar-ergo" style="width: 64%;"></div>
+                  </div>
+                </div>
+
+                <div class="stat-bar-box">
+                  <div class="stat-bar-header">
+                    <span class="name">Retroceso Horiz.</span>
+                    <span class="val" id="stat-recoil-h">112</span>
+                  </div>
+                  <div class="progress-track">
+                    <div class="progress-fill" id="bar-recoil-h" style="width: 48%;"></div>
+                  </div>
+                </div>
+
+                <div class="stat-bar-box">
+                  <div class="stat-bar-header">
+                    <span class="name">Masa & Vel. Salida</span>
+                    <span class="val" id="stat-misc">3.62 kg · 740 m/s</span>
+                  </div>
+                  <div class="progress-track">
+                    <div class="progress-fill" style="width: 58%;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Footer de Exportación con 1-Clic -->
+            <div class="hud-export-footer">
+              <div style="display: flex; gap: 10px; align-items: center;">
+                <span style="font-size: 0.8rem; color: var(--text-muted);">CÓDIGO PORTABLE:</span>
+                <span class="code-chip" id="hud-build-code">TTCBUILD:RD704_META_REC44_ERG64</span>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-ghost" style="padding: 6px 14px; font-size: 0.8rem;" onclick="copyBuildCode()">
+                  📋 Copiar TTCBUILD
+                </button>
+                <button class="btn btn-gold" style="padding: 6px 14px; font-size: 0.8rem;" onclick="copyShoppingList()">
+                  🛒 Lista de Compras (₽)
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN DE CARACTERÍSTICAS MAESTRAS -->
+  <section class="features-section" id="features">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">TECNOLOGÍA & CAPACIDADES TÁCTICAS</span>
+        <h2 class="section-title">Diseñado para Operadores que no Aceptan Lag</h2>
+        <p class="section-desc">
+          Olvida tener 15 pestañas de Chrome devorando 6 GB de RAM en tus incursiones. TTC corre nativamente en tu escritorio con cero impacto de rendimiento.
+        </p>
+      </div>
+
+      <div class="features-grid">
+        <!-- Feature 1 -->
+        <div class="feature-card">
+          <div class="feature-icon-box">🛠️</div>
+          <h3>Gunsmith Studio & Workbench</h3>
+          <p>
+            Banco de armería interactivo con renderizado esquemático dinámico en tiempo real. Prueba cañones, silenciadores, culatas y empuñaduras con cálculo exacto de ADS y recoil.
+          </p>
+          <ul class="feature-bullet-list">
+            <li>Presets meta en 1 clic (Competitivo, LL2, CQC).</li>
+            <li>Exportación a SPT-AKI JSON y códigos Base64.</li>
+            <li>Generador automático de lista de compras en rublos.</li>
+          </ul>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="feature-card">
+          <div class="feature-icon-box">🗺️</div>
+          <h3>Dossier Quests 100% Offline</h3>
+          <p>
+            Wiki completa de misiones dividida en 4 fases tácticas (Preparación, Infiltración, Objetivos y Extracción) con retícula lumínica sobre el mapa topográfico 2D.
+          </p>
+          <ul class="feature-bullet-list">
+            <li>Ubicaciones exactas de llaves requeridas y trueques.</li>
+            <li>Seguimiento de misiones críticas para el contenedor KAPPA.</li>
+            <li>Ruta completa y requisitos de Lightkeeper.</li>
+          </ul>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="feature-card">
+          <div class="feature-icon-box">💥</div>
+          <h3>Balística & Simulador STK</h3>
+          <p>
+            Más de 175 proyectiles y calibres meta actualizados. Simulador de disparos para matar (Shots to Kill) contra armaduras clase 1 a 6 y efectividad de Leg Meta.
+          </p>
+          <ul class="feature-bullet-list">
+            <li>Penetración, fragmentación y daño a armadura.</li>
+            <li>Simulador de combate contra Bosses y Guardias.</li>
+            <li>Filtro de exclusión de munición no letal (Flares, etc.).</li>
+          </ul>
+        </div>
+
+        <!-- Feature 4 -->
+        <div class="feature-card">
+          <div class="feature-icon-box">📍</div>
+          <h3>Mapas 2D & Radar de Bosses</h3>
+          <p>
+            Planos topográficos de alta resolución con porcentajes oficiales de spawn calibrados para PvE y PvP. Capas de extracciones PMC/Scav y cajas de seguridad.
+          </p>
+          <ul class="feature-bullet-list">
+            <li>Radares de Reshala, Kaban, Kollontay, Goons, Partisan.</li>
+            <li>Sistema de pines tácticos personalizados guardados en SQLite.</li>
+            <li>Rutas de extracción con Red Rebel y Co-op.</li>
+          </ul>
+        </div>
+
+        <!-- Feature 5 -->
+        <div class="feature-card">
+          <div class="feature-icon-box">📦</div>
+          <h3>Alijo, Crafteos FiR & Traders</h3>
+          <p>
+            Inventario completo de comerciantes de LL1 a LL4. Tracker de alijo para acumular objetos con estado Found in Raid (FiR) necesarios para futuras misiones.
+          </p>
+          <ul class="feature-bullet-list">
+            <li>Recetas de crafteo del Hideout de máxima rentabilidad.</li>
+            <li>Guía de ofrendas del Círculo Cultista.</li>
+            <li>Filtro instantáneo de objetos para guardar o vender.</li>
+          </ul>
+        </div>
+
+        <!-- Feature 6 -->
+        <div class="feature-card">
+          <div class="feature-icon-box">⚡</div>
+          <h3>Rendimiento Extremo & Zero-Lag</h3>
+          <p>
+            Construido bajo Clean Architecture en Python & CustomTkinter. In-Memory RAM DataStore para consultas instantáneas en menos de 1 milisegundo.
+          </p>
+          <ul class="feature-bullet-list">
+            <li>Base de datos SQLite local con WAL mode.</li>
+            <li>Renderizado en lotes (Batch Rendering) a 60 FPS sin tirones.</li>
+            <li>Sincronización GraphQL en segundo plano no bloqueante.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PESTAÑAS INTERACTIVAS: DEMO PROFUNDA -->
+  <section class="interactive-section" id="dossier">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">EXPLORADOR EN VIVO</span>
+        <h2 class="section-title">Inspecciona los Módulos Clave de TTC</h2>
+        <p class="section-desc">
+          Comprueba la profundidad táctica y la organización militar de cada sección de la aplicación.
+        </p>
+      </div>
+
+      <div class="tab-pills-row">
+        <button class="tab-pill-btn active" onclick="showDemoTab('tab-quests-demo', this)">
+          🗺️ Wiki Quests Dossier
+        </button>
+        <button class="tab-pill-btn" onclick="showDemoTab('tab-ballistics-demo', this)" id="ballistics">
+          💥 Matriz Balística STK
+        </button>
+        <button class="tab-pill-btn" onclick="showDemoTab('tab-bosses-demo', this)">
+          📍 Radar de Spawns & Bosses
+        </button>
+        <button class="tab-pill-btn" onclick="showDemoTab('tab-hideout-demo', this)">
+          📦 Hideout & Tracker FiR
+        </button>
+      </div>
+
+      <!-- Tab 1: Quests Dossier -->
+      <div class="tab-display-card active" id="tab-quests-demo">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 16px;">
+          <div>
+            <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--gold); text-transform: uppercase;">COMERCIANTE: PRAPOR // MAPA: CUSTOMS</span>
+            <h3 style="font-size: 1.5rem; font-weight: 800; color: var(--text-main);">Checking (El Reloj de Bronce)</h3>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <span style="background: rgba(16, 185, 129, 0.15); color: var(--green-meta); border: 1px solid var(--green-meta); padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: 700;">★ REQUERIDA KAPPA</span>
+            <span style="background: rgba(56, 189, 248, 0.15); color: var(--cyan-hud); border: 1px solid var(--cyan-hud); padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: 700;">LLAVE: MACHINERY KEY</span>
+          </div>
+        </div>
+
+        <div class="quest-phase-grid">
+          <div class="quest-phase-card">
+            <div class="quest-phase-num">FASE 01</div>
+            <div class="quest-phase-title">🎒 Preparación</div>
+            <div class="quest-phase-desc">Obtén la <strong>Machinery Key</strong> en el cuarto 205 del edificio de 3 pisos de los Dorms (o en el bolsillo de chaquetas). Llévate blindaje Clase 3+.</div>
+          </div>
+
+          <div class="quest-phase-card">
+            <div class="quest-phase-num">FASE 02</div>
+            <div class="quest-phase-title">🎯 Infiltración</div>
+            <div class="quest-phase-desc">Dirígete a la zona de construcción central de Customs. Mantén vigilancia sobre los francotiradores Scav del silo y la grúa.</div>
+          </div>
+
+          <div class="quest-phase-card">
+            <div class="quest-phase-num">FASE 03</div>
+            <div class="quest-phase-title">🗝️ Objetivos</div>
+            <div class="quest-phase-desc">Abre la cabina del camión cisterna cisterna con la llave. Recoge el <strong>reloj de bolsillo de bronce</strong> situado bajo los pedales del conductor.</div>
+          </div>
+
+          <div class="quest-phase-card">
+            <div class="quest-phase-num">FASE 04</div>
+            <div class="quest-phase-title">🚁 Extracción</div>
+            <div class="quest-phase-desc">Sobrevive y extrae con vida por Crossroads, Trailer Park o ZB-1011. Entrega el reloj a Prapor en el menú de traders.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Balística STK -->
+      <div class="tab-display-card" id="tab-ballistics-demo">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 14px;">
+          <div>
+            <h3 style="font-size: 1.4rem; font-weight: 800;">Simulador Balístico & Efectividad contra Blindaje</h3>
+            <p style="color: var(--text-dim); font-size: 0.9rem;">Cálculo de disparos necesarios para abatir (STK) a través de armadura pectoral.</p>
+          </div>
+          <div class="code-chip">CALIBRES META: 7.62x51 & 5.56x45</div>
+        </div>
+
+        <table class="ballistics-table">
+          <thead>
+            <tr>
+              <th>Proyectil</th>
+              <th>Calibre</th>
+              <th>Daño</th>
+              <th>Penetración</th>
+              <th>Blindaje Clase 4</th>
+              <th>Blindaje Clase 5</th>
+              <th>Blindaje Clase 6</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="font-weight: 700; color: #fff;">M61</td>
+              <td>7.62x51mm</td>
+              <td>70</td>
+              <td><span class="pen-badge pen-high">64 PEN</span></td>
+              <td><span style="color: var(--green-meta); font-weight: 700;">1-2 Tiros (99%)</span></td>
+              <td><span style="color: var(--green-meta); font-weight: 700;">1-2 Tiros (97%)</span></td>
+              <td><span style="color: var(--green-meta); font-weight: 700;">2 Tiros (92%)</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight: 700; color: #fff;">M80</td>
+              <td>7.62x51mm</td>
+              <td>80</td>
+              <td><span class="pen-badge pen-mid">41 PEN</span></td>
+              <td><span style="color: var(--green-meta); font-weight: 700;">2 Tiros (92%)</span></td>
+              <td><span style="color: var(--amber-warn); font-weight: 700;">2-3 Tiros (45%)</span></td>
+              <td><span style="color: var(--red-threat); font-weight: 700;">4+ Tiros (18%)</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight: 700; color: #fff;">M855A1</td>
+              <td>5.56x45mm</td>
+              <td>49</td>
+              <td><span class="pen-badge pen-high">44 PEN</span></td>
+              <td><span style="color: var(--green-meta); font-weight: 700;">2-3 Tiros (95%)</span></td>
+              <td><span style="color: var(--amber-warn); font-weight: 700;">3-4 Tiros (65%)</span></td>
+              <td><span style="color: var(--red-threat); font-weight: 700;">5+ Tiros (28%)</span></td>
+            </tr>
+            <tr>
+              <td style="font-weight: 700; color: #fff;">RIP (Leg Meta)</td>
+              <td>9x19mm Parabellum</td>
+              <td>102</td>
+              <td><span class="pen-badge pen-low">2 PEN</span></td>
+              <td><span style="color: var(--red-threat);">No Penetra (0%)</span></td>
+              <td><span style="color: var(--red-threat);">No Penetra (0%)</span></td>
+              <td><span style="color: var(--green-meta); font-weight: 700;">Piernas: 5 Tiros (TTK 0.3s)</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Tab 3: Bosses & Spawns -->
+      <div class="tab-display-card" id="tab-bosses-demo">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 14px;">
+          <div>
+            <h3 style="font-size: 1.4rem; font-weight: 800;">Radar Táctico de Spawns de Bosses (PvE / PvP)</h3>
+            <p style="color: var(--text-dim); font-size: 0.9rem;">Porcentajes oficiales calibrados y zonas calientes de patrulla.</p>
+          </div>
+          <div class="code-chip">MOTOR BALÍSTICO DE PROBABILIDADES</div>
+        </div>
+
+        <div class="quest-phase-grid" style="margin-top: 20px;">
+          <div class="quest-phase-card">
+            <div style="display: flex; justify-content: space-between;">
+              <span class="quest-phase-num">STREETS OF TARKOV</span>
+              <span style="color: var(--gold); font-weight: 700; font-family: var(--font-mono);">30% PROB.</span>
+            </div>
+            <div class="quest-phase-title">Kollontay & Guardias</div>
+            <div class="quest-phase-desc">
+              Patrulla activa en el Hotel Klimov y la Academia MVD. Provoca atascos automáticos en armas automáticas en combate CQC.
+            </div>
+          </div>
+
+          <div class="quest-phase-card">
+            <div style="display: flex; justify-content: space-between;">
+              <span class="quest-phase-num">STREETS OF TARKOV</span>
+              <span style="color: var(--gold); font-weight: 700; font-family: var(--font-mono);">35% PROB.</span>
+            </div>
+            <div class="quest-phase-title">Kaban & Nido de Francotiradores</div>
+            <div class="quest-phase-desc">
+              Emplazado en el taller de reparación de LexOs. Protegido por guardias pesados con ametralladoras fijas PKP y AGS-30.
+            </div>
+          </div>
+
+          <div class="quest-phase-card">
+            <div style="display: flex; justify-content: space-between;">
+              <span class="quest-phase-num">CUSTOMS / WOODS / SHORELINE</span>
+              <span style="color: var(--gold); font-weight: 700; font-family: var(--font-mono);">28% PROB.</span>
+            </div>
+            <div class="quest-phase-title">The Goons (Knight, Big Pipe, Birdeye)</div>
+            <div class="quest-phase-desc">
+              Escuadrón cazador errante sin pasos audibles. Ataques de francotirador coordinados a más de 300 metros con proyectiles M993/M61.
+            </div>
+          </div>
+
+          <div class="quest-phase-card">
+            <div style="display: flex; justify-content: space-between;">
+              <span class="quest-phase-num">MAPAS BOSCOSOS</span>
+              <span style="color: var(--gold); font-weight: 700; font-family: var(--font-mono);">25% PROB.</span>
+            </div>
+            <div class="quest-phase-title">Partisan (El Trampero del Karma)</div>
+            <div class="quest-phase-desc">
+              Caza operadores con bajo nivel de karma. Coloca trampas explosivas y minas de cable con granadas F-1 y VOG-25 en arbustos.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 4: Hideout & FiR -->
+      <div class="tab-display-card" id="tab-hideout-demo">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 14px;">
+          <div>
+            <h3 style="font-size: 1.4rem; font-weight: 800;">Tracker de Alijo & Ítems Found in Raid (FiR)</h3>
+            <p style="color: var(--text-dim); font-size: 0.9rem;">No vuelvas a vender por error un objeto necesario para una misión futura.</p>
+          </div>
+          <div class="code-chip">JUNKBOX MANAGER SYNC</div>
+        </div>
+
+        <div class="quest-phase-grid" style="margin-top: 20px;">
+          <div class="quest-phase-card">
+            <div class="quest-phase-num">LAVATORY NIVEL 2</div>
+            <div class="quest-phase-title">Crafteo de Mochila Pilgrim (FiR)</div>
+            <div class="quest-phase-desc">Craftea mochilas moradas requeridas para la misión <em>Sew it Good - Part 1</em> de Ragman. Conteo automático de materiales en alijo.</div>
+          </div>
+
+          <div class="quest-phase-card">
+            <div class="quest-phase-num">WORKBENCH NIVEL 3</div>
+            <div class="quest-phase-title">Munición Meta 7.62x39mm BP</div>
+            <div class="quest-phase-desc">Producción de 120 proyectiles BP. Calcula el margen de ganancia en rublos frente al costo de los materiales en el Mercado Negro.</div>
+          </div>
+
+          <div class="quest-phase-card">
+            <div class="quest-phase-num">CÍRCULO CULTISTA</div>
+            <div class="quest-phase-title">Ofrendas Místicas de Alto Valor</div>
+            <div class="quest-phase-desc">Combina objetos que alcancen el umbral de 400.000 ₽ para asegurar un 25% de probabilidad de recibir llaves marcadas y tarjetas de acceso.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN DE DESCARGA & INSTALACIÓN -->
+  <section class="download-section" id="download">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">DESCARGA E INSTALACIÓN</span>
+        <h2 class="section-title">Comienza a Usar TTC en Segundos</h2>
+        <p class="section-desc">
+          Elige la opción que mejor se adapte a tu estilo de juego: el binario portátil directo para Windows o la versión libre desde el código en Python.
+        </p>
+      </div>
+
+      <div class="download-grid">
+        <!-- Tarjeta 1: Ejecutable Portátil Windows -->
+        <div class="download-card highlight">
+          <span class="badge-top-card">MÁS FÁCIL (RECOMENDADO)</span>
+          <div>
+            <h3>📦 TTC Portable para Windows</h3>
+            <p style="color: var(--text-dim); font-size: 0.95rem; margin-bottom: 20px;">
+              Ejecutable autónomo precompilado. No necesitas instalar Python ni dependencias. Descargar, descomprimir y listo para entrar a raid.
+            </p>
+            <ul class="feature-bullet-list" style="margin-bottom: 24px;">
+              <li>Compatible con Windows 10 y Windows 11 (64-bit).</li>
+              <li>Icono de alta resolución en barra de tareas de Windows.</li>
+              <li>Base de datos SQLite local pre-optimizada.</li>
+              <li>Modo ventana siempre visible (Always on Top) para raids.</li>
+            </ul>
+          </div>
+          <div>
+            <a href="https://github.com/Patoma89/TarkovScope/releases" target="_blank" class="btn btn-gold" style="width: 100%; font-size: 1.05rem; padding: 14px;">
+              ⬇ Descargar TTC.exe (GitHub Releases)
+            </a>
+            <div style="text-align: center; margin-top: 10px; font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono);">
+              SHA-256 VERIFICADO // ZERO TELEMETRÍA // 100% SEGURO
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarjeta 2: Instalación para Desarrolladores Python -->
+        <div class="download-card">
+          <div>
+            <h3>🐍 Ejecución desde Código Fuente</h3>
+            <p style="color: var(--text-dim); font-size: 0.95rem;">
+              Para desarrolladores o usuarios que prefieran clonar el repositorio y ejecutar la aplicación directamente en su entorno de Python.
+            </p>
+
+            <div class="terminal-box">
+              <button class="copy-btn" onclick="copyCommands()">Copiar</button>
+              <span class="cmd"># 1. Clonar el repositorio</span>
+              <span>git clone https://github.com/Patoma89/TarkovScope.git</span><br>
+              <span>cd TarkovScope</span><br><br>
+              <span class="cmd"># 2. Instalar dependencias necesarias</span>
+              <span>pip install -r requirements.txt</span><br><br>
+              <span class="cmd"># 3. Iniciar TTC</span>
+              <span>python TarkovScope.py</span>
+            </div>
+
+            <ul class="feature-bullet-list">
+              <li>Requiere Python 3.10 o superior.</li>
+              <li>Acceso al launcher rápido <code>Ejecutar_TTC.bat</code>.</li>
+              <li>Suite completa de 58 pruebas unitarias en <code>tests/</code>.</li>
+            </ul>
+          </div>
+
+          <div style="margin-top: 24px;">
+            <a href="https://github.com/Patoma89/TarkovScope" target="_blank" class="btn btn-ghost" style="width: 100%; padding: 12px;">
+              ★ Explorar Repositorio en GitHub
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div class="brand" style="margin-bottom: 16px;">
+            <div class="brand-icon" style="width: 32px; height: 32px;">
+              <svg viewBox="0 0 24 24" style="width: 18px; height: 18px;">
+                <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/>
+                <line x1="12" y1="2" x2="12" y2="7" stroke="currentColor" stroke-width="1.8"/>
+                <line x1="12" y1="17" x2="12" y2="22" stroke="currentColor" stroke-width="1.8"/>
+                <line x1="2" y1="12" x2="7" y2="12" stroke="currentColor" stroke-width="1.8"/>
+                <line x1="17" y1="12" x2="22" y2="12" stroke="currentColor" stroke-width="1.8"/>
+                <circle cx="12" cy="12" r="2.5" fill="currentColor"/>
+              </svg>
+            </div>
+            <div class="brand-text">
+              <h1 style="font-size: 1.15rem;">TTC</h1>
+              <span style="font-size: 0.62rem;">Tactical Tarkov Companion</span>
+            </div>
+          </div>
+          <p style="font-size: 0.88rem; line-height: 1.6; color: var(--text-dim); max-width: 440px;">
+            Suite táctica de escritorio de código abierto para Escape from Tarkov. Optimizada para bajo consumo de recursos y lectura offline durante incursiones de alto riesgo.
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Navegación</h4>
+          <ul>
+            <li><a href="#features">Características</a></li>
+            <li><a href="#workbench">Gunsmith Studio</a></li>
+            <li><a href="#dossier">Quests Dossier</a></li>
+            <li><a href="#ballistics">Simulador Balístico</a></li>
+            <li><a href="#download">Descargas</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Comunidad & Código</h4>
+          <ul>
+            <li><a href="https://github.com/Patoma89/TarkovScope" target="_blank">Repositorio en GitHub</a></li>
+            <li><a href="https://github.com/Patoma89/TarkovScope/releases" target="_blank">Notas de Lanzamiento</a></li>
+            <li><a href="https://github.com/Patoma89/TarkovScope/issues" target="_blank">Reportar un Bug</a></li>
+            <li><a href="https://github.com/Patoma89/TarkovScope/blob/main/README.md" target="_blank">Documentación</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="disclaimer">
+        Escape from Tarkov es una marca registrada de Battlestate Games Limited. 
+        TTC (Tactical Tarkov Companion) es una herramienta comunitaria independiente, de código abierto y sin fines de lucro, sin afiliación oficial con Battlestate Games.
+        Todos los nombres de objetos, imágenes y marcas pertenecen a sus respectivos propietarios.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast flotante para copiado -->
+  <div class="toast" id="toast-msg">✓ Copiado al portapapeles</div>
+
+  <!-- JAVASCRIPT REACTIVO INTERACTIVO -->
+  <script>
+    // Presets de Armas interactivos en el HUD
+    const PRESETS = {
+      meta: {
+        title: "RD-704 (7.62x39mm)",
+        subtitle: "CARABINA DE ASALTO // CALIBRE 7.62x39 // PRESET META LASER RECOIL",
+        recoilV: "44 (-52%)",
+        recoilVVal: 44,
+        ergo: "64 (+32)",
+        ergoVal: 64,
+        recoilH: "112",
+        recoilHVal: 48,
+        misc: "3.62 kg · 740 m/s",
+        code: "TTCBUILD:RD704_META_REC44_ERG64",
+        shopping: "RD-704 Meta Shopping List:\n- Silenciador PRS QDC + Freno Muzzle (Mechanic LL4): 82.000 ₽\n- Empuñadura Magpul MOE + Pad (Peacekeeper LL3): 14.500 ₽\n- Guarda-manos SAG Custom MK3 (Skier LL3): 35.000 ₽\n- Mira Vudu 1-6x con montura 30mm (Jaeger LL3): 95.000 ₽\nCosto estimado total: 226.500 ₽"
+      },
+      budget: {
+        title: "RD-704 (7.62x39mm)",
+        subtitle: "CARABINA DE ASALTO // CALIBRE 7.62x39 // PRESET BUDGET LL2 COST-EFFECTIVE",
+        recoilV: "58 (-38%)",
+        recoilVVal: 58,
+        ergo: "52 (+20)",
+        ergoVal: 52,
+        recoilH: "148",
+        recoilHVal: 60,
+        misc: "3.45 kg · 730 m/s",
+        code: "TTCBUILD:RD704_BUDGET_LL2_REC58",
+        shopping: "RD-704 Budget LL2 Shopping List:\n- Freno de boca compensador Zenit DTK-1 (Prapor LL2): 6.800 ₽\n- Empuñadura Magpul RVG (Peacekeeper LL2): 9.200 ₽\n- Mira Holo Walther MRS (Skier LL2): 18.000 ₽\nCosto estimado total: 84.000 ₽"
+      },
+      ergo: {
+        title: "RD-704 (7.62x39mm)",
+        subtitle: "CARABINA DE ASALTO // CALIBRE 7.62x39 // PRESET CQC ULTRA ADS ERGO",
+        recoilV: "52 (-44%)",
+        recoilVVal: 52,
+        ergo: "78 (+46)",
+        ergoVal: 78,
+        recoilH: "130",
+        recoilHVal: 54,
+        misc: "3.20 kg · 745 m/s",
+        code: "TTCBUILD:RD704_CQC_ERGO78_ADS",
+        shopping: "RD-704 CQC Ergo Shopping List:\n- Culata CTR con Cheek Riser (Peacekeeper LL3): 28.000 ₽\n- Empuñadura táctica Stark SE-5 (Mechanic LL3): 42.000 ₽\n- Linterna táctica Surefire X400 (Skier LL2): 16.000 ₽\n- Mira EOTech EXPS3-0 (Peacekeeper LL3): 45.000 ₽\nCosto estimado total: 171.000 ₽"
+      }
+    };
+
+    let activePresetKey = 'meta';
+
+    function setPreset(key, btn) {
+      activePresetKey = key;
+      const data = PRESETS[key];
+      if (!data) return;
+
+      document.querySelectorAll('.preset-pill').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      document.getElementById('hud-weapon-name').textContent = data.title;
+      document.getElementById('hud-weapon-class').textContent = data.subtitle;
+      document.getElementById('stat-recoil-v').textContent = data.recoilV;
+      document.getElementById('bar-recoil-v').style.width = data.recoilVVal + '%';
+      document.getElementById('stat-ergo').textContent = data.ergo;
+      document.getElementById('bar-ergo').style.width = data.ergoVal + '%';
+      document.getElementById('stat-recoil-h').textContent = data.recoilH;
+      document.getElementById('bar-recoil-h').style.width = data.recoilHVal + '%';
+      document.getElementById('stat-misc').textContent = data.misc;
+      document.getElementById('hud-build-code').textContent = data.code;
+    }
+
+    // Cambiar módulos en el HUD
+    function switchHudModule(mod, btn) {
+      document.querySelectorAll('.hud-sidebar .hud-nav-item').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      if (mod === 'quests') {
+        document.getElementById('dossier').scrollIntoView({ behavior: 'smooth' });
+      } else if (mod === 'ballistics') {
+        showDemoTab('tab-ballistics-demo', document.querySelectorAll('.tab-pill-btn')[1]);
+        document.getElementById('dossier').scrollIntoView({ behavior: 'smooth' });
+      } else if (mod === 'maps') {
+        showDemoTab('tab-bosses-demo', document.querySelectorAll('.tab-pill-btn')[2]);
+        document.getElementById('dossier').scrollIntoView({ behavior: 'smooth' });
+      } else if (mod === 'flea') {
+        showDemoTab('tab-hideout-demo', document.querySelectorAll('.tab-pill-btn')[3]);
+        document.getElementById('dossier').scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    // Pestañas de la sección interactiva
+    function showDemoTab(tabId, btn) {
+      document.querySelectorAll('.tab-display-card').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.tab-pill-btn').forEach(b => b.classList.remove('active'));
+      
+      const target = document.getElementById(tabId);
+      if (target) {
+        target.classList.add('active');
+      }
+      if (btn) {
+        btn.classList.add('active');
+      }
+    }
+
+    // Funciones de Copiado con Toast
+    function showToast(text) {
+      const toast = document.getElementById('toast-msg');
+      toast.textContent = text || '✓ Copiado al portapapeles';
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 2500);
+    }
+
+    function copyBuildCode() {
+      const data = PRESETS[activePresetKey];
+      navigator.clipboard.writeText(data.code).then(() => {
+        showToast('✓ Código ' + data.code + ' copiado');
+      });
+    }
+
+    function copyShoppingList() {
+      const data = PRESETS[activePresetKey];
+      navigator.clipboard.writeText(data.shopping).then(() => {
+        showToast('✓ Lista de compras copiada al portapapeles');
+      });
+    }
+
+    function copyCommands() {
+      const cmds = "git clone https://github.com/Patoma89/TarkovScope.git\ncd TarkovScope\npip install -r requirements.txt\npython TarkovScope.py";
+      navigator.clipboard.writeText(cmds).then(() => {
+        showToast('✓ Comandos de instalación copiados');
+      });
+    }
+  </script>
+</body>
+</html>
