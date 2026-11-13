@@ -1,11 +1,38 @@
 """TarkovScope - Datos del usuario: progreso de misiones/hideout, marcadores de mapa, alijo y perfil.
 Extraido de database.py (responsabilidad unica). database.py re-exporta estas funciones.
 """
+import json
 from datetime import datetime
 from typing import Any, Dict, List, Set
 from core.config import DB_PATH
 from core.maps_data import normalize_map_key
 from core.db_connection import get_db_connection
+
+
+def get_user_preference(key: str, default: str = "", db_path: str = DB_PATH) -> str:
+    """Lee una preferencia de usuario desde la tabla metadata."""
+    try:
+        with get_db_connection(db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT value FROM metadata WHERE key = ?;", (key,))
+            row = cursor.fetchone()
+            return str(row[0]) if row and row[0] is not None else default
+    except Exception:
+        return default
+
+
+def set_user_preference(key: str, value: str, db_path: str = DB_PATH) -> None:
+    """Guarda una preferencia de usuario en la tabla metadata."""
+    with get_db_connection(db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            INSERT INTO metadata (key, value, updated_at)
+            VALUES (?, ?, CURRENT_TIMESTAMP)
+            ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP;
+            """,
+            (key, str(value)),
+        )
 
 
 def toggle_quest_progress(quest_id: int, db_path: str = DB_PATH) -> bool:
@@ -21,6 +48,30 @@ def toggle_quest_progress(quest_id: int, db_path: str = DB_PATH) -> bool:
             cursor.execute("UPDATE user_quest_progress SET is_completed = ?, updated_at = CURRENT_TIMESTAMP WHERE quest_id = ?;", (new_state, quest_id))
         conn.commit()
         return bool(new_state)
+
+
+def get_owned_key_ids(db_path: str = DB_PATH) -> Set[str]:
+    """Devuelve el conjunto de IDs de llaves marcadas como poseídas por el usuario."""
+    raw = get_user_preference("owned_keys", "[]", db_path=db_path)
+    try:
+        data = json.loads(raw) if raw else []
+        return {str(k) for k in data} if isinstance(data, list) else set()
+    except (TypeError, ValueError):
+        return set()
+
+
+def toggle_owned_key(key_id: str, db_path: str = DB_PATH) -> bool:
+    """Alterna el estado de posesión de una llave y retorna el nuevo estado booleano."""
+    owned = get_owned_key_ids(db_path=db_path)
+    kid = str(key_id)
+    if kid in owned:
+        owned.remove(kid)
+        new_state = False
+    else:
+        owned.add(kid)
+        new_state = True
+    set_user_preference("owned_keys", json.dumps(sorted(owned)), db_path=db_path)
+    return new_state
 
 
 def get_completed_story_quest_ids(db_path: str = DB_PATH) -> Set[str]:

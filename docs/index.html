@@ -920,7 +920,7 @@
           </svg>
           GitHub
         </a>
-        <a href="#descargar" class="btn btn-gold">⬇ Descargar v1.0</a>
+        <a href="#descargar" class="btn btn-gold">⬇ Descargar v1.2</a>
       </div>
     </div>
   </nav>
@@ -930,7 +930,7 @@
     <div class="container">
       <div class="hero-pill">
         <span class="status-dot"></span>
-        <span>V1.0 OFICIAL · PVE &amp; PVP · &lt;1 MS RAM CACHE · 100% OFFLINE</span>
+        <span>V1.2.0 OFICIAL · PVE &amp; PVP · &lt;1 MS RAM CACHE · 100% OFFLINE</span>
       </div>
 
       <h1 class="hero-title">
@@ -990,6 +990,8 @@
             <button class="tour-tab-btn" onclick="selectTour('bosses', this)">📍 Mapas &amp; Bosses</button>
             <button class="tour-tab-btn" onclick="selectTour('hideout', this)">📦 Alijo FiR &amp; Traders</button>
             <button class="tour-tab-btn" onclick="selectTour('lore', this)">📖 Story &amp; Lore</button>
+            <button class="tour-tab-btn" onclick="selectTour('keys', this)">🔑 Llaves &amp; Intel</button>
+            <button class="tour-tab-btn" onclick="selectTour('medical', this)">💊 Medicina &amp; Stims</button>
           </aside>
 
           <div class="showcase-stage" id="tour-stage">
@@ -1087,6 +1089,32 @@
             <li>Guías paso a paso con imágenes y banners panorámicos integrados.</li>
             <li>Desplazamiento acelerado ultra suave (<em>Smooth Scroll</em>).</li>
             <li>Búsqueda global instantánea (<code>Ctrl + K</code>) desde cualquier pantalla de la app.</li>
+          </ul>
+        </article>
+
+        <article class="module-card">
+          <div class="module-icon">🔑</div>
+          <h3>Llaves &amp; Keyring (224 Llaves)</h3>
+          <p>
+            Catálogo completo con las 224 llaves, tarjetas Labs y accesos de extracción organizados por mapa, usos e importancia táctica.
+          </p>
+          <ul class="module-list">
+            <li>Iconos oficiales en caché local y filtro instantáneo por mapa o categoría.</li>
+            <li>Checklist persistente de llavero (<em>Keyring</em>) para marcar las que ya tienes.</li>
+            <li>Dossier táctico con ubicación exacta, botín y misiones vinculadas.</li>
+          </ul>
+        </article>
+
+        <article class="module-card">
+          <div class="module-icon">💊</div>
+          <h3>Medicina &amp; Estimulantes (43 Ítems)</h3>
+          <p>
+            Guía médica táctica con botiquines, cirugías, vendajes, analgésicos y jeringas (stims) de TerraGroup listos para consulta en segundos.
+          </p>
+          <ul class="module-list">
+            <li>Filtro inteligente por síntoma: hemorragias, fracturas, dolor o veneno.</li>
+            <li>Detalle completo de duración, cargas, efectos positivos y penalizaciones.</li>
+            <li>Imágenes oficiales integradas y renderizado fluido sin tirones.</li>
           </ul>
         </article>
       </div>
@@ -1261,7 +1289,7 @@
       gunsmith: {
         tag: "MÓDULO 01 // ARMERÍA INTERACTIVA",
         title: "Gunsmith Studio & Workbench Dinámico",
-        desc: "Diseña y optimiza cualquier arma antes de gastar un solo rublo. El plano esquemático militar actualiza visualmente cada accesorio montado mientras el motor balístico recalcula ergonomía, retroceso, masa y velocidad al instante.",
+        desc: "Diseña y optimiza cualquiera de las 110 armas y 116 accesorios antes de gastar un solo rublo. El plano esquemático militar actualiza visualmente cada accesorio montado mientras el motor balístico recalcula ergonomía, retroceso, masa y velocidad al instante.",
         highlights: [
           { icon: "📐", title: "Blueprint en Tiempo Real", text: "Visualiza silenciadores, miras, cargadores de tambor, culatas y empuñaduras directamente sobre el plano del arma." },
           { icon: "⚡", title: "Presets Meta en 1 Clic", text: "Alterna al instante entre configuraciones Meta Laser Recoil, Budget LL2, CQC High Ergo y Gunsmith de Mechanic." },
@@ -1329,6 +1357,30 @@
         ],
         footerLeft: "ARCHIVO: story_quests_data.py (CAP. 1–10)",
         footerRight: "LECTURA: ALTO CONTRASTE"
+      },
+      keys: {
+        tag: "MÓDULO 07 // LLAVERO TÁCTICO",
+        title: "Llaves, Tarjetas Labs & Intel (224 Ítems)",
+        desc: "Consulta al instante las 224 llaves y tarjetas magnéticas de todos los mapas, incluidas Labs y The Labyrinth, con iconos oficiales en caché y seguimiento persistente de tu llavero.",
+        highlights: [
+          { icon: "🗝️", title: "224 Llaves Indexadas", text: "Clasificadas por mapa, usos, misión vinculada, extracción y valor táctico real." },
+          { icon: "✅", title: "Keyring Checklist", text: "Marca qué llaves ya conseguiste en tu alijo y filtra las pendientes en un clic." },
+          { icon: "⚡", title: "Carga Ultra Rápida", text: "Iconos precacheados localmente y renderizado por lotes a 60 FPS sin tirones." }
+        ],
+        footerLeft: "ARCHIVOS: keys_data.py + keys_wiki_catalog.py",
+        footerRight: "COBERTURA: 224 LLAVES OFICIALES"
+      },
+      medical: {
+        tag: "MÓDULO 08 // SOPORTE VITAL & STIMS",
+        title: "Medicina, Cirugía & Estimulantes (43 Ítems)",
+        desc: "Encuentra el tratamiento exacto en medio de una incursión: botiquines, kits quirúrgicos, vendajes, analgésicos y jeringas TerraGroup con efectos y contraindicaciones.",
+        highlights: [
+          { icon: "🩹", title: "Filtro por Síntoma", text: "Filtra al instante por sangrado ligero/pesado, fractura, dolor, envenenamiento o buff de combate." },
+          { icon: "💉", title: "43 Ítems con Iconos Oficiales", text: "Comparativa de usos, tiempo de aplicación, hidratación, energía y efectos secundarios." },
+          { icon: "🚀", title: "Consulta Instantánea", text: "Dossier limpio en español con carga inmediata desde RAM e imágenes locales." }
+        ],
+        footerLeft: "ARCHIVO: medical_data.py + tab_medical.py",
+        footerRight: "CATÁLOGO: 43 MEDS & STIMS"
       }
     };
 

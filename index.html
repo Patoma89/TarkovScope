@@ -6,7 +6,7 @@
   <title>TTC — Tactical Tarkov Companion | Asistente Táctico de Escritorio</title>
   <meta name="description" content="TTC (Tactical Tarkov Companion) es la suite táctica de escritorio definitiva para Escape from Tarkov (PvE & PvP). Cero latencia (<1 ms), 100% offline, Gunsmith Studio interactivo, Wiki Dossier de Quests, mapas 2D y simulador balístico.">
   <meta name="keywords" content="TTC, Tactical Tarkov Companion, Escape from Tarkov, Tarkov Desktop App, Gunsmith Studio, Quests Offline, Balística EFT, Mapas Tarkov, CustomTkinter">
-  <meta name="theme-color" content="#0d0e0c">
+  <meta name="theme-color" content="#0b0e14">
 
   <!-- Open Graph / Redes Sociales -->
   <meta property="og:type" content="website">
@@ -15,45 +15,41 @@
   <meta property="og:url" content="https://patoma89.github.io/TarkovScope/">
 
   <link rel="icon" type="image/x-icon" href="ttc.ico">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Inter:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --bg-void: #070807;
-      --bg-dark: #0d0e0c;
-      --bg-elevated: #141612;
-      --bg-elevated-hover: #1c1f19;
-      --bg-panel: #10120e;
+      --bg-void: #07090d;
+      --bg-dark: #0b0e14;
+      --bg-elevated: #111620;
+      --bg-elevated-hover: #161d2b;
+      --bg-panel: #0d1119;
 
-      --gold: #c7b082;
-      --gold-bright: #e4cfa3;
-      --gold-dim: #8a7957;
-      --gold-glow: rgba(199, 176, 130, 0.22);
+      --gold: #d4b886;
+      --gold-bright: #ebd0a0;
+      --gold-dim: #8f7952;
+      --gold-glow: rgba(212, 184, 134, 0.22);
 
-      --green: #72a350;
-      --green-glow: rgba(114, 163, 80, 0.22);
-      --cyan: #94a38b;
-      --cyan-glow: rgba(148, 163, 139, 0.16);
-      --amber: #c97b2e;
-      --red: #b84239;
+      --green: #10b981;
+      --green-glow: rgba(16, 185, 129, 0.2);
+      --cyan: #38bdf8;
+      --cyan-glow: rgba(56, 189, 248, 0.18);
+      --amber: #f59e0b;
+      --red: #ef4444;
 
-      --text-main: #eae6dc;
-      --text-dim: #b4afa2;
-      --text-muted: #6f6b60;
+      --text-main: #f8fafc;
+      --text-dim: #cbd5e1;
+      --text-muted: #64748b;
 
-      --border: #2a2c25;
-      --border-gold: rgba(199, 176, 130, 0.34);
+      --border: #232936;
+      --border-gold: rgba(212, 184, 134, 0.28);
 
-      --font-display: 'Chakra Petch', 'Segoe UI', sans-serif;
-      --font-sans: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
-      --font-mono: 'Share Tech Mono', Consolas, monospace;
+      --font-sans: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', Consolas, 'Fira Code', monospace;
 
-      --radius-sm: 3px;
-      --radius-md: 5px;
-      --radius-lg: 8px;
-      --shadow-card: 0 18px 40px -15px rgba(0, 0, 0, 0.85);
+      --radius-sm: 6px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --shadow-card: 0 18px 40px -15px rgba(0, 0, 0, 0.75);
     }
 
     * {
@@ -73,11 +69,11 @@
       line-height: 1.65;
       overflow-x: hidden;
       background-image:
-        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(199, 176, 130, 0.13), transparent),
-        radial-gradient(circle at 85% 30%, rgba(114, 163, 80, 0.06), transparent 35%),
-        radial-gradient(circle at 15% 65%, rgba(154, 136, 102, 0.05), transparent 35%),
-        linear-gradient(to right, rgba(234, 230, 220, 0.02) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(234, 230, 220, 0.02) 1px, transparent 1px);
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(212, 184, 134, 0.12), transparent),
+        radial-gradient(circle at 85% 30%, rgba(56, 189, 248, 0.05), transparent 35%),
+        radial-gradient(circle at 15% 65%, rgba(16, 185, 129, 0.05), transparent 35%),
+        linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
       background-size: 100% 100%, 100% 100%, 100% 100%, 44px 44px, 44px 44px;
     }
 
@@ -181,16 +177,12 @@
       list-style: none;
     }
 
-    h1, h2, h3, h4, .nav-links a, .btn {
-      font-family: var(--font-display);
-    }
-
     .nav-links a {
-      font-size: 0.88rem;
-      font-weight: 700;
+      font-size: 0.86rem;
+      font-weight: 600;
       color: var(--text-dim);
       text-transform: uppercase;
-      letter-spacing: 1.1px;
+      letter-spacing: 0.9px;
       padding: 6px 0;
       position: relative;
     }
@@ -231,33 +223,32 @@
       justify-content: center;
       gap: 8px;
       padding: 10px 20px;
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       font-weight: 700;
-      text-transform: uppercase;
       border-radius: var(--radius-sm);
       cursor: pointer;
       transition: all 0.22s ease;
       border: 1px solid transparent;
       white-space: nowrap;
-      letter-spacing: 0.9px;
+      letter-spacing: 0.4px;
     }
 
     .btn-gold {
-      background: linear-gradient(135deg, #d8c295, #9a8356);
-      color: #0b0c09;
-      border-color: #ead7b0;
+      background: linear-gradient(135deg, #dcc190, #b59660);
+      color: #090c12;
+      border-color: #f3e2c3;
       box-shadow: 0 6px 20px var(--gold-glow);
     }
 
     .btn-gold:hover {
-      background: linear-gradient(135deg, #e8d4ab, #b39966);
+      background: linear-gradient(135deg, #ebd0a0, #c7a66e);
       color: #000;
       transform: translateY(-2px);
-      box-shadow: 0 10px 26px rgba(199, 176, 130, 0.36);
+      box-shadow: 0 10px 26px rgba(212, 184, 134, 0.36);
     }
 
     .btn-ghost {
-      background: rgba(20, 22, 18, 0.9);
+      background: rgba(17, 22, 32, 0.85);
       color: var(--text-main);
       border-color: var(--border);
     }
@@ -929,7 +920,7 @@
           </svg>
           GitHub
         </a>
-        <a href="#descargar" class="btn btn-gold">⬇ Descargar</a>
+        <a href="#descargar" class="btn btn-gold">⬇ Descargar v1.2</a>
       </div>
     </div>
   </nav>
@@ -939,7 +930,7 @@
     <div class="container">
       <div class="hero-pill">
         <span class="status-dot"></span>
-        <span>TACTICAL TARKOV COMPANION · PVE &amp; PVP · &lt;1 MS RAM CACHE · AUTO-UPDATER</span>
+        <span>V1.2.0 OFICIAL · PVE &amp; PVP · &lt;1 MS RAM CACHE · 100% OFFLINE</span>
       </div>
 
       <h1 class="hero-title">
@@ -999,6 +990,8 @@
             <button class="tour-tab-btn" onclick="selectTour('bosses', this)">📍 Mapas &amp; Bosses</button>
             <button class="tour-tab-btn" onclick="selectTour('hideout', this)">📦 Alijo FiR &amp; Traders</button>
             <button class="tour-tab-btn" onclick="selectTour('lore', this)">📖 Story &amp; Lore</button>
+            <button class="tour-tab-btn" onclick="selectTour('keys', this)">🔑 Llaves &amp; Intel</button>
+            <button class="tour-tab-btn" onclick="selectTour('medical', this)">💊 Medicina &amp; Stims</button>
           </aside>
 
           <div class="showcase-stage" id="tour-stage">
@@ -1098,6 +1091,32 @@
             <li>Búsqueda global instantánea (<code>Ctrl + K</code>) desde cualquier pantalla de la app.</li>
           </ul>
         </article>
+
+        <article class="module-card">
+          <div class="module-icon">🔑</div>
+          <h3>Llaves &amp; Keyring (224 Llaves)</h3>
+          <p>
+            Catálogo completo con las 224 llaves, tarjetas Labs y accesos de extracción organizados por mapa, usos e importancia táctica.
+          </p>
+          <ul class="module-list">
+            <li>Iconos oficiales en caché local y filtro instantáneo por mapa o categoría.</li>
+            <li>Checklist persistente de llavero (<em>Keyring</em>) para marcar las que ya tienes.</li>
+            <li>Dossier táctico con ubicación exacta, botín y misiones vinculadas.</li>
+          </ul>
+        </article>
+
+        <article class="module-card">
+          <div class="module-icon">💊</div>
+          <h3>Medicina &amp; Estimulantes (43 Ítems)</h3>
+          <p>
+            Guía médica táctica con botiquines, cirugías, vendajes, analgésicos y jeringas (stims) de TerraGroup listos para consulta en segundos.
+          </p>
+          <ul class="module-list">
+            <li>Filtro inteligente por síntoma: hemorragias, fracturas, dolor o veneno.</li>
+            <li>Detalle completo de duración, cargas, efectos positivos y penalizaciones.</li>
+            <li>Imágenes oficiales integradas y renderizado fluido sin tirones.</li>
+          </ul>
+        </article>
       </div>
     </div>
   </section>
@@ -1164,19 +1183,19 @@
         <div class="download-card featured">
           <span class="featured-ribbon">RECOMENDADO · SIN PYTHON</span>
           <div>
-            <h3>📦 Instalador Oficial para Windows</h3>
+            <h3>📦 TTC Portable para Windows</h3>
             <p style="color: var(--text-dim); font-size: 0.95rem; margin-bottom: 18px;">
-              Instalador oficial con acceso directo, ícono nativo, optimización de rendimiento 4x y verificador de actualizaciones integrado.
+              Binario autónomo compilado con PyInstaller e ícono nativo de barra de tareas. Descomprimir, abrir y desplegar.
             </p>
             <ul class="module-list" style="margin-bottom: 24px;">
-              <li>Compatible con Windows 10 y Windows 11 (64-bit) sin permisos de admin.</li>
+              <li>Compatible con Windows 10 y Windows 11 (64-bit).</li>
               <li>Funciona 100% offline tras la primera sincronización.</li>
               <li>Sin telemetría, sin anuncios y 100% gratuito.</li>
             </ul>
           </div>
           <div>
-            <a href="https://github.com/Patoma89/TarkovScope/releases/latest" target="_blank" class="btn btn-gold" style="width: 100%; padding: 14px; font-size: 1rem;">
-              ⬇ Descargar Instalador (GitHub Releases)
+            <a href="https://github.com/Patoma89/TarkovScope/releases" target="_blank" class="btn btn-gold" style="width: 100%; padding: 14px; font-size: 1rem;">
+              ⬇ Descargar TTC.exe (GitHub Releases)
             </a>
           </div>
         </div>
@@ -1270,7 +1289,7 @@
       gunsmith: {
         tag: "MÓDULO 01 // ARMERÍA INTERACTIVA",
         title: "Gunsmith Studio & Workbench Dinámico",
-        desc: "Diseña y optimiza cualquier arma antes de gastar un solo rublo. El plano esquemático militar actualiza visualmente cada accesorio montado mientras el motor balístico recalcula ergonomía, retroceso, masa y velocidad al instante.",
+        desc: "Diseña y optimiza cualquiera de las 110 armas y 116 accesorios antes de gastar un solo rublo. El plano esquemático militar actualiza visualmente cada accesorio montado mientras el motor balístico recalcula ergonomía, retroceso, masa y velocidad al instante.",
         highlights: [
           { icon: "📐", title: "Blueprint en Tiempo Real", text: "Visualiza silenciadores, miras, cargadores de tambor, culatas y empuñaduras directamente sobre el plano del arma." },
           { icon: "⚡", title: "Presets Meta en 1 Clic", text: "Alterna al instante entre configuraciones Meta Laser Recoil, Budget LL2, CQC High Ergo y Gunsmith de Mechanic." },
@@ -1338,6 +1357,30 @@
         ],
         footerLeft: "ARCHIVO: story_quests_data.py (CAP. 1–10)",
         footerRight: "LECTURA: ALTO CONTRASTE"
+      },
+      keys: {
+        tag: "MÓDULO 07 // LLAVERO TÁCTICO",
+        title: "Llaves, Tarjetas Labs & Intel (224 Ítems)",
+        desc: "Consulta al instante las 224 llaves y tarjetas magnéticas de todos los mapas, incluidas Labs y The Labyrinth, con iconos oficiales en caché y seguimiento persistente de tu llavero.",
+        highlights: [
+          { icon: "🗝️", title: "224 Llaves Indexadas", text: "Clasificadas por mapa, usos, misión vinculada, extracción y valor táctico real." },
+          { icon: "✅", title: "Keyring Checklist", text: "Marca qué llaves ya conseguiste en tu alijo y filtra las pendientes en un clic." },
+          { icon: "⚡", title: "Carga Ultra Rápida", text: "Iconos precacheados localmente y renderizado por lotes a 60 FPS sin tirones." }
+        ],
+        footerLeft: "ARCHIVOS: keys_data.py + keys_wiki_catalog.py",
+        footerRight: "COBERTURA: 224 LLAVES OFICIALES"
+      },
+      medical: {
+        tag: "MÓDULO 08 // SOPORTE VITAL & STIMS",
+        title: "Medicina, Cirugía & Estimulantes (43 Ítems)",
+        desc: "Encuentra el tratamiento exacto en medio de una incursión: botiquines, kits quirúrgicos, vendajes, analgésicos y jeringas TerraGroup con efectos y contraindicaciones.",
+        highlights: [
+          { icon: "🩹", title: "Filtro por Síntoma", text: "Filtra al instante por sangrado ligero/pesado, fractura, dolor, envenenamiento o buff de combate." },
+          { icon: "💉", title: "43 Ítems con Iconos Oficiales", text: "Comparativa de usos, tiempo de aplicación, hidratación, energía y efectos secundarios." },
+          { icon: "🚀", title: "Consulta Instantánea", text: "Dossier limpio en español con carga inmediata desde RAM e imágenes locales." }
+        ],
+        footerLeft: "ARCHIVO: medical_data.py + tab_medical.py",
+        footerRight: "CATÁLOGO: 43 MEDS & STIMS"
       }
     };
 

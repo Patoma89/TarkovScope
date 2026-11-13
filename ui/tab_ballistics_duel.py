@@ -372,6 +372,18 @@ class DuelMixin:
         self._render_duel_content()
 
     def _on_duel_quick_search(self, event=None):
+        job = getattr(self, "_duel_search_job", None)
+        if job is not None:
+            try:
+                self.after_cancel(job)
+            except Exception:
+                pass
+        self._duel_search_job = self.after(120, self._flush_duel_quick_search)
+
+    def _flush_duel_quick_search(self):
+        self._duel_search_job = None
+        if not self.winfo_exists():
+            return
         query = self.duel_search_entry.get().strip().lower()
         if not hasattr(self, "_all_search_labels"):
             return
@@ -451,24 +463,39 @@ class DuelMixin:
         self._build_bullet_stat_card(self.duel_scroll, ammo_a, ammo_b, is_a=True).grid(row=0, column=0, padx=8, pady=8, sticky="nsew")
         self._build_bullet_stat_card(self.duel_scroll, ammo_b, ammo_a, is_a=False).grid(row=0, column=1, padx=8, pady=8, sticky="nsew")
 
-        duel_box = ctk.CTkFrame(self.duel_scroll, fg_color="#10141D", corner_radius=8, border_width=1, border_color="#242B3B")
+        def _fmt_shots(n: int) -> str:
+            return "1 tiro" if n == 1 else f"{n} tiros"
+
+        duel_box = ctk.CTkFrame(self.duel_scroll, fg_color="#10141D", corner_radius=8, border_width=1, border_color="#2B3548")
         duel_box.grid(row=1, column=0, columnspan=2, padx=8, pady=12, sticky="ew")
-        duel_box.grid_columnconfigure(0, minsize=180, weight=1)
-        duel_box.grid_columnconfigure(1, minsize=160, weight=1)
-        duel_box.grid_columnconfigure(2, minsize=160, weight=1)
-        duel_box.grid_columnconfigure(3, minsize=320, weight=3)
+        duel_box.grid_columnconfigure(0, weight=1)
 
-        hdr_row = ctk.CTkFrame(duel_box, fg_color="#181F2C", corner_radius=4)
-        hdr_row.grid(row=0, column=0, columnspan=4, padx=8, pady=8, sticky="ew")
-        hdr_row.grid_columnconfigure(0, minsize=180, weight=1)
-        hdr_row.grid_columnconfigure(1, minsize=160, weight=1)
-        hdr_row.grid_columnconfigure(2, minsize=160, weight=1)
-        hdr_row.grid_columnconfigure(3, minsize=320, weight=3)
+        duel_table = ctk.CTkFrame(duel_box, fg_color="#232B3D", corner_radius=6)
+        duel_table.grid(row=0, column=0, padx=8, pady=8, sticky="ew")
+        duel_table.grid_columnconfigure(0, minsize=215, weight=0)
+        duel_table.grid_columnconfigure(1, minsize=185, weight=0)
+        duel_table.grid_columnconfigure(2, minsize=185, weight=0)
+        duel_table.grid_columnconfigure(3, minsize=320, weight=1)
 
-        ctk.CTkLabel(hdr_row, text="NIVEL DE BLINDAJE", font=ui_font(12, "bold"), text_color=C_TEXT_DIM).grid(row=0, column=0, padx=10, pady=6, sticky="w")
-        ctk.CTkLabel(hdr_row, text="EFECTIVIDAD A", font=ui_font(12, "bold"), text_color=THEME["accent_gold"]).grid(row=0, column=1, padx=10, pady=6)
-        ctk.CTkLabel(hdr_row, text="EFECTIVIDAD B", font=ui_font(12, "bold"), text_color=C_BLUE).grid(row=0, column=2, padx=10, pady=6)
-        ctk.CTkLabel(hdr_row, text="VEREDICTO TÁCTICO DE COMBATE", font=ui_font(12, "bold"), text_color=C_TEXT).grid(row=0, column=3, padx=10, pady=6, sticky="w")
+        hdr_specs = [
+            (0, "NIVEL DE BLINDAJE", C_TEXT_DIM, "w", "center"),
+            (1, "EFECTIVIDAD A", THEME["accent_gold"], "center", "center"),
+            (2, "EFECTIVIDAD B", C_BLUE, "center", "center"),
+            (3, "VEREDICTO TÁCTICO DE COMBATE", C_TEXT, "w", "w"),
+        ]
+        for col_i, h_txt, h_col, h_anchor, _ in hdr_specs:
+            h_cell = ctk.CTkFrame(duel_table, fg_color="#181F2C", corner_radius=0, height=34)
+            h_cell.grid(row=0, column=col_i, padx=(0, 1 if col_i < 3 else 0), pady=(0, 1), sticky="nsew")
+            h_cell.grid_propagate(False)
+            h_cell.grid_columnconfigure(0, weight=1)
+            h_cell.grid_rowconfigure(0, weight=1)
+            ctk.CTkLabel(
+                h_cell,
+                text=h_txt,
+                font=ui_font(11, "bold"),
+                text_color=h_col,
+                anchor=h_anchor
+            ).grid(row=0, column=0, padx=12, pady=4, sticky="ew" if h_anchor == "w" else "")
 
         armor_class_names = {
             1: "Clase 1 (Tela / Zhuk-3)",
@@ -496,67 +523,136 @@ class DuelMixin:
             bg_b, fg_b = CLASS_SCORE_COLORS.get(sc_b, (eff_b["color"], C_BG_INSET))
 
             if stk_a < stk_b:
-                comment = f"🟢 Ventaja A: Abate en {stk_a} tiros ({sim_a['ttk_ms']} ms) vs {stk_b} tiros ({sim_b['ttk_ms']} ms) de B."
+                comment = f"🟢 Ventaja A: Abate en {_fmt_shots(stk_a)} ({sim_a['ttk_ms']} ms) vs {_fmt_shots(stk_b)} ({sim_b['ttk_ms']} ms) de B."
                 txt_c = C_GREEN_LIGHT
             elif stk_b < stk_a:
-                comment = f"🔵 Ventaja B: Abate en {stk_b} tiros ({sim_b['ttk_ms']} ms) vs {stk_a} tiros ({sim_a['ttk_ms']} ms) de A."
+                comment = f"🔵 Ventaja B: Abate en {_fmt_shots(stk_b)} ({sim_b['ttk_ms']} ms) vs {_fmt_shots(stk_a)} ({sim_a['ttk_ms']} ms) de A."
                 txt_c = C_BLUE
             elif sc_a > sc_b:
-                comment = f"🟢 Ventaja A en 1er impacto ({sim_a['first_shot_pen_pct']}% pen vs {sim_b['first_shot_pen_pct']}%). Ambos abaten en ~{stk_a} tiros."
+                comment = f"🟢 Ventaja A en 1er impacto ({sim_a['first_shot_pen_pct']}% pen vs {sim_b['first_shot_pen_pct']}%). Ambos abaten en ~{_fmt_shots(stk_a)}."
                 txt_c = C_GREEN_LIGHT
             elif sc_b > sc_a:
-                comment = f"🔵 Ventaja B en 1er impacto ({sim_b['first_shot_pen_pct']}% pen vs {sim_a['first_shot_pen_pct']}%). Ambos abaten en ~{stk_b} tiros."
+                comment = f"🔵 Ventaja B en 1er impacto ({sim_b['first_shot_pen_pct']}% pen vs {sim_a['first_shot_pen_pct']}%). Ambos abaten en ~{_fmt_shots(stk_b)}."
                 txt_c = C_BLUE
             else:
-                comment = f"⚖️ Empate táctico: Ambos abaten al tórax en ~{stk_a} disparos ({sim_a['ttk_ms']} ms a 700 RPM)."
+                comment = f"⚖️ Empate táctico: Ambos abaten al tórax en ~{_fmt_shots(stk_a)} ({sim_a['ttk_ms']} ms a 700 RPM)."
                 txt_c = C_TEXT_SOFT
 
-            r_f = ctk.CTkFrame(duel_box, fg_color="#121622" if ac % 2 == 0 else "#151B2A", corner_radius=2)
-            r_f.grid(row=ac, column=0, columnspan=4, padx=8, pady=2, sticky="ew")
-            r_f.grid_columnconfigure(0, minsize=180, weight=1)
-            r_f.grid_columnconfigure(1, minsize=160, weight=1)
-            r_f.grid_columnconfigure(2, minsize=160, weight=1)
-            r_f.grid_columnconfigure(3, minsize=320, weight=3)
+            row_bg = "#121622" if ac % 2 == 0 else "#151B2A"
+            pad_bot = 1 if ac < 6 else 0
 
-            ctk.CTkLabel(r_f, text=armor_class_names[ac], font=ui_font(12, "bold"), text_color=C_TEXT).grid(row=0, column=0, padx=10, pady=7, sticky="w")
-            ctk.CTkLabel(r_f, text=f"{sc_a}/6 • {stk_a} tiros ({sim_a['ttk_ms']}ms)", font=ui_font(11, "bold"), fg_color=bg_a, text_color=fg_a, corner_radius=4, width=152, height=24).grid(row=0, column=1, padx=6, pady=7)
-            ctk.CTkLabel(r_f, text=f"{sc_b}/6 • {stk_b} tiros ({sim_b['ttk_ms']}ms)", font=ui_font(11, "bold"), fg_color=bg_b, text_color=fg_b, corner_radius=4, width=152, height=24).grid(row=0, column=2, padx=6, pady=7)
-            ctk.CTkLabel(r_f, text=comment, font=ui_font(12), text_color=txt_c).grid(row=0, column=3, padx=10, pady=7, sticky="w")
+            c0 = ctk.CTkFrame(duel_table, fg_color=row_bg, corner_radius=0, height=40)
+            c0.grid(row=ac, column=0, padx=(0, 1), pady=(0, pad_bot), sticky="nsew")
+            c0.grid_propagate(False)
+            c0.grid_columnconfigure(0, weight=1)
+            c0.grid_rowconfigure(0, weight=1)
+            ctk.CTkLabel(c0, text=armor_class_names[ac], font=ui_font(12, "bold"), text_color=C_TEXT, anchor="w").grid(row=0, column=0, padx=12, sticky="ew")
+
+            c1 = ctk.CTkFrame(duel_table, fg_color=row_bg, corner_radius=0, height=40)
+            c1.grid(row=ac, column=1, padx=(0, 1), pady=(0, pad_bot), sticky="nsew")
+            c1.grid_propagate(False)
+            c1.grid_columnconfigure(0, weight=1)
+            c1.grid_rowconfigure(0, weight=1)
+            ctk.CTkLabel(
+                c1,
+                text=f"{sc_a}/6  •  {_fmt_shots(stk_a)} ({sim_a['ttk_ms']}ms)",
+                font=ui_font(11, "bold"),
+                fg_color=bg_a,
+                text_color=fg_a,
+                corner_radius=5,
+                width=164,
+                height=26
+            ).grid(row=0, column=0)
+
+            c2 = ctk.CTkFrame(duel_table, fg_color=row_bg, corner_radius=0, height=40)
+            c2.grid(row=ac, column=2, padx=(0, 1), pady=(0, pad_bot), sticky="nsew")
+            c2.grid_propagate(False)
+            c2.grid_columnconfigure(0, weight=1)
+            c2.grid_rowconfigure(0, weight=1)
+            ctk.CTkLabel(
+                c2,
+                text=f"{sc_b}/6  •  {_fmt_shots(stk_b)} ({sim_b['ttk_ms']}ms)",
+                font=ui_font(11, "bold"),
+                fg_color=bg_b,
+                text_color=fg_b,
+                corner_radius=5,
+                width=164,
+                height=26
+            ).grid(row=0, column=0)
+
+            c3 = ctk.CTkFrame(duel_table, fg_color=row_bg, corner_radius=0, height=40)
+            c3.grid(row=ac, column=3, padx=0, pady=(0, pad_bot), sticky="nsew")
+            c3.grid_propagate(False)
+            c3.grid_columnconfigure(0, weight=1)
+            c3.grid_rowconfigure(0, weight=1)
+            ctk.CTkLabel(c3, text=comment, font=ui_font(12), text_color=txt_c, anchor="w").grid(row=0, column=0, padx=12, sticky="ew")
 
         # --- Simulador contra Bosses Icónicos ---
-        boss_box = ctk.CTkFrame(self.duel_scroll, fg_color="#10141D", corner_radius=8, border_width=1, border_color="#242B3B")
+        boss_box = ctk.CTkFrame(self.duel_scroll, fg_color="#10141D", corner_radius=8, border_width=1, border_color="#2B3548")
         boss_box.grid(row=2, column=0, columnspan=2, padx=8, pady=(4, 10), sticky="ew")
-        boss_box.grid_columnconfigure(0, minsize=220, weight=1)
-        boss_box.grid_columnconfigure(1, minsize=150, weight=1)
-        boss_box.grid_columnconfigure(2, minsize=150, weight=1)
-        boss_box.grid_columnconfigure(3, minsize=280, weight=2)
+        boss_box.grid_columnconfigure(0, weight=1)
 
-        b_hdr = ctk.CTkFrame(boss_box, fg_color="#1A1625", corner_radius=4)
-        b_hdr.grid(row=0, column=0, columnspan=4, padx=8, pady=8, sticky="ew")
-        b_hdr.grid_columnconfigure(0, minsize=220, weight=1)
-        b_hdr.grid_columnconfigure(1, minsize=150, weight=1)
-        b_hdr.grid_columnconfigure(2, minsize=150, weight=1)
-        b_hdr.grid_columnconfigure(3, minsize=280, weight=2)
+        boss_table = ctk.CTkFrame(boss_box, fg_color="#232B3D", corner_radius=6)
+        boss_table.grid(row=0, column=0, padx=8, pady=8, sticky="ew")
+        boss_table.grid_columnconfigure(0, minsize=215, weight=0)
+        boss_table.grid_columnconfigure(1, minsize=185, weight=0)
+        boss_table.grid_columnconfigure(2, minsize=185, weight=0)
+        boss_table.grid_columnconfigure(3, minsize=320, weight=1)
 
-        ctk.CTkLabel(b_hdr, text="💀 SIMULADOR CONTRA BOSSES ICÓNICOS", font=ui_font(12, "bold"), text_color=C_AMBER).grid(row=0, column=0, padx=10, pady=6, sticky="w")
-        ctk.CTkLabel(b_hdr, text="IMPACTO PROYECTIL A", font=ui_font(12, "bold"), text_color=THEME["accent_gold"]).grid(row=0, column=1, padx=10, pady=6)
-        ctk.CTkLabel(b_hdr, text="IMPACTO PROYECTIL B", font=ui_font(12, "bold"), text_color=C_BLUE).grid(row=0, column=2, padx=10, pady=6)
-        ctk.CTkLabel(b_hdr, text="ANÁLISIS LETALIDAD BOSS", font=ui_font(12, "bold"), text_color=C_TEXT).grid(row=0, column=3, padx=10, pady=6, sticky="w")
+        boss_hdrs = [
+            (0, "💀 SIMULADOR CONTRA BOSSES", C_AMBER, "w"),
+            (1, "IMPACTO PROYECTIL A", THEME["accent_gold"], "center"),
+            (2, "IMPACTO PROYECTIL B", C_BLUE, "center"),
+            (3, "ANÁLISIS LETALIDAD BOSS", C_TEXT, "w"),
+        ]
+        for col_i, h_txt, h_col, h_anchor in boss_hdrs:
+            h_cell = ctk.CTkFrame(boss_table, fg_color="#1A1625", corner_radius=0, height=34)
+            h_cell.grid(row=0, column=col_i, padx=(0, 1 if col_i < 3 else 0), pady=(0, 1), sticky="nsew")
+            h_cell.grid_propagate(False)
+            h_cell.grid_columnconfigure(0, weight=1)
+            h_cell.grid_rowconfigure(0, weight=1)
+            ctk.CTkLabel(
+                h_cell,
+                text=h_txt,
+                font=ui_font(11, "bold"),
+                text_color=h_col,
+                anchor=h_anchor
+            ).grid(row=0, column=0, padx=12, pady=4, sticky="ew" if h_anchor == "w" else "")
 
         boss_sim_a = simulate_boss_targets(dmg_a, pen_a, admg_a)
         boss_sim_b = simulate_boss_targets(dmg_b, pen_b, admg_b)
+        total_bosses = len(boss_sim_a)
         for idx, (ba, bb) in enumerate(zip(boss_sim_a, boss_sim_b), start=1):
-            bf = ctk.CTkFrame(boss_box, fg_color="#121622" if idx % 2 == 0 else "#151B2A", corner_radius=2)
-            bf.grid(row=idx, column=0, columnspan=4, padx=8, pady=2, sticky="ew")
-            bf.grid_columnconfigure(0, minsize=220, weight=1)
-            bf.grid_columnconfigure(1, minsize=150, weight=1)
-            bf.grid_columnconfigure(2, minsize=150, weight=1)
-            bf.grid_columnconfigure(3, minsize=280, weight=2)
+            row_bg = "#121622" if idx % 2 == 0 else "#151B2A"
+            pad_bot = 1 if idx < total_bosses else 0
 
-            ctk.CTkLabel(bf, text=ba["target"], font=ui_font(12, "bold"), text_color=C_TEXT).grid(row=0, column=0, padx=10, pady=6, sticky="w")
-            ctk.CTkLabel(bf, text=f"{ba['stk']} tiros ({ba['pen_pct']}% pen)", font=ui_font(12, "bold"), text_color=C_GREEN_LIGHT if ba["stk"] <= bb["stk"] else C_TEXT_MUTED).grid(row=0, column=1, padx=8, pady=6)
-            ctk.CTkLabel(bf, text=f"{bb['stk']} tiros ({bb['pen_pct']}% pen)", font=ui_font(12, "bold"), text_color=C_BLUE if bb["stk"] <= ba["stk"] else C_TEXT_MUTED).grid(row=0, column=2, padx=8, pady=6)
-            ctk.CTkLabel(bf, text=f"A: {ba['verdict']}  |  B: {bb['verdict']}", font=ui_font(11), text_color=C_TEXT_DIM).grid(row=0, column=3, padx=10, pady=6, sticky="w")
+            b0 = ctk.CTkFrame(boss_table, fg_color=row_bg, corner_radius=0, height=36)
+            b0.grid(row=idx, column=0, padx=(0, 1), pady=(0, pad_bot), sticky="nsew")
+            b0.grid_propagate(False)
+            b0.grid_columnconfigure(0, weight=1)
+            b0.grid_rowconfigure(0, weight=1)
+            ctk.CTkLabel(b0, text=ba["target"], font=ui_font(12, "bold"), text_color=C_TEXT, anchor="w").grid(row=0, column=0, padx=12, sticky="ew")
+
+            b1 = ctk.CTkFrame(boss_table, fg_color=row_bg, corner_radius=0, height=36)
+            b1.grid(row=idx, column=1, padx=(0, 1), pady=(0, pad_bot), sticky="nsew")
+            b1.grid_propagate(False)
+            b1.grid_columnconfigure(0, weight=1)
+            b1.grid_rowconfigure(0, weight=1)
+            ctk.CTkLabel(b1, text=f"{_fmt_shots(ba['stk'])} ({ba['pen_pct']}% pen)", font=ui_font(12, "bold"), text_color=C_GREEN_LIGHT if ba["stk"] <= bb["stk"] else C_TEXT_MUTED).grid(row=0, column=0)
+
+            b2 = ctk.CTkFrame(boss_table, fg_color=row_bg, corner_radius=0, height=36)
+            b2.grid(row=idx, column=2, padx=(0, 1), pady=(0, pad_bot), sticky="nsew")
+            b2.grid_propagate(False)
+            b2.grid_columnconfigure(0, weight=1)
+            b2.grid_rowconfigure(0, weight=1)
+            ctk.CTkLabel(b2, text=f"{_fmt_shots(bb['stk'])} ({bb['pen_pct']}% pen)", font=ui_font(12, "bold"), text_color=C_BLUE if bb["stk"] <= ba["stk"] else C_TEXT_MUTED).grid(row=0, column=0)
+
+            b3 = ctk.CTkFrame(boss_table, fg_color=row_bg, corner_radius=0, height=36)
+            b3.grid(row=idx, column=3, padx=0, pady=(0, pad_bot), sticky="nsew")
+            b3.grid_propagate(False)
+            b3.grid_columnconfigure(0, weight=1)
+            b3.grid_rowconfigure(0, weight=1)
+            ctk.CTkLabel(b3, text=f"A: {ba['verdict']}  |  B: {bb['verdict']}", font=ui_font(11), text_color=C_TEXT_DIM, anchor="w").grid(row=0, column=0, padx=12, sticky="ew")
 
         pen_winner = ammo_a["name"] if pen_a >= pen_b else ammo_b["name"]
         dmg_winner = ammo_a["name"] if dmg_a >= dmg_b else ammo_b["name"]

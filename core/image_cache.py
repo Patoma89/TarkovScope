@@ -275,15 +275,29 @@ def load_map_image(map_id: str, target_size: Tuple[int, int] = (780, 480)) -> Im
     return create_placeholder_map(map_id, target_size)
 
 
+_FULL_RES_MAP_CACHE: Dict[Tuple[str, int], Image.Image] = {}
+_FULL_RES_MAP_CACHE_MAX = 3
+
+
 def load_full_res_map_image(map_id: str, max_dim: int = 2000) -> Image.Image:
-    """Carga el mapa en alta resolución (para el visor interactivo Zoom/Pan)."""
+    """Carga el mapa en alta resolución (para el visor interactivo Zoom/Pan) con caché LRU en RAM."""
     norm_key = normalize_map_key(map_id)
+    cache_key = (norm_key, max_dim)
+    if cache_key in _FULL_RES_MAP_CACHE:
+        img = _FULL_RES_MAP_CACHE.pop(cache_key)
+        _FULL_RES_MAP_CACHE[cache_key] = img
+        return img
+
     raw_path = get_cached_map_path(norm_key)
     if os.path.exists(raw_path):
         try:
             img = Image.open(raw_path).convert("RGBA")
             if max(img.size) > max_dim:
                 img.thumbnail((max_dim, max_dim), Image.Resampling.LANCZOS)
+            if len(_FULL_RES_MAP_CACHE) >= _FULL_RES_MAP_CACHE_MAX:
+                oldest_key = next(iter(_FULL_RES_MAP_CACHE))
+                _FULL_RES_MAP_CACHE.pop(oldest_key, None)
+            _FULL_RES_MAP_CACHE[cache_key] = img
             return img
         except Exception:
             pass

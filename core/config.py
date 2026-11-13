@@ -6,7 +6,7 @@ import sys
 
 APP_NAME = "TTC (Tactical Tarkov Companion)"
 APP_FULL_NAME = "TTC (Tactical Tarkov Companion)"
-APP_VERSION = "1.1.0"
+APP_VERSION = "1.2.0"
 APP_AUTHOR = "Patoma89"
 GITHUB_REPO = "Patoma89/TarkovScope"
 
@@ -80,19 +80,83 @@ DATA_FILES = {
 
 TARKOV_DEV_GRAPHQL_URL = "https://api.tarkov.dev/graphql"
 
-# Paleta táctica de alto contraste inspirada en Escape from Tarkov & Wiki Oficial
-THEME = {
-    "bg_dark": "#0A0C10",          # Fondo principal negro obsidiana profundo
-    "bg_card": "#12161E",          # Fondo de paneles con contraste nítido
-    "bg_card_hover": "#1C222E",    # Estado hover elevado
-    "border": "#2D3545",           # Bordes estructurales definidos
-    "text_main": "#F8FAFC",        # Blanco puro de máximo contraste para lectura
-    "text_muted": "#CBD5E1",       # Gris plata brillante (alta legibilidad, nunca apagado)
-    "accent_gold": "#D4B886",      # Dorado arena oficial de Tarkov / Wiki
-    "accent_orange": "#E86C25",    # Naranja táctico de alto contraste
-    "accent_olive": "#4D6B43",     # Verde militar táctico
-    "accent_blue": "#38BDF8",      # Azul cian táctico de alta visibilidad
-    "accent_red": "#F43F5E",       # Rojo carmesí nítido
-    "accent_yellow": "#FACC15",    # Ámbar brillante de alto contraste
-    "accent_green": "#22C55E",     # Verde esmeralda brillante
+THEME_SKIN_META = {
+    "tarkov_classic": {"label": "EFT Hideout", "use_tarkov_font": True},
+    "labs_nvg": {"label": "Labs NVG", "use_tarkov_font": True},
+    "tactical_slate": {"label": "Tactical Slate", "use_tarkov_font": False},
 }
+
+# Paletas tácticas (3 Skins seleccionables, solo valores hex #RRGGBB)
+THEME_SKINS = {
+    "tarkov_classic": {
+        "bg_dark": "#0B0B09",          # Negro carbón menú EFT
+        "bg_deep": "#0E0E0B",
+        "bg_card": "#161714",          # Acero/oliva oscuro inventario
+        "bg_card_hover": "#21221D",
+        "bg_row": "#1A1B17",
+        "bg_row_alt": "#22241E",
+        "border": "#33352D",
+        "border_soft": "#272922",
+        "text_main": "#F5F3EC",
+        "text_muted": "#C7C3B6",
+        "text_dim": "#949084",
+        "accent_gold": "#C8B07E",      # Dorado arena oficial EFT
+        "accent_orange": "#D96B27",
+        "accent_olive": "#556B45",
+        "accent_blue": "#5AA9D6",
+        "accent_red": "#E04F5F",
+        "accent_yellow": "#EAB308",
+        "accent_green": "#4A9E5B",
+    },
+    "labs_nvg": {
+        "bg_dark": "#070B0E",          # Negro laboratorio nocturno
+        "bg_deep": "#090F14",
+        "bg_card": "#0E171F",
+        "bg_card_hover": "#162430",
+        "bg_row": "#111C26",
+        "bg_row_alt": "#172634",
+        "border": "#1E3A4C",
+        "border_soft": "#162A38",
+        "text_main": "#F0FDF4",
+        "text_muted": "#B8D8E8",
+        "text_dim": "#7CA3B8",
+        "accent_gold": "#4ADE80",      # Verde fósforo NVG
+        "accent_orange": "#22D3EE",    # Cian TerraGroup
+        "accent_olive": "#15803D",
+        "accent_blue": "#38BDF8",
+        "accent_red": "#FB7185",
+        "accent_yellow": "#A3E635",
+        "accent_green": "#22C55E",
+    },
+    "tactical_slate": {
+        "bg_dark": "#0A0C10",          # Fondo principal negro obsidiana profundo
+        "bg_deep": "#0D1016",
+        "bg_card": "#12161E",          # Fondo de paneles con contraste nítido
+        "bg_card_hover": "#1C222E",    # Estado hover elevado
+        "bg_row": "#1A202C",
+        "bg_row_alt": "#222938",
+        "border": "#2D3545",           # Bordes estructurales definidos
+        "border_soft": "#262C38",
+        "text_main": "#F8FAFC",        # Blanco puro de máximo contraste para lectura
+        "text_muted": "#CBD5E1",       # Gris plata brillante
+        "text_dim": "#94A3B8",
+        "accent_gold": "#D4B886",      # Dorado arena oficial de Tarkov / Wiki
+        "accent_orange": "#E86C25",    # Naranja táctico de alto contraste
+        "accent_olive": "#4D6B43",     # Verde militar táctico
+        "accent_blue": "#38BDF8",      # Azul cian táctico de alta visibilidad
+        "accent_red": "#F43F5E",       # Rojo carmesí nítido
+        "accent_yellow": "#FACC15",    # Ámbar brillante de alto contraste
+        "accent_green": "#22C55E",     # Verde esmeralda brillante
+    },
+}
+
+# Paleta táctica activa (mutable in-place para soportar cambio de skin)
+THEME = dict(THEME_SKINS["tactical_slate"])
+
+
+def apply_skin_to_theme(skin_id: str) -> str:
+    """Actualiza THEME in-place con la skin seleccionada y retorna el skin_id válido."""
+    valid_id = skin_id if skin_id in THEME_SKINS else "tactical_slate"
+    THEME.clear()
+    THEME.update(THEME_SKINS[valid_id])
+    return valid_id

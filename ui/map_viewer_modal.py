@@ -7,6 +7,7 @@ Permite:
 - Selector visual con círculos 3D reales renderizados por PIL del color exacto de cada opción.
 """
 import re
+import threading
 import tkinter as tk
 from typing import Optional, Dict, Any, Callable
 import customtkinter as ctk
@@ -296,6 +297,8 @@ class MapViewerModal(ctk.CTkToplevel):
         self._max_zoom = 3.5
         self._tk_img: Optional[ImageTk.PhotoImage] = None
         self._img_id: Optional[int] = None
+        self._zoom_job: Optional[str] = None
+        self._layer_render_token: int = 0
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(2 if self._map_name else 1, weight=1)
@@ -479,19 +482,39 @@ class MapViewerModal(ctk.CTkToplevel):
     def _refresh_map_layers(self):
         if not self._map_name:
             return
-        markers = get_datastore().get_markers(self._map_name)
-        self._orig_img = render_map_with_user_markers(
-            self._map_name,
-            markers,
-            high_res=True,
-            show_pins=self.show_pins.get(),
-            show_pmc=self.show_pmc.get(),
-            show_scav=self.show_scav.get(),
-            show_boss=self.show_boss.get(),
-            show_keys=self.show_keys.get(),
-            show_loot=self.show_loot.get()
-        )
-        self._render_scaled_image(center=False)
+        self._layer_render_token += 1
+        token = self._layer_render_token
+        map_name = self._map_name
+        markers = get_datastore().get_markers(map_name)
+        s_pins = self.show_pins.get()
+        s_pmc = self.show_pmc.get()
+        s_scav = self.show_scav.get()
+        s_boss = self.show_boss.get()
+        s_keys = self.show_keys.get()
+        s_loot = self.show_loot.get()
+
+        def worker():
+            rendered = render_map_with_user_markers(
+                map_name,
+                markers,
+                high_res=True,
+                show_pins=s_pins,
+                show_pmc=s_pmc,
+                show_scav=s_scav,
+                show_boss=s_boss,
+                show_keys=s_keys,
+                show_loot=s_loot
+            )
+
+            def apply_img():
+                if not self.winfo_exists() or token != self._layer_render_token:
+                    return
+                self._orig_img = rendered
+                self._render_scaled_image(center=False)
+
+            self.after(0, apply_img)
+
+        threading.Thread(target=worker, daemon=True).start()
 
     def _prompt_move_marker(self):
         if not self._map_name:
@@ -608,16 +631,31 @@ class MapViewerModal(ctk.CTkToplevel):
         self._zoom = max(self._min_zoom, min(self._max_zoom, scale))
         self._render_scaled_image(center=True)
 
-    def _step_zoom(self, factor: float):
+    def _step_zoom(self, factor: float, debounce: bool = False):
         new_z = max(self._min_zoom, min(self._max_zoom, self._zoom * factor))
         if abs(new_z - self._zoom) < 0.01:
             return
         self._zoom = new_z
+        self.zoom_lbl.configure(text=f"{int(self._zoom * 100)}%")
+        if self._zoom_job is not None:
+            try:
+                self.after_cancel(self._zoom_job)
+            except Exception:
+                pass
+            self._zoom_job = None
+
+        if debounce:
+            self._zoom_job = self.after(25, self._flush_debounced_zoom)
+        else:
+            self._render_scaled_image(center=False)
+
+    def _flush_debounced_zoom(self):
+        self._zoom_job = None
         self._render_scaled_image(center=False)
 
     def _on_mouse_wheel(self, event):
         factor = 1.18 if event.delta > 0 else 0.85
-        self._step_zoom(factor)
+        self._step_zoom(factor, debounce=True)
 
     def _on_pan_move(self, event):
         if self._placing_marker_mode:

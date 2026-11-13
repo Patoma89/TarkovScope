@@ -507,7 +507,7 @@ BOSSES_DATA: List[Dict[str, Any]] = [
         },
         "map_spawns": {
             "Lighthouse": [
-                {"zone": "Isla del Faro (Lighthouse Island) [100%]", "details": "Probabilidad de spawn: 100% garantizado en PvE y PvP — Colinas rocosas de la península del Faro protegiendo a Lightkeeper.", "x": 0.33, "y": 0.86, "chance": "100%"}
+                {"zone": "Isla del Faro (Lighthouse Island) [100%]", "details": "Probabilidad de spawn: 100% garantizado en PvE y PvP — Colinas rocosas de la península del Faro protegiendo a Lightkeeper.", "x": 0.155, "y": 0.885, "chance": "100%"}
             ]
         },
         "total_hp": 1655,

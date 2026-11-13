@@ -9,6 +9,7 @@ y documento editorial ilustrado con banners e imágenes a la derecha.
 import customtkinter as ctk
 from typing import Dict, Any, List, Optional
 from core.config import THEME
+from core.lore_data import LORE_UNIVERSE_SECTIONS
 from ui.theme import ui_font
 from ui.image_utils import (
     get_story_chapter_icon_ctk,
@@ -281,11 +282,13 @@ class TabLore(ctk.CTkFrame):
 
     def __init__(self, master, **kwargs):
         super().__init__(master, fg_color="transparent", **kwargs)
-        self.active_chapter_id: int = 1
+        self._lore_mode: str = "UNIVERSE"
+        self.active_chapter_id: int = 101
         self.index_buttons: Dict[int, ctk.CTkButton] = {}
         self.chapter_section_frames: Dict[int, ctk.CTkFrame] = {}
         self._narrative_labels: List[ctk.CTkLabel] = []
         self._resize_job: Optional[str] = None
+        self._batch_token: int = 0
 
         self.grid_columnconfigure(0, weight=0)
         self.grid_columnconfigure(1, weight=1)
@@ -326,28 +329,74 @@ class TabLore(ctk.CTkFrame):
 
         ctk.CTkLabel(
             hdr,
-            text="Crónica completa en español • Haz clic en un capítulo para saltar a su sección",
+            text="Enciclopedia completa en español • Haz clic en una sección para saltar",
             font=ui_font(11),
             text_color=C_TEXT_DIM,
             wraplength=235,
             justify="left"
-        ).pack(anchor="w", pady=(3, 0))
+        ).pack(anchor="w", pady=(3, 8))
+
+        self.mode_switch = ctk.CTkSegmentedButton(
+            hdr,
+            values=["🌍 Universo", "📖 Campaña (10)"],
+            font=ui_font(11, "bold"),
+            fg_color=C_BG_PANEL_ALT2,
+            selected_color=THEME["accent_gold"],
+            selected_hover_color=THEME["accent_orange"],
+            unselected_color=C_BG_PANEL_ALT2,
+            unselected_hover_color=C_BG_ROW_ALT,
+            text_color=C_WHITE,
+            command=self._on_lore_mode_changed
+        )
+        self.mode_switch.set("🌍 Universo")
+        self.mode_switch.pack(fill="x", pady=(0, 2))
 
         sep = ctk.CTkFrame(sidebar, height=1, fg_color=C_BG_ROW_ALT)
         sep.grid(row=1, column=0, padx=14, pady=(0, 6), sticky="ew")
 
-        idx_list = ctk.CTkFrame(sidebar, fg_color="transparent")
-        idx_list.grid(row=2, column=0, padx=10, pady=(2, 10), sticky="nsew")
-        idx_list.grid_columnconfigure(0, weight=1)
+        self.idx_list = ctk.CTkFrame(sidebar, fg_color="transparent")
+        self.idx_list.grid(row=2, column=0, padx=10, pady=(2, 10), sticky="nsew")
+        self.idx_list.grid_columnconfigure(0, weight=1)
 
-        for idx, ch in enumerate(LORE_NARRATIVE_CHAPTERS):
+        self._populate_index_buttons()
+
+        # Botón para volver arriba del todo
+        ctk.CTkButton(
+            sidebar,
+            text="⬆ Ir al Inicio del Documento",
+            height=32,
+            corner_radius=6,
+            fg_color="#141924",
+            hover_color="#1F2738",
+            border_width=1,
+            border_color="#2D3648",
+            text_color=C_TEXT_DIM,
+            font=ui_font(11, "bold"),
+            command=lambda: self._scroll_to_chapter(self._get_active_items()[0]["id"])
+        ).grid(row=3, column=0, padx=12, pady=(0, 12), sticky="ew")
+
+    def _get_active_items(self) -> List[Dict[str, Any]]:
+        return LORE_UNIVERSE_SECTIONS if self._lore_mode == "UNIVERSE" else LORE_NARRATIVE_CHAPTERS
+
+    def _populate_index_buttons(self):
+        for w in self.idx_list.winfo_children():
+            w.destroy()
+        self.index_buttons.clear()
+
+        items = self._get_active_items()
+        for idx, ch in enumerate(items):
             cid = ch["id"]
             is_act = (cid == self.active_chapter_id)
-            icon_ctk = get_story_chapter_icon_ctk(ch["icon_file"], size=(22, 22))
+            if self._lore_mode == "CAMPAIGN":
+                icon_ctk = get_story_chapter_icon_ctk(ch.get("icon_file", ""), size=(22, 22))
+                lbl_txt = f"  {cid:02d}.  {ch['title'].replace('Chapter ' + str(cid) + ': ', '')}"
+            else:
+                icon_ctk = None
+                lbl_txt = f"  {idx + 1:02d}.  {ch['short_title']}"
 
             btn = ctk.CTkButton(
-                idx_list,
-                text=f"  {cid:02d}.  {ch['title'].replace('Chapter ' + str(cid) + ': ', '')}",
+                self.idx_list,
+                text=lbl_txt,
                 image=icon_ctk,
                 compound="left",
                 anchor="w",
@@ -364,20 +413,15 @@ class TabLore(ctk.CTkFrame):
             btn.grid(row=idx, column=0, padx=2, pady=2, sticky="ew")
             self.index_buttons[cid] = btn
 
-        # Botón para volver arriba del todo
-        ctk.CTkButton(
-            sidebar,
-            text="⬆ Ir al Inicio del Documento",
-            height=32,
-            corner_radius=6,
-            fg_color="#141924",
-            hover_color="#1F2738",
-            border_width=1,
-            border_color="#2D3648",
-            text_color=C_TEXT_DIM,
-            font=ui_font(11, "bold"),
-            command=lambda: self._scroll_to_chapter(1)
-        ).grid(row=3, column=0, padx=12, pady=(0, 12), sticky="ew")
+    def _on_lore_mode_changed(self, value: str):
+        new_mode = "UNIVERSE" if "Universo" in value else "CAMPAIGN"
+        if new_mode == self._lore_mode:
+            return
+        self._lore_mode = new_mode
+        items = self._get_active_items()
+        self.active_chapter_id = items[0]["id"]
+        self._populate_index_buttons()
+        self._reload_reader_content()
 
     # =========================================================================
     # COLUMNA DERECHA: DOCUMENTO CONTINUO EXPLICATIVO CON IMÁGENES
@@ -392,6 +436,21 @@ class TabLore(ctk.CTkFrame):
         )
         self.reader_scroll.grid(row=0, column=1, sticky="nsew")
         self.reader_scroll.grid_columnconfigure(0, weight=1)
+        self._bind_mousewheel_recursive(self.reader_scroll)
+        self._reload_reader_content()
+
+    def _reload_reader_content(self):
+        self._batch_token += 1
+        token = self._batch_token
+        for w in self.reader_scroll.winfo_children():
+            w.destroy()
+        self.chapter_section_frames.clear()
+        self._narrative_labels.clear()
+
+        try:
+            self.reader_scroll._parent_canvas.yview_moveto(0.0)
+        except Exception:
+            pass
 
         # Portada / Introducción General del Documento
         intro_box = ctk.CTkFrame(
@@ -404,19 +463,28 @@ class TabLore(ctk.CTkFrame):
         intro_box.grid(row=0, column=0, padx=20, pady=(18, 12), sticky="ew")
         intro_box.grid_columnconfigure(0, weight=1)
 
+        if self._lore_mode == "UNIVERSE":
+            hdr_title = "ENCICLOPEDIA DEL UNIVERSO Y LORE DE ESCAPE FROM TARKOV"
+            intro_sub = (
+                "Archivo completo de inteligencia sobre la región de Norvinsk: cronología desde la Zona Económica Especial "
+                "y las Contract Wars hasta el bloqueo actual, facciones (BEAR, USEC, Black Division, Scavs, Cultistas), "
+                "trasfondo de comerciantes, historia de los Bosses, proyectos secretos de TerraGroup y series canónicas."
+            )
+        else:
+            hdr_title = "CRÓNICA DE LA CAMPAÑA: LOS 10 CAPÍTULOS OFICIALES"
+            intro_sub = (
+                "Crónica integral en español de los 10 Capítulos de la campaña principal de Escape from Tarkov. "
+                "Relata de forma continua la historia desde Ground Zero hasta los 4 finales posibles en Terminal y The Labyrinth."
+            )
+
         ctk.CTkLabel(
             intro_box,
-            text="HISTORIA COMPLETA Y LORE DE ESCAPE FROM TARKOV",
+            text=hdr_title,
             font=ui_font(22, "bold"),
             text_color=THEME["accent_gold"],
             anchor="w"
         ).grid(row=0, column=0, padx=22, pady=(16, 4), sticky="w")
 
-        intro_sub = (
-            "Crónica integral en español de los 10 Capítulos de la campaña principal de Escape from Tarkov. "
-            "Este documento relata de forma continua qué ocurrió en la región de Norvinsk, los experimentos secretos "
-            "de TerraGroup, el surgimiento de las facciones y los cuatro desenlaces posibles para escapar de Tarkov."
-        )
         lbl_intro = ctk.CTkLabel(
             intro_box,
             text=intro_sub,
@@ -428,33 +496,35 @@ class TabLore(ctk.CTkFrame):
         )
         lbl_intro.grid(row=1, column=0, padx=22, pady=(0, 16), sticky="w")
         self._narrative_labels.append(lbl_intro)
+        self._bind_mousewheel_recursive(intro_box)
 
-        # Renderizar los primeros 2 capítulos de inmediato y diferir el resto en lotes para 0 lag
-        self._bind_mousewheel_recursive(self.reader_scroll)
         self._pending_chapter_idx = 0
-        self._render_next_chapters_batch(count=2)
+        self._render_next_chapters_batch(count=2, token=token)
 
-    def _render_next_chapters_batch(self, count: int = 2):
+    def _render_next_chapters_batch(self, count: int = 2, token: Optional[int] = None):
         if not self.winfo_exists():
             return
-        total = len(LORE_NARRATIVE_CHAPTERS)
+        if token is not None and token != self._batch_token:
+            return
+        items = self._get_active_items()
+        total = len(items)
         end = min(self._pending_chapter_idx + count, total)
         for idx in range(self._pending_chapter_idx, end):
-            ch = LORE_NARRATIVE_CHAPTERS[idx]
+            ch = items[idx]
             if ch["id"] not in self.chapter_section_frames:
                 sec = self._create_chapter_article_section(self.reader_scroll, ch, row_idx=idx + 1)
                 self.chapter_section_frames[ch["id"]] = sec
                 self._bind_mousewheel_recursive(sec)
         self._pending_chapter_idx = end
         if end < total:
-            self.after(16, lambda: self._render_next_chapters_batch(2))
+            self.after(16, lambda t=token: self._render_next_chapters_batch(2, token=t))
         else:
             self.after(40, self._refresh_scrollregion)
 
     def _ensure_all_chapters_built(self):
-        total = len(LORE_NARRATIVE_CHAPTERS)
+        total = len(self._get_active_items())
         while self._pending_chapter_idx < total:
-            self._render_next_chapters_batch(count=total)
+            self._render_next_chapters_batch(count=total, token=self._batch_token)
 
     def _refresh_scrollregion(self):
         if not self.winfo_exists():
@@ -555,7 +625,35 @@ class TabLore(ctk.CTkFrame):
         div.grid(row=cur_r, column=0, padx=22, pady=(8, 12), sticky="ew")
         cur_r += 1
 
-        # 3. Texto narrativo continuo del capítulo
+        # 3. Ficha Táctica de Puntos Clave (si el dossier incluye highlights)
+        highlights = ch.get("highlights", [])
+        if highlights:
+            hl_box = ctk.CTkFrame(article, fg_color="#131926", corner_radius=8, border_width=1, border_color="#253045")
+            hl_box.grid(row=cur_r, column=0, padx=22, pady=(0, 14), sticky="ew")
+            hl_box.grid_columnconfigure(0, minsize=165, weight=0)
+            hl_box.grid_columnconfigure(1, weight=1)
+            for h_idx, (h_key, h_val) in enumerate(highlights):
+                ctk.CTkLabel(
+                    hl_box,
+                    text=h_key,
+                    font=ui_font(12, "bold"),
+                    text_color=accent,
+                    anchor="w"
+                ).grid(row=h_idx, column=0, padx=(14, 10), pady=6, sticky="nw")
+                h_lbl = ctk.CTkLabel(
+                    hl_box,
+                    text=h_val,
+                    font=ui_font(12),
+                    text_color=C_TEXT_MUTED,
+                    justify="left",
+                    wraplength=680,
+                    anchor="w"
+                )
+                h_lbl.grid(row=h_idx, column=1, padx=(0, 14), pady=6, sticky="ew")
+                self._narrative_labels.append(h_lbl)
+            cur_r += 1
+
+        # 4. Texto narrativo continuo del capítulo
         lbl_body = ctk.CTkLabel(
             article,
             text=ch["narrative_es"],
@@ -642,7 +740,8 @@ class TabLore(ctk.CTkFrame):
             else:
                 total_h = max(1, self.reader_scroll.winfo_reqheight())
 
-            if chapter_id == 1:
+            first_id = self._get_active_items()[0]["id"]
+            if chapter_id == first_id:
                 canvas.yview_moveto(0.0)
             else:
                 y_pos = target_widget.winfo_y()

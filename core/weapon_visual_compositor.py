@@ -1,102 +1,198 @@
 """
-TarkovScope - Compositor Visual Dinámico de Armas y Blueprint Táctico
-Dibuja el plano esquemático de armería estilo EFT en tiempo real:
-renderiza el chasis del arma y ensambla visualmente cada accesorio instalado
-(silenciadores, miras ópticas, empuñaduras, culatas, cargadores de tambor/curvos y láseres).
+TarkovScope - Compositor Visual Dinámico de Armas estilo Escape from Tarkov
+Renderiza la imagen real del arma desde cache/weapons/ sobre un banco de armería
+táctico, rodeada por los recuadros reales de sus accesorios montados (con sus PNGs
+oficiales p_*.png) y líneas guía hacia cada zona de anclaje del arma.
 Lógica pura de renderizado gráfico desacoplada de la interfaz (Clean Architecture).
 """
 import os
-import math
-from typing import Dict, Any, Tuple, Optional
-from PIL import Image, ImageDraw, ImageFont
+import sys
+import threading
+import requests
+from typing import Dict, Any, Tuple, Optional, List, Set, Callable
+from PIL import Image, ImageDraw
 
 from core.image_cache import _get_font, WEAPONS_DIR
-from core.weapon_modding_data import MODDABLE_WEAPONS, ATTACHMENTS_CATALOG
+from core.config import TARKOV_DEV_GRAPHQL_URL
+from core.weapon_modding_data import MODDABLE_WEAPONS, ATTACHMENTS_CATALOG, get_attachment_image_key
 
 
-# Perfiles geométricos de base según plataforma de arma
-WEAPON_GEOMETRY: Dict[str, Dict[str, Any]] = {
-    "m4a1": {
-        "body_rect": [190, 110, 430, 158],
-        "barrel_start": 430,
-        "barrel_y": 126,
-        "barrel_h": 14,
-        "rail_y": 108,
-        "mag_x": 310,
-        "grip_x": 235,
-        "stock_x": 190,
-    },
-    "ak74n": {
-        "body_rect": [180, 108, 440, 156],
-        "barrel_start": 440,
-        "barrel_y": 124,
-        "barrel_h": 13,
-        "rail_y": 106,
-        "mag_x": 320,
-        "grip_x": 225,
-        "stock_x": 180,
-    },
-    "spear": {
-        "body_rect": [190, 106, 450, 160],
-        "barrel_start": 450,
-        "barrel_y": 125,
-        "barrel_h": 16,
-        "rail_y": 104,
-        "mag_x": 315,
-        "grip_x": 235,
-        "stock_x": 190,
-    },
-    "sa58": {
-        "body_rect": [170, 108, 440, 162],
-        "barrel_start": 440,
-        "barrel_y": 126,
-        "barrel_h": 15,
-        "rail_y": 106,
-        "mag_x": 310,
-        "grip_x": 220,
-        "stock_x": 170,
-    },
-    "mp133": {
-        "body_rect": [180, 114, 420, 156],
-        "barrel_start": 420,
-        "barrel_y": 122,
-        "barrel_h": 12,
-        "rail_y": 112,
-        "mag_x": 350,
-        "grip_x": 210,
-        "stock_x": 180,
-    },
-    "vector45": {
-        "body_rect": [220, 102, 390, 166],
-        "barrel_start": 390,
-        "barrel_y": 122,
-        "barrel_h": 14,
-        "rail_y": 100,
-        "mag_x": 330,
-        "grip_x": 260,
-        "stock_x": 220,
-    },
-    "dvl10": {
-        "body_rect": [170, 112, 410, 156],
-        "barrel_start": 410,
-        "barrel_y": 124,
-        "barrel_h": 18,
-        "rail_y": 108,
-        "mag_x": 290,
-        "grip_x": 220,
-        "stock_x": 170,
-    },
-    "mk47": {
-        "body_rect": [190, 108, 440, 158],
-        "barrel_start": 440,
-        "barrel_y": 125,
-        "barrel_h": 14,
-        "rail_y": 106,
-        "mag_x": 320,
-        "grip_x": 235,
-        "stock_x": 190,
-    }
+# Mapeo de weapon_id -> nombre de archivo PNG real en cache/weapons/
+WEAPON_IMAGE_FILES: Dict[str, str] = {
+    "m4a1": "m4a1.png",
+    "ak74n": "ak_74n.png",
+    "spear": "mcx_spear.png",
+    "mk47": "mk47_mutant.png",
+    "dvl10": "dvl_10.png",
+    "mp7a2": "mp7a2.png",
+    "rd704": "rd_704.png",
+    "saiga12": "saiga_12.png",
+    "sr25": "sr_25.png",
+    "vss": "vss_val.png",
+    "asval": "vss_val.png",
+    "hk416": "m4a1.png",
+    "tx15": "m4a1.png",
+    "adar": "m4a1.png",
+    "akm": "ak_74n.png",
+    "ak101": "ak_74n.png",
+    "ak103": "ak_74n.png",
+    "ak104": "ak_74n.png",
+    "ak105": "ak_74n.png",
+    "ak12": "ak_74n.png",
+    "rpk16": "ak_74n.png",
+    "mp133": "gs_1.png",
+    "m870": "gs_1.png",
+    "mp153": "gs_1.png",
+    "mp155": "gs_1.png",
+    "vector45": "gs_11.png",
+    "mpx": "gs_12.png",
+    "pp19": "gs_3.png",
+    "mp5": "gs_5.png",
+    "rsass": "gs_6.png",
+    "m1a": "gs_14.png",
+    "ak74m": "ak_74n.png",
+    "sks": "gs_24.png",
+    "svds": "gs_21.png",
+    "p90": "gs_20.png",
+    "sa58": "gs_18.png",
+    "scar_h": "gs_18.png",
+    "scar_l": "m4a1.png",
+    "mdr_556": "m4a1.png",
+    "mdr_762": "gs_18.png",
+    "mcx300": "mcx_spear.png",
+    "m700": "dvl_10.png",
+    "axmc": "dvl_10.png",
+    "sv98": "dvl_10.png",
+    "t5000": "dvl_10.png",
 }
+
+_RAW_PNG_CACHE: Dict[str, Image.Image] = {}
+_FACTORY_FETCH_IN_FLIGHT: Set[str] = set()
+_FACTORY_FETCH_FAILED: Set[str] = set()
+
+
+def _resolve_factory_png_path(weapon_id: str) -> str:
+    return os.path.join(WEAPONS_DIR, f"factory_{weapon_id}.png")
+
+
+def ensure_factory_weapon_image_async(
+    weapon_id: str,
+    on_ready: Optional[Callable[[], None]] = None
+) -> None:
+    """
+    Descarga en segundo plano la imagen del arma de fábrica completa (defaultPreset)
+    desde tarkov.dev y la guarda en cache/weapons/factory_<id>.png.
+    """
+    if not weapon_id or weapon_id in _FACTORY_FETCH_IN_FLIGHT or weapon_id in _FACTORY_FETCH_FAILED:
+        return
+    dst_path = _resolve_factory_png_path(weapon_id)
+    if os.path.exists(dst_path):
+        return
+    weapon = MODDABLE_WEAPONS.get(weapon_id)
+    if not weapon:
+        return
+
+    _FACTORY_FETCH_IN_FLIGHT.add(weapon_id)
+    # Usar nombre base sin calibre final para mejor coincidencia en tarkov.dev
+    raw_name = weapon["name"].split(" 5.")[0].split(" 7.")[0].split(" 9x")[0].split(" .")[0].split(" 12/")[0].split(" 4.")[0].split(" 23x")[0].split(" 20/")[0].strip()
+
+    def worker():
+        try:
+            q = (
+                'query($n: String!) { items(name: $n, types: [gun], limit: 3) { '
+                'name image512pxLink properties { ... on ItemPropertiesWeapon { '
+                'defaultPreset { image512pxLink inspectImageLink } } } } }'
+            )
+            resp = requests.post(
+                TARKOV_DEV_GRAPHQL_URL,
+                json={"query": q, "variables": {"n": raw_name}},
+                timeout=8,
+            )
+            if resp.status_code != 200:
+                _FACTORY_FETCH_FAILED.add(weapon_id)
+                return
+            items = resp.json().get("data", {}).get("items", []) or []
+            img_url = None
+            for it in items:
+                props = it.get("properties") or {}
+                preset = props.get("defaultPreset") or {}
+                img_url = preset.get("image512pxLink") or preset.get("inspectImageLink") or it.get("image512pxLink")
+                if img_url:
+                    break
+            if not img_url:
+                _FACTORY_FETCH_FAILED.add(weapon_id)
+                return
+            img_resp = requests.get(img_url, timeout=10)
+            if img_resp.status_code == 200 and len(img_resp.content) > 500:
+                with open(dst_path, "wb") as fh:
+                    fh.write(img_resp.content)
+                _RAW_PNG_CACHE.pop(f"factory_{weapon_id}", None)
+                if on_ready:
+                    on_ready()
+            else:
+                _FACTORY_FETCH_FAILED.add(weapon_id)
+        except Exception:
+            _FACTORY_FETCH_FAILED.add(weapon_id)
+        finally:
+            _FACTORY_FETCH_IN_FLIGHT.discard(weapon_id)
+
+    threading.Thread(target=worker, daemon=True).start()
+
+
+def _resolve_weapon_png_path(filename_no_ext: str) -> Optional[str]:
+    clean = filename_no_ext if filename_no_ext.endswith(".png") else f"{filename_no_ext}.png"
+    p1 = os.path.join(WEAPONS_DIR, clean)
+    if os.path.exists(p1):
+        return p1
+    if hasattr(sys, "_MEIPASS"):
+        p2 = os.path.join(sys._MEIPASS, "cache", "weapons", clean)
+        if os.path.exists(p2):
+            return p2
+    return None
+
+
+def _load_raw_png(filename_no_ext: str) -> Optional[Image.Image]:
+    if not filename_no_ext:
+        return None
+    if filename_no_ext in _RAW_PNG_CACHE:
+        return _RAW_PNG_CACHE[filename_no_ext]
+    path = _resolve_weapon_png_path(filename_no_ext)
+    if not path:
+        return None
+    try:
+        img = Image.open(path).convert("RGBA")
+        if len(_RAW_PNG_CACHE) > 96:
+            _RAW_PNG_CACHE.clear()
+        _RAW_PNG_CACHE[filename_no_ext] = img
+        return img
+    except Exception:
+        return None
+
+
+def _fit_contain(img: Image.Image, max_w: int, max_h: int, allow_upscale: float = 1.0) -> Image.Image:
+    ow, oh = img.size
+    if ow <= 0 or oh <= 0:
+        return img.copy()
+    scale = min(max(16, max_w) / ow, max(16, max_h) / oh)
+    if scale > allow_upscale:
+        scale = allow_upscale
+    nw, nh = max(16, int(round(ow * scale))), max(16, int(round(oh * scale)))
+    if (nw, nh) == (ow, oh):
+        return img.copy()
+    return img.resize((nw, nh), Image.Resampling.LANCZOS)
+
+
+# Posiciones normalizadas de los recuadros de accesorios alrededor del arma (estilo EFT Inspect, cañón a la izquierda)
+_SLOT_LAYOUT: List[Tuple[str, str, Tuple[int, int, int, int], Tuple[float, float], Tuple[float, float]]] = [
+    ("muzzle", "BOCA", (56, 189, 248, 255), (0.14, 0.17), (0.31, 0.44)),
+    ("optic", "ÓPTICA", (212, 184, 134, 255), (0.42, 0.17), (0.51, 0.37)),
+    ("tactical", "TÁCTICO", (239, 68, 68, 255), (0.70, 0.17), (0.41, 0.44)),
+    ("handguard", "GUARDAMANOS", (148, 163, 184, 255), (0.12, 0.83), (0.41, 0.49)),
+    ("foregrip", "EMPUÑADURA", (96, 165, 250, 255), (0.31, 0.83), (0.43, 0.52)),
+    ("magazine", "CARGADOR", (245, 158, 11, 255), (0.50, 0.83), (0.52, 0.60)),
+    ("pistol_grip", "PISTOLETE", (168, 85, 247, 255), (0.69, 0.83), (0.58, 0.57)),
+    ("stock", "CULATA", (52, 211, 153, 255), (0.88, 0.83), (0.66, 0.48)),
+]
 
 
 def render_weapon_workbench_composite(
@@ -105,354 +201,141 @@ def render_weapon_workbench_composite(
     target_size: Tuple[int, int] = (680, 260)
 ) -> Image.Image:
     """
-    Renderiza el banco de trabajo táctico en tiempo real:
-    dibuja el chasis del arma con cuadrícula milimétrica militar y ensambla
-    visualmente las piezas instaladas (cañón, silenciador, óptica, cargador, grip, culata y láser).
-    Responde en <1 ms sirviendo una visualización dinámica y viva.
+    Genera la vista de armería estilo Escape from Tarkov con la imagen real del arma
+    y los recuadros visuales de cada accesorio instalado.
     """
     w, h = target_size
-    canvas = Image.new("RGBA", (w, h), (11, 15, 23, 255))
+    weapon = MODDABLE_WEAPONS.get(weapon_id, MODDABLE_WEAPONS["m4a1"])
+
+    canvas = Image.new("RGBA", (w, h), (10, 13, 19, 255))
     draw = ImageDraw.Draw(canvas)
 
-    weapon = MODDABLE_WEAPONS.get(weapon_id, MODDABLE_WEAPONS["m4a1"])
-    geom = WEAPON_GEOMETRY.get(weapon_id, WEAPON_GEOMETRY["m4a1"])
-
-    # 1. Fondo de tapete milimétrico militar (Workbench Grid)
-    grid_step = 24
+    # 1. Fondo de banco de armería con cuadrícula sutil
+    grid_step = 26
     for gx in range(0, w, grid_step):
-        draw.line([(gx, 0), (gx, h)], fill=(18, 27, 40, 255), width=1)
+        draw.line([(gx, 0), (gx, h)], fill=(20, 26, 38, 255), width=1)
     for gy in range(0, h, grid_step):
-        draw.line([(0, gy), (w, gy)], fill=(18, 27, 40, 255), width=1)
+        draw.line([(0, gy), (w, gy)], fill=(20, 26, 38, 255), width=1)
 
-    # Regla milimétrica en los bordes
-    font_ruler = _get_font(9, bold=False)
-    for rx in range(0, w, 48):
-        draw.line([(rx, h - 8), (rx, h)], fill=(71, 85, 105, 255), width=1)
-        if rx > 0 and rx < w - 40:
-            draw.text((rx + 3, h - 14), f"{rx}mm", fill=(100, 116, 139, 200), font=font_ruler)
+    # Marco perimetral y esquinas tácticas
+    draw.rectangle([1, 1, w - 2, h - 2], outline=(38, 48, 66, 255), width=1)
+    b_len = 14
+    gold = (200, 176, 126, 220)
+    for (cx, cy, dx, dy) in [
+        (4, 4, 1, 1), (w - 5, 4, -1, 1),
+        (4, h - 5, 1, -1), (w - 5, h - 5, -1, -1),
+    ]:
+        draw.line([(cx, cy), (cx + dx * b_len, cy)], fill=gold, width=2)
+        draw.line([(cx, cy), (cx, cy + dy * b_len)], fill=gold, width=2)
 
-    # 2. Silueta del Chasis / Cajón de Mecanismos (Receiver & Handguard)
-    rx1, ry1, rx2, ry2 = geom["body_rect"]
-    draw.rounded_rectangle(
-        [rx1, ry1, rx2, ry2],
-        radius=5,
-        fill=(36, 44, 58, 255),
-        outline=(71, 85, 105, 255),
-        width=2
-    )
-    # Riel Picatinny superior
-    rail_y = geom["rail_y"]
-    draw.rectangle([rx1 + 10, rail_y, rx2 - 10, rail_y + 4], fill=(71, 85, 105, 255))
-    for tooth_x in range(rx1 + 14, rx2 - 14, 6):
-        draw.line([(tooth_x, rail_y), (tooth_x, rail_y + 3)], fill=(20, 25, 35, 255), width=1)
+    # 2. Imagen REAL del arma de fábrica centrada en la zona central
+    factory_key = f"factory_{weapon_id}"
+    weapon_pil = _load_raw_png(factory_key)
+    is_factory_full = weapon_pil is not None
+    if not weapon_pil:
+        img_file = weapon.get("img_key") or WEAPON_IMAGE_FILES.get(weapon_id, f"{weapon_id}.png")
+        weapon_pil = _load_raw_png(img_file)
+        if not weapon_pil and weapon_id in WEAPON_IMAGE_FILES:
+            weapon_pil = _load_raw_png(WEAPON_IMAGE_FILES[weapon_id])
 
-    # Ventana de expulsión y cerrojo
-    draw.rectangle([rx1 + 75, ry1 + 8, rx1 + 120, ry1 + 22], fill=(20, 25, 35, 255), outline=(51, 65, 85, 255), width=1)
+    center_top = int(h * 0.27)
+    center_bot = int(h * 0.71)
+    center_h = max(60, center_bot - center_top)
+    center_w = int(w * 0.64)
 
-    # 3. Cañón Dinámico (Barrel)
-    b_start = geom["barrel_start"]
-    by = geom["barrel_y"]
-    bh = geom["barrel_h"]
-    part_barrel = slots.get("barrel", "none")
-    # Longitud según cañón
-    barrel_len = 100
-    if "260mm" in part_barrel or "short" in part_barrel or "11in" in part_barrel:
-        barrel_len = 65
-    elif "406mm" in part_barrel or "16in" in part_barrel or "660mm" in part_barrel or "21in" in part_barrel:
-        barrel_len = 145
-    elif "508mm" in part_barrel:
-        barrel_len = 175
+    if weapon_pil:
+        ow, oh = weapon_pil.size
+        is_bare_receiver = (not is_factory_full) and (ow <= 90 or (ow / max(1, oh)) < 1.55)
+        if is_bare_receiver:
+            # Integrar silueta táctica de arma completa detrás del receiver para que nunca flote solo
+            cy = center_top + center_h // 2
+            cx = w // 2
+            # Culata trasera integrada
+            draw.polygon([(cx - 145, cy - 12), (cx - 40, cy - 10), (cx - 40, cy + 8), (cx - 148, cy + 20)], fill=(22, 28, 39, 235), outline=(56, 70, 92, 220))
+            # Guardamanos y cañón delantero integrados
+            draw.rectangle([cx + 35, cy - 12, cx + 145, cy + 8], fill=(24, 30, 42, 235), outline=(56, 70, 92, 220), width=1)
+            draw.rectangle([cx + 145, cy - 5, cx + 205, cy + 2], fill=(32, 40, 54, 240), outline=(74, 90, 114, 220), width=1)
+            # Cargador curvo inferior
+            draw.polygon([(cx + 6, cy + 12), (cx + 28, cy + 12), (cx + 36, cy + 44), (cx + 14, cy + 44)], fill=(20, 26, 36, 235), outline=(56, 70, 92, 200))
 
-    b_end = b_start + barrel_len
-    draw.rectangle([b_start, by, b_end, by + bh], fill=(45, 55, 72, 255), outline=(71, 85, 105, 255), width=2)
-    # Ranuras de ventilación / paso de gases
-    for gx in range(b_start + 12, b_end - 12, 14):
-        draw.line([(gx, by + 3), (gx + 6, by + bh - 3)], fill=(25, 32, 45, 255), width=1)
-
-    # 4. Bocacha o Silenciador Dinámico (Muzzle)
-    part_muzzle = slots.get("muzzle", "none")
-    muzzle_callout = None
-    if part_muzzle != "none":
-        m_item = ATTACHMENTS_CATALOG.get(part_muzzle, {})
-        m_name = m_item.get("name", "")
-        is_silencer = "silenciador" in m_name.lower() or "wave" in m_name.lower() or "waffel" in m_name.lower() or "prs" in m_name.lower() or "salvo" in m_name.lower() or "rotor" in m_name.lower() or "slx" in m_name.lower()
-
-        if is_silencer:
-            # Silenciador táctico cilíndrico extendido
-            s_w = 68
-            s_h = bh + 14
-            s_y = by - 7
+        wpn_fit = _fit_contain(weapon_pil, center_w, center_h, allow_upscale=1.8 if is_bare_receiver else 2.2)
+        ww, wh = wpn_fit.size
+        wx = (w - ww) // 2
+        wy = center_top + (center_h - wh) // 2
+        if not is_bare_receiver:
             draw.rounded_rectangle(
-                [b_end, s_y, b_end + s_w, s_y + s_h],
-                radius=4,
-                fill=(26, 32, 44, 255),
-                outline=(56, 189, 248, 255),  # Cyan táctico
-                width=2
+                [wx - 10, wy - 6, wx + ww + 10, wy + wh + 6],
+                radius=8,
+                fill=(0, 0, 0, 255),
+                outline=(45, 56, 76, 200),
+                width=1,
             )
-            # Estrías de disipación de calor
-            for sx in range(b_end + 8, b_end + s_w - 6, 8):
-                draw.line([(sx, s_y + 3), (sx, s_y + s_h - 3)], fill=(56, 189, 248, 120), width=1)
-            # Boca del silenciador
-            draw.ellipse([b_end + s_w - 3, s_y + s_h // 2 - 3, b_end + s_w + 3, s_y + s_h // 2 + 3], fill=(15, 23, 42, 255))
-            muzzle_callout = (b_end + s_w // 2, s_y, f"🔇 {m_name.split(' (')[0][:20]}")
-        else:
-            # Freno de boca / compensador corto con puertos de escape
-            b_w = 26
-            b_h = bh + 6
-            b_y = by - 3
-            draw.rectangle(
-                [b_end, b_y, b_end + b_w, b_y + b_h],
-                fill=(30, 41, 59, 255),
-                outline=(148, 163, 184, 255),
-                width=2
-            )
-            draw.line([(b_end + 8, b_y + 2), (b_end + 8, b_y + b_h - 2)], fill=(56, 189, 248, 200), width=2)
-            draw.line([(b_end + 16, b_y + 2), (b_end + 16, b_y + b_h - 2)], fill=(56, 189, 248, 200), width=2)
-            muzzle_callout = (b_end + b_w // 2, b_y, f"💥 {m_name.split(' (')[0][:20]}")
-
-    # 5. Óptica / Mira Dinámica (Optic)
-    part_optic = slots.get("optic", "none")
-    optic_callout = None
-    if part_optic != "none":
-        o_item = ATTACHMENTS_CATALOG.get(part_optic, {})
-        o_name = o_item.get("name", "")
-        ox = rx1 + 80
-        oy = rail_y - 2
-
-        if "vortex" in part_optic or "schmidt" in part_optic or "valday" in part_optic or "1-6" in o_name or "1-8" in o_name:
-            # Mira telescópica / LPVO con montura cantilever y torretas
-            scope_w = 115
-            scope_h = 24
-            mount_h = 10
-            # Montura cantilever
-            draw.rectangle([ox + 15, oy - mount_h, ox + 35, oy], fill=(30, 41, 59, 255), outline=(212, 184, 134, 255), width=1)
-            draw.rectangle([ox + 75, oy - mount_h, ox + 95, oy], fill=(30, 41, 59, 255), outline=(212, 184, 134, 255), width=1)
-            draw.line([(ox + 15, oy - mount_h), (ox + 95, oy - mount_h)], fill=(212, 184, 134, 255), width=2)
-            # Tubo principal de la mira
-            tube_y = oy - mount_h - scope_h
-            draw.rounded_rectangle([ox, tube_y, ox + scope_w, tube_y + scope_h], radius=4, fill=(24, 30, 42, 255), outline=(212, 184, 134, 255), width=2)
-            # Campana delantera (objetivo) y trasera (ocular)
-            draw.polygon([(ox + scope_w - 18, tube_y), (ox + scope_w, tube_y - 3), (ox + scope_w, tube_y + scope_h + 3), (ox + scope_w - 18, tube_y + scope_h)], fill=(36, 44, 58, 255))
-            draw.polygon([(ox + 18, tube_y), (ox, tube_y - 2), (ox, tube_y + scope_h + 2), (ox + 18, tube_y + scope_h)], fill=(36, 44, 58, 255))
-            # Torretas de ajuste
-            draw.rectangle([ox + 50, tube_y - 6, ox + 62, tube_y], fill=(212, 184, 134, 255))
-            draw.rectangle([ox + 48, tube_y + scope_h // 2 - 4, ox + 52, tube_y + scope_h // 2 + 4], fill=(212, 184, 134, 255))
-            optic_callout = (ox + scope_w // 2, tube_y - 6, f"🎯 {o_name.split(' (')[0][:22]}")
-
-        elif "eotech" in part_optic or "srs" in part_optic or "hologr" in o_name.lower():
-            # Mira holográfica EOTech (capucha acorazada rectangular)
-            holo_w = 58
-            holo_h = 32
-            draw.rounded_rectangle(
-                [ox + 20, oy - holo_h, ox + 20 + holo_w, oy],
-                radius=4,
-                fill=(28, 36, 50, 255),
-                outline=(212, 184, 134, 255),
-                width=2
-            )
-            # Ventana óptica de cristal (cian translúcido)
-            draw.rectangle([ox + 28, oy - holo_h + 6, ox + 20 + holo_w - 8, oy - 6], fill=(56, 189, 248, 80), outline=(56, 189, 248, 200), width=1)
-            # Retícula central dorada
-            cx = ox + 20 + holo_w // 2
-            cy = oy - holo_h // 2
-            draw.ellipse([cx - 4, cy - 4, cx + 4, cy + 4], outline=(245, 158, 11, 240), width=1)
-            draw.point([(cx, cy)], fill=(255, 255, 255, 255))
-            optic_callout = (ox + 20 + holo_w // 2, oy - holo_h, f"🎯 {o_name.split(' (')[0][:22]}")
-
-        else:
-            # Punto rojo colimador compacto (Micro T-1, PK-06, etc.)
-            red_w = 42
-            red_h = 24
-            draw.rounded_rectangle(
-                [ox + 30, oy - red_h, ox + 30 + red_w, oy],
-                radius=3,
-                fill=(30, 41, 59, 255),
-                outline=(212, 184, 134, 255),
-                width=2
-            )
-            draw.ellipse([ox + 30 + red_w - 6, oy - red_h + 4, ox + 30 + red_w, oy - 4], fill=(56, 189, 248, 140))
-            optic_callout = (ox + 30 + red_w // 2, oy - red_h, f"🎯 {o_name.split(' (')[0][:22]}")
-
-    # 6. Cargador Dinámico (Magazine)
-    part_mag = slots.get("magazine", "none")
-    mag_x = geom["mag_x"]
-    mag_y = ry2
-    mag_callout = None
-    if part_mag != "none":
-        m_item = ATTACHMENTS_CATALOG.get(part_mag, {})
-        m_name = m_item.get("name", "")
-
-        if "d60" in part_mag or "drum" in part_mag or "rpk_60" in part_mag:
-            # Tambor redondo de alta capacidad (Drum Mag)
-            drum_r = 34
-            draw.ellipse(
-                [mag_x - drum_r, mag_y + 4, mag_x + drum_r, mag_y + 4 + drum_r * 2],
-                fill=(24, 30, 42, 255),
-                outline=(245, 158, 11, 255),  # Ámbar táctico
-                width=2
-            )
-            # Ranuras del tambor
-            for ang in range(0, 360, 45):
-                rad = math.radians(ang)
-                dx = int(math.cos(rad) * 16)
-                dy = int(math.sin(rad) * 16)
-                draw.line([(mag_x, mag_y + 4 + drum_r), (mag_x + dx, mag_y + 4 + drum_r + dy)], fill=(71, 85, 105, 200), width=1)
-            mag_callout = (mag_x, mag_y + 4 + drum_r * 2, f"🔋 {m_name.split(' (')[0][:20]}")
-
-        elif "mp133" in weapon_id:
-            # Tubo depósito escopeta (horizontal paralelo bajo el cañón)
-            tube_len = 110 if "8" in part_mag else 80
-            draw.rectangle([b_start - 30, by + bh + 4, b_start + tube_len, by + bh + 14], fill=(36, 44, 58, 255), outline=(245, 158, 11, 255), width=2)
-            mag_callout = (b_start + tube_len // 2, by + bh + 16, f"🔋 {m_name[:18]}")
-
-        else:
-            # Cargador curvo tipo banana / STANAG / AK
-            mag_w = 26
-            mag_len = 62 if ("60" in part_mag or "30" in part_mag) else 38
-            draw.polygon([
-                (mag_x - 12, mag_y),
-                (mag_x + mag_w - 12, mag_y),
-                (mag_x + mag_w - 4, mag_y + mag_len),
-                (mag_x - 4, mag_y + mag_len)
-            ], fill=(28, 36, 50, 255), outline=(245, 158, 11, 255))
-            # Costillas de polímero
-            for my_step in range(mag_y + 10, mag_y + mag_len - 6, 8):
-                draw.line([(mag_x - 9, my_step), (mag_x + mag_w - 7, my_step)], fill=(71, 85, 105, 180), width=1)
-            mag_callout = (mag_x + 5, mag_y + mag_len, f"🔋 {m_name.split(' (')[0][:20]}")
-
-    # 7. Empuñadura Frontal Dinámica (Foregrip)
-    part_fg = slots.get("foregrip", "none")
-    fg_x = rx2 - 50
-    fg_y = ry2 - 6
-    fg_callout = None
-    if part_fg != "none":
-        fg_item = ATTACHMENTS_CATALOG.get(part_fg, {})
-        fg_name = fg_item.get("name", "")
-
-        if "fortis" in part_fg or "bcm" in part_fg or "se5" in part_fg or "shift" in fg_name.lower():
-            # Empuñadura esqueleto / inclinada hacia adelante
-            draw.polygon([
-                (fg_x, fg_y),
-                (fg_x + 22, fg_y),
-                (fg_x + 32, fg_y + 34),
-                (fg_x + 16, fg_y + 34)
-            ], fill=(30, 41, 59, 255), outline=(96, 165, 250, 255))
-            fg_callout = (fg_x + 24, fg_y + 36, f"✊ {fg_name.split(' (')[0][:18]}")
-        else:
-            # Empuñadura vertical estándar / pesada (RVG / RK-2)
-            draw.rounded_rectangle(
-                [fg_x, fg_y, fg_x + 18, fg_y + 40],
-                radius=3,
-                fill=(26, 32, 44, 255),
-                outline=(96, 165, 250, 255),
-                width=2
-            )
-            # Textura de agarre
-            for ty in range(fg_y + 6, fg_y + 36, 6):
-                draw.line([(fg_x + 3, ty), (fg_x + 15, ty)], fill=(96, 165, 250, 140), width=1)
-            fg_callout = (fg_x + 9, fg_y + 42, f"✊ {fg_name.split(' (')[0][:18]}")
-
-    # 8. Pistolete (Pistol Grip)
-    part_pg = slots.get("pistol_grip", "none")
-    px = geom["grip_x"]
-    py = ry2 - 2
-    if part_pg != "none":
-        draw.polygon([
-            (px, py),
-            (px + 24, py),
-            (px + 8, py + 42),
-            (px - 10, py + 40)
-        ], fill=(30, 41, 59, 255), outline=(148, 163, 184, 255))
-        # Guardamonte del gatillo
-        draw.arc([px + 14, py - 4, px + 36, py + 18], start=0, end=180, fill=(71, 85, 105, 255), width=2)
-        draw.line([(px + 25, py + 2), (px + 22, py + 12)], fill=(212, 184, 134, 255), width=2)  # Gatillo
-
-    # 9. Culata Dinámica (Stock)
-    part_stock = slots.get("stock", "none")
-    sx = geom["stock_x"]
-    sy = ry1 + 6
-    stock_callout = None
-    if part_stock != "none":
-        s_item = ATTACHMENTS_CATALOG.get(part_stock, {})
-        s_name = s_item.get("name", "")
-
-        # Tubo buffer de amortiguación
-        draw.rectangle([sx - 48, sy + 6, sx, sy + 22], fill=(45, 55, 72, 255), outline=(71, 85, 105, 255), width=1)
-
-        if "prs" in part_stock or "precision" in s_name.lower():
-            # Culata pesada de precisión PRS con carrillera regulable
-            draw.rounded_rectangle([sx - 125, sy - 8, sx - 40, sy + 46], radius=4, fill=(24, 30, 42, 255), outline=(52, 211, 153, 255), width=2)
-            # Carrillera superior elevada
-            draw.rectangle([sx - 110, sy - 14, sx - 60, sy - 6], fill=(52, 211, 153, 200))
-            # Cantonera de goma gruesa
-            draw.rectangle([sx - 132, sy - 6, sx - 124, sy + 44], fill=(15, 23, 42, 255), outline=(52, 211, 153, 255), width=1)
-            stock_callout = (sx - 80, sy + 50, f"🪖 {s_name.split(' (')[0][:18]}")
-
-        elif "ctr" in part_stock or "sopmod" in part_stock or "moe" in part_stock or "pt3" in part_stock:
-            # Culata táctica telescópica con cantonera de goma
-            draw.polygon([
-                (sx - 42, sy + 4),
-                (sx - 105, sy + 2),
-                (sx - 110, sy + 44),
-                (sx - 80, sy + 40),
-                (sx - 42, sy + 24)
-            ], fill=(28, 36, 50, 255), outline=(52, 211, 153, 255))
-            # Cantonera de goma
-            draw.rectangle([sx - 116, sy, sx - 108, sy + 46], fill=(15, 23, 42, 255), outline=(52, 211, 153, 255), width=1)
-            stock_callout = (sx - 75, sy + 48, f"🪖 {s_name.split(' (')[0][:18]}")
-
-        else:
-            # Culata estándar de fábrica
-            draw.polygon([
-                (sx - 35, sy + 6),
-                (sx - 95, sy + 6),
-                (sx - 98, sy + 40),
-                (sx - 35, sy + 22)
-            ], fill=(36, 44, 58, 255), outline=(52, 211, 153, 255))
-            stock_callout = (sx - 65, sy + 46, f"🪖 {s_name.split(' (')[0][:18]}")
-
-    # 10. Dispositivo Táctico (Laser / Torch)
-    part_tac = slots.get("tactical", "none")
-    if part_tac != "none":
-        t_item = ATTACHMENTS_CATALOG.get(part_tac, {})
-        tx = rx2 - 35
-        ty = rail_y - 8
-        draw.rounded_rectangle([tx, ty, tx + 34, ty + 12], radius=2, fill=(30, 41, 59, 255), outline=(239, 68, 68, 255), width=1)
-        # Emisor láser (punto rojo brillante)
-        draw.ellipse([tx + 32, ty + 3, tx + 36, ty + 7], fill=(239, 68, 68, 255))
-        # Rayo láser guía semitransparente que se proyecta al frente
-        draw.line([(tx + 36, ty + 5), (w - 20, ty + 5)], fill=(239, 68, 68, 60), width=1)
-
-    # 11. Banderolas Tácticas de Anclaje (Callouts & Badges)
-    font_callout = _get_font(10, bold=True)
-    callouts = [c for c in (muzzle_callout, optic_callout, mag_callout, fg_callout, stock_callout) if c]
-
-    for cx, cy, label in callouts:
-        tb = draw.textbbox((0, 0), label, font=font_callout)
-        tw = tb[2] - tb[0] + 12
-        th = tb[3] - tb[1] + 6
-
-        # Posicionar badge dentro de límites
-        bx = max(10, min(w - tw - 10, cx - tw // 2))
-        by = max(8, min(h - th - 8, cy - th - 6 if cy < h // 2 else cy + 6))
-
-        # Color del badge según categoría
-        b_color = (56, 189, 248, 255) if "🔇" in label or "💥" in label else (
-            (212, 184, 134, 255) if "🎯" in label else (
-                (245, 158, 11, 255) if "🔋" in label else (
-                    (96, 165, 250, 255) if "✊" in label else (52, 211, 153, 255)
-                )
-            )
+        canvas.alpha_composite(wpn_fit, (wx, wy))
+    else:
+        font_fb = _get_font(16, bold=True)
+        fb_txt = weapon["name"].upper()
+        tb = draw.textbbox((0, 0), fb_txt, font=font_fb)
+        draw.rounded_rectangle(
+            [w // 2 - 180, h // 2 - 24, w // 2 + 180, h // 2 + 24],
+            radius=8,
+            fill=(18, 24, 36, 230),
+            outline=gold,
+            width=1,
         )
+        draw.text((w // 2 - (tb[2] - tb[0]) // 2, h // 2 - (tb[3] - tb[1]) // 2), fb_txt, fill=(245, 243, 236, 255), font=font_fb)
 
-        draw.rounded_rectangle([bx, by, bx + tw, by + th], radius=4, fill=(15, 23, 42, 235), outline=b_color, width=1)
-        draw.text((bx + 6, by + 3), label, fill=(248, 250, 252, 255), font=font_callout)
-        # Línea de conexión al anclaje
-        draw.line([(cx, cy), (bx + tw // 2, by + (th if cy < h // 2 else 0))], fill=(b_color[0], b_color[1], b_color[2], 120), width=1)
+    # 3. Recuadros reales de accesorios estilo EFT alrededor del arma
+    supported = set(weapon.get("supported_slots", []))
+    box_w = max(92, min(122, int(w * 0.165)))
+    box_h = max(36, min(46, int(h * 0.165)))
+    font_slot = _get_font(8, bold=True)
+    font_part = _get_font(9, bold=True)
 
-    # 12. Título de plataforma y estado en esquinas
-    font_title = _get_font(11, bold=True)
-    draw.text((14, 10), f"BANCO MILITAR DE PRUEBAS: {weapon['name'].upper()}", fill=(212, 184, 134, 255), font=font_title)
-    draw.text((w - 220, 10), f"ESTADO: MODDING ACTIVO ({len([s for s in slots.values() if s != 'none'])} PIEZAS)", fill=(148, 163, 184, 255), font=font_title)
+    for slot_key, slot_lbl, accent_rgba, (bcx_p, bcy_p), (ax_p, ay_p) in _SLOT_LAYOUT:
+        if supported and slot_key not in supported:
+            continue
+        part_id = slots.get(slot_key, "none")
+        is_equipped = part_id != "none"
+        part = ATTACHMENTS_CATALOG.get(part_id, ATTACHMENTS_CATALOG["none"])
+
+        bx = max(8, min(w - box_w - 8, int(w * bcx_p) - box_w // 2))
+        by = max(24, min(h - box_h - 6, int(h * bcy_p) - box_h // 2))
+
+        ax, ay = int(w * ax_p), int(h * ay_p)
+        line_col = (accent_rgba[0], accent_rgba[1], accent_rgba[2], 140 if is_equipped else 45)
+        edge_y = by + box_h if bcy_p < 0.5 else by
+        draw.line([(bx + box_w // 2, edge_y), (ax, ay)], fill=line_col, width=1)
+        draw.ellipse([ax - 2, ay - 2, ax + 2, ay + 2], fill=line_col)
+
+        fill_col = (18, 24, 34, 240) if is_equipped else (13, 17, 24, 195)
+        border_col = accent_rgba if is_equipped else (42, 52, 68, 180)
+        draw.rounded_rectangle([bx, by, bx + box_w, by + box_h], radius=4, fill=fill_col, outline=border_col, width=1)
+
+        icon_box = box_h - 8
+        if is_equipped:
+            p_img_key = get_attachment_image_key(part_id)
+            p_pil = _load_raw_png(p_img_key)
+            if p_pil:
+                p_fit = _fit_contain(p_pil, icon_box, icon_box)
+                pw, ph = p_fit.size
+                canvas.alpha_composite(p_fit, (bx + 4 + (icon_box - pw) // 2, by + 4 + (icon_box - ph) // 2))
+            text_x = bx + icon_box + 7
+        else:
+            text_x = bx + 6
+
+        draw.text((text_x, by + 4), slot_lbl, fill=accent_rgba if is_equipped else (100, 116, 139, 255), font=font_slot)
+        p_name = part.get("name", "Vacío").split(" (")[0] if is_equipped else "Vacío"
+        max_chars = 11 if is_equipped else 14
+        if len(p_name) > max_chars:
+            p_name = p_name[:max_chars - 1] + "…"
+        draw.text((text_x, by + 16), p_name, fill=(248, 250, 252, 255) if is_equipped else (100, 116, 139, 200), font=font_part)
+
+    # 4. Cabecera superior estilo EFT Inspect
+    font_hdr = _get_font(11, bold=True)
+    active_count = len([s for s in slots.values() if s != "none"])
+    draw.text((14, 7), f"{weapon['name'].upper()}  •  {weapon.get('caliber', '')}", fill=(212, 184, 134, 255), font=font_hdr)
+    right_txt = f"{weapon.get('fire_rate', 600)} RPM  |  {active_count} PIEZAS"
+    rtb = draw.textbbox((0, 0), right_txt, font=font_hdr)
+    draw.text((w - (rtb[2] - rtb[0]) - 14, 7), right_txt, fill=(148, 163, 184, 255), font=font_hdr)
 
     return canvas

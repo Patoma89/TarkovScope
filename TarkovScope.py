@@ -17,13 +17,15 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 if current_dir not in sys.path:
     sys.path.insert(0, current_dir)
 
-from core.config import APP_NAME, APP_VERSION, THEME, BUNDLE_DIR, BASE_DIR
+from core.config import APP_NAME, APP_VERSION, THEME, THEME_SKIN_META, BUNDLE_DIR, BASE_DIR
 from core.database import init_db, is_db_populated
 from core.datastore import get_datastore
 from core.sync_service import SyncService
 from core.updater import check_github_release
+from core.user_data import set_user_preference
 from ui.image_utils import clear_image_ram_cache
-from ui.theme import THEME_SETTINGS, ui_font
+import ui.theme as theme_mod
+from ui.theme import THEME_SETTINGS, ui_font, apply_ui_skin, get_active_skin_id
 from ui.update_modal import UpdateDialog
 from ui.tab_bosses import TabBosses
 from ui.tab_weapons import TabWeapons
@@ -33,6 +35,8 @@ from ui.tab_maps import TabMaps
 from ui.tab_flea import TabFlea
 from ui.tab_lore import TabLore
 from ui.tab_story_quests import TabStoryQuests
+from ui.tab_keys import TabKeys
+from ui.tab_medical import TabMedical
 from ui.global_search_modal import GlobalSearchModal
 from ui.theme import C_AMBER, C_BG_DEEP, C_BG_ROW, C_BORDER, C_BORDER_ALT, C_GREEN, C_RED, C_TEXT, C_TEXT_DIM, C_TEXT_MUTED, C_WHITE
 
@@ -99,21 +103,23 @@ class TarkovScopeApp(ctk.CTk):
             "weapons": TabWeapons,
             "ballistics": TabBallistics,
             "flea": TabFlea,
+            "keys": TabKeys,
+            "medical": TabMedical,
             "lore": TabLore,
         }
 
         self.switch_tab("quests")
         self._check_initial_sync()
-        self.after(300, self._warmup_remaining_tabs)
+        self.after(1200, self._warmup_remaining_tabs)
 
     def _build_sidebar(self):
         """Barra de navegación lateral limpia, tipográfica y con alto contraste."""
         self.sidebar = ctk.CTkFrame(
             self,
             width=245,
-            fg_color=C_BG_DEEP,
+            fg_color=theme_mod.C_BG_DEEP,
             border_width=1,
-            border_color="#232936",
+            border_color=theme_mod.C_BORDER_SOFT,
             corner_radius=0
         )
         self.sidebar.grid(row=0, column=0, sticky="nsew", padx=0, pady=0)
@@ -174,7 +180,38 @@ class TarkovScopeApp(ctk.CTk):
             anchor="w",
             command=self.toggle_always_on_top
         )
-        self.btn_topmost.grid(row=3, column=0, pady=(2, 0), sticky="ew")
+        self.btn_topmost.grid(row=3, column=0, pady=(2, 6), sticky="ew")
+
+        # Selector de Skin Táctica (3 Skins + Tipografía EFT)
+        skin_row = ctk.CTkFrame(logo_frame, fg_color="transparent")
+        skin_row.grid(row=4, column=0, pady=(2, 0), sticky="ew")
+        skin_row.grid_columnconfigure(1, weight=1)
+
+        ctk.CTkLabel(
+            skin_row,
+            text="🎨 Skin:",
+            font=ui_font(11, "bold"),
+            text_color=theme_mod.C_TEXT_DIM
+        ).grid(row=0, column=0, padx=(2, 6), sticky="w")
+
+        self._skin_label_to_id = {v["label"]: k for k, v in THEME_SKIN_META.items()}
+        active_skin_id = get_active_skin_id()
+        active_skin_label = THEME_SKIN_META.get(active_skin_id, {}).get("label", "EFT Hideout")
+        self.skin_menu = ctk.CTkOptionMenu(
+            skin_row,
+            values=list(self._skin_label_to_id.keys()),
+            height=26,
+            font=ui_font(11, "bold"),
+            fg_color=theme_mod.C_BG_PANEL,
+            button_color=theme_mod.C_BORDER,
+            button_hover_color=theme_mod.C_BG_ROW_ALT,
+            dropdown_fg_color=theme_mod.C_BG_PANEL,
+            dropdown_hover_color=theme_mod.C_BG_ROW_ALT,
+            text_color=THEME["accent_gold"],
+            command=self._on_skin_changed
+        )
+        self.skin_menu.set(active_skin_label)
+        self.skin_menu.grid(row=0, column=1, sticky="ew")
 
         # 2. Separador Superior
         sep = ctk.CTkFrame(self.sidebar, height=1, fg_color="#232936")
@@ -194,6 +231,8 @@ class TarkovScopeApp(ctk.CTk):
             ("weapons", "Armas & Gunsmith"),
             ("ballistics", "Balística & Munición"),
             ("flea", "Hideout & Ítems FiR"),
+            ("keys", "Llaves & Intel"),
+            ("medical", "Medicina & Stims"),
             ("lore", "Story & Lore"),
         ]
 
@@ -304,6 +343,37 @@ class TarkovScopeApp(ctk.CTk):
         self.content_frame.grid_columnconfigure(0, weight=1)
         self.content_frame.grid_rowconfigure(0, weight=1)
 
+    def _on_skin_changed(self, selected_label: str):
+        skin_id = self._skin_label_to_id.get(selected_label, "tarkov_classic")
+        if skin_id == get_active_skin_id():
+            return
+        set_user_preference("ui_skin", skin_id)
+        apply_ui_skin(skin_id)
+        self.configure(fg_color=THEME["bg_dark"])
+
+        current_key = self._current_tab_key or "quests"
+        for frame in list(self.tabs.values()):
+            try:
+                frame.destroy()
+            except Exception:
+                pass
+        self.tabs.clear()
+        self._active_nav_key = ""
+
+        try:
+            self.sidebar.destroy()
+        except Exception:
+            pass
+        try:
+            self.content_frame.destroy()
+        except Exception:
+            pass
+
+        self._build_sidebar()
+        self._build_content_area()
+        self.switch_tab(current_key)
+        self.after(600, self._warmup_remaining_tabs)
+
     def _get_or_create_tab(self, tab_key: str, background: bool = False) -> ctk.CTkFrame:
         if tab_key not in self.tabs:
             cls = self._tab_classes[tab_key]
@@ -364,7 +434,7 @@ class TarkovScopeApp(ctk.CTk):
                     self._get_or_create_tab(key, background=True)
                 except Exception as e:
                     logger.warning("Fallo pre-calentando pestaña %s: %s", key, e)
-            self.after(120, lambda: _warm_step(idx + 1))
+            self.after(250, lambda: _warm_step(idx + 1))
 
         _warm_step(0)
 

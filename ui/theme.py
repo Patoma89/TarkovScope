@@ -1,13 +1,53 @@
 """
-TarkovScope - Sistema Tipográfico Profesional (Segoe UI / Consolas) y Tema de Alto Contraste
+TarkovScope - Sistema Tipográfico Profesional (Bender / Bahnschrift / Segoe UI / Consolas) y 3 Skins Tácticas
 Garantiza fuentes nítidas nativas de Windows (evitando el fallback borroso de Tkinter)
-con jerarquía tipográfica clara y alto contraste.
+con jerarquía tipográfica clara, alto contraste y soporte dinámico para 3 skins.
 """
+import os
 import sys
 import functools
 import customtkinter as ctk
-from core.config import THEME
+from core.config import THEME, THEME_SKINS, THEME_SKIN_META, BASE_DIR, BUNDLE_DIR, CACHE_DIR, apply_skin_to_theme
+from core.user_data import get_user_preference
 
+_TARKOV_FONT_LOADED = False
+
+
+def _detect_tarkov_font_family() -> str:
+    """
+    Carga Bender.ttf en memoria privada de Windows si existe en assets/fonts o cache/fonts;
+    de lo contrario usa Bahnschrift (tipografía militar condensada nativa de Windows 10/11)
+    con respaldo a Segoe UI.
+    """
+    global _TARKOV_FONT_LOADED
+    if sys.platform.startswith("win"):
+        if not _TARKOV_FONT_LOADED:
+            font_candidates = [
+                os.path.join(BASE_DIR, "assets", "fonts", "Bender.ttf"),
+                os.path.join(BASE_DIR, "assets", "fonts", "Bender-Bold.ttf"),
+                os.path.join(CACHE_DIR, "fonts", "Bender.ttf"),
+                os.path.join(CACHE_DIR, "fonts", "Bender-Bold.ttf"),
+                os.path.join(BUNDLE_DIR, "assets", "fonts", "Bender.ttf"),
+                os.path.join(BUNDLE_DIR, "cache", "fonts", "Bender.ttf"),
+            ]
+            loaded_bender = False
+            try:
+                import ctypes
+                FR_PRIVATE = 0x10
+                for fp in font_candidates:
+                    if os.path.exists(fp):
+                        if ctypes.windll.gdi32.AddFontResourceExW(fp, FR_PRIVATE, 0) > 0:
+                            loaded_bender = True
+            except Exception:
+                pass
+            _TARKOV_FONT_LOADED = loaded_bender
+        if _TARKOV_FONT_LOADED:
+            return "Bender"
+        return "Bahnschrift"
+    return "Segoe UI"
+
+
+TARKOV_FONT_FAMILY = _detect_tarkov_font_family()
 FONT_FAMILY = "Segoe UI"
 FONT_MONO_FAMILY = "Consolas"
 
@@ -58,9 +98,57 @@ apply_global_smooth_scroll()
 
 @functools.lru_cache(maxsize=256)
 def ui_font(size: int = 13, weight: str = "normal", mono: bool = False) -> ctk.CTkFont:
-    """Retorna una fuente CTkFont con familia nativa Segoe UI o Consolas para máxima nitidez (en caché O(1))."""
+    """Retorna una fuente CTkFont con familia activa (Bender/Bahnschrift o Segoe UI / Consolas) en caché O(1)."""
     fam = FONT_MONO_FAMILY if mono else FONT_FAMILY
     return ctk.CTkFont(family=fam, size=size, weight=weight)
+
+
+_ACTIVE_SKIN_ID = "tarkov_classic"
+
+
+def get_active_skin_id() -> str:
+    return _ACTIVE_SKIN_ID
+
+
+def apply_ui_skin(skin_id: str) -> str:
+    """Aplica una de las 3 skins tácticas a THEME, constantes C_* y tipografía activa."""
+    global _ACTIVE_SKIN_ID, FONT_FAMILY
+    global C_TEXT, C_TEXT_MUTED, C_TEXT_DIM, C_BLUE, C_BORDER, C_BORDER_SOFT, C_BORDER_ALT
+    global C_BG_DEEP, C_BG_DARKEST, C_BG_INSET, C_BG_PANEL, C_BG_PANEL_ALT, C_BG_PANEL_ALT2
+    global C_BG_ROW, C_BG_ROW_ALT, C_GREEN, C_GREEN_LIGHT
+
+    valid_id = apply_skin_to_theme(skin_id)
+    _ACTIVE_SKIN_ID = valid_id
+
+    use_tarkov_font = bool(THEME_SKIN_META.get(valid_id, {}).get("use_tarkov_font", False))
+    FONT_FAMILY = TARKOV_FONT_FAMILY if use_tarkov_font else "Segoe UI"
+    ui_font.cache_clear()
+
+    THEME_SETTINGS.update({
+        "fg_color": THEME["bg_dark"],
+        "card_color": THEME["bg_card"],
+        "card_hover": THEME["bg_card_hover"],
+        "border_color": THEME["border"],
+        "accent_orange": THEME["accent_orange"],
+        "accent_gold": THEME.get("accent_gold", "#D4B886"),
+        "accent_olive": THEME["accent_olive"],
+        "text_main": THEME["text_main"],
+        "text_muted": THEME["text_muted"],
+    })
+
+    C_TEXT = THEME["text_main"]
+    C_TEXT_MUTED = THEME["text_muted"]
+    C_TEXT_DIM = THEME.get("text_dim", "#94A3B8")
+    C_BLUE = THEME["accent_blue"]
+    C_BORDER = THEME["border"]
+    C_BORDER_SOFT = THEME.get("border_soft", "#262C38")
+    C_BG_DEEP = THEME.get("bg_deep", "#0D1016")
+    C_BG_PANEL = THEME["bg_card"]
+    C_BG_PANEL_ALT2 = THEME["bg_card_hover"]
+    C_BG_ROW = THEME.get("bg_row", "#1A202C")
+    C_BG_ROW_ALT = THEME.get("bg_row_alt", "#222938")
+    C_GREEN = THEME["accent_green"]
+    return valid_id
 
 
 THEME_SETTINGS = {
@@ -76,7 +164,7 @@ THEME_SETTINGS = {
 }
 
 
-# Paleta semantica centralizada (valores identicos a los literales originales)
+# Paleta semantica centralizada
 C_WHITE = "#FFFFFF"  # Blanco puro
 C_TEXT = "#F8FAFC"  # Texto principal (alto contraste)
 C_TEXT_SOFT = "#E2E8F0"  # Texto suave
@@ -102,3 +190,6 @@ C_EMERALD = "#10B981"  # Esmeralda
 C_RED = "#EF4444"  # Rojo de alerta
 C_RED_DARK = "#DC2626"  # Rojo oscuro
 C_AMBER = "#F59E0B"  # Ambar
+
+# Aplicar skin guardada al cargar el módulo (por defecto EFT Hideout)
+apply_ui_skin(get_user_preference("ui_skin", "tarkov_classic"))

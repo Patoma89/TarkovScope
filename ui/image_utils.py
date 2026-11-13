@@ -28,11 +28,14 @@ from core.image_cache import (
 
 # Caché en memoria RAM de instancias CTkImage (acceso en O(1) = 0 ms)
 _CTK_IMAGE_RAM_CACHE: Dict[str, ctk.CTkImage] = {}
+_STORY_FULL_PIL_CACHE: Dict[Tuple[str, Tuple[int, int]], Image.Image] = {}
+_STORY_FULL_PIL_CACHE_MAX = 6
 
 
 def clear_image_ram_cache() -> None:
     """Limpia el caché en memoria RAM de imágenes CTkImage."""
     _CTK_IMAGE_RAM_CACHE.clear()
+    _STORY_FULL_PIL_CACHE.clear()
 
 
 def get_trader_ctk_image(
@@ -335,12 +338,22 @@ def get_story_gallery_full_pil(gallery_file: str, max_size: Tuple[int, int] = (1
     """Retorna la imagen PIL en alta resolución para el modal de zoom al hacer clic en una captura."""
     if not gallery_file:
         return None
+    cache_key = (gallery_file, max_size)
+    if cache_key in _STORY_FULL_PIL_CACHE:
+        img = _STORY_FULL_PIL_CACHE.pop(cache_key)
+        _STORY_FULL_PIL_CACHE[cache_key] = img
+        return img
+
     path = _resolve_story_asset_path("gallery", gallery_file)
     if not os.path.exists(path):
         return None
     try:
         pil_img = Image.open(path).convert("RGBA")
         pil_img.thumbnail(max_size, Image.Resampling.LANCZOS)
+        if len(_STORY_FULL_PIL_CACHE) >= _STORY_FULL_PIL_CACHE_MAX:
+            oldest_key = next(iter(_STORY_FULL_PIL_CACHE))
+            _STORY_FULL_PIL_CACHE.pop(oldest_key, None)
+        _STORY_FULL_PIL_CACHE[cache_key] = pil_img
         return pil_img
     except Exception:
         return None
