@@ -1,8 +1,6 @@
 """
 TarkovScope - Modal CustomTkinter para Verificación y Descarga de Actualizaciones
 """
-import os
-import subprocess
 import sys
 import threading
 import webbrowser
@@ -10,7 +8,7 @@ from typing import Any, Dict
 import customtkinter as ctk
 
 from core.config import APP_VERSION, BASE_DIR, THEME
-from core.updater import download_installer, run_git_fast_forward_pull
+from core.updater import download_installer, launch_installer, run_git_fast_forward_pull
 from ui.theme import C_AMBER, C_BG_DEEP, C_BG_PANEL, C_BORDER, C_GREEN, C_RED, C_TEXT, C_TEXT_DIM, C_TEXT_MUTED, C_WHITE, ui_font
 
 
@@ -170,7 +168,7 @@ class UpdateDialog(ctk.CTkToplevel):
                     if not self.winfo_exists():
                         return
                     self.status_lbl.configure(text="✓ Instalador listo. Iniciando...", text_color=C_GREEN)
-                    subprocess.Popen([exe_path], close_fds=True)
+                    launch_installer(exe_path)
                     self.master.destroy()
 
                 self.after(0, on_ok)

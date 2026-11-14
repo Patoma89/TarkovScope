@@ -42,3 +42,31 @@ Name: "{autodesktop}\TTC (Tactical Tarkov Companion)"; Filename: "{app}\TTC.exe"
 
 [Run]
 Filename: "{app}\TTC.exe"; Description: "{cm:LaunchProgram,TTC (Tactical Tarkov Companion)}"; Flags: nowait postinstall skipifsilent
+
+[Code]
+function SetEnvironmentVariableNull(lpName: string; lpValue: LongWord): BOOL;
+  external 'SetEnvironmentVariableW@kernel32.dll stdcall';
+
+function InitializeSetup(): Boolean;
+var
+  TclVal: string;
+  TkVal: string;
+begin
+  { Limpia variables internas heredadas cuando el instalador se lanza desde una versión anterior empaquetada con PyInstaller --onefile }
+  SetEnvironmentVariableNull('_PYI_APPLICATION_HOME_DIR', 0);
+  SetEnvironmentVariableNull('_PYI_ARCHIVE_FILE', 0);
+  SetEnvironmentVariableNull('_PYI_PARENT_PROCESS_LEVEL', 0);
+  SetEnvironmentVariableNull('_PYI_SPLASH_IPC', 0);
+  SetEnvironmentVariableNull('_MEIPASS2', 0);
+  SetEnvironmentVariableNull('_MEIPASS', 0);
+
+  TclVal := Uppercase(GetEnv('TCL_LIBRARY'));
+  if Pos('_MEI', TclVal) > 0 then
+    SetEnvironmentVariableNull('TCL_LIBRARY', 0);
+
+  TkVal := Uppercase(GetEnv('TK_LIBRARY'));
+  if Pos('_MEI', TkVal) > 0 then
+    SetEnvironmentVariableNull('TK_LIBRARY', 0);
+
+  Result := True;
+end;

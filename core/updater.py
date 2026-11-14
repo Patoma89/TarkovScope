@@ -6,10 +6,43 @@ import os
 import re
 import subprocess
 import tempfile
-from typing import Any, Callable, Dict, Optional, Tuple
+from typing import Any, Callable, Dict, Mapping, Optional, Tuple
 import requests
 
 from core.config import APP_VERSION, GITHUB_REPO
+
+_PYI_ENV_PREFIXES = ("_PYI_", "_MEIPASS")
+_PYI_TEMP_PATH_VARS = ("TCL_LIBRARY", "TK_LIBRARY")
+
+
+def build_clean_subprocess_env(
+    base_env: Optional[Mapping[str, str]] = None,
+) -> Dict[str, str]:
+    """Devuelve una copia de las variables de entorno sin rastros del bootloader PyInstaller.
+
+    Evita que procesos hijos (p. ej. el instalador de actualizaciones) hereden
+    `_PYI_APPLICATION_HOME_DIR` o `_MEIPASS2`, lo que provoca fallos de validación
+    en el bootloader `--onefile` de PyInstaller >= 6.22.1 al relanzar la app.
+    """
+    source = os.environ if base_env is None else base_env
+    cleaned: Dict[str, str] = {}
+    for key, val in source.items():
+        upper_key = key.upper()
+        if upper_key.startswith(_PYI_ENV_PREFIXES):
+            continue
+        if upper_key in _PYI_TEMP_PATH_VARS and "_MEI" in str(val).upper():
+            continue
+        cleaned[key] = val
+    return cleaned
+
+
+def launch_installer(exe_path: str) -> subprocess.Popen:
+    """Inicia el instalador descargado con un entorno limpio de variables PyInstaller."""
+    return subprocess.Popen(
+        [exe_path],
+        close_fds=True,
+        env=build_clean_subprocess_env(),
+    )
 
 
 def parse_version(tag: str) -> Tuple[int, ...]:
