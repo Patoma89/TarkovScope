@@ -354,15 +354,18 @@ WIKI_EXTRA_KEYS = [
     "name": "TerraGroup storage room keycard",
     "short_name": "Polikhim",
     "map": "Factory",
-    "category": "Quest Key",
+    "category": "Keycard",
+    "secondary_categories": [
+      "Quest Key"
+    ],
     "uses": 10,
     "quests": [
-      "Dragnet (Mechanic)"
+      "Dragnet (Jaeger)"
     ],
-    "opens": "Sala de almacenamiento de TerraGroup en Factory (misión Dragnet).",
-    "loot": "Objetivo de misión Dragnet + spawns médicos y electrónicos.",
+    "opens": "Sala de almacenamiento de TerraGroup (Polikhim) en los túneles subterráneos de Factory, junto a Camera Bunker Door (misión Dragnet).",
+    "loot": "Contenedor químico de misión Dragnet, caja fuerte de TerraGroup y spawns médicos/electrónicos.",
     "spawns": "Bolsillos de Cultistas / Priest y cajas raras.",
-    "verdict": "SIEMPRE GUARDAR (Quest)",
+    "verdict": "KEYCARD / QUEST (Dragnet)",
     "approx_value": "Muy Alto (Keycard de Dragnet)"
   },
   {
@@ -488,15 +491,15 @@ WIKI_EXTRA_KEYS = [
   {
     "id": "interchange_object_21ws_keycard",
     "name": "Object #21WS keycard",
-    "short_name": "Object #21WScard",
+    "short_name": "21WS Keycard",
     "map": "Interchange",
     "category": "Keycard",
-    "uses": 40,
+    "uses": 15,
     "quests": [],
-    "opens": "Abre la zona/puerta correspondiente a Object #21WS keycard en Interchange.",
-    "loot": "Ver descripción de la sala / puerta en la ficha.",
-    "spawns": "Chaquetas, archivadores, Scavs y spawns en el mapa correspondiente.",
-    "verdict": "KEYCARD",
+    "opens": "Contenedor marítimo cerrado en la zona de carga exterior de Interchange (requiere corriente encendida).",
+    "loot": "Cajas de armas, accesorios meta y spawns sueltos de armamento.",
+    "spawns": "Bolsillos de Killa, Scavs, Raiders y Scav Case.",
+    "verdict": "KEYCARD / LOOT",
     "approx_value": "Variable (según Flea Market)"
   },
   {
@@ -576,18 +579,21 @@ WIKI_EXTRA_KEYS = [
   {
     "id": "interchange_station_14_4_kord_arshavin_k_pass_restored",
     "name": "Station 14-4 KORD Arshavin K. pass (Restored)",
-    "short_name": "Station 14-4 KORD Arshav",
+    "short_name": "Arshavin K. Pass",
     "map": "Interchange",
-    "category": "Quest Key",
-    "uses": 40,
-    "quests": [
-      "Requerida para misión en Interchange"
+    "category": "Keycard",
+    "secondary_categories": [
+      "Quest Key"
     ],
-    "opens": "Abre la zona/puerta correspondiente a Station 14-4 KORD Arshavin K. pass (Restored) en Interchange.",
-    "loot": "Ver descripción de la sala / puerta en la ficha.",
-    "spawns": "Chaquetas, archivadores, Scavs y spawns en el mapa correspondiente.",
-    "verdict": "SIEMPRE GUARDAR (Quest)",
-    "approx_value": "Variable (según Flea Market)"
+    "uses": 1,
+    "quests": [
+      "They Are Already Here (Historia)"
+    ],
+    "opens": "Acceso electrónico a Station 14-4 KORD en Interchange tras restaurar el pase dañado en el Intelligence Center.",
+    "loot": "Objetivo de historia y acceso restringido de Station 14-4 KORD.",
+    "spawns": "Crafteo en Intelligence Center (a partir de Arshavin K. pass Damaged en Lighthouse).",
+    "verdict": "KEYCARD / STORY QUEST",
+    "approx_value": "No vendible en Flea (Slot especial)"
   },
   {
     "id": "lighthouse_conference_room_key",
@@ -2200,16 +2206,18 @@ WIKI_EXTRA_KEYS = [
   {
     "id": "streets_of_tarkov_reprogrammed_keycard_for_a_p_s_apartment_lock_green",
     "name": "Reprogrammed keycard for A.P.'s apartment lock (Green)",
-    "short_name": "Reprogrammedcard for A.P",
+    "short_name": "A.P. Lock (Green)",
     "map": "Streets of Tarkov",
     "category": "Keycard",
-    "uses": 40,
-    "quests": [],
-    "opens": "Abre la zona/puerta correspondiente a Reprogrammed keycard for A.P.'s apartment lock (Green) en Streets of Tarkov.",
-    "loot": "Ver descripción de la sala / puerta en la ficha.",
-    "spawns": "Chaquetas, archivadores, Scavs y spawns en el mapa correspondiente.",
+    "uses": 1,
+    "quests": [
+      "They Are Already Here / The Unheard"
+    ],
+    "opens": "Habitación oculta dentro del apartamento corporativo de A.P. en Streets of Tarkov.",
+    "loot": "Contenido de historia / apartamento corporativo de A.P.",
+    "spawns": "Crafteo en Intelligence Center tras descifrar la memoria flash de A.P.",
     "verdict": "KEYCARD",
-    "approx_value": "Variable (según Flea Market)"
+    "approx_value": "No vendible en Flea"
   },
   {
     "id": "streets_of_tarkov_rus_post_car_key",
@@ -2392,71 +2400,76 @@ WIKI_EXTRA_KEYS = [
   {
     "id": "the_lab_terragroup_labs_residential_unit_keycard",
     "name": "TerraGroup Labs residential unit keycard",
-    "short_name": "TerraGroup Labs resident",
+    "short_name": "Residential Unit",
     "map": "The Lab",
     "category": "Keycard",
-    "uses": 40,
+    "uses": 1,
     "quests": [],
-    "opens": "Puerta / zona en The Lab.",
-    "loot": "Ver descripción de la sala / puerta en la ficha.",
-    "spawns": "Chaquetas, archivadores, Scavs y spawns en el mapa correspondiente.",
-    "verdict": "KEYCARD",
-    "approx_value": "Variable (según Flea Market)"
+    "opens": "Unidad residencial del bloque de contención (junto a Blue Keycard) en The Lab.",
+    "loot": "Bitcoins, objetos de valor, Intel y equipo médico.",
+    "spawns": "Spawns dentro del área residencial/contención en The Lab.",
+    "verdict": "KEYCARD LABS",
+    "approx_value": "Alto (1 uso / The Lab)"
   },
   {
     "id": "the_lab_keycard_with_a_blue_marking",
     "name": "Keycard with a blue marking",
-    "short_name": "Keycard with a blue mark",
+    "short_name": "Blue Marking",
     "map": "The Lab",
     "category": "Keycard",
-    "uses": 40,
-    "quests": [],
-    "opens": "Abre la zona/puerta correspondiente a Keycard with a blue marking en The Lab.",
-    "loot": "Ver descripción de la sala / puerta en la ficha.",
-    "spawns": "Chaquetas, archivadores, Scavs y spawns en el mapa correspondiente.",
-    "verdict": "KEYCARD",
-    "approx_value": "Variable (según Flea Market)"
+    "secondary_categories": [
+      "Quest Key"
+    ],
+    "uses": 1,
+    "quests": [
+      "TerraGroup Employee (Therapist)"
+    ],
+    "opens": "Sala de Sanitar (Laboratory block G22, Planta 2) en The Lab.",
+    "loot": "Objetos de misión de Sanitar, estimulantes y LEDX.",
+    "spawns": "Bolsillos de Sanitar, Scavs y Marked Rooms.",
+    "verdict": "KEYCARD / QUEST",
+    "approx_value": "Medio (~100k - 200k ₽)"
   },
   {
     "id": "the_lab_terragroup_labs_arsenal_storage_room_key",
     "name": "TerraGroup Labs arsenal storage room key",
-    "short_name": "TerraGroup Labs arsenal ",
+    "short_name": "Labs Arsenal Storage",
     "map": "The Lab",
-    "category": "Keycard",
+    "category": "Llaves",
     "uses": 40,
     "quests": [],
-    "opens": "Puerta / zona en The Lab.",
-    "loot": "Ver descripción de la sala / puerta en la ficha.",
-    "spawns": "Chaquetas, archivadores, Scavs y spawns en el mapa correspondiente.",
-    "verdict": "KEYCARD",
+    "opens": "Llave mecánica de la jaula/almacén interior dentro de la sala de seguridad Arsenal (Red Keycard, Planta 2) en The Lab.",
+    "loot": "Armas, mods, chalecos y munición dentro de la jaula interna de Arsenal.",
+    "spawns": "Spawns raros en Labs/Shoreline, chaquetas y Flea Market.",
+    "verdict": "LLAVE DE ZONA / LOOT",
     "approx_value": "Variable (según Flea Market)"
   },
   {
     "id": "the_lab_terragroup_labs_manager_s_office_room_key",
     "name": "TerraGroup Labs manager's office room key",
-    "short_name": "TerraGroup Labs manager'",
+    "short_name": "Labs Manager's Office",
     "map": "The Lab",
-    "category": "Keycard",
+    "category": "Llaves",
     "uses": 40,
     "quests": [],
-    "opens": "Abre la zona/puerta correspondiente a TerraGroup Labs manager's office room key en The Lab.",
-    "loot": "Ver descripción de la sala / puerta en la ficha.",
-    "spawns": "Chaquetas, archivadores, Scavs y spawns en el mapa correspondiente.",
-    "verdict": "KEYCARD",
+    "opens": "Llave mecánica de la oficina de gerencia (Manager's Office) sobre el domo central en The Lab.",
+    "loot": "Objetos de valor (Bitcoins, Prokill, relojes), caja fuerte y PCs.",
+    "spawns": "Chaquetas, archivadores, Scavs y Raiders.",
+    "verdict": "LLAVE DE ZONA / LOOT",
     "approx_value": "Variable (según Flea Market)"
   },
   {
     "id": "the_lab_terragroup_labs_weapon_testing_area_key",
     "name": "TerraGroup Labs weapon testing area key",
-    "short_name": "TerraGroup Labs weapon t",
+    "short_name": "Labs Weapon Testing",
     "map": "The Lab",
-    "category": "Keycard",
+    "category": "Llaves",
     "uses": 40,
     "quests": [],
-    "opens": "Abre la zona/puerta correspondiente a TerraGroup Labs weapon testing area key en The Lab.",
-    "loot": "Ver descripción de la sala / puerta en la ficha.",
-    "spawns": "Chaquetas, archivadores, Scavs y spawns en el mapa correspondiente.",
-    "verdict": "KEYCARD",
+    "opens": "Llave mecánica del área acristalada de pruebas de armas en el centro de Planta 1 en The Lab.",
+    "loot": "Cajas de armas, piezas meta (M4/HK/AK) y munición AP.",
+    "spawns": "Chaquetas, Raiders y spawns en The Lab.",
+    "verdict": "LLAVE DE ZONA / LOOT",
     "approx_value": "Variable (según Flea Market)"
   },
   {

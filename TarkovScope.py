@@ -114,7 +114,6 @@ class TarkovScopeApp(ctk.CTk):
 
         self.switch_tab("quests")
         self._check_initial_sync()
-        self.after(1200, self._warmup_remaining_tabs)
 
     def _build_sidebar(self):
         """Barra de navegación lateral limpia, tipográfica y con alto contraste."""
@@ -378,7 +377,6 @@ class TarkovScopeApp(ctk.CTk):
         self._build_sidebar()
         self._build_content_area()
         self.switch_tab(current_key)
-        self.after(600, self._warmup_remaining_tabs)
 
     def _get_or_create_tab(self, tab_key: str, background: bool = False) -> ctk.CTkFrame:
         if tab_key not in self.tabs:
@@ -426,23 +424,6 @@ class TarkovScopeApp(ctk.CTk):
                 border_color=THEME["accent_gold"],
                 text_color=C_WHITE
             )
-
-    def _warmup_remaining_tabs(self):
-        """Pre-construye todas las pestañas restantes en idle sin interrumpir la pestaña activa."""
-        tabs_to_warm = ["bosses", "maps", "weapons", "ballistics", "containers", "flea", "pmc_systems", "story_quests", "lore"]
-
-        def _warm_step(idx: int = 0):
-            if not self.winfo_exists() or idx >= len(tabs_to_warm):
-                return
-            key = tabs_to_warm[idx]
-            if key not in self.tabs:
-                try:
-                    self._get_or_create_tab(key, background=True)
-                except Exception as e:
-                    logger.warning("Fallo pre-calentando pestaña %s: %s", key, e)
-            self.after(250, lambda: _warm_step(idx + 1))
-
-        _warm_step(0)
 
     def _check_initial_sync(self):
         if not is_db_populated():

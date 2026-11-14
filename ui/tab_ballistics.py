@@ -48,11 +48,11 @@ class TabBallistics(ArmorMixin, DuelMixin, ctk.CTkFrame):
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(2, weight=1)
 
+        self.duel_frame = None
         self._build_filter_bar()
         self._build_legend_bar()
         self._build_table_area()
         self._build_pagination_bar()
-        self._build_duel_area()
         self.reload_data()
 
     def _build_filter_bar(self):
@@ -69,15 +69,15 @@ class TabBallistics(ArmorMixin, DuelMixin, ctk.CTkFrame):
         ctk.CTkLabel(
             bar,
             text="Calibre:",
-            font=ui_font(size=14, weight="bold"),
+            font=ui_font(size=13, weight="bold"),
             text_color=THEME["accent_gold"]
-        ).grid(row=0, column=0, padx=(14, 6), pady=10, sticky="w")
+        ).grid(row=0, column=0, padx=(12, 6), pady=(8, 4), sticky="w")
 
         self.caliber_combo = ctk.CTkComboBox(
             bar,
             values=["TODOS LOS CALIBRES"],
-            width=240,
-            height=34,
+            width=220,
+            height=32,
             fg_color=C_BG_PANEL,
             border_color="#2E3646",
             button_color="#252F42",
@@ -86,34 +86,34 @@ class TabBallistics(ArmorMixin, DuelMixin, ctk.CTkFrame):
             dropdown_hover_color="#252F42",
             dropdown_text_color=C_TEXT,
             text_color=C_TEXT,
-            font=ui_font(size=13, weight="bold"),
-            dropdown_font=ui_font(size=13, weight="bold"),
+            font=ui_font(size=12, weight="bold"),
+            dropdown_font=ui_font(size=12, weight="bold"),
             command=self._on_filter_change,
             state="readonly"
         )
         self.caliber_combo.set("TODOS LOS CALIBRES")
-        self.caliber_combo.grid(row=0, column=1, padx=6, pady=10, sticky="w")
+        self.caliber_combo.grid(row=0, column=1, padx=4, pady=(8, 4), sticky="w")
 
         self.search_entry = ctk.CTkEntry(
             bar,
             placeholder_text="Buscar proyectil (ej: Igolnik, M855A1, M61, BP, RIP, Flechette, Hybrid)...",
-            height=34,
+            height=32,
             fg_color=C_BG_PANEL,
             border_color="#2E3646",
             text_color=C_TEXT,
-            font=ui_font(size=13)
+            font=ui_font(size=12)
         )
-        self.search_entry.grid(row=0, column=2, padx=8, pady=10, sticky="ew")
+        self.search_entry.grid(row=0, column=2, padx=(6, 12), pady=(8, 4), sticky="ew")
         self.search_entry.bind("<KeyRelease>", self._on_search_debounced)
 
         presets_frame = ctk.CTkFrame(bar, fg_color="transparent")
-        presets_frame.grid(row=0, column=3, padx=12, pady=8, sticky="e")
+        presets_frame.grid(row=1, column=0, columnspan=3, padx=10, pady=(2, 8), sticky="ew")
 
         self.btn_all = ctk.CTkButton(
             presets_frame,
             text="Todos",
-            width=78,
-            height=32,
+            width=76,
+            height=30,
             fg_color=THEME["accent_orange"],
             font=ui_font(size=12, weight="bold"),
             command=lambda: self._set_preset("ALL")
@@ -123,8 +123,8 @@ class TabBallistics(ArmorMixin, DuelMixin, ctk.CTkFrame):
         self.btn_meta = ctk.CTkButton(
             presets_frame,
             text="Meta Perforante (Pen 40+)",
-            width=175,
-            height=32,
+            width=165,
+            height=30,
             fg_color=THEME["bg_dark"],
             hover_color=THEME["border"],
             font=ui_font(size=12, weight="bold"),
@@ -135,8 +135,8 @@ class TabBallistics(ArmorMixin, DuelMixin, ctk.CTkFrame):
         self.btn_leg = ctk.CTkButton(
             presets_frame,
             text="Leg Meta (Daño 75+)",
-            width=150,
-            height=32,
+            width=145,
+            height=30,
             fg_color=THEME["bg_dark"],
             hover_color=THEME["border"],
             font=ui_font(size=12, weight="bold"),
@@ -144,29 +144,29 @@ class TabBallistics(ArmorMixin, DuelMixin, ctk.CTkFrame):
         )
         self.btn_leg.pack(side="left", padx=3)
 
-        self.btn_duel = ctk.CTkButton(
-            presets_frame,
-            text="⚔️ Comparador Versus",
-            width=165,
-            height=32,
-            fg_color=C_SLATE_800,
-            hover_color=THEME["accent_gold"],
-            font=ui_font(size=12, weight="bold"),
-            command=self._toggle_duel_mode
-        )
-        self.btn_duel.pack(side="left", padx=3)
-
         self.btn_armor = ctk.CTkButton(
             presets_frame,
             text="🛡️ Blindaje & Cascos",
-            width=160,
-            height=32,
+            width=155,
+            height=30,
             fg_color=C_SLATE_800,
             hover_color=THEME["accent_gold"],
             font=ui_font(size=12, weight="bold"),
             command=self._toggle_armor_mode
         )
-        self.btn_armor.pack(side="left", padx=3)
+        self.btn_armor.pack(side="right", padx=3)
+
+        self.btn_duel = ctk.CTkButton(
+            presets_frame,
+            text="⚔️ Comparador Versus",
+            width=158,
+            height=30,
+            fg_color=C_SLATE_800,
+            hover_color=THEME["accent_gold"],
+            font=ui_font(size=12, weight="bold"),
+            command=self._toggle_duel_mode
+        )
+        self.btn_duel.pack(side="right", padx=3)
 
     def _build_legend_bar(self):
         """Barra de referencia rápida de efectividad contra blindajes Clases 1 a 6."""
@@ -304,9 +304,10 @@ class TabBallistics(ArmorMixin, DuelMixin, ctk.CTkFrame):
         self.caliber_combo.configure(values=display_values)
         if self.caliber_combo.get() not in self.display_to_raw_caliber:
             self.caliber_combo.set("TODOS LOS CALIBRES")
-        self._init_duel_dropdowns()
-        if self.is_duel_mode:
-            self._render_duel_content()
+        if self.duel_frame is not None:
+            self._init_duel_dropdowns()
+            if self.is_duel_mode:
+                self._render_duel_content()
         self._reset_and_filter()
 
     def _set_preset(self, mode: str):

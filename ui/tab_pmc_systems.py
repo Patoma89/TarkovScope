@@ -6,6 +6,7 @@ Presenta en 3 sub-vistas segmentadas:
   3. BTR Driver & Red de Transits (tarifas USEC/BEAR/Scav, conexiones entre mapas y multiplicador EXP)
 """
 from typing import Any, Dict, List, Optional
+import tkinter as tk
 import customtkinter as ctk
 
 from core.config import THEME
@@ -109,37 +110,38 @@ class TabPMCSystems(ctk.CTkFrame):
 
         ctk.CTkLabel(
             hdr,
-            text="📈 SISTEMAS DE PMC: SKILLS, SCAV KARMA, BTR & TRANSITS",
-            font=ui_font(16, "bold"),
+            text="📈 SISTEMAS DE PMC: SKILLS, SCAV KARMA & BTR",
+            font=ui_font(15, "bold"),
             text_color=THEME["accent_gold"],
-        ).grid(row=0, column=0, padx=14, pady=(10, 2), sticky="w")
+        ).grid(row=0, column=0, padx=14, pady=(8, 2), sticky="w")
 
         ctk.CTkLabel(
             hdr,
-            text="Guía táctica de progresión: entrenamiento de skills sin diminishing returns, reputación de Fence, tarifas BTR y rutas de Transit.",
-            font=ui_font(12),
+            text="Guía táctica de progresión: skills sin fatiga, Scav Karma (Fence), tarifas BTR y Transits.",
+            font=ui_font(11),
             text_color=C_TEXT_DIM,
         ).grid(row=1, column=0, padx=14, pady=(0, 8), sticky="w")
 
         seg_bar = ctk.CTkFrame(hdr, fg_color="transparent")
-        seg_bar.grid(row=0, column=1, rowspan=2, padx=14, pady=10, sticky="e")
+        seg_bar.grid(row=0, column=1, rowspan=2, padx=12, pady=8, sticky="e")
 
         views = [
             ("skills", "📈 Skills & Leveo"),
-            ("karma", "⚖️ Scav Karma (Fence)"),
+            ("karma", "⚖️ Scav Karma"),
             ("btr_transits", "🚐 BTR & Transits"),
         ]
         for key, label in views:
             btn = ctk.CTkButton(
                 seg_bar,
                 text=label,
-                height=34,
+                height=32,
+                width=0,
                 corner_radius=8,
                 font=ui_font(12, "bold"),
                 border_width=1,
                 command=lambda k=key: self._switch_view(k),
             )
-            btn.pack(side="left", padx=4)
+            btn.pack(side="left", padx=3)
             self._view_btns[key] = btn
 
     def _build_views(self):
@@ -152,9 +154,9 @@ class TabPMCSystems(ctk.CTkFrame):
         self.karma_frame = ctk.CTkFrame(self.view_container, fg_color="transparent")
         self.btr_frame = ctk.CTkFrame(self.view_container, fg_color="transparent")
 
+        self._karma_built = False
+        self._btr_built = False
         self._build_skills_view()
-        self._build_karma_view()
-        self._build_btr_transits_view()
 
     def _switch_view(self, view_key: str):
         self.active_view = view_key
@@ -174,8 +176,14 @@ class TabPMCSystems(ctk.CTkFrame):
             self.skills_frame.grid(row=0, column=0, sticky="nsew")
             self._schedule_skills_render()
         elif view_key == "karma":
+            if not self._karma_built:
+                self._karma_built = True
+                self._build_karma_view()
             self.karma_frame.grid(row=0, column=0, sticky="nsew")
         elif view_key == "btr_transits":
+            if not self._btr_built:
+                self._btr_built = True
+                self._build_btr_transits_view()
             self.btr_frame.grid(row=0, column=0, sticky="nsew")
             self._schedule_transits_render()
 
@@ -469,15 +477,17 @@ class TabPMCSystems(ctk.CTkFrame):
             self.after(4, lambda: self._render_skills_batch(items, end, token))
 
     def _select_skill(self, sk: Dict[str, Any]):
-        self.selected_skill_id = sk["id"]
-        for sid, frame in self._skill_row_refs.items():
-            if not frame.winfo_exists():
-                continue
-            sel = sid == self.selected_skill_id
-            frame.configure(
-                fg_color=C_BG_ROW_ALT if sel else C_BG_ROW,
-                border_color=THEME["accent_gold"] if sel else C_BORDER,
-            )
+        prev_id = self.selected_skill_id
+        new_id = sk["id"]
+        if prev_id != new_id:
+            self.selected_skill_id = new_id
+            for sid, sel in ((prev_id, False), (new_id, True)):
+                frame = self._skill_row_refs.get(sid or "")
+                if frame and frame.winfo_exists():
+                    frame.configure(
+                        fg_color=C_BG_ROW_ALT if sel else C_BG_ROW,
+                        border_color=THEME["accent_gold"] if sel else C_BORDER,
+                    )
         self._render_skill_detail(sk)
 
     def _render_skill_detail(self, sk: Optional[Dict[str, Any]]):
@@ -744,22 +754,25 @@ class TabPMCSystems(ctk.CTkFrame):
         btr_card.grid_columnconfigure(1, weight=1)
 
         left_btr = ctk.CTkFrame(btr_card, fg_color="transparent")
-        left_btr.grid(row=0, column=0, padx=14, pady=10, sticky="nsew")
+        left_btr.grid(row=0, column=0, padx=12, pady=10, sticky="nsew")
 
         maps_str = " · ".join(BTR_SERVICE_DATA["maps"])
         ctk.CTkLabel(
             left_btr,
             text=f"🚐 BTR DRIVER — MAPAS ACTIVOS: {maps_str}",
-            font=ui_font(14, "bold"),
+            font=ui_font(13, "bold"),
             text_color=THEME["accent_gold"],
+            wraplength=420,
+            justify="left",
+            anchor="w",
         ).pack(anchor="w")
 
         ctk.CTkLabel(
             left_btr,
             text=BTR_SERVICE_DATA["unlock_note"],
-            font=ui_font(12),
+            font=ui_font(11),
             text_color=C_TEXT_SOFT,
-            wraplength=500,
+            wraplength=420,
             justify="left",
         ).pack(anchor="w", pady=(4, 4))
 
@@ -768,13 +781,13 @@ class TabPMCSystems(ctk.CTkFrame):
             text=f"⚠️ {BTR_SERVICE_DATA['hostile_rule']}",
             font=ui_font(11, "bold"),
             text_color=C_AMBER,
-            wraplength=500,
+            wraplength=420,
             justify="left",
         ).pack(anchor="w")
 
         # Tabla tarifas BTR
         tbl = ctk.CTkFrame(btr_card, fg_color=C_BG_DEEP, corner_radius=8, border_width=1, border_color=C_BORDER)
-        tbl.grid(row=0, column=1, padx=14, pady=10, sticky="nsew")
+        tbl.grid(row=0, column=1, padx=12, pady=10, sticky="nsew")
         for c in range(4):
             tbl.grid_columnconfigure(c, weight=1 if c > 0 else 2)
 
@@ -785,7 +798,7 @@ class TabPMCSystems(ctk.CTkFrame):
                 text=h,
                 font=ui_font(11, "bold"),
                 text_color=THEME["accent_gold"] if c == 0 else (C_GREEN_LIGHT if c == 2 else C_TEXT_MUTED),
-            ).grid(row=0, column=c, padx=8, pady=(8, 4), sticky="w" if c == 0 else "")
+            ).grid(row=0, column=c, padx=6, pady=(8, 4), sticky="w" if c == 0 else "")
 
         for r, srv in enumerate(BTR_SERVICE_DATA["services"], start=1):
             vals = [srv["service"], srv["usec"], srv["bear"], srv["scav"]]
@@ -795,7 +808,7 @@ class TabPMCSystems(ctk.CTkFrame):
                     text=val,
                     font=ui_font(11, "bold" if c in (0, 2) else "normal"),
                     text_color=C_TEXT_SOFT if c == 0 else (C_GREEN_LIGHT if c == 2 else C_TEXT_MUTED),
-                ).grid(row=r, column=c, padx=8, pady=4, sticky="w" if c == 0 else "")
+                ).grid(row=r, column=c, padx=6, pady=3, sticky="w" if c == 0 else "")
 
         # Bloque medio: Filtro de Transits + Multiplicador EXP
         fbar = ctk.CTkFrame(
@@ -806,32 +819,22 @@ class TabPMCSystems(ctk.CTkFrame):
             border_color=THEME["border"],
         )
         fbar.grid(row=1, column=0, pady=(0, 8), sticky="ew")
-        fbar.grid_columnconfigure(1, weight=1)
+        fbar.grid_columnconfigure(0, weight=1)
 
         top_f = ctk.CTkFrame(fbar, fg_color="transparent")
-        top_f.grid(row=0, column=0, columnspan=2, padx=12, pady=(8, 4), sticky="ew")
-        top_f.grid_columnconfigure(1, weight=1)
+        top_f.grid(row=0, column=0, padx=12, pady=(8, 3), sticky="ew")
+        top_f.grid_columnconfigure(0, weight=1)
 
         self.transit_search_entry = ctk.CTkEntry(
             top_f,
-            width=250,
-            height=32,
+            height=30,
             placeholder_text="Buscar mapa origen, destino o ubicación...",
             font=ui_font(12),
             fg_color=C_BG_DEEP,
             border_color=THEME["border"],
         )
-        self.transit_search_entry.grid(row=0, column=0, padx=(0, 10), sticky="w")
+        self.transit_search_entry.grid(row=0, column=0, padx=(0, 10), sticky="ew")
         self.transit_search_entry.bind("<KeyRelease>", self._on_transit_search_key)
-
-        exp_strip = "   ".join(f"{k}: {v}" for k, v in TRANSIT_EXP_MULTIPLIERS)
-        ctk.CTkLabel(
-            top_f,
-            text=f"🔥 Bonus EXP por Tránsito Continuo:  {exp_strip}",
-            font=ui_font(11, "bold"),
-            text_color=C_EMERALD,
-            anchor="w",
-        ).grid(row=0, column=1, sticky="w")
 
         self.transit_count_lbl = ctk.CTkLabel(
             top_f,
@@ -839,30 +842,41 @@ class TabPMCSystems(ctk.CTkFrame):
             font=ui_font(12, "bold"),
             text_color=THEME["accent_gold"],
         )
-        self.transit_count_lbl.grid(row=0, column=2, padx=(10, 0), sticky="e")
+        self.transit_count_lbl.grid(row=0, column=1, padx=(6, 0), sticky="e")
+
+        exp_strip = "   ".join(f"{k}: {v}" for k, v in TRANSIT_EXP_MULTIPLIERS)
+        ctk.CTkLabel(
+            fbar,
+            text=f"🔥 Bonus EXP por Tránsito Continuo:  {exp_strip}",
+            font=ui_font(11, "bold"),
+            text_color=C_EMERALD,
+            anchor="w",
+        ).grid(row=1, column=0, padx=12, pady=(0, 4), sticky="ew")
 
         pills_row = ctk.CTkFrame(fbar, fg_color="transparent")
-        pills_row.grid(row=1, column=0, columnspan=2, padx=10, pady=(2, 8), sticky="ew")
+        pills_row.grid(row=2, column=0, padx=10, pady=(2, 8), sticky="ew")
 
         ctk.CTkLabel(
             pills_row,
             text="Origen:",
             font=ui_font(11, "bold"),
             text_color=C_TEXT_DIM,
-        ).pack(side="left", padx=(2, 6))
+        ).grid(row=0, column=0, padx=(2, 6), pady=2, sticky="w")
 
-        for mname in TRANSIT_MAP_FILTERS:
+        for m_idx, mname in enumerate(TRANSIT_MAP_FILTERS):
+            r_pos = m_idx // 6
+            c_pos = (m_idx % 6) + 1
             btn = ctk.CTkButton(
                 pills_row,
                 text=mname,
                 height=26,
-                width=74,
+                width=118,
                 corner_radius=12,
                 font=ui_font(11, "bold"),
                 border_width=1,
                 command=lambda m=mname: self._set_transit_map(m),
             )
-            btn.pack(side="left", padx=2)
+            btn.grid(row=r_pos, column=c_pos, padx=2, pady=2, sticky="w")
             self._transit_map_btns[mname] = btn
 
         self._update_transit_map_styles()
@@ -923,7 +937,7 @@ class TabPMCSystems(ctk.CTkFrame):
     def _render_transits_batch(self, items: List[Dict[str, Any]], start: int, token: int):
         if not self.winfo_exists() or token != self._transit_token:
             return
-        batch_size = 10
+        batch_size = 16
         end = min(start + batch_size, len(items))
         for idx in range(start, end):
             tr = items[idx]
@@ -931,46 +945,51 @@ class TabPMCSystems(ctk.CTkFrame):
             c = idx % 2
             is_pmc_only = tr.get("faction") == "PMC"
 
-            card = ctk.CTkFrame(
+            card = tk.Frame(
                 self.transit_scroll,
-                fg_color=C_BG_ROW,
-                corner_radius=8,
-                border_width=1,
-                border_color=C_AMBER if is_pmc_only else C_BORDER,
+                bg=C_BG_ROW,
+                highlightbackground=C_AMBER if is_pmc_only else C_BORDER,
+                highlightthickness=1,
+                bd=0,
             )
-            card.grid(row=r, column=c, padx=6, pady=5, sticky="nsew")
+            card.grid(row=r, column=c, padx=6, pady=4, sticky="nsew")
             card.grid_columnconfigure(0, weight=1)
 
-            top = ctk.CTkFrame(card, fg_color="transparent")
+            top = tk.Frame(card, bg=C_BG_ROW, bd=0)
             top.grid(row=0, column=0, padx=10, pady=(8, 2), sticky="ew")
             top.grid_columnconfigure(0, weight=1)
 
-            ctk.CTkLabel(
+            tk.Label(
                 top,
                 text=f"{tr['from_map']}  ➔  {tr['to_map']}",
-                font=ui_font(13, "bold"),
-                text_color=C_WHITE,
+                font=ui_font(12, "bold"),
+                bg=C_BG_ROW,
+                fg=C_WHITE,
                 anchor="w",
+                bd=0,
             ).grid(row=0, column=0, sticky="w")
 
-            ctk.CTkLabel(
+            tk.Label(
                 top,
                 text=f" {tr['faction']} ",
-                font=ui_font(10, "bold"),
-                fg_color="#B45309" if is_pmc_only else "#0F766E",
-                text_color=C_WHITE,
-                corner_radius=6,
-                height=20,
+                font=ui_font(9, "bold"),
+                bg="#B45309" if is_pmc_only else "#0F766E",
+                fg=C_WHITE,
+                padx=5,
+                pady=2,
+                bd=0,
             ).grid(row=0, column=1, padx=(8, 0), sticky="e")
 
-            ctk.CTkLabel(
+            tk.Label(
                 card,
                 text=f"📍 {tr['notes']}",
-                font=ui_font(11),
-                text_color=C_TEXT_MUTED,
-                wraplength=470,
+                font=ui_font(10),
+                bg=C_BG_ROW,
+                fg=C_TEXT_MUTED,
+                wraplength=390,
                 justify="left",
                 anchor="w",
+                bd=0,
             ).grid(row=1, column=0, padx=10, pady=(0, 8), sticky="w")
 
         if end < len(items):
@@ -995,11 +1014,13 @@ class TabPMCSystems(ctk.CTkFrame):
         elif raw.startswith("KARMA:"):
             self._switch_view("karma")
         elif raw.startswith("BTR:"):
+            self._switch_view("btr_transits")
             self.active_transit_map = "Todos"
             self._update_transit_map_styles()
             self.transit_search_entry.delete(0, "end")
-            self._switch_view("btr_transits")
+            self._schedule_transits_render()
         elif raw.startswith("TRANSIT:"):
+            self._switch_view("btr_transits")
             map_name = raw.split(":", 1)[1].strip()
             if map_name in TRANSIT_MAP_FILTERS:
                 self.active_transit_map = map_name
@@ -1009,6 +1030,6 @@ class TabPMCSystems(ctk.CTkFrame):
                 self.transit_search_entry.delete(0, "end")
                 self.transit_search_entry.insert(0, map_name)
             self._update_transit_map_styles()
-            self._switch_view("btr_transits")
+            self._schedule_transits_render()
         else:
             self._switch_view("skills")

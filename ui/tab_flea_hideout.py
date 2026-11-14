@@ -2,6 +2,7 @@
 TarkovScope - Vista de Módulos del Hideout, Crafteos y Contenedor KAPPA (Mixin de TabFleaAndItems).
 Extraído de tab_flea.py para respetar el principio de responsabilidad única (SOLID).
 """
+import tkinter as tk
 import customtkinter as ctk
 from typing import List, Dict, Any, Optional
 from core.config import THEME
@@ -204,14 +205,13 @@ class FleaHideoutMixin:
             )
         self._run_search(self.search_entry.get())
 
-    def _render_kappa_items(self, query: str):
+    def _render_kappa_items(self, query: str, token: int = 0):
         ds = get_datastore()
         q = query.strip().lower()
         all_kappa = KAPPA_COLLECTOR_ITEMS
         tot_k = len(all_kappa)
         done_k = sum(1 for it in all_kappa if ds.get_stash_count(f"kappa:{it['name']}") >= 1)
 
-        # Banner de progreso Kappa Collector
         prog_hdr = ctk.CTkFrame(
             self.results_scroll,
             fg_color="#141821",
@@ -223,12 +223,13 @@ class FleaHideoutMixin:
         prog_hdr.grid_columnconfigure(0, weight=1)
 
         pct_k = int((done_k / tot_k) * 100) if tot_k > 0 else 0
-        ctk.CTkLabel(
+        prog_lbl = ctk.CTkLabel(
             prog_hdr,
             text=f"🏆 PROGRESO MISIÓN 'COLLECTOR' (SECURE CONTAINER KAPPA):  {done_k} / {tot_k} Objetos Streamer FiR en tu Alijo ({pct_k}%)",
             font=ui_font(14, "bold"),
             text_color=THEME["accent_gold"]
-        ).grid(row=0, column=0, padx=14, pady=8, sticky="w")
+        )
+        prog_lbl.grid(row=0, column=0, padx=14, pady=8, sticky="w")
 
         items = [
             it for it in all_kappa
@@ -246,57 +247,99 @@ class FleaHideoutMixin:
             ).grid(row=1, column=0, pady=40)
             return
 
-        for idx, it in enumerate(items, start=1):
-            k_key = f"kappa:{it['name']}"
-            has_item = ds.get_stash_count(k_key) >= 1
+        def _refresh_prog_header():
+            d_cnt = sum(1 for k_it in all_kappa if ds.get_stash_count(f"kappa:{k_it['name']}") >= 1)
+            p_val = int((d_cnt / tot_k) * 100) if tot_k > 0 else 0
+            if prog_lbl.winfo_exists():
+                prog_lbl.configure(
+                    text=f"🏆 PROGRESO MISIÓN 'COLLECTOR' (SECURE CONTAINER KAPPA):  {d_cnt} / {tot_k} Objetos Streamer FiR en tu Alijo ({p_val}%)"
+                )
 
-            card = ctk.CTkFrame(
-                self.results_scroll,
-                fg_color="#0D1612" if has_item else C_BG_DEEP,
-                corner_radius=6,
-                border_width=1,
-                border_color=C_EMERALD if has_item else C_BORDER_SOFT
-            )
-            card.grid(row=idx, column=0, padx=8, pady=3, sticky="ew")
-            card.grid_columnconfigure(1, weight=1)
+        def draw_batch(start: int = 0, batch_size: int = 16):
+            if not self.winfo_exists() or (token and token != self._render_token):
+                return
+            end = min(start + batch_size, len(items))
+            for i in range(start, end):
+                it = items[i]
+                k_key = f"kappa:{it['name']}"
+                has_item = ds.get_stash_count(k_key) >= 1
+                row_bg = "#0D1612" if has_item else C_BG_DEEP
 
-            ctk.CTkLabel(
-                card,
-                text=it["name"],
-                font=ui_font(14, "bold"),
-                text_color=C_GREEN_LIGHT if has_item else THEME["accent_gold"]
-            ).grid(row=0, column=0, padx=14, pady=9, sticky="w")
+                card = tk.Frame(
+                    self.results_scroll,
+                    bg=row_bg,
+                    highlightbackground=C_EMERALD if has_item else C_BORDER_SOFT,
+                    highlightthickness=1,
+                    bd=0,
+                )
+                card.grid(row=i + 1, column=0, padx=8, pady=3, sticky="ew")
+                card.grid_columnconfigure(1, weight=1)
 
-            ctk.CTkLabel(
-                card,
-                text=f"Dónde conseguirlo: {it['boss_or_spot']}",
-                font=ui_font(13),
-                text_color=C_TEXT
-            ).grid(row=0, column=1, padx=10, pady=9, sticky="w")
+                n_lbl = tk.Label(
+                    card,
+                    text=it["name"],
+                    font=ui_font(13, "bold"),
+                    bg=row_bg,
+                    fg=C_GREEN_LIGHT if has_item else THEME["accent_gold"],
+                    anchor="w",
+                    bd=0,
+                )
+                n_lbl.grid(row=0, column=0, padx=14, pady=8, sticky="w")
 
-            btn_toggle = ctk.CTkButton(
-                card,
-                text="✓ En Alijo (1/1 FiR)" if has_item else "Marcar FiR (0/1)",
-                width=155,
-                height=28,
-                corner_radius=5,
-                fg_color=C_EMERALD if has_item else "#1E2534",
-                hover_color="#059669" if has_item else C_SLATE_700,
-                text_color=C_BG_DARKEST if has_item else C_TEXT,
-                font=ui_font(12, "bold"),
-            )
+                s_lbl = tk.Label(
+                    card,
+                    text=f"Dónde conseguirlo: {it['boss_or_spot']}",
+                    font=ui_font(12),
+                    bg=row_bg,
+                    fg=C_TEXT,
+                    anchor="w",
+                    bd=0,
+                )
+                s_lbl.grid(row=0, column=1, padx=10, pady=8, sticky="w")
 
-            def make_kappa_toggler(item_key=k_key):
-                def _toggle():
-                    cur = ds.get_stash_count(item_key)
-                    ds.set_stash_count(item_key, 0 if cur >= 1 else 1)
-                    self._render_kappa_items(self.search_entry.get())
-                return _toggle
+                btn_toggle = ctk.CTkButton(
+                    card,
+                    text="✓ En Alijo (1/1 FiR)" if has_item else "Marcar FiR (0/1)",
+                    width=150,
+                    height=28,
+                    corner_radius=5,
+                    fg_color=C_EMERALD if has_item else "#1E2534",
+                    hover_color="#059669" if has_item else C_SLATE_700,
+                    text_color=C_BG_DARKEST if has_item else C_TEXT,
+                    font=ui_font(12, "bold"),
+                )
 
-            btn_toggle.configure(command=make_kappa_toggler())
-            btn_toggle.grid(row=0, column=2, padx=14, pady=9, sticky="e")
+                def make_kappa_toggler(item_key=k_key, c_card=card, c_nlbl=n_lbl, c_slbl=s_lbl, c_btn=btn_toggle):
+                    def _toggle():
+                        cur = ds.get_stash_count(item_key)
+                        new_done = cur < 1
+                        ds.set_stash_count(item_key, 1 if new_done else 0)
+                        _refresh_prog_header()
+                        if self.filter_only_missing.get() and new_done:
+                            if c_card.winfo_exists():
+                                c_card.destroy()
+                            return
+                        new_bg = "#0D1612" if new_done else C_BG_DEEP
+                        c_card.configure(bg=new_bg, highlightbackground=C_EMERALD if new_done else C_BORDER_SOFT)
+                        c_nlbl.configure(bg=new_bg, fg=C_GREEN_LIGHT if new_done else THEME["accent_gold"])
+                        c_slbl.configure(bg=new_bg)
+                        c_btn.configure(
+                            text="✓ En Alijo (1/1 FiR)" if new_done else "Marcar FiR (0/1)",
+                            fg_color=C_EMERALD if new_done else "#1E2534",
+                            hover_color="#059669" if new_done else C_SLATE_700,
+                            text_color=C_BG_DARKEST if new_done else C_TEXT,
+                        )
+                    return _toggle
 
-    def _render_hideout_crafts(self, query: str):
+                btn_toggle.configure(command=make_kappa_toggler())
+                btn_toggle.grid(row=0, column=2, padx=14, pady=7, sticky="e")
+
+            if end < len(items):
+                self.after(4, lambda: draw_batch(end, batch_size))
+
+        draw_batch(0)
+
+    def _render_hideout_crafts(self, query: str, token: int = 0):
         q = query.strip().lower()
         crafts = [
             c for c in HIDEOUT_CRAFTS_DATA
@@ -349,78 +392,98 @@ class FleaHideoutMixin:
             "MATERIAL / QUEST": (C_AMBER, C_BG_DARKEST),
         }
 
-        for idx, c in enumerate(crafts, start=1):
-            card = ctk.CTkFrame(
-                self.results_scroll,
-                fg_color=C_BG_DEEP if idx % 2 == 1 else "#11151E",
-                corner_radius=6,
-                border_width=1,
-                border_color=C_BORDER_SOFT
-            )
-            card.grid(row=idx, column=0, padx=8, pady=4, sticky="ew")
-            card.grid_columnconfigure(1, weight=1)
+        def draw_craft_batch(start: int = 0, batch_size: int = 14):
+            if not self.winfo_exists() or (token and token != self._render_token):
+                return
+            end = min(start + batch_size, len(crafts))
+            for i in range(start, end):
+                idx = i + 1
+                c = crafts[i]
+                row_bg = C_BG_DEEP if idx % 2 == 1 else "#11151E"
+                card = tk.Frame(
+                    self.results_scroll,
+                    bg=row_bg,
+                    highlightbackground=C_BORDER_SOFT,
+                    highlightthickness=1,
+                    bd=0,
+                )
+                card.grid(row=idx, column=0, padx=8, pady=4, sticky="ew")
+                card.grid_columnconfigure(1, weight=1)
 
-            # Col 0: Estación + Nivel + Tiempo
-            left_box = ctk.CTkFrame(card, fg_color="#161C28", corner_radius=6, width=215)
-            left_box.grid(row=0, column=0, rowspan=2, padx=10, pady=8, sticky="nsew")
-            left_box.grid_propagate(False)
+                left_box = tk.Frame(card, bg="#161C28", width=210, bd=0)
+                left_box.grid(row=0, column=0, padx=10, pady=8, sticky="nsew")
+                left_box.grid_propagate(False)
 
-            ctk.CTkLabel(
-                left_box,
-                text=f"🏭 {c['station']} Nv.{c['level']}",
-                font=ui_font(13, "bold"),
-                text_color=THEME["accent_gold"],
-                anchor="w"
-            ).pack(anchor="w", padx=10, pady=(8, 2))
+                tk.Label(
+                    left_box,
+                    text=f"🏭 {c['station']} Nv.{c['level']}",
+                    font=ui_font(12, "bold"),
+                    bg="#161C28",
+                    fg=THEME["accent_gold"],
+                    anchor="w",
+                    bd=0,
+                ).pack(anchor="w", padx=10, pady=(8, 2))
 
-            ctk.CTkLabel(
-                left_box,
-                text=f"⏱ Duración: {c['time']}",
-                font=ui_font(12, "bold"),
-                text_color=C_BLUE,
-                anchor="w"
-            ).pack(anchor="w", padx=10, pady=(0, 6))
+                tk.Label(
+                    left_box,
+                    text=f"⏱ Duración: {c['time']}",
+                    font=ui_font(11, "bold"),
+                    bg="#161C28",
+                    fg=C_BLUE,
+                    anchor="w",
+                    bd=0,
+                ).pack(anchor="w", padx=10, pady=(0, 6))
 
-            # Col 1: Producto resultante + Materiales + Uso
-            mid_box = ctk.CTkFrame(card, fg_color="transparent")
-            mid_box.grid(row=0, column=1, padx=8, pady=8, sticky="nsew")
+                mid_box = tk.Frame(card, bg=row_bg, bd=0)
+                mid_box.grid(row=0, column=1, padx=8, pady=8, sticky="nsew")
 
-            ctk.CTkLabel(
-                mid_box,
-                text=f"➜ Produce: {c['output']}",
-                font=ui_font(14, "bold"),
-                text_color=C_GREEN_LIGHT,
-                anchor="w"
-            ).pack(anchor="w")
+                tk.Label(
+                    mid_box,
+                    text=f"➜ Produce: {c['output']}",
+                    font=ui_font(13, "bold"),
+                    bg=row_bg,
+                    fg=C_GREEN_LIGHT,
+                    anchor="w",
+                    bd=0,
+                ).pack(anchor="w")
 
-            ctk.CTkLabel(
-                mid_box,
-                text=f"🧩 Materiales requeridos: {c['inputs']}",
-                font=ui_font(12, "bold"),
-                text_color=C_TEXT,
-                anchor="w",
-                justify="left",
-                wraplength=680
-            ).pack(anchor="w", pady=(3, 2))
+                tk.Label(
+                    mid_box,
+                    text=f"🧩 Materiales requeridos: {c['inputs']}",
+                    font=ui_font(11, "bold"),
+                    bg=row_bg,
+                    fg=C_TEXT,
+                    anchor="w",
+                    justify="left",
+                    wraplength=640,
+                    bd=0,
+                ).pack(anchor="w", pady=(3, 2))
 
-            ctk.CTkLabel(
-                mid_box,
-                text=f"💡 Utilidad Táctica / Quest: {c['usage']}",
-                font=ui_font(12),
-                text_color=C_TEXT_DIM,
-                anchor="w",
-                justify="left",
-                wraplength=680
-            ).pack(anchor="w")
+                tk.Label(
+                    mid_box,
+                    text=f"💡 Utilidad Táctica / Quest: {c['usage']}",
+                    font=ui_font(11),
+                    bg=row_bg,
+                    fg=C_TEXT_DIM,
+                    anchor="w",
+                    justify="left",
+                    wraplength=640,
+                    bd=0,
+                ).pack(anchor="w")
 
-            # Col 2: Categoría Badge
-            bg_c, fg_c = cat_colors.get(c["category"], (C_SLATE_700, C_WHITE))
-            ctk.CTkLabel(
-                card,
-                text=f" {c['category']} ",
-                font=ui_font(11, "bold"),
-                fg_color=bg_c,
-                text_color=fg_c,
-                corner_radius=4,
-                height=26
-            ).grid(row=0, column=2, padx=12, pady=10, sticky="ne")
+                bg_c, fg_c = cat_colors.get(c["category"], (C_SLATE_700, C_WHITE))
+                tk.Label(
+                    card,
+                    text=f" {c['category']} ",
+                    font=ui_font(10, "bold"),
+                    bg=bg_c,
+                    fg=fg_c,
+                    padx=6,
+                    pady=4,
+                    bd=0,
+                ).grid(row=0, column=2, padx=12, pady=10, sticky="ne")
+
+            if end < len(crafts):
+                self.after(4, lambda: draw_craft_batch(end, batch_size))
+
+        draw_craft_batch(0)

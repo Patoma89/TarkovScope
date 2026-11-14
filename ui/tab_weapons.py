@@ -2,6 +2,7 @@
 TarkovScope - Pestaña de Armas, Builds Meta/Budget y Guías Gunsmith (Mechanic) con Imágenes Pre-Cacheadas
 Muestra imágenes reales en caché de cada arma y de cada accesorio / pieza Gunsmith con 0 ms de espera.
 """
+import tkinter as tk
 import customtkinter as ctk
 from typing import Dict, Any
 from core.config import THEME
@@ -45,48 +46,48 @@ class TabWeapons(ctk.CTkFrame, WeaponBuilderMixin):
 
         ctk.CTkLabel(
             bar,
-            text="🔫 ARSENAL TÁCTICO, BUILDS META & GUÍAS GUNSMITH (CON IMÁGENES)",
-            font=ui_font(size=17, weight="bold"),
+            text="🔫 ARSENAL TÁCTICO & GUNSMITH",
+            font=ui_font(size=16, weight="bold"),
             text_color=THEME["accent_orange"]
-        ).grid(row=0, column=0, padx=16, pady=12, sticky="w")
+        ).grid(row=0, column=0, padx=14, pady=10, sticky="w")
 
         btn_box = ctk.CTkFrame(bar, fg_color="transparent")
-        btn_box.grid(row=0, column=1, padx=14, pady=8, sticky="e")
+        btn_box.grid(row=0, column=1, padx=10, pady=8, sticky="e")
 
         self.btn_arsenal = ctk.CTkButton(
             btn_box,
             text="🔫 Arsenal & Builds Meta",
-            width=195,
-            height=34,
+            width=165,
+            height=32,
             fg_color=THEME["accent_orange"],
-            font=ui_font(size=13, weight="bold"),
+            font=ui_font(size=12, weight="bold"),
             command=lambda: self._switch_mode("ARSENAL")
         )
-        self.btn_arsenal.pack(side="left", padx=4)
+        self.btn_arsenal.pack(side="left", padx=3)
 
         self.btn_gunsmith = ctk.CTkButton(
             btn_box,
             text="🔧 Guías Gunsmith (Mechanic)",
-            width=210,
-            height=34,
+            width=185,
+            height=32,
             fg_color=THEME["bg_dark"],
             hover_color=THEME["border"],
-            font=ui_font(size=13, weight="bold"),
+            font=ui_font(size=12, weight="bold"),
             command=lambda: self._switch_mode("GUNSMITH")
         )
-        self.btn_gunsmith.pack(side="left", padx=4)
+        self.btn_gunsmith.pack(side="left", padx=3)
 
         self.btn_builder = ctk.CTkButton(
             btn_box,
-            text="🛠️ Modding Studio (Interactivo)",
-            width=230,
-            height=34,
+            text="🛠️ Modding Studio Pro",
+            width=175,
+            height=32,
             fg_color=THEME["bg_dark"],
             hover_color=THEME["border"],
-            font=ui_font(size=13, weight="bold"),
+            font=ui_font(size=12, weight="bold"),
             command=lambda: self._switch_mode("BUILDER")
         )
-        self.btn_builder.pack(side="left", padx=4)
+        self.btn_builder.pack(side="left", padx=3)
 
     def _build_body_container(self):
         self.body_frame = ctk.CTkFrame(self, fg_color="transparent")
@@ -475,11 +476,14 @@ class TabWeapons(ctk.CTkFrame, WeaponBuilderMixin):
         return outer
 
     def _on_gs_search_debounced(self, _=None):
+        self._gs_limit = 8
         if self._gs_search_debounce is not None:
             self.after_cancel(self._gs_search_debounce)
         self._gs_search_debounce = self.after(150, self._refresh_gunsmith_list)
 
-    def _refresh_gunsmith_list(self):
+    def _refresh_gunsmith_list(self, reset_limit: bool = False):
+        if reset_limit:
+            self._gs_limit = 8
         self._render_token_gunsmith = getattr(self, "_render_token_gunsmith", 0) + 1
         token = self._render_token_gunsmith
 
@@ -521,140 +525,184 @@ class TabWeapons(ctk.CTkFrame, WeaponBuilderMixin):
             ).grid(row=0, column=0, pady=40)
             return
 
-        def _render_batch(start_idx: int = 0, batch_size: int = 5):
+        limit_n = getattr(self, "_gs_limit", 8)
+        shown_gs = filtered_gs[:limit_n]
+        remaining_gs = len(filtered_gs) - len(shown_gs)
+
+        def _render_batch(start_idx: int = 0, batch_size: int = 4):
             if not self.winfo_exists() or token != self._render_token_gunsmith:
                 return
-            end_idx = min(start_idx + batch_size, len(filtered_gs))
+            end_idx = min(start_idx + batch_size, len(shown_gs))
             for idx in range(start_idx, end_idx):
-                self._create_gunsmith_card(self.gs_scroll, idx, filtered_gs[idx])
-            if end_idx < len(filtered_gs):
-                self.after(8, lambda: _render_batch(end_idx, batch_size))
+                self._create_gunsmith_card(self.gs_scroll, idx, shown_gs[idx])
+            if end_idx < len(shown_gs):
+                self.after(6, lambda: _render_batch(end_idx, batch_size))
+            elif remaining_gs > 0:
+                def _load_more_gs():
+                    self._gs_limit = getattr(self, "_gs_limit", 8) + 10
+                    self._refresh_gunsmith_list()
 
-        _render_batch(0, 5)
+                ctk.CTkButton(
+                    self.gs_scroll,
+                    text=f"⬇ Cargar más misiones Gunsmith ({remaining_gs} restantes)",
+                    height=34,
+                    fg_color=C_BG_PANEL,
+                    hover_color=THEME["accent_orange"],
+                    border_width=1,
+                    border_color=C_BORDER,
+                    text_color=C_WHITE,
+                    font=ui_font(size=12, weight="bold"),
+                    command=_load_more_gs,
+                ).grid(row=len(shown_gs), column=0, padx=14, pady=10, sticky="ew")
+
+        _render_batch(0, 4)
 
     def _create_gunsmith_card(self, scroll: ctk.CTkScrollableFrame, idx: int, gs: Dict[str, Any]):
         ds = get_datastore()
         gs_key = f"gunsmith:{gs['part']}"
         is_done = ds.get_stash_count(gs_key) >= 1
+        card_bg = "#0D1713" if is_done else THEME["bg_dark"]
+        hdr_bg = "#11221B" if is_done else C_BG_PANEL_ALT2
 
-        card = ctk.CTkFrame(
+        card = tk.Frame(
             scroll,
-            fg_color="#0D1713" if is_done else THEME["bg_dark"],
-            corner_radius=10,
-            border_width=1,
-            border_color=C_EMERALD if is_done else THEME["border"]
+            bg=card_bg,
+            highlightbackground=C_EMERALD if is_done else THEME["border"],
+            highlightthickness=1,
+            bd=0,
         )
-        card.grid(row=idx, column=0, padx=14, pady=8, sticky="ew")
+        card.grid(row=idx, column=0, padx=12, pady=7, sticky="ew")
         card.grid_columnconfigure(1, weight=1)
 
-        # 1. Cabecera Unificada de la Misión (Fila 0, Span 2 columnas)
-        hdr_frame = ctk.CTkFrame(card, fg_color="#11221B" if is_done else C_BG_PANEL_ALT2, corner_radius=8)
-        hdr_frame.grid(row=0, column=0, columnspan=2, padx=12, pady=(12, 6), sticky="ew")
+        hdr_frame = tk.Frame(card, bg=hdr_bg, bd=0)
+        hdr_frame.grid(row=0, column=0, columnspan=2, padx=10, pady=(10, 6), sticky="ew")
         hdr_frame.grid_columnconfigure(0, weight=1)
 
-        title_row = ctk.CTkFrame(hdr_frame, fg_color="transparent")
-        title_row.grid(row=0, column=0, padx=14, pady=8, sticky="ew")
-        title_row.grid_columnconfigure(0, weight=1)
-
-        ctk.CTkLabel(
-            title_row,
+        lbl_title = tk.Label(
+            hdr_frame,
             text=f"🔧 {gs['title']}  —  {gs['weapon']}",
-            font=ui_font(size=16, weight="bold"),
-            text_color=C_GREEN_LIGHT if is_done else THEME["accent_orange"],
-            anchor="w"
-        ).pack(side="left")
+            font=ui_font(size=15, weight="bold"),
+            bg=hdr_bg,
+            fg=C_GREEN_LIGHT if is_done else THEME["accent_orange"],
+            anchor="w",
+            bd=0,
+        )
+        lbl_title.grid(row=0, column=0, padx=12, pady=8, sticky="w")
 
-        def toggle_gs(k=gs_key):
-            cur = ds.get_stash_count(k)
-            ds.set_stash_count(k, 0 if cur >= 1 else 1)
-            self._refresh_gunsmith_list()
+        tk.Label(
+            hdr_frame,
+            text=f" Nivel {gs['level']} Requerido  •  KAPPA ",
+            font=ui_font(size=11, weight="bold"),
+            bg=THEME["accent_blue"],
+            fg=C_WHITE,
+            padx=6,
+            pady=4,
+            bd=0,
+        ).grid(row=0, column=1, padx=4, pady=8)
 
-        ctk.CTkButton(
-            title_row,
+        btn_done = ctk.CTkButton(
+            hdr_frame,
             text="✓ Completada" if is_done else "Marcar Completada",
-            width=150,
+            width=145,
             height=28,
             corner_radius=6,
             fg_color=C_EMERALD if is_done else C_SLATE_800,
             hover_color="#059669" if is_done else THEME["accent_orange"],
             text_color=C_BG_DARKEST if is_done else C_WHITE,
             font=ui_font(size=12, weight="bold"),
-            command=toggle_gs
-        ).pack(side="right", padx=(8, 0))
+        )
 
-        ctk.CTkLabel(
-            title_row,
-            text=f" Nivel {gs['level']} Requerido  •  KAPPA ",
-            font=ui_font(size=12, weight="bold"),
-            fg_color=THEME["accent_blue"],
-            text_color=C_WHITE,
-            corner_radius=6,
-            height=26
-        ).pack(side="right")
+        def toggle_gs(k=gs_key):
+            cur = ds.get_stash_count(k)
+            new_done = cur < 1
+            ds.set_stash_count(k, 1 if new_done else 0)
+            total_gs = len(GUNSMITH_GUIDES_DATA)
+            done_gs = sum(1 for g in GUNSMITH_GUIDES_DATA if ds.get_stash_count(f"gunsmith:{g['part']}") >= 1)
+            pct_gs = int((done_gs / total_gs) * 100) if total_gs > 0 else 0
+            if hasattr(self, "gs_progress_lbl") and self.gs_progress_lbl.winfo_exists():
+                self.gs_progress_lbl.configure(
+                    text=f"🔧 Progreso Gunsmith: {done_gs} / {total_gs} Completadas ({pct_gs}%)"
+                )
+            if self._gs_only_pending.get() and new_done:
+                if card.winfo_exists():
+                    card.destroy()
+                return
+            nb = "#0D1713" if new_done else THEME["bg_dark"]
+            nh = "#11221B" if new_done else C_BG_PANEL_ALT2
+            card.configure(bg=nb, highlightbackground=C_EMERALD if new_done else THEME["border"])
+            hdr_frame.configure(bg=nh)
+            lbl_title.configure(bg=nh, fg=C_GREEN_LIGHT if new_done else THEME["accent_orange"])
+            btn_done.configure(
+                text="✓ Completada" if new_done else "Marcar Completada",
+                fg_color=C_EMERALD if new_done else C_SLATE_800,
+                hover_color="#059669" if new_done else THEME["accent_orange"],
+                text_color=C_BG_DARKEST if new_done else C_WHITE,
+            )
 
-        # 2. Barra de Requisitos Técnicos de Mechanic (Fila 1, Span 2 columnas)
-        reqs_bar = ctk.CTkFrame(card, fg_color="#141A26", corner_radius=6, border_width=1, border_color="#273142")
-        reqs_bar.grid(row=1, column=0, columnspan=2, padx=12, pady=(0, 10), sticky="ew")
+        btn_done.configure(command=toggle_gs)
+        btn_done.grid(row=0, column=2, padx=(4, 10), pady=8)
 
-        ctk.CTkLabel(
+        reqs_bar = tk.Frame(card, bg="#141A26", highlightbackground="#273142", highlightthickness=1, bd=0)
+        reqs_bar.grid(row=1, column=0, columnspan=2, padx=10, pady=(0, 8), sticky="ew")
+
+        tk.Label(
             reqs_bar,
             text=f"📐 REQUISITOS OBLIGATORIOS: {gs['reqs']}",
-            font=ui_font(size=13, weight="bold"),
-            text_color=THEME["accent_yellow"],
+            font=ui_font(size=12, weight="bold"),
+            bg="#141A26",
+            fg=THEME["accent_yellow"],
             anchor="w",
-            justify="left"
-        ).pack(anchor="w", padx=12, pady=6)
+            justify="left",
+            wraplength=820,
+            bd=0,
+        ).pack(anchor="w", padx=10, pady=6)
 
-        # 3. Columna Izquierda: Showcase Fijo del Arma (Fila 2, Columna 0)
-        wp_box = ctk.CTkFrame(
-            card,
-            width=260,
-            fg_color="#10141E",
-            corner_radius=8,
-            border_width=1,
-            border_color="#242C3B"
-        )
-        wp_box.grid(row=2, column=0, padx=(12, 8), pady=(0, 12), sticky="nsew")
+        wp_box = tk.Frame(card, width=250, bg="#10141E", highlightbackground="#242C3B", highlightthickness=1, bd=0)
+        wp_box.grid(row=2, column=0, padx=(10, 8), pady=(0, 10), sticky="nsew")
         wp_box.grid_propagate(False)
 
         wp_img = get_weapon_or_part_ctk_image(
             gs.get("image_key", f"gs_{gs['part']}"),
-            size=(236, 100),
+            size=(228, 96),
             label_fallback=gs["weapon"]
         )
-        ctk.CTkLabel(wp_box, text="", image=wp_img).pack(padx=8, pady=(10, 4))
+        ctk.CTkLabel(wp_box, text="", image=wp_img, fg_color="#10141E").pack(padx=8, pady=(10, 4))
 
-        ctk.CTkLabel(
+        tk.Label(
             wp_box,
             text=gs["weapon"],
-            font=ui_font(size=13, weight="bold"),
-            text_color=THEME["text_main"],
-            wraplength=240,
-            justify="center"
+            font=ui_font(size=12, weight="bold"),
+            bg="#10141E",
+            fg=THEME["text_main"],
+            wraplength=230,
+            justify="center",
+            bd=0,
         ).pack(padx=8, pady=(0, 6))
 
-        # 4. Columna Derecha: Tabla Estructurada y Alineada de Piezas (Fila 2, Columna 1)
-        parts_box = ctk.CTkFrame(card, fg_color="#10141E", corner_radius=8, border_width=1, border_color="#242C3B")
-        parts_box.grid(row=2, column=1, padx=(0, 12), pady=(0, 12), sticky="nsew")
+        parts_box = tk.Frame(card, bg="#10141E", highlightbackground="#242C3B", highlightthickness=1, bd=0)
+        parts_box.grid(row=2, column=1, padx=(0, 10), pady=(0, 10), sticky="nsew")
         parts_box.grid_columnconfigure(1, weight=1)
 
         parts_list = gs.get("parts_detailed", [])
         for p_idx, (part_icon_key, p_line) in enumerate(parts_list):
             is_warn = "IMPORTANTE" in p_line
-            part_img = get_weapon_or_part_ctk_image(part_icon_key, size=(60, 36), label_fallback="MOD")
+            part_img = get_weapon_or_part_ctk_image(part_icon_key, size=(58, 34), label_fallback="MOD")
 
             ctk.CTkLabel(
                 parts_box,
                 text="",
-                image=part_img
-            ).grid(row=p_idx, column=0, padx=(10, 8), pady=4, sticky="w")
+                image=part_img,
+                fg_color="#10141E",
+            ).grid(row=p_idx, column=0, padx=(10, 8), pady=3, sticky="w")
 
-            ctk.CTkLabel(
+            tk.Label(
                 parts_box,
                 text=p_line,
-                font=ui_font(size=12, weight="bold" if is_warn else "normal"),
-                text_color=THEME["accent_green"] if is_warn else C_TEXT_SOFT,
-                wraplength=480,
+                font=ui_font(size=11, weight="bold" if is_warn else "normal"),
+                bg="#10141E",
+                fg=THEME["accent_green"] if is_warn else C_TEXT_SOFT,
+                wraplength=460,
                 justify="left",
-                anchor="w"
-            ).grid(row=p_idx, column=1, padx=4, pady=4, sticky="w")
+                anchor="w",
+                bd=0,
+            ).grid(row=p_idx, column=1, padx=4, pady=3, sticky="w")

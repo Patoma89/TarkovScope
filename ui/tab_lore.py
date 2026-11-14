@@ -499,9 +499,9 @@ class TabLore(ctk.CTkFrame):
         self._bind_mousewheel_recursive(intro_box)
 
         self._pending_chapter_idx = 0
-        self._render_next_chapters_batch(count=2, token=token)
+        self._render_next_chapters_batch(count=1, token=token)
 
-    def _render_next_chapters_batch(self, count: int = 2, token: Optional[int] = None):
+    def _render_next_chapters_batch(self, count: int = 1, token: Optional[int] = None):
         if not self.winfo_exists():
             return
         if token is not None and token != self._batch_token:
@@ -517,7 +517,7 @@ class TabLore(ctk.CTkFrame):
                 self._bind_mousewheel_recursive(sec)
         self._pending_chapter_idx = end
         if end < total:
-            self.after(16, lambda t=token: self._render_next_chapters_batch(2, token=t))
+            self.after(20, lambda t=token: self._render_next_chapters_batch(1, token=t))
         else:
             self.after(40, self._refresh_scrollregion)
 

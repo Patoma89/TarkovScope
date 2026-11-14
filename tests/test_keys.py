@@ -5,8 +5,10 @@ import unittest
 
 from core.database import init_db
 from core.keys_data import (
+    DIRECT_KEY_ICON_URLS,
     KEYS_CATALOG,
     filter_keys,
+    get_key_icon_path,
     get_key_stats,
     get_keys_categories,
     get_keys_maps,
@@ -39,6 +41,32 @@ class TestKeysDataAndPersistence(unittest.TestCase):
 
         dorm_314 = filter_keys(query="314")
         self.assertTrue(any(k["id"] == "customs_dorm_314_marked" for k in dorm_314))
+
+    def test_keycard_category_excludes_mechanical_keys_and_includes_polikhim(self):
+        cards = filter_keys(category_filter="Keycard")
+        card_ids = {k["id"] for k in cards}
+        self.assertIn("factory_terragroup_storage_room_keycard", card_ids)
+        self.assertIn("interchange_11sr", card_ids)
+        self.assertIn("interchange_object_21ws_keycard", card_ids)
+        self.assertIn("the_labyrinth_labrys_access_keycard", card_ids)
+
+        mechanical_labs = {
+            "the_lab_terragroup_labs_arsenal_storage_room_key",
+            "the_lab_terragroup_labs_manager_s_office_room_key",
+            "the_lab_terragroup_labs_weapon_testing_area_key",
+        }
+        self.assertTrue(mechanical_labs.isdisjoint(card_ids))
+        for mech_id in mechanical_labs:
+            item = next(k for k in KEYS_CATALOG if k["id"] == mech_id)
+            self.assertEqual(item["category"], "Llaves")
+
+        polikhim = filter_keys(category_filter="Keycard", query="polikhim")
+        self.assertEqual([k["id"] for k in polikhim], ["factory_terragroup_storage_room_keycard"])
+        # Polikhim conserva compatibilidad con Quest Key y Extracto conserva 11SR
+        self.assertTrue(any(k["id"] == "factory_terragroup_storage_room_keycard" for k in filter_keys(category_filter="Quest Key")))
+        self.assertTrue(any(k["id"] == "interchange_11sr" for k in filter_keys(category_filter="Extracto / Utilidad")))
+        self.assertIn("the_labyrinth_labrys_access_keycard", DIRECT_KEY_ICON_URLS)
+        self.assertIsNotNone(get_key_icon_path("the_labyrinth_labrys_access_keycard"))
 
     def test_owned_keys_toggle_and_missing_quest_filter(self):
         self.assertEqual(get_owned_key_ids(db_path=self.db_path), set())

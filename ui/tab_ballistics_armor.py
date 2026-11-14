@@ -3,7 +3,8 @@ TarkovScope - Sub-vista Táctica de Blindaje, Placas Balísticas, Cascos & Auric
 Mixin integrado en TabBallistics para consultar protección, compatibilidad de auriculares
 y simular penetración multicapa en vivo usando simulate_plate_and_aramid().
 """
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
+import tkinter as tk
 import customtkinter as ctk
 
 from core.armor_data import (
@@ -63,6 +64,9 @@ BENCHMARK_AMMO = [
 ]
 
 
+ARMOR_PAGE_SIZE = 30
+
+
 class ArmorMixin:
     """Mixin de Blindaje, Placas, Cascos y Auriculares para TabBallistics."""
 
@@ -75,9 +79,11 @@ class ArmorMixin:
         self._armor_selected_id: Optional[str] = None
         self._armor_render_token: int = 0
         self._armor_search_job: Optional[str] = None
+        self._armor_page: int = 0
+        self._armor_filtered_items: List[Dict[str, Any]] = []
         self._armor_cat_btns: Dict[str, ctk.CTkButton] = {}
         self._armor_cls_btns: Dict[int, ctk.CTkButton] = {}
-        self._armor_row_refs: Dict[str, ctk.CTkFrame] = {}
+        self._armor_row_refs: Dict[str, Tuple[Any, ...]] = {}
 
     def _build_armor_area(self):
         if self.armor_frame is not None:
@@ -108,7 +114,7 @@ class ArmorMixin:
                 r1,
                 text=short_lbl,
                 height=30,
-                width=86 if cat == "Todos" else 104,
+                width=74 if cat == "Todos" else 94,
                 corner_radius=6,
                 font=ui_font(12, "bold"),
                 fg_color=THEME["accent_gold"] if cat == self._armor_cat else THEME["bg_dark"],
@@ -116,19 +122,19 @@ class ArmorMixin:
                 hover_color=THEME["border"],
                 command=lambda c=cat: self._set_armor_cat(c),
             )
-            btn.grid(row=0, column=idx, padx=3, sticky="w")
+            btn.grid(row=0, column=idx, padx=2, sticky="w")
             self._armor_cat_btns[cat] = btn
 
         self.armor_search_entry = ctk.CTkEntry(
             r1,
-            placeholder_text="Buscar placa, chaleco, casco o ComTac (ej: GAC, Slick, ULACH, Altyn)...",
-            height=32,
+            placeholder_text="Buscar placa, chaleco, casco o ComTac (GAC, Slick, ULACH)...",
+            height=30,
             fg_color=C_BG_PANEL,
             border_color="#2E3646",
             text_color=C_TEXT,
             font=ui_font(12),
         )
-        self.armor_search_entry.grid(row=0, column=6, padx=(10, 0), sticky="ew")
+        self.armor_search_entry.grid(row=0, column=6, padx=(8, 0), sticky="ew")
         self.armor_search_entry.bind("<KeyRelease>", self._on_armor_search_debounced)
 
         # Fila 2: Clases mínimas + Compatibilidad Auriculares + Contador
@@ -186,16 +192,66 @@ class ArmorMixin:
         split.grid_columnconfigure(1, weight=1)
         split.grid_rowconfigure(0, weight=1)
 
+        left_col = ctk.CTkFrame(split, fg_color="transparent")
+        left_col.grid(row=0, column=0, padx=(0, 8), sticky="nsew")
+        left_col.grid_rowconfigure(0, weight=1)
+        left_col.grid_columnconfigure(0, weight=1)
+
         self.armor_list_scroll = ctk.CTkScrollableFrame(
-            split,
-            width=430,
+            left_col,
+            width=405,
             fg_color=THEME["bg_deep"],
             corner_radius=10,
             border_width=1,
             border_color=THEME["border"],
         )
-        self.armor_list_scroll.grid(row=0, column=0, padx=(0, 8), sticky="nsew")
+        self.armor_list_scroll.grid(row=0, column=0, sticky="nsew")
         self.armor_list_scroll.grid_columnconfigure(0, weight=1)
+
+        armor_pager = ctk.CTkFrame(
+            left_col,
+            fg_color=THEME["bg_card"],
+            corner_radius=8,
+            border_width=1,
+            border_color=THEME["border"],
+            height=36,
+        )
+        armor_pager.grid(row=1, column=0, pady=(6, 0), sticky="ew")
+        armor_pager.grid_columnconfigure(1, weight=1)
+
+        self.armor_prev_btn = ctk.CTkButton(
+            armor_pager,
+            text="◀ Ant.",
+            width=72,
+            height=26,
+            corner_radius=6,
+            fg_color=C_SLATE_800,
+            hover_color=THEME["border"],
+            font=ui_font(11, "bold"),
+            command=self._armor_prev_page,
+        )
+        self.armor_prev_btn.grid(row=0, column=0, padx=6, pady=5)
+
+        self.armor_page_lbl = ctk.CTkLabel(
+            armor_pager,
+            text="Pág. 1 / 1",
+            font=ui_font(11, "bold"),
+            text_color=C_TEXT_MUTED,
+        )
+        self.armor_page_lbl.grid(row=0, column=1, padx=4, pady=5)
+
+        self.armor_next_btn = ctk.CTkButton(
+            armor_pager,
+            text="Sig. ▶",
+            width=72,
+            height=26,
+            corner_radius=6,
+            fg_color=C_SLATE_800,
+            hover_color=THEME["border"],
+            font=ui_font(11, "bold"),
+            command=self._armor_next_page,
+        )
+        self.armor_next_btn.grid(row=0, column=2, padx=6, pady=5)
 
         self.armor_detail_scroll = ctk.CTkScrollableFrame(
             split,
@@ -216,7 +272,8 @@ class ArmorMixin:
             return
 
         if self.is_duel_mode:
-            self.duel_frame.grid_remove()
+            if getattr(self, "duel_frame", None) is not None:
+                self.duel_frame.grid_remove()
             self.is_duel_mode = False
             self.btn_duel.configure(text="⚔️ Comparador Versus", fg_color=C_SLATE_800, text_color=C_TEXT)
 
@@ -292,6 +349,17 @@ class ArmorMixin:
             self.after_cancel(self._armor_search_job)
         self._armor_search_job = self.after(140, self._schedule_armor_render)
 
+    def _armor_prev_page(self):
+        if self._armor_page > 0:
+            self._armor_page -= 1
+            self._render_armor_page()
+
+    def _armor_next_page(self):
+        total_pages = max(1, (len(self._armor_filtered_items) + ARMOR_PAGE_SIZE - 1) // ARMOR_PAGE_SIZE)
+        if self._armor_page + 1 < total_pages:
+            self._armor_page += 1
+            self._render_armor_page()
+
     def _schedule_armor_render(self):
         self._armor_search_job = None
         if not self.winfo_exists() or self.armor_frame is None:
@@ -303,15 +371,18 @@ class ArmorMixin:
             query=query,
             headset_only_compat=bool(self._armor_compat_only.get()),
         )
+        self._armor_filtered_items = items
+        self._armor_page = 0
         self.armor_count_lbl.configure(text=f"{len(items)} ítems")
-        self._armor_render_token += 1
-        token = self._armor_render_token
-        self._armor_row_refs.clear()
-
-        for child in self.armor_list_scroll.winfo_children():
-            child.destroy()
 
         if not items:
+            self._armor_render_token += 1
+            self._armor_row_refs.clear()
+            for child in self.armor_list_scroll.winfo_children():
+                child.destroy()
+            self.armor_page_lbl.configure(text="Pág. 1 / 1")
+            self.armor_prev_btn.configure(state="disabled")
+            self.armor_next_btn.configure(state="disabled")
             ctk.CTkLabel(
                 self.armor_list_scroll,
                 text="Sin resultados para ese filtro.",
@@ -328,55 +399,116 @@ class ArmorMixin:
             sel = next(it for it in items if it["id"] == self._armor_selected_id)
             self._show_armor_detail(sel)
 
-        def draw_batch(start: int = 0, batch_size: int = 16):
+        self._render_armor_page()
+
+    def _render_armor_page(self):
+        if not self.winfo_exists() or self.armor_frame is None:
+            return
+        items = self._armor_filtered_items
+        total = len(items)
+        total_pages = max(1, (total + ARMOR_PAGE_SIZE - 1) // ARMOR_PAGE_SIZE)
+        if self._armor_page >= total_pages:
+            self._armor_page = max(0, total_pages - 1)
+
+        start_idx = self._armor_page * ARMOR_PAGE_SIZE
+        end_idx = min(start_idx + ARMOR_PAGE_SIZE, total)
+        page_slice = items[start_idx:end_idx]
+
+        self.armor_page_lbl.configure(text=f"Pág. {self._armor_page + 1} / {total_pages} ({start_idx + 1}-{end_idx})")
+        self.armor_prev_btn.configure(state="normal" if self._armor_page > 0 else "disabled")
+        self.armor_next_btn.configure(state="normal" if (self._armor_page + 1) < total_pages else "disabled")
+
+        self._armor_render_token += 1
+        token = self._armor_render_token
+        self._armor_row_refs.clear()
+
+        for child in self.armor_list_scroll.winfo_children():
+            child.destroy()
+
+        try:
+            self.armor_list_scroll._parent_canvas.yview_moveto(0.0)
+        except Exception:
+            pass
+
+        def draw_batch(start: int = 0, batch_size: int = 15):
             if token != self._armor_render_token or not self.winfo_exists():
                 return
-            end = min(start + batch_size, len(items))
+            end = min(start + batch_size, len(page_slice))
             for idx in range(start, end):
-                self._create_armor_card(idx, items[idx])
-            if end < len(items):
+                self._create_armor_card(idx, page_slice[idx])
+            if end < len(page_slice):
                 self.after(4, lambda: draw_batch(end, batch_size))
 
         draw_batch(0)
 
+    def _style_armor_row(self, row_id: Optional[str], selected: bool):
+        if not row_id:
+            return
+        refs = self._armor_row_refs.get(row_id)
+        if not refs:
+            return
+        card, icon_lbl, name_lbl, sub_lbl = refs
+        if not card.winfo_exists():
+            return
+        bg = THEME["bg_card_hover"] if selected else THEME["bg_card"]
+        card.configure(
+            bg=bg,
+            highlightbackground=THEME["accent_gold"] if selected else THEME["border_soft"],
+            highlightthickness=2 if selected else 1,
+        )
+        icon_lbl.configure(fg_color=bg)
+        name_lbl.configure(bg=bg)
+        sub_lbl.configure(bg=bg)
+
     def _create_armor_card(self, row_idx: int, item: Dict[str, Any]):
         is_sel = item["id"] == self._armor_selected_id
-        card = ctk.CTkFrame(
+        row_bg = THEME["bg_card_hover"] if is_sel else THEME["bg_card"]
+
+        card = tk.Frame(
             self.armor_list_scroll,
-            fg_color=THEME["bg_card_hover"] if is_sel else THEME["bg_card"],
-            corner_radius=8,
-            border_width=2 if is_sel else 1,
-            border_color=THEME["accent_gold"] if is_sel else THEME["border_soft"],
+            bg=row_bg,
+            highlightbackground=THEME["accent_gold"] if is_sel else THEME["border_soft"],
+            highlightthickness=2 if is_sel else 1,
+            bd=0,
+            cursor="hand2",
         )
         card.grid(row=row_idx, column=0, padx=6, pady=3, sticky="ew")
         card.grid_columnconfigure(1, weight=1)
-        self._armor_row_refs[item["id"]] = card
 
-        # Icono 42x38
-        icon_lbl = ctk.CTkLabel(card, text="", width=48, height=40)
+        # Icono 42x38 (único CTkLabel plano por soporte HiDPI CTkImage)
+        icon_lbl = ctk.CTkLabel(card, text="", width=48, height=40, fg_color=row_bg)
         icon_lbl.grid(row=0, column=0, rowspan=2, padx=(8, 8), pady=6)
 
         def _apply_img(img: ctk.CTkImage):
             if icon_lbl.winfo_exists():
                 icon_lbl.configure(image=img)
 
+        def _on_icon_ready(im: ctk.CTkImage):
+            if self.winfo_exists():
+                try:
+                    self.after(0, lambda: _apply_img(im))
+                except Exception:
+                    pass
+
         ctk_img = get_gear_ctk_icon(
             item.get("cache_key", ""),
             item.get("icon_url", ""),
             max_size=(46, 38),
-            on_ready=lambda im: self.after(0, lambda: _apply_img(im)),
+            on_ready=_on_icon_ready,
         )
         if ctk_img is not None:
             icon_lbl.configure(image=ctk_img)
 
-        name_lbl = ctk.CTkLabel(
+        name_lbl = tk.Label(
             card,
             text=item["name"],
-            font=ui_font(12, "bold"),
-            text_color=C_WHITE,
+            font=ui_font(11, "bold"),
+            bg=row_bg,
+            fg=C_WHITE,
             anchor="w",
-            wraplength=260,
+            wraplength=235,
             justify="left",
+            bd=0,
         )
         name_lbl.grid(row=0, column=1, padx=(0, 6), pady=(6, 1), sticky="ew")
 
@@ -399,37 +531,39 @@ class ArmorMixin:
             badge_txt = f"Cl.{cls}" if cls > 0 else "Mod."
             b_bg, b_fg = CLASS_BADGE_COLORS.get(cls, ("#334155", "#FFFFFF"))
 
-        sub_lbl = ctk.CTkLabel(
+        sub_lbl = tk.Label(
             card,
             text=sub_txt,
-            font=ui_font(11),
-            text_color=C_TEXT_DIM,
+            font=ui_font(10),
+            bg=row_bg,
+            fg=C_TEXT_DIM,
             anchor="w",
+            bd=0,
         )
         sub_lbl.grid(row=1, column=1, padx=(0, 6), pady=(0, 6), sticky="ew")
 
-        badge = ctk.CTkLabel(
+        badge = tk.Label(
             card,
             text=badge_txt,
-            width=48,
-            height=24,
-            corner_radius=6,
-            fg_color=b_bg,
-            text_color=b_fg,
-            font=ui_font(11, "bold"),
+            width=6,
+            bg=b_bg,
+            fg=b_fg,
+            font=ui_font(10, "bold"),
+            padx=6,
+            pady=4,
+            bd=0,
         )
         badge.grid(row=0, column=2, rowspan=2, padx=(4, 8))
 
+        self._armor_row_refs[item["id"]] = (card, icon_lbl, name_lbl, sub_lbl)
+
         def _on_click(_e=None, target=item):
-            self._armor_selected_id = target["id"]
-            for kid, frame in self._armor_row_refs.items():
-                if frame.winfo_exists():
-                    sel = kid == target["id"]
-                    frame.configure(
-                        fg_color=THEME["bg_card_hover"] if sel else THEME["bg_card"],
-                        border_width=2 if sel else 1,
-                        border_color=THEME["accent_gold"] if sel else THEME["border_soft"],
-                    )
+            prev_id = self._armor_selected_id
+            new_id = target["id"]
+            if prev_id != new_id:
+                self._armor_selected_id = new_id
+                self._style_armor_row(prev_id, False)
+                self._style_armor_row(new_id, True)
             self._show_armor_detail(target)
 
         for w in (card, icon_lbl, name_lbl, sub_lbl, badge):
@@ -458,11 +592,18 @@ class ArmorMixin:
 
         big_icon = ctk.CTkLabel(hdr, text="", width=92, height=84)
         big_icon.grid(row=0, column=0, rowspan=2, padx=12, pady=10)
+        def _on_big_icon_ready(im: ctk.CTkImage):
+            if self.winfo_exists():
+                try:
+                    self.after(0, lambda: big_icon.winfo_exists() and big_icon.configure(image=im))
+                except Exception:
+                    pass
+
         img = get_gear_ctk_icon(
             item.get("cache_key", ""),
             item.get("icon_url", ""),
             max_size=(88, 80),
-            on_ready=lambda im: self.after(0, lambda: big_icon.winfo_exists() and big_icon.configure(image=im)),
+            on_ready=_on_big_icon_ready,
         )
         if img is not None:
             big_icon.configure(image=img)
@@ -619,7 +760,11 @@ class ArmorMixin:
                 eff_dur = 55.0
             target_hp = 35.0 if cat == "Casco Blindado" else 85.0
 
-            for b_idx, (a_name, dmg, pen, admg, rpm) in enumerate(BENCHMARK_AMMO, start=1):
+            sim_table = tk.Frame(sim_box, bg=THEME["bg_card"], bd=0)
+            sim_table.grid(row=1, column=0, padx=10, pady=(0, 10), sticky="ew")
+            sim_table.grid_columnconfigure(0, weight=1)
+
+            for b_idx, (a_name, dmg, pen, admg, rpm) in enumerate(BENCHMARK_AMMO):
                 sim = simulate_plate_and_aramid(
                     damage=dmg,
                     penetration_power=pen,
@@ -631,29 +776,31 @@ class ArmorMixin:
                     rpm=rpm,
                 )
                 eff = calculate_armor_effectiveness(pen, plate_cls)
-                row_f = ctk.CTkFrame(
-                    sim_box,
-                    fg_color=THEME["bg_row"] if b_idx % 2 == 0 else THEME["bg_row_alt"],
-                    corner_radius=6,
-                )
-                row_f.grid(row=b_idx, column=0, padx=10, pady=2, sticky="ew")
-                row_f.grid_columnconfigure(0, weight=1)
+                rbg = THEME["bg_row"] if b_idx % 2 == 0 else THEME["bg_row_alt"]
 
-                ctk.CTkLabel(
-                    row_f,
+                tk.Label(
+                    sim_table,
                     text=f"{a_name}  (Pen {pen} • Daño {dmg})",
                     font=ui_font(11, "bold"),
-                    text_color=C_TEXT,
+                    bg=rbg,
+                    fg=C_TEXT,
                     anchor="w",
-                ).grid(row=0, column=0, padx=(10, 6), pady=4, sticky="w")
+                    padx=10,
+                    pady=4,
+                    bd=0,
+                ).grid(row=b_idx, column=0, pady=1, sticky="ew")
 
                 stk = sim["stk"]
                 stk_txt = f"{stk} tiros" if stk < 30 else "30+ tiros"
                 pct = sim["first_shot_pen_pct"]
-                ctk.CTkLabel(
-                    row_f,
+                tk.Label(
+                    sim_table,
                     text=f"1er tiro: {pct}%  •  {stk_txt}  ({eff['label']})",
                     font=ui_font(11, "bold"),
-                    text_color=eff["color"],
+                    bg=rbg,
+                    fg=eff["color"],
                     anchor="e",
-                ).grid(row=0, column=1, padx=(6, 10), pady=4, sticky="e")
+                    padx=10,
+                    pady=4,
+                    bd=0,
+                ).grid(row=b_idx, column=1, pady=1, sticky="ew")

@@ -3,6 +3,7 @@ TarkovScope - Sub-vistas de Trueques Clave (Barters), Cultist Circle & Semáforo
 Mixin integrado en TabFleaAndItems.
 """
 from typing import Any, Dict, List
+import tkinter as tk
 import customtkinter as ctk
 
 from core.barters_data import (
@@ -141,14 +142,17 @@ class FleaBartersMixin:
 
     def _on_barter_trader_change(self, val: str):
         self._barter_trader = val
+        self._barters_limit = 40
         self._run_search(self.search_entry.get())
 
     def _on_barter_cat_change(self, val: str):
         self._barter_category = val
+        self._barters_limit = 40
         self._run_search(self.search_entry.get())
 
     def _on_barter_ll_change(self, val: str):
         self._barter_max_ll = int(val[2]) if len(val) >= 3 and val[2].isdigit() else 4
+        self._barters_limit = 40
         self._run_search(self.search_entry.get())
 
     def _render_barters_view(self, query: str, token: int):
@@ -174,7 +178,9 @@ class FleaBartersMixin:
             ).grid(row=0, column=0, pady=40)
             return
 
-        shown = items[:120]
+        limit_n = getattr(self, "_barters_limit", 40)
+        shown = items[:limit_n]
+        remaining = len(items) - len(shown)
 
         def render_batch(start: int = 0, batch_size: int = 16):
             if not self.winfo_exists() or token != self._render_token:
@@ -184,69 +190,103 @@ class FleaBartersMixin:
                 self._create_barter_row(idx, shown[idx])
             if end < len(shown):
                 self.after(4, lambda: render_batch(end, batch_size))
+            elif remaining > 0:
+                def _load_more_barters():
+                    self._barters_limit = getattr(self, "_barters_limit", 40) + 50
+                    self._run_search(self.search_entry.get())
+
+                ctk.CTkButton(
+                    self.results_scroll,
+                    text=f"⬇ Cargar más trueques ({remaining} restantes)",
+                    height=34,
+                    fg_color=C_BG_PANEL,
+                    hover_color=THEME["accent_gold"],
+                    border_width=1,
+                    border_color=C_BORDER,
+                    text_color=C_WHITE,
+                    font=ui_font(12, "bold"),
+                    command=_load_more_barters,
+                ).grid(row=len(shown), column=0, padx=6, pady=8, sticky="ew")
 
         render_batch(0)
 
     def _create_barter_row(self, row_idx: int, b: Dict[str, Any]):
-        card = ctk.CTkFrame(
+        row_bg = THEME["bg_row"] if row_idx % 2 == 0 else THEME["bg_row_alt"]
+        card = tk.Frame(
             self.results_scroll,
-            fg_color=THEME["bg_row"] if row_idx % 2 == 0 else THEME["bg_row_alt"],
-            corner_radius=8,
-            border_width=1,
-            border_color=THEME["accent_gold"] if b.get("is_essential") else C_BORDER_SOFT,
+            bg=row_bg,
+            highlightbackground=THEME["accent_gold"] if b.get("is_essential") else C_BORDER_SOFT,
+            highlightthickness=1,
+            bd=0,
         )
         card.grid(row=row_idx, column=0, padx=6, pady=3, sticky="ew")
         card.grid_columnconfigure(2, weight=1)
 
-        icon_lbl = ctk.CTkLabel(card, text="", width=46, height=40)
+        icon_lbl = ctk.CTkLabel(card, text="", width=46, height=40, fg_color=row_bg)
         icon_lbl.grid(row=0, column=0, rowspan=2, padx=(10, 8), pady=6)
+
+        def _on_icon_ready(im: ctk.CTkImage):
+            if self.winfo_exists():
+                try:
+                    self.after(0, lambda: icon_lbl.winfo_exists() and icon_lbl.configure(image=im))
+                except Exception:
+                    pass
+
         img = get_gear_ctk_icon(
             b.get("cache_key", ""),
             b.get("icon_url", ""),
             max_size=(42, 38),
-            on_ready=lambda im: self.after(0, lambda: icon_lbl.winfo_exists() and icon_lbl.configure(image=im)),
+            on_ready=_on_icon_ready,
         )
         if img is not None:
             icon_lbl.configure(image=img)
 
-        t_badge = ctk.CTkFrame(card, fg_color="#161C28", corner_radius=6, width=130)
+        t_badge = tk.Frame(card, bg="#161C28", width=128, bd=0)
         t_badge.grid(row=0, column=1, rowspan=2, padx=(0, 10), pady=6, sticky="ns")
         t_badge.grid_propagate(False)
-        ctk.CTkLabel(
+        tk.Label(
             t_badge,
             text=f"{b['trader']} LL{b['ll']}",
-            font=ui_font(12, "bold"),
-            text_color=THEME["accent_gold"],
-        ).pack(anchor="center", pady=(8, 1))
-        ctk.CTkLabel(
+            font=ui_font(11, "bold"),
+            bg="#161C28",
+            fg=THEME["accent_gold"],
+            bd=0,
+        ).pack(anchor="center", pady=(7, 1))
+        tk.Label(
             t_badge,
             text="★ CLAVE" if b.get("is_essential") else b.get("category", ""),
-            font=ui_font(10, "bold"),
-            text_color=C_GREEN_LIGHT if b.get("is_essential") else C_TEXT_DIM,
+            font=ui_font(9, "bold"),
+            bg="#161C28",
+            fg=C_GREEN_LIGHT if b.get("is_essential") else C_TEXT_DIM,
+            bd=0,
         ).pack(anchor="center", pady=(0, 6))
 
-        ctk.CTkLabel(
+        tk.Label(
             card,
             text=b["reward"],
-            font=ui_font(14, "bold"),
-            text_color=C_WHITE,
+            font=ui_font(13, "bold"),
+            bg=row_bg,
+            fg=C_WHITE,
             anchor="w",
+            bd=0,
         ).grid(row=0, column=2, padx=(0, 10), pady=(7, 1), sticky="ew")
 
         sub = f"Entrega: {b['inputs_text']}"
         if b.get("quest_unlock"):
             sub += f"   •   🔓 {b['quest_unlock']}"
-        ctk.CTkLabel(
+        tk.Label(
             card,
             text=sub,
-            font=ui_font(12),
-            text_color=C_TEXT_SOFT,
+            font=ui_font(11),
+            bg=row_bg,
+            fg=C_TEXT_SOFT,
             anchor="w",
-            wraplength=680,
+            wraplength=650,
             justify="left",
+            bd=0,
         ).grid(row=1, column=2, padx=(0, 10), pady=(0, 7), sticky="ew")
 
-    def _render_cultist_circle_view(self, query: str):
+    def _render_cultist_circle_view(self, query: str, token: int = 0):
         q = (query or "").strip().lower()
 
         # Tarjeta de Reglas & Umbrales Oficiales
@@ -313,35 +353,52 @@ class FleaBartersMixin:
             text_color=THEME["accent_gold"],
         ).grid(row=1, column=0, padx=10, pady=(4, 6), sticky="w")
 
-        for idx, s in enumerate(filtered, start=2):
-            card = ctk.CTkFrame(
-                self.results_scroll,
-                fg_color=THEME["bg_row"] if idx % 2 == 0 else THEME["bg_row_alt"],
-                corner_radius=6,
-                border_width=1,
-                border_color="#7E22CE" if s.get("repeatable") else C_BORDER_SOFT,
-            )
-            card.grid(row=idx, column=0, padx=6, pady=2, sticky="ew")
-            card.grid_columnconfigure(1, weight=1)
+        def _draw_sac_batch(start: int = 0, batch_size: int = 18):
+            if not self.winfo_exists() or (token and token != self._render_token):
+                return
+            end = min(start + batch_size, len(filtered))
+            for i in range(start, end):
+                idx = i + 2
+                s = filtered[i]
+                rbg = THEME["bg_row"] if idx % 2 == 0 else THEME["bg_row_alt"]
+                card = tk.Frame(
+                    self.results_scroll,
+                    bg=rbg,
+                    highlightbackground="#7E22CE" if s.get("repeatable") else C_BORDER_SOFT,
+                    highlightthickness=1,
+                    bd=0,
+                )
+                card.grid(row=idx, column=0, padx=6, pady=2, sticky="ew")
+                card.grid_columnconfigure(1, weight=1)
 
-            tag = "♻️ REPETIBLE" if s.get("repeatable") else "🔒 ÚNICO"
-            ctk.CTkLabel(
-                card,
-                text=f"{tag}\n{s['duration']}",
-                font=ui_font(11, "bold"),
-                text_color="#C084FC" if s.get("repeatable") else THEME["accent_gold"],
-                width=120,
-            ).grid(row=0, column=0, padx=10, pady=6)
+                tag = "♻️ REPETIBLE" if s.get("repeatable") else "🔒 ÚNICO"
+                tk.Label(
+                    card,
+                    text=f"{tag}\n{s['duration']}",
+                    font=ui_font(10, "bold"),
+                    bg=rbg,
+                    fg="#C084FC" if s.get("repeatable") else THEME["accent_gold"],
+                    width=16,
+                    pady=6,
+                    bd=0,
+                ).grid(row=0, column=0, padx=8, pady=4)
 
-            ctk.CTkLabel(
-                card,
-                text=f"Sacrificar:  {s['input']}\nResultado:  {s['outcome']}",
-                font=ui_font(12),
-                text_color=C_WHITE,
-                anchor="w",
-                wraplength=700,
-                justify="left",
-            ).grid(row=0, column=1, padx=6, pady=6, sticky="ew")
+                tk.Label(
+                    card,
+                    text=f"Sacrificar:  {s['input']}\nResultado:  {s['outcome']}",
+                    font=ui_font(11),
+                    bg=rbg,
+                    fg=C_WHITE,
+                    anchor="w",
+                    wraplength=680,
+                    justify="left",
+                    bd=0,
+                ).grid(row=0, column=1, padx=6, pady=6, sticky="ew")
+
+            if end < len(filtered):
+                self.after(4, lambda: _draw_sac_batch(end, batch_size))
+
+        _draw_sac_batch(0)
 
     def _render_keep_or_sell_view(self, query: str):
         ds = get_datastore()

@@ -2,8 +2,8 @@
 TarkovScope - Pestaña dedicada: Llaves, Keycards & Marked Rooms (Keys & Intel)
 Catálogo táctico por mapa y categoría con checklist personal de llavero y dossier detallado.
 """
+import tkinter as tk
 import customtkinter as ctk
-from PIL import Image
 from typing import Dict, Any, List, Optional, Set, Tuple
 
 from core.config import THEME
@@ -17,6 +17,7 @@ from core.keys_data import (
     fetch_key_icons_async,
 )
 from core.user_data import get_owned_key_ids, toggle_owned_key
+from ui.image_utils import get_resized_ctk_image, get_resized_tk_image
 from ui.theme import (
     C_BG_DARKEST,
     C_BG_DEEP,
@@ -62,8 +63,9 @@ class TabKeys(ctk.CTkFrame):
         self._render_token: int = 0
         self._cat_buttons: Dict[str, ctk.CTkButton] = {}
         self._key_thumb_cache: Dict[Tuple[str, int], ctk.CTkImage] = {}
+        self._key_tk_cache: Dict[Tuple[str, int], Any] = {}
         self._row_widgets: Dict[str, Dict[str, Any]] = {}
-        self._render_limit: int = 45
+        self._render_limit: int = 30
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(2, weight=1)
@@ -77,15 +79,35 @@ class TabKeys(ctk.CTkFrame):
         if self.selected_key_id:
             self._show_key_detail(self.selected_key_id)
 
-        fetch_key_icons_async(on_done=lambda: self.after(0, self._on_icons_downloaded))
+        def _on_icons_done():
+            if self.winfo_exists():
+                try:
+                    self.after(0, self._on_icons_downloaded)
+                except Exception:
+                    pass
+
+        fetch_key_icons_async(on_done=_on_icons_done)
 
     def _on_icons_downloaded(self):
         if not self.winfo_exists():
             return
         self._key_thumb_cache.clear()
+        self._key_tk_cache.clear()
         self._schedule_render_keys()
         if self.selected_key_id:
             self._show_key_detail(self.selected_key_id)
+
+    def _get_key_tk_image(self, key_id: str, size: int = 42):
+        cache_key = (key_id, size)
+        if cache_key in self._key_tk_cache:
+            return self._key_tk_cache[cache_key]
+        path = get_key_icon_path(key_id)
+        if not path:
+            return None
+        tk_img = get_resized_tk_image(f"key:{key_id}", path, (size, size))
+        if tk_img is not None:
+            self._key_tk_cache[cache_key] = tk_img
+        return tk_img
 
     def _get_key_ctk_image(self, key_id: str, size: int = 44) -> Optional[ctk.CTkImage]:
         cache_key = (key_id, size)
@@ -94,18 +116,10 @@ class TabKeys(ctk.CTkFrame):
         path = get_key_icon_path(key_id)
         if not path:
             return None
-        try:
-            with Image.open(path) as img:
-                rgba = img.convert("RGBA")
-                iw, ih = rgba.size
-                scale = min(size / max(1, iw), size / max(1, ih))
-                tw = max(1, int(round(iw * scale)))
-                th = max(1, int(round(ih * scale)))
-                ctk_img = ctk.CTkImage(light_image=rgba, dark_image=rgba, size=(tw, th))
-                self._key_thumb_cache[cache_key] = ctk_img
-                return ctk_img
-        except Exception:
-            return None
+        ctk_img = get_resized_ctk_image(f"key:{key_id}", path, (size, size))
+        if ctk_img is not None:
+            self._key_thumb_cache[cache_key] = ctk_img
+        return ctk_img
 
     def _build_header(self):
         hdr = ctk.CTkFrame(
@@ -325,7 +339,7 @@ class TabKeys(ctk.CTkFrame):
         self._render_token += 1
         token = self._render_token
         if reset_limit:
-            self._render_limit = 45
+            self._render_limit = 30
 
         self._row_widgets.clear()
         for w in self.scroll_keys.winfo_children():
@@ -361,12 +375,12 @@ class TabKeys(ctk.CTkFrame):
     def _render_batch(self, items: List[Dict[str, Any]], start_idx: int, token: int, remaining: int = 0):
         if not self.winfo_exists() or token != self._render_token:
             return
-        batch_size = 15
+        batch_size = 12
         end_idx = min(start_idx + batch_size, len(items))
         for item in items[start_idx:end_idx]:
             self._create_key_row(item)
         if end_idx < len(items):
-            self.after(2, lambda: self._render_batch(items, end_idx, token, remaining))
+            self.after(8, lambda: self._render_batch(items, end_idx, token, remaining))
         elif remaining > 0:
             btn_more = ctk.CTkButton(
                 self.scroll_keys,
@@ -392,136 +406,155 @@ class TabKeys(ctk.CTkFrame):
         is_selected = kid == self.selected_key_id
         cat = item["category"]
         cat_color = CATEGORY_COLORS.get(cat, C_SLATE_700)
+        row_bg = C_BG_PANEL if is_selected else C_BG_DEEP
 
-        card = ctk.CTkFrame(
+        card = tk.Frame(
             self.scroll_keys,
-            fg_color=C_BG_PANEL if is_selected else C_BG_DEEP,
-            corner_radius=6,
-            border_width=2 if is_selected else 1,
-            border_color=THEME["accent_gold"] if is_selected else C_BORDER,
+            bg=row_bg,
+            highlightbackground=THEME["accent_gold"] if is_selected else C_BORDER,
+            highlightthickness=2 if is_selected else 1,
+            bd=0,
+            cursor="hand2",
         )
         card.pack(fill="x", padx=4, pady=3)
         card.grid_columnconfigure(1, weight=1)
 
-        # Col 0 (Izquierda): Imagen oficial de la llave
-        img_box = ctk.CTkFrame(
+        img_box = tk.Frame(
             card,
-            width=52,
-            height=52,
-            fg_color="#080C14",
-            corner_radius=6,
-            border_width=1,
-            border_color=THEME["accent_gold"] if is_selected else C_BORDER,
+            width=50,
+            height=50,
+            bg="#080C14",
+            highlightbackground=THEME["accent_gold"] if is_selected else C_BORDER,
+            highlightthickness=1,
+            bd=0,
         )
-        img_box.grid(row=0, column=0, rowspan=2, padx=(8, 10), pady=7)
+        img_box.grid(row=0, column=0, rowspan=2, padx=(8, 10), pady=6)
         img_box.grid_propagate(False)
 
-        key_img = self._get_key_ctk_image(kid, size=44)
+        key_img = self._get_key_tk_image(kid, size=42)
         if key_img is not None:
-            lbl_img = ctk.CTkLabel(img_box, text="", image=key_img)
+            lbl_img = tk.Label(img_box, text="", image=key_img, bg="#080C14", bd=0)
         else:
             fallback_icon = "💳" if cat == "Keycard" else "🔑"
-            lbl_img = ctk.CTkLabel(
+            lbl_img = tk.Label(
                 img_box,
                 text=fallback_icon,
-                font=ui_font(20),
-                text_color=THEME["accent_gold"] if cat != "Keycard" else "#38BDF8",
+                font=ui_font(18),
+                bg="#080C14",
+                fg=THEME["accent_gold"] if cat != "Keycard" else "#38BDF8",
+                bd=0,
             )
-        lbl_img.pack(expand=True)
+        lbl_img.pack(expand=True, fill="both")
 
-        # Col 1 (Centro): Nombre y badges
-        top = ctk.CTkFrame(card, fg_color="transparent")
-        top.grid(row=0, column=1, sticky="ew", padx=2, pady=(7, 2))
-        top.grid_columnconfigure(0, weight=1)
-
-        lbl_name = ctk.CTkLabel(
-            top,
+        lbl_name = tk.Label(
+            card,
             text=item["name"],
-            font=ui_font(13, "bold"),
-            text_color=THEME["accent_gold"] if is_selected else C_WHITE,
+            font=ui_font(12, "bold"),
+            bg=row_bg,
+            fg=THEME["accent_gold"] if is_selected else C_WHITE,
             anchor="w",
+            bd=0,
         )
-        lbl_name.grid(row=0, column=0, sticky="w")
+        lbl_name.grid(row=0, column=1, sticky="ew", padx=2, pady=(6, 1))
 
-        meta = ctk.CTkFrame(card, fg_color="transparent")
-        meta.grid(row=1, column=1, sticky="w", padx=2, pady=(0, 7))
+        meta = tk.Frame(card, bg=row_bg, bd=0)
+        meta.grid(row=1, column=1, sticky="w", padx=2, pady=(0, 6))
 
-        ctk.CTkLabel(
+        cat_lbl = tk.Label(
             meta,
             text=f" {cat} ",
-            font=ui_font(10, "bold"),
-            fg_color=cat_color,
-            text_color=C_WHITE,
-            corner_radius=4,
-        ).pack(side="left", padx=(0, 5))
+            font=ui_font(9, "bold"),
+            bg=cat_color,
+            fg=C_WHITE,
+            padx=4,
+            pady=1,
+            bd=0,
+        )
+        cat_lbl.pack(side="left", padx=(0, 5))
 
-        ctk.CTkLabel(
+        map_lbl = tk.Label(
             meta,
             text=f"📍 {item['map']}",
-            font=ui_font(11, "bold"),
-            text_color="#38BDF8",
-        ).pack(side="left", padx=4)
-
-        ctk.CTkLabel(
-            meta,
-            text=f"•  Usos: {item['uses']}",
-            font=ui_font(11),
-            text_color=C_TEXT_MUTED,
-        ).pack(side="left", padx=4)
-
-        if item.get("quests"):
-            ctk.CTkLabel(
-                meta,
-                text=f"•  📌 {len(item['quests'])} Quest",
-                font=ui_font(11, "bold"),
-                text_color=C_GREEN_LIGHT,
-            ).pack(side="left", padx=4)
-
-        # Col 2 (Derecha): Tick / Checkbox para marcar si la tienes
-        chk_var = ctk.BooleanVar(value=is_owned)
-        chk_own = ctk.CTkCheckBox(
-            card,
-            text="",
-            width=28,
-            checkbox_width=24,
-            checkbox_height=24,
-            corner_radius=6,
-            border_width=2,
-            border_color=C_EMERALD if is_owned else C_SLATE_700,
-            fg_color="#15803D",
-            hover_color="#16A34A",
-            checkmark_color=C_WHITE,
-            variable=chk_var,
-            command=lambda key_id=kid: self._on_toggle_owned(key_id),
+            font=ui_font(10, "bold"),
+            bg=row_bg,
+            fg="#38BDF8",
+            bd=0,
         )
-        chk_own.grid(row=0, column=2, rowspan=2, padx=(6, 12), pady=8)
+        map_lbl.pack(side="left", padx=4)
 
-        for widget in (card, img_box, lbl_img, top, lbl_name, meta):
+        uses_lbl = tk.Label(
+            meta,
+            text=f"• Usos: {item['uses']}",
+            font=ui_font(10),
+            bg=row_bg,
+            fg=C_TEXT_MUTED,
+            bd=0,
+        )
+        uses_lbl.pack(side="left", padx=4)
+
+        meta_children = [cat_lbl, map_lbl, uses_lbl]
+        if item.get("quests"):
+            q_lbl = tk.Label(
+                meta,
+                text=f"• 📌 {len(item['quests'])}Q",
+                font=ui_font(10, "bold"),
+                bg=row_bg,
+                fg=C_GREEN_LIGHT,
+                bd=0,
+            )
+            q_lbl.pack(side="left", padx=4)
+            meta_children.append(q_lbl)
+
+        btn_own = tk.Label(
+            card,
+            text="✓" if is_owned else "",
+            width=2,
+            font=ui_font(12, "bold"),
+            bg="#15803D" if is_owned else C_BG_DARKEST,
+            fg=C_WHITE,
+            highlightbackground=C_EMERALD if is_owned else C_SLATE_700,
+            highlightthickness=2,
+            bd=0,
+            cursor="hand2",
+        )
+        btn_own.grid(row=0, column=2, rowspan=2, padx=(6, 12), pady=6, ipadx=2, ipady=1)
+        btn_own.bind("<Button-1>", lambda _e, key_id=kid: self._on_toggle_owned(key_id))
+
+        for widget in (card, img_box, lbl_img, lbl_name, meta, *meta_children):
             widget.bind("<Button-1>", lambda _e, key_id=kid: self._on_select_key(key_id))
 
         self._row_widgets[kid] = {
             "card": card,
             "img_box": img_box,
             "lbl_name": lbl_name,
-            "chk_own": chk_own,
-            "chk_var": chk_var,
+            "meta": meta,
+            "meta_bg_labels": [map_lbl, uses_lbl] + ([meta_children[-1]] if item.get("quests") else []),
+            "btn_own": btn_own,
         }
 
     def _apply_row_selection_style(self, key_id: Optional[str], selected: bool):
         rw = self._row_widgets.get(key_id or "")
         if not rw:
             return
+        if not rw["card"].winfo_exists():
+            return
+        row_bg = C_BG_PANEL if selected else C_BG_DEEP
         rw["card"].configure(
-            fg_color=C_BG_PANEL if selected else C_BG_DEEP,
-            border_width=2 if selected else 1,
-            border_color=THEME["accent_gold"] if selected else C_BORDER,
+            bg=row_bg,
+            highlightbackground=THEME["accent_gold"] if selected else C_BORDER,
+            highlightthickness=2 if selected else 1,
         )
         rw["img_box"].configure(
-            border_color=THEME["accent_gold"] if selected else C_BORDER,
+            highlightbackground=THEME["accent_gold"] if selected else C_BORDER,
         )
         rw["lbl_name"].configure(
-            text_color=THEME["accent_gold"] if selected else C_WHITE,
+            bg=row_bg,
+            fg=THEME["accent_gold"] if selected else C_WHITE,
         )
+        rw["meta"].configure(bg=row_bg)
+        for ml in rw.get("meta_bg_labels", []):
+            if ml.winfo_exists():
+                ml.configure(bg=row_bg)
 
     def _on_select_key(self, key_id: str):
         if self.selected_key_id == key_id:
@@ -544,10 +577,11 @@ class TabKeys(ctk.CTkFrame):
             self._schedule_render_keys()
         else:
             rw = self._row_widgets.get(key_id)
-            if rw:
-                rw["chk_var"].set(new_state)
-                rw["chk_own"].configure(
-                    border_color=C_EMERALD if new_state else C_SLATE_700,
+            if rw and rw["btn_own"].winfo_exists():
+                rw["btn_own"].configure(
+                    text="✓" if new_state else "",
+                    bg="#15803D" if new_state else C_BG_DARKEST,
+                    highlightbackground=C_EMERALD if new_state else C_SLATE_700,
                 )
 
         if self.selected_key_id == key_id:

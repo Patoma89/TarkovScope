@@ -12,6 +12,7 @@ Diseño de Tabla estilo Escape from Tarkov Wiki con sub-pestañas:
    - Tarjetas de armamento, munición, blindajes y recetas de trueque (barters) con imágenes oficiales.
 """
 import webbrowser
+import tkinter as tk
 import customtkinter as ctk
 from typing import List, Dict, Any, Optional
 from core.config import THEME
@@ -69,13 +70,13 @@ MAP_FILTER_OPTIONS = [
 ]
 
 COL_CHECK_W = 50
-COL_QUEST_W = 285
-COL_OBJ_W = 470
-COL_REW_W = 280
+COL_QUEST_W = 245
+COL_OBJ_W = 365
+COL_REW_W = 245
 
 
 class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
-    PAGE_SIZE = 20
+    PAGE_SIZE = 16
 
     def __init__(self, master, **kwargs):
         super().__init__(master, fg_color="transparent", **kwargs)
@@ -124,15 +125,11 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
         self.quests_view.grid_columnconfigure(0, weight=1)
         self.quests_view.grid_rowconfigure(3, weight=1)
 
-        # Vista 2: Assortment
-        self.assortment_view = ctk.CTkFrame(self.views_container, fg_color="transparent")
-        self.assortment_view.grid(row=0, column=0, sticky="nsew")
-        self.assortment_view.grid_columnconfigure(0, weight=1)
-        self.assortment_view.grid_rowconfigure(3, weight=1)
+        # Vista 2: Assortment (construcción diferida bajo demanda al abrirla)
+        self.assortment_view: Optional[ctk.CTkFrame] = None
 
-        # Construir ambas vistas
+        # Construir Vista 1 inicialmente
         self._setup_quests_view()
-        self._setup_assortment_view()
 
         # Mostrar por defecto Quests
         self._switch_subtab("quests")
@@ -207,6 +204,12 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
             )
             self.subtab_info_lbl.configure(text="Escape from Tarkov Official Quests")
         else:
+            if self.assortment_view is None:
+                self.assortment_view = ctk.CTkFrame(self.views_container, fg_color="transparent")
+                self.assortment_view.grid(row=0, column=0, sticky="nsew")
+                self.assortment_view.grid_columnconfigure(0, weight=1)
+                self.assortment_view.grid_rowconfigure(3, weight=1)
+                self._setup_assortment_view()
             self.assortment_view.tkraise()
             self.btn_subtab_assort.configure(
                 fg_color="#1E2536",
@@ -310,8 +313,11 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
 
             def make_cb(label_widget):
                 def _cb(new_img):
-                    if label_widget.winfo_exists():
-                        self.after(0, lambda: label_widget.configure(image=new_img))
+                    if self.winfo_exists() and label_widget.winfo_exists():
+                        try:
+                            self.after(0, lambda: label_widget.winfo_exists() and label_widget.configure(image=new_img))
+                        except Exception:
+                            pass
                 return _cb
 
             ctk_img = get_trader_ctk_image(t_name, size=(68, 68), widget_callback=make_cb(img_lbl))
@@ -348,10 +354,10 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
             border_color=C_BORDER_SOFT
         )
         bar.grid(row=1, column=0, padx=0, pady=(0, 6), sticky="ew")
-        bar.grid_columnconfigure(2, weight=1)
+        bar.grid_columnconfigure(0, weight=1)
 
         modes_row = ctk.CTkFrame(bar, fg_color="transparent")
-        modes_row.grid(row=0, column=0, columnspan=4, padx=12, pady=(7, 5), sticky="ew")
+        modes_row.grid(row=0, column=0, padx=10, pady=(6, 3), sticky="ew")
 
         modes_spec = [
             ("CORRELATIVE", "Progresión Correlativa"),
@@ -364,7 +370,7 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
             btn = ctk.CTkButton(
                 modes_row,
                 text=m_label,
-                height=30,
+                height=28,
                 corner_radius=5,
                 border_width=1,
                 border_color=THEME["accent_gold"] if is_act else C_BORDER,
@@ -387,25 +393,16 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
             fg_color=THEME["accent_green"],
             command=self._reset_and_apply_filters
         )
-        hide_chk.pack(side="right", padx=6)
+        hide_chk.pack(side="right", padx=4)
 
-        self.search_entry = ctk.CTkEntry(
-            modes_row,
-            placeholder_text="Buscar misión, objetivo o recompensa...",
-            width=260,
-            height=30,
-            fg_color=C_BG_PANEL,
-            border_color=C_BORDER,
-            text_color=C_TEXT,
-            font=ui_font(12)
-        )
-        self.search_entry.pack(side="right", padx=6)
-        self.search_entry.bind("<KeyRelease>", self._on_search_key_debounced)
+        search_row = ctk.CTkFrame(bar, fg_color="transparent")
+        search_row.grid(row=1, column=0, padx=10, pady=(2, 6), sticky="ew")
+        search_row.grid_columnconfigure(1, weight=1)
 
         self.map_combo = ctk.CTkComboBox(
-            modes_row,
+            search_row,
             values=MAP_FILTER_OPTIONS,
-            width=170,
+            width=185,
             height=30,
             fg_color=C_BG_PANEL,
             border_color=C_BORDER,
@@ -415,7 +412,19 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
             command=self._on_map_filter_change
         )
         self.map_combo.set("TODOS LOS MAPAS")
-        self.map_combo.pack(side="right", padx=6)
+        self.map_combo.grid(row=0, column=0, padx=(0, 8), sticky="w")
+
+        self.search_entry = ctk.CTkEntry(
+            search_row,
+            placeholder_text="Buscar misión, objetivo o recompensa...",
+            height=30,
+            fg_color=C_BG_PANEL,
+            border_color=C_BORDER,
+            text_color=C_TEXT,
+            font=ui_font(12)
+        )
+        self.search_entry.grid(row=0, column=1, padx=0, sticky="ew")
+        self.search_entry.bind("<KeyRelease>", self._on_search_key_debounced)
 
     def _build_wiki_table_header(self):
         hdr = ctk.CTkFrame(
@@ -649,12 +658,12 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
         row_bg = "#0E1C16" if is_done else ("#0C0E13" if row_idx % 2 == 0 else "#10141B")
         border_col = C_GREEN if is_done else "#232936"
 
-        row_frame = ctk.CTkFrame(
+        row_frame = tk.Frame(
             self.scroll_frame,
-            fg_color=row_bg,
-            corner_radius=0,
-            border_width=1,
-            border_color=border_col
+            bg=row_bg,
+            highlightbackground=border_col,
+            highlightthickness=1,
+            bd=0,
         )
         row_frame.grid(row=row_idx, column=0, padx=0, pady=0, sticky="ew")
         row_frame.grid_columnconfigure(0, minsize=COL_CHECK_W, weight=0)
@@ -663,7 +672,7 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
         row_frame.grid_columnconfigure(3, minsize=COL_REW_W, weight=2)
 
         # Columna 0: Checkbox centrado
-        chk_cell = ctk.CTkFrame(row_frame, fg_color="transparent")
+        chk_cell = tk.Frame(row_frame, bg=row_bg, bd=0)
         chk_cell.grid(row=0, column=0, padx=4, pady=10, sticky="nsew")
         chk_var = ctk.BooleanVar(value=is_done)
         chk = ctk.CTkCheckBox(
@@ -679,56 +688,65 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
             border_color=C_TEXT_DIM,
             fg_color=THEME["accent_green"],
             hover_color="#16A34A",
+            bg_color=row_bg,
             command=lambda q_obj=q: self._on_toggle_quest(q_obj)
         )
         chk.pack(expand=True, padx=(12, 4), pady=8)
 
         # Columna 1: Quest Title + Badges + Cadena Correlativa
-        quest_cell = ctk.CTkFrame(row_frame, fg_color="transparent")
+        quest_cell = tk.Frame(row_frame, bg=row_bg, bd=0)
         quest_cell.grid(row=0, column=1, padx=8, pady=10, sticky="nsew")
 
-        title_lbl = ctk.CTkLabel(
+        title_lbl = tk.Label(
             quest_cell,
             text=q["title"],
             font=ui_font(14, "bold"),
-            text_color=C_GREEN_LIGHT if is_done else THEME["accent_gold"],
+            bg=row_bg,
+            fg=C_GREEN_LIGHT if is_done else THEME["accent_gold"],
             anchor="w",
             justify="left",
-            wraplength=COL_QUEST_W - 24
+            wraplength=COL_QUEST_W - 24,
+            bd=0,
         )
         title_lbl.pack(fill="x", anchor="w")
 
-        badges_row = ctk.CTkFrame(quest_cell, fg_color="transparent")
+        badges_row = tk.Frame(quest_cell, bg=row_bg, bd=0)
         badges_row.pack(fill="x", anchor="w", pady=(4, 2))
 
         if self.selected_trader == "TODOS":
-            ctk.CTkLabel(
+            tk.Label(
                 badges_row,
                 text=f" {q['trader_name']} ",
-                font=ui_font(11, "bold"),
-                fg_color=C_SLATE_800,
-                text_color=C_TEXT,
-                corner_radius=3
+                font=ui_font(10, "bold"),
+                bg=C_SLATE_800,
+                fg=C_TEXT,
+                padx=4,
+                pady=1,
+                bd=0,
             ).pack(side="left", padx=(0, 4))
 
         if q.get("is_kappa"):
-            ctk.CTkLabel(
+            tk.Label(
                 badges_row,
                 text=" KAPPA ",
-                font=ui_font(10, "bold"),
-                fg_color=C_AMBER,
-                text_color=C_BG_DARKEST,
-                corner_radius=3
+                font=ui_font(9, "bold"),
+                bg=C_AMBER,
+                fg=C_BG_DARKEST,
+                padx=4,
+                pady=1,
+                bd=0,
             ).pack(side="left", padx=(0, 4))
 
         if q.get("is_lightkeeper"):
-            ctk.CTkLabel(
+            tk.Label(
                 badges_row,
                 text=" LIGHTKEEPER ",
-                font=ui_font(10, "bold"),
-                fg_color="#06B6D4",
-                text_color=C_BG_DARKEST,
-                corner_radius=3
+                font=ui_font(9, "bold"),
+                bg="#06B6D4",
+                fg=C_BG_DARKEST,
+                padx=4,
+                pady=1,
+                bd=0,
             ).pack(side="left", padx=(0, 4))
 
         primary_map = q.get("primary_map", "Cualquier Mapa")
@@ -742,77 +760,88 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
                 fg_color="#1E3A8A",
                 hover_color="#2563EB",
                 text_color=C_WHITE,
+                bg_color=row_bg,
                 font=ui_font(10, "bold"),
                 command=lambda mp=primary_map: open_map_viewer_modal(self, mp)
             ).pack(side="left", padx=(0, 4))
 
         req_keys = extract_required_keys(q)
         for r_key in req_keys:
-            ctk.CTkLabel(
+            tk.Label(
                 badges_row,
                 text=f" 🔑 Llave: {r_key} ",
-                font=ui_font(10, "bold"),
-                fg_color="#854D0E",
-                text_color="#FEF08A",
-                corner_radius=3
+                font=ui_font(9, "bold"),
+                bg="#854D0E",
+                fg="#FEF08A",
+                padx=4,
+                pady=1,
+                bd=0,
             ).pack(side="left", padx=(0, 4))
 
         unlocks = q.get("unlocks_titles", [])
         prereqs = q.get("prereq_titles", [])
         if unlocks:
             u_txt = ", ".join(unlocks[:2]) + (f" (+{len(unlocks)-2})" if len(unlocks) > 2 else "")
-            ctk.CTkLabel(
+            tk.Label(
                 quest_cell,
                 text=f"↳ Desbloquea: {u_txt}",
                 font=ui_font(11, "bold"),
-                text_color="#60A5FA",
+                bg=row_bg,
+                fg="#60A5FA",
                 anchor="w",
                 justify="left",
-                wraplength=COL_QUEST_W - 24
+                wraplength=COL_QUEST_W - 24,
+                bd=0,
             ).pack(fill="x", anchor="w", pady=(2, 0))
         elif prereqs:
             p_txt = ", ".join(prereqs[:2])
-            ctk.CTkLabel(
+            tk.Label(
                 quest_cell,
                 text=f"🔗 Previa: {p_txt}",
                 font=ui_font(11),
-                text_color=C_TEXT_DIM,
+                bg=row_bg,
+                fg=C_TEXT_DIM,
                 anchor="w",
                 justify="left",
-                wraplength=COL_QUEST_W - 24
+                wraplength=COL_QUEST_W - 24,
+                bd=0,
             ).pack(fill="x", anchor="w", pady=(2, 0))
 
         # Columna 2: Objectives
-        obj_cell = ctk.CTkFrame(row_frame, fg_color="transparent")
+        obj_cell = tk.Frame(row_frame, bg=row_bg, bd=0)
         obj_cell.grid(row=0, column=2, padx=10, pady=10, sticky="nsew")
 
         obj_lines = q.get("objectives_lines") or ["• Consultar detalles en la Wiki."]
-        ctk.CTkLabel(
+        tk.Label(
             obj_cell,
             text="\n".join(obj_lines[:8]),
             font=ui_font(13),
-            text_color=C_TEXT,
+            bg=row_bg,
+            fg=C_TEXT,
             anchor="w",
             justify="left",
-            wraplength=COL_OBJ_W + 40
+            wraplength=COL_OBJ_W + 40,
+            bd=0,
         ).pack(fill="both", expand=True, anchor="w")
 
         # Columna 3: Rewards
-        rew_cell = ctk.CTkFrame(row_frame, fg_color="transparent")
+        rew_cell = tk.Frame(row_frame, bg=row_bg, bd=0)
         rew_cell.grid(row=0, column=3, padx=10, pady=10, sticky="nsew")
 
         rew_lines = q.get("rewards_lines") or [f"• +{q.get('exp', 0):,} EXP"]
-        ctk.CTkLabel(
+        tk.Label(
             rew_cell,
             text="\n".join(rew_lines[:7]),
             font=ui_font(13),
-            text_color=C_TEXT_SOFT,
+            bg=row_bg,
+            fg=C_TEXT_SOFT,
             anchor="w",
             justify="left",
-            wraplength=COL_REW_W - 20
+            wraplength=COL_REW_W - 20,
+            bd=0,
         ).pack(fill="x", anchor="w")
 
-        actions_row = ctk.CTkFrame(rew_cell, fg_color="transparent")
+        actions_row = tk.Frame(rew_cell, bg=row_bg, bd=0)
         actions_row.pack(fill="x", pady=(6, 0))
 
         ctk.CTkButton(
@@ -824,6 +853,7 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
             fg_color="#1E3A8A",
             hover_color=THEME["accent_gold"],
             text_color=C_WHITE,
+            bg_color=row_bg,
             font=ui_font(11, "bold"),
             command=lambda quest_obj=q: self._open_quest_guide_modal(quest_obj)
         ).pack(side="left", padx=(0, 4))
@@ -838,6 +868,7 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
                 fg_color=C_BG_ROW,
                 hover_color=C_BORDER_ALT,
                 text_color=THEME["accent_gold"],
+                bg_color=row_bg,
                 font=ui_font(11, "bold"),
                 command=lambda u=q["wiki_url"]: webbrowser.open(u)
             ).pack(side="right")

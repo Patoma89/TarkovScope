@@ -581,8 +581,11 @@ class TabBosses(ctk.CTkFrame):
             ).pack(side="left", padx=2, pady=6)
 
         def update_img(new_ctk):
-            if self.map_img_lbl.winfo_exists():
-                self.after(0, lambda: self.map_img_lbl.configure(image=new_ctk))
+            if self.winfo_exists() and self.map_img_lbl.winfo_exists():
+                try:
+                    self.after(0, lambda: self.map_img_lbl.winfo_exists() and self.map_img_lbl.configure(image=new_ctk))
+                except Exception:
+                    pass
 
         ctk_map = get_boss_spawn_map_ctk_image(b, m_name, target_size=(740, 450), widget_callback=update_img)
         self.map_img_lbl.configure(image=ctk_map)

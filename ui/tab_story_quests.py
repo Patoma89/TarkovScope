@@ -71,10 +71,10 @@ class TabStoryQuests(StoryGuideMixin, ctk.CTkFrame):
         hdr.grid(row=0, column=0, padx=0, pady=(0, 6), sticky="ew")
         hdr.grid_columnconfigure(0, weight=1)
 
-        # Fila 0: Título + Botones de Subvista + Progreso Global
+        # Fila 0: Título + Progreso Global
         row0 = ctk.CTkFrame(hdr, fg_color="transparent")
-        row0.grid(row=0, column=0, padx=14, pady=(8, 4), sticky="ew")
-        row0.grid_columnconfigure(1, weight=1)
+        row0.grid(row=0, column=0, padx=14, pady=(8, 3), sticky="ew")
+        row0.grid_columnconfigure(0, weight=1)
 
         title_box = ctk.CTkFrame(row0, fg_color="transparent")
         title_box.grid(row=0, column=0, sticky="w")
@@ -82,20 +82,28 @@ class TabStoryQuests(StoryGuideMixin, ctk.CTkFrame):
         ctk.CTkLabel(
             title_box,
             text="📖 CAPÍTULOS DE LA HISTORIA — GUÍA INTERACTIVA WIKI OFICIAL",
-            font=ui_font(16, "bold"),
+            font=ui_font(15, "bold"),
             text_color=C_TEXT
         ).pack(anchor="w")
 
         ctk.CTkLabel(
             title_box,
-            text="10 Capítulos Oficiales • Guía Paso a Paso Completa • 498 Mapas y Capturas HD Offline • Tablas de Ítems y Códigos",
+            text="10 Capítulos Oficiales • Guía Paso a Paso • 498 Mapas y Capturas HD Offline • Tablas y Códigos",
             font=ui_font(11),
             text_color=C_TEXT_DIM
         ).pack(anchor="w")
 
-        # Selector de Subvistas en el centro-derecha
-        subview_box = ctk.CTkFrame(row0, fg_color="transparent")
-        subview_box.grid(row=0, column=1, padx=14)
+        self.stats_lbl = ctk.CTkLabel(
+            row0,
+            text="Progreso: 0 / 437 (0%)",
+            font=ui_font(13, "bold"),
+            text_color=THEME["accent_green"]
+        )
+        self.stats_lbl.grid(row=0, column=1, sticky="e", padx=4)
+
+        # Fila 1: Botones de Subvista (evita desborde horizontal)
+        subview_box = ctk.CTkFrame(hdr, fg_color="transparent")
+        subview_box.grid(row=1, column=0, padx=14, pady=(0, 4), sticky="ew")
 
         subviews = [
             ("GUIDE", "📖 Guía Completa Wiki (Paso a Paso + Fotos)"),
@@ -107,7 +115,7 @@ class TabStoryQuests(StoryGuideMixin, ctk.CTkFrame):
             btn = ctk.CTkButton(
                 subview_box,
                 text=sv_label,
-                height=30,
+                height=28,
                 corner_radius=5,
                 border_width=1,
                 border_color=THEME["accent_gold"] if is_act else C_BORDER,
@@ -117,20 +125,12 @@ class TabStoryQuests(StoryGuideMixin, ctk.CTkFrame):
                 font=ui_font(12, "bold"),
                 command=lambda k=sv_key: self._set_subview(k)
             )
-            btn.pack(side="left", padx=3)
+            btn.pack(side="left", padx=(0, 6))
             self.subview_buttons[sv_key] = btn
 
-        self.stats_lbl = ctk.CTkLabel(
-            row0,
-            text="Progreso: 0 / 437 (0%)",
-            font=ui_font(13, "bold"),
-            text_color=THEME["accent_green"]
-        )
-        self.stats_lbl.grid(row=0, column=2, sticky="e", padx=4)
-
-        # Fila 1: Buscador + Botón Idioma (ES/EN) + Ocultar completadas
+        # Fila 2: Buscador + Botón Idioma (ES/EN) + Ocultar completadas
         bar_row = ctk.CTkFrame(hdr, fg_color="transparent")
-        bar_row.grid(row=1, column=0, padx=14, pady=(2, 8), sticky="ew")
+        bar_row.grid(row=2, column=0, padx=14, pady=(2, 8), sticky="ew")
         bar_row.grid_columnconfigure(0, weight=1)
 
         self.search_entry = ctk.CTkEntry(
@@ -189,16 +189,18 @@ class TabStoryQuests(StoryGuideMixin, ctk.CTkFrame):
         inner.pack(fill="x", padx=6, pady=5)
 
         for idx, (ch_id, ch_title, icon_fn) in enumerate(CHAPTER_SELECTOR_SPECS):
-            inner.grid_columnconfigure(idx, weight=1)
+            r_idx = idx // 5
+            c_idx = idx % 5
+            inner.grid_columnconfigure(c_idx, weight=1)
             is_sel = (ch_id == self.selected_chapter)
-            icon_ctk = get_story_chapter_icon_ctk(icon_fn, size=(22, 22))
+            icon_ctk = get_story_chapter_icon_ctk(icon_fn, size=(20, 20))
 
             btn = ctk.CTkButton(
                 inner,
                 text=f"{ch_id}. {ch_title}",
                 image=icon_ctk,
                 compound="left",
-                height=34,
+                height=30,
                 corner_radius=6,
                 fg_color="#222B3D" if is_sel else C_BG_PANEL_ALT,
                 hover_color="#2C374E",
@@ -208,7 +210,7 @@ class TabStoryQuests(StoryGuideMixin, ctk.CTkFrame):
                 font=ui_font(11, "bold"),
                 command=lambda cid=ch_id: self._select_chapter(cid)
             )
-            btn.grid(row=0, column=idx, padx=2, pady=1, sticky="ew")
+            btn.grid(row=r_idx, column=c_idx, padx=2, pady=2, sticky="ew")
             self.chapter_buttons[ch_id] = btn
 
     def _build_main_scroll_area(self):

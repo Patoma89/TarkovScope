@@ -9,6 +9,7 @@ Incluye:
 2) Buscador de Ítems requeridos para Quests (Found in Raid).
 3) Rastreador de objetos Streamer para la misión Collector (Contenedor Kappa).
 """
+import tkinter as tk
 import customtkinter as ctk
 from typing import Optional, List, Dict, Any
 from core.config import THEME
@@ -29,6 +30,8 @@ class TabFleaAndItems(FleaBartersMixin, FleaHideoutMixin, ctk.CTkFrame):
         self.filter_only_missing = ctk.BooleanVar(value=False)
         self._debounce_job: Optional[str] = None
         self._render_token: int = 0
+        self._fir_limit: int = 35
+        self._barters_limit: int = 40
         self._init_barters_state()
 
         self.grid_columnconfigure(0, weight=1)
@@ -63,12 +66,12 @@ class TabFleaAndItems(FleaBartersMixin, FleaHideoutMixin, ctk.CTkFrame):
         ).grid(row=0, column=0, sticky="w")
 
         mode_bar = ctk.CTkFrame(box, fg_color="transparent")
-        mode_bar.grid(row=1, column=0, padx=14, pady=(0, 8), sticky="ew")
+        mode_bar.grid(row=1, column=0, padx=12, pady=(0, 8), sticky="ew")
 
         self.btn_mode_hideout = ctk.CTkButton(
             mode_bar,
             text="Hideout & Estaciones",
-            width=155,
+            width=142,
             height=30,
             corner_radius=5,
             border_width=1,
@@ -79,12 +82,12 @@ class TabFleaAndItems(FleaBartersMixin, FleaHideoutMixin, ctk.CTkFrame):
             font=ui_font(12, "bold"),
             command=lambda: self._switch_mode("HIDEOUT")
         )
-        self.btn_mode_hideout.pack(side="left", padx=(0, 4))
+        self.btn_mode_hideout.pack(side="left", padx=(0, 3))
 
         self.btn_mode_fir = ctk.CTkButton(
             mode_bar,
             text="Ítems FiR",
-            width=105,
+            width=88,
             height=30,
             corner_radius=5,
             border_width=1,
@@ -95,12 +98,12 @@ class TabFleaAndItems(FleaBartersMixin, FleaHideoutMixin, ctk.CTkFrame):
             font=ui_font(12, "bold"),
             command=lambda: self._switch_mode("FIR")
         )
-        self.btn_mode_fir.pack(side="left", padx=4)
+        self.btn_mode_fir.pack(side="left", padx=3)
 
         self.btn_mode_kappa = ctk.CTkButton(
             mode_bar,
             text="Collector (Kappa)",
-            width=135,
+            width=126,
             height=30,
             corner_radius=5,
             border_width=1,
@@ -111,12 +114,12 @@ class TabFleaAndItems(FleaBartersMixin, FleaHideoutMixin, ctk.CTkFrame):
             font=ui_font(12, "bold"),
             command=lambda: self._switch_mode("KAPPA")
         )
-        self.btn_mode_kappa.pack(side="left", padx=4)
+        self.btn_mode_kappa.pack(side="left", padx=3)
 
         self.btn_mode_crafts = ctk.CTkButton(
             mode_bar,
             text="⚗️ Crafteos",
-            width=105,
+            width=96,
             height=30,
             corner_radius=5,
             border_width=1,
@@ -127,12 +130,12 @@ class TabFleaAndItems(FleaBartersMixin, FleaHideoutMixin, ctk.CTkFrame):
             font=ui_font(12, "bold"),
             command=lambda: self._switch_mode("CRAFTS")
         )
-        self.btn_mode_crafts.pack(side="left", padx=4)
+        self.btn_mode_crafts.pack(side="left", padx=3)
 
         self.btn_mode_barters = ctk.CTkButton(
             mode_bar,
             text="🔄 Trueques (Barters)",
-            width=155,
+            width=146,
             height=30,
             corner_radius=5,
             border_width=1,
@@ -143,12 +146,12 @@ class TabFleaAndItems(FleaBartersMixin, FleaHideoutMixin, ctk.CTkFrame):
             font=ui_font(12, "bold"),
             command=lambda: self._switch_mode("BARTERS")
         )
-        self.btn_mode_barters.pack(side="left", padx=4)
+        self.btn_mode_barters.pack(side="left", padx=3)
 
         self.btn_mode_cultist = ctk.CTkButton(
             mode_bar,
             text="🌀 Cultist Circle",
-            width=130,
+            width=122,
             height=30,
             corner_radius=5,
             border_width=1,
@@ -159,12 +162,12 @@ class TabFleaAndItems(FleaBartersMixin, FleaHideoutMixin, ctk.CTkFrame):
             font=ui_font(12, "bold"),
             command=lambda: self._switch_mode("CULTIST")
         )
-        self.btn_mode_cultist.pack(side="left", padx=4)
+        self.btn_mode_cultist.pack(side="left", padx=3)
 
         self.btn_mode_keep_sell = ctk.CTkButton(
             mode_bar,
             text="🚦 ¿Vender o Guardar?",
-            width=165,
+            width=150,
             height=30,
             corner_radius=5,
             border_width=1,
@@ -175,7 +178,7 @@ class TabFleaAndItems(FleaBartersMixin, FleaHideoutMixin, ctk.CTkFrame):
             font=ui_font(12, "bold"),
             command=lambda: self._switch_mode("KEEP_SELL")
         )
-        self.btn_mode_keep_sell.pack(side="left", padx=4)
+        self.btn_mode_keep_sell.pack(side="left", padx=3)
 
         search_row = ctk.CTkFrame(box, fg_color="transparent")
         search_row.grid(row=2, column=0, padx=14, pady=(0, 10), sticky="ew")
@@ -234,7 +237,7 @@ class TabFleaAndItems(FleaBartersMixin, FleaHideoutMixin, ctk.CTkFrame):
             self.hideout_bar,
             text="Progresión Correlativa",
             height=30,
-            width=175,
+            width=165,
             corner_radius=5,
             border_width=1,
             border_color=THEME["accent_gold"],
@@ -244,13 +247,13 @@ class TabFleaAndItems(FleaBartersMixin, FleaHideoutMixin, ctk.CTkFrame):
             font=ui_font(12, "bold"),
             command=lambda: self._set_hideout_progression("CORRELATIVE")
         )
-        self.btn_prog_corr.grid(row=0, column=0, padx=(12, 6), pady=7, sticky="w")
+        self.btn_prog_corr.grid(row=0, column=0, padx=(12, 6), pady=(7, 3), sticky="w")
 
         self.btn_prog_all = ctk.CTkButton(
             self.hideout_bar,
             text="Todas las Zonas (68 Niveles)",
             height=30,
-            width=195,
+            width=185,
             corner_radius=5,
             border_width=1,
             border_color=C_BORDER,
@@ -260,15 +263,7 @@ class TabFleaAndItems(FleaBartersMixin, FleaHideoutMixin, ctk.CTkFrame):
             font=ui_font(12, "bold"),
             command=lambda: self._set_hideout_progression("ALL")
         )
-        self.btn_prog_all.grid(row=0, column=1, padx=4, pady=7, sticky="w")
-
-        self.hideout_notice_lbl = ctk.CTkLabel(
-            self.hideout_bar,
-            text="Marcá cada nivel construido para desbloquear correlativamente las siguientes zonas del Hideout",
-            font=ui_font(12, "bold"),
-            text_color=THEME["accent_gold"]
-        )
-        self.hideout_notice_lbl.grid(row=0, column=2, padx=12, pady=7)
+        self.btn_prog_all.grid(row=0, column=1, padx=4, pady=(7, 3), sticky="w")
 
         self.hide_built_var = ctk.BooleanVar(value=False)
         self.hide_built_chk = ctk.CTkCheckBox(
@@ -280,13 +275,13 @@ class TabFleaAndItems(FleaBartersMixin, FleaHideoutMixin, ctk.CTkFrame):
             fg_color=THEME["accent_green"],
             command=lambda: self._run_search(self.search_entry.get())
         )
-        self.hide_built_chk.grid(row=0, column=3, padx=8, pady=7, sticky="e")
+        self.hide_built_chk.grid(row=0, column=3, padx=8, pady=(7, 3), sticky="e")
 
         self.btn_reset_hideout = ctk.CTkButton(
             self.hideout_bar,
             text="Desmarcar Zonas",
             height=28,
-            width=135,
+            width=130,
             corner_radius=5,
             border_width=1,
             border_color=C_RED,
@@ -296,7 +291,7 @@ class TabFleaAndItems(FleaBartersMixin, FleaHideoutMixin, ctk.CTkFrame):
             font=ui_font(12, "bold"),
             command=self._on_clear_action
         )
-        self.btn_reset_hideout.grid(row=0, column=4, padx=6, pady=7, sticky="e")
+        self.btn_reset_hideout.grid(row=0, column=4, padx=6, pady=(7, 3), sticky="e")
 
         self.hideout_stats_lbl = ctk.CTkLabel(
             self.hideout_bar,
@@ -304,7 +299,16 @@ class TabFleaAndItems(FleaBartersMixin, FleaHideoutMixin, ctk.CTkFrame):
             font=ui_font(13, "bold"),
             text_color=THEME["accent_green"]
         )
-        self.hideout_stats_lbl.grid(row=0, column=5, padx=(6, 14), pady=7, sticky="e")
+        self.hideout_stats_lbl.grid(row=0, column=5, padx=(6, 14), pady=(7, 3), sticky="e")
+
+        self.hideout_notice_lbl = ctk.CTkLabel(
+            self.hideout_bar,
+            text="Marcá cada nivel construido para desbloquear correlativamente las siguientes zonas del Hideout",
+            font=ui_font(11, "bold"),
+            text_color=THEME["accent_gold"],
+            anchor="w",
+        )
+        self.hideout_notice_lbl.grid(row=1, column=0, columnspan=6, padx=14, pady=(0, 6), sticky="ew")
 
     def _build_results_area(self):
         self.results_scroll = ctk.CTkScrollableFrame(
@@ -334,6 +338,8 @@ class TabFleaAndItems(FleaBartersMixin, FleaHideoutMixin, ctk.CTkFrame):
 
     def _switch_mode(self, mode: str):
         self.view_mode = mode
+        self._fir_limit = 35
+        self._barters_limit = 40
         for m_key, btn in [
             ("HIDEOUT", self.btn_mode_hideout),
             ("FIR", self.btn_mode_fir),
@@ -424,11 +430,11 @@ class TabFleaAndItems(FleaBartersMixin, FleaHideoutMixin, ctk.CTkFrame):
             return
 
         if self.view_mode == "KAPPA":
-            self._render_kappa_items(query)
+            self._render_kappa_items(query, token)
             return
 
         if self.view_mode == "CRAFTS":
-            self._render_hideout_crafts(query)
+            self._render_hideout_crafts(query, token)
             return
 
         if self.view_mode == "BARTERS":
@@ -436,15 +442,26 @@ class TabFleaAndItems(FleaBartersMixin, FleaHideoutMixin, ctk.CTkFrame):
             return
 
         if self.view_mode == "CULTIST":
-            self._render_cultist_circle_view(query)
+            self._render_cultist_circle_view(query, token)
             return
 
         if self.view_mode == "KEEP_SELL":
             self._render_keep_or_sell_view(query)
             return
 
-        results: List[Dict[str, Any]] = ds.search_fir_items(query)[:60]
-        if not results:
+        all_results = ds.search_fir_items(query)
+        only_missing = bool(self.filter_only_missing.get())
+        filtered: List[tuple] = []
+        for r in all_results:
+            item_name = r["item_name"]
+            req_count = int(r.get("count_required", 1))
+            collected = ds.get_stash_count(item_name)
+            is_done = (collected >= req_count)
+            if only_missing and is_done:
+                continue
+            filtered.append((r, item_name, req_count, collected, is_done))
+
+        if not filtered:
             ctk.CTkLabel(
                 self.results_scroll,
                 text="No se encontraron requerimientos de misión para ese ítem.",
@@ -453,86 +470,92 @@ class TabFleaAndItems(FleaBartersMixin, FleaHideoutMixin, ctk.CTkFrame):
             ).grid(row=0, column=0, pady=40)
             return
 
+        shown = filtered[: self._fir_limit]
+        remaining = len(filtered) - len(shown)
+
         def render_batch(idx: int):
             if not self.winfo_exists() or token != self._render_token:
                 return
-            limit = min(idx + 12, len(results))
+            limit = min(idx + 14, len(shown))
             for i in range(idx, limit):
-                r = results[i]
-                item_name = r["item_name"]
-                req_count = int(r.get("count_required", 1))
-                collected = ds.get_stash_count(item_name)
-                is_done = (collected >= req_count)
+                r, item_name, req_count, collected, is_done = shown[i]
+                row_bg = "#0D1612" if is_done else C_BG_DEEP
 
-                if self.filter_only_missing.get() and is_done:
-                    continue
-
-                card = ctk.CTkFrame(
+                card = tk.Frame(
                     self.results_scroll,
-                    fg_color="#0D1612" if is_done else C_BG_DEEP,
-                    corner_radius=6,
-                    border_width=1,
-                    border_color=C_EMERALD if is_done else C_BORDER_SOFT
+                    bg=row_bg,
+                    highlightbackground=C_EMERALD if is_done else C_BORDER_SOFT,
+                    highlightthickness=1,
+                    bd=0,
                 )
                 card.grid(row=i, column=0, padx=8, pady=3, sticky="ew")
                 card.grid_columnconfigure(1, weight=1)
 
-                ctk.CTkLabel(
+                name_lbl = tk.Label(
                     card,
                     text=r["item_name"],
-                    font=ui_font(14, "bold"),
-                    text_color=C_GREEN_LIGHT if is_done else THEME["accent_gold"]
-                ).grid(row=0, column=0, padx=14, pady=9, sticky="w")
+                    font=ui_font(13, "bold"),
+                    bg=row_bg,
+                    fg=C_GREEN_LIGHT if is_done else THEME["accent_gold"],
+                    anchor="w",
+                    bd=0,
+                )
+                name_lbl.grid(row=0, column=0, padx=14, pady=8, sticky="w")
 
-                ctk.CTkLabel(
+                q_lbl = tk.Label(
                     card,
                     text=f"Quest: {r['quest_title']}  •  Trader: {r['trader_name']}",
-                    font=ui_font(13),
-                    text_color=C_TEXT
-                ).grid(row=0, column=1, padx=10, pady=9, sticky="w")
+                    font=ui_font(12),
+                    bg=row_bg,
+                    fg=C_TEXT,
+                    anchor="w",
+                    bd=0,
+                )
+                q_lbl.grid(row=0, column=1, padx=10, pady=8, sticky="w")
 
-                # Stepper de Alijo / Junkbox Tracker
-                tracker_frame = ctk.CTkFrame(card, fg_color="transparent")
-                tracker_frame.grid(row=0, column=2, padx=14, pady=6, sticky="e")
+                tracker_frame = tk.Frame(card, bg=row_bg, bd=0)
+                tracker_frame.grid(row=0, column=2, padx=14, pady=5, sticky="e")
 
-                lbl_stash = ctk.CTkLabel(
+                lbl_stash = tk.Label(
                     tracker_frame,
                     text=f"✓ {collected}/{req_count}x" if is_done else f"Alijo: {collected}/{req_count}x",
-                    font=ui_font(12, "bold"),
-                    fg_color=C_EMERALD if is_done else "#1E2534",
-                    text_color=C_BG_DARKEST if is_done else C_TEXT_MUTED,
-                    corner_radius=4,
-                    width=120,
-                    height=28
+                    font=ui_font(11, "bold"),
+                    bg=C_EMERALD if is_done else "#1E2534",
+                    fg=C_BG_DARKEST if is_done else C_TEXT_MUTED,
+                    width=13,
+                    pady=4,
+                    bd=0,
                 )
 
-                def make_updater(name=item_name, req=req_count, lbl=lbl_stash, c_card=card):
+                def make_updater(name=item_name, req=req_count, lbl=lbl_stash, c_card=card,
+                                 n_lbl=name_lbl, ql=q_lbl, tf=tracker_frame):
                     def update_counter(delta: int):
                         cur = ds.get_stash_count(name)
                         new_val = max(0, cur + delta)
                         ds.set_stash_count(name, new_val)
                         done = (new_val >= req)
+                        new_bg = "#0D1612" if done else C_BG_DEEP
                         lbl.configure(
                             text=f"✓ {new_val}/{req}x" if done else f"Alijo: {new_val}/{req}x",
-                            fg_color=C_EMERALD if done else "#1E2534",
-                            text_color=C_BG_DARKEST if done else C_TEXT_MUTED
+                            bg=C_EMERALD if done else "#1E2534",
+                            fg=C_BG_DARKEST if done else C_TEXT_MUTED,
                         )
-                        c_card.configure(
-                            fg_color="#0D1612" if done else C_BG_DEEP,
-                            border_color=C_EMERALD if done else C_BORDER_SOFT
-                        )
+                        c_card.configure(bg=new_bg, highlightbackground=C_EMERALD if done else C_BORDER_SOFT)
+                        n_lbl.configure(bg=new_bg, fg=C_GREEN_LIGHT if done else THEME["accent_gold"])
+                        ql.configure(bg=new_bg)
+                        tf.configure(bg=new_bg)
                     return update_counter
 
-                fn_update = make_updater(item_name, req_count, lbl_stash, card)
+                fn_update = make_updater()
 
                 ctk.CTkButton(
                     tracker_frame,
                     text="−",
                     width=28,
-                    height=28,
+                    height=26,
                     fg_color=C_BG_ROW,
                     hover_color=C_RED_DARK,
-                    font=ui_font(14, "bold"),
+                    font=ui_font(13, "bold"),
                     command=lambda fn=fn_update: fn(-1)
                 ).pack(side="left", padx=2)
 
@@ -542,15 +565,32 @@ class TabFleaAndItems(FleaBartersMixin, FleaHideoutMixin, ctk.CTkFrame):
                     tracker_frame,
                     text="+",
                     width=28,
-                    height=28,
+                    height=26,
                     fg_color=C_BG_ROW,
                     hover_color="#16A34A",
-                    font=ui_font(14, "bold"),
+                    font=ui_font(13, "bold"),
                     command=lambda fn=fn_update: fn(1)
                 ).pack(side="left", padx=2)
 
-            if limit < len(results):
+            if limit < len(shown):
                 self.after(4, lambda: render_batch(limit))
+            elif remaining > 0:
+                def _load_more_fir():
+                    self._fir_limit += 40
+                    self._run_search(self.search_entry.get())
+
+                ctk.CTkButton(
+                    self.results_scroll,
+                    text=f"⬇ Cargar más ítems FiR ({remaining} restantes)",
+                    height=34,
+                    fg_color=C_BG_PANEL,
+                    hover_color=THEME["accent_gold"],
+                    border_width=1,
+                    border_color=C_BORDER,
+                    text_color=C_WHITE,
+                    font=ui_font(12, "bold"),
+                    command=_load_more_fir,
+                ).grid(row=len(shown), column=0, padx=8, pady=8, sticky="ew")
 
         render_batch(0)
 

@@ -2,8 +2,8 @@
 TarkovScope - Pestaña Ultra PRO: Medicina, Botiquines & Estimulantes (Medical & Stims)
 Catálogo completo con iconos oficiales, filtro por síntoma/lesión y dossier táctico.
 """
+import tkinter as tk
 import customtkinter as ctk
-from PIL import Image
 from typing import Dict, Any, List, Optional, Tuple
 
 from core.config import THEME
@@ -14,6 +14,7 @@ from core.medical_data import (
     filter_medical_items,
     get_medical_icon_path,
 )
+from ui.image_utils import get_resized_ctk_image, get_resized_tk_image
 from ui.theme import (
     C_BG_DARKEST,
     C_BG_DEEP,
@@ -51,7 +52,8 @@ class TabMedical(ctk.CTkFrame):
         self._render_token: int = 0
         self._cat_buttons: Dict[str, ctk.CTkButton] = {}
         self._sym_buttons: Dict[str, ctk.CTkButton] = {}
-        self._thumb_cache: Dict[Tuple[str, int], ctk.CTkImage] = {}
+        self._thumb_cache: Dict[Tuple[str, int, int], ctk.CTkImage] = {}
+        self._tk_thumb_cache: Dict[Tuple[str, int, int], Any] = {}
         self._row_widgets: Dict[str, Dict[str, Any]] = {}
 
         self.grid_columnconfigure(0, weight=1)
@@ -65,6 +67,18 @@ class TabMedical(ctk.CTkFrame):
         if self.selected_item_id:
             self._show_detail(self.selected_item_id)
 
+    def _get_tk_icon(self, item_id: str, max_w: int = 58, max_h: int = 44):
+        key = (item_id, max_w, max_h)
+        if key in self._tk_thumb_cache:
+            return self._tk_thumb_cache[key]
+        path = get_medical_icon_path(item_id)
+        if not path:
+            return None
+        tk_img = get_resized_tk_image(f"med:{item_id}", path, (max_w, max_h))
+        if tk_img is not None:
+            self._tk_thumb_cache[key] = tk_img
+        return tk_img
+
     def _get_ctk_icon(self, item_id: str, max_w: int = 58, max_h: int = 44) -> Optional[ctk.CTkImage]:
         key = (item_id, max_w, max_h)
         if key in self._thumb_cache:
@@ -72,18 +86,10 @@ class TabMedical(ctk.CTkFrame):
         path = get_medical_icon_path(item_id)
         if not path:
             return None
-        try:
-            with Image.open(path) as img:
-                rgba = img.convert("RGBA")
-                iw, ih = rgba.size
-                scale = min(max_w / max(1, iw), max_h / max(1, ih))
-                tw = max(1, int(round(iw * scale)))
-                th = max(1, int(round(ih * scale)))
-                ctk_img = ctk.CTkImage(light_image=rgba, dark_image=rgba, size=(tw, th))
-                self._thumb_cache[key] = ctk_img
-                return ctk_img
-        except Exception:
-            return None
+        ctk_img = get_resized_ctk_image(f"med:{item_id}", path, (max_w, max_h))
+        if ctk_img is not None:
+            self._thumb_cache[key] = ctk_img
+        return ctk_img
 
     def _build_header(self):
         hdr = ctk.CTkFrame(
@@ -150,7 +156,7 @@ class TabMedical(ctk.CTkFrame):
         bar.grid(row=1, column=0, sticky="ew", padx=2, pady=(0, 8))
         bar.grid_columnconfigure(0, weight=1)
 
-        # Fila 0: Categorías + Buscador
+        # Fila 0: Categorías (izq) y fila 1: Buscador + Síntomas
         top_row = ctk.CTkFrame(bar, fg_color="transparent")
         top_row.grid(row=0, column=0, sticky="ew", padx=10, pady=(8, 4))
         top_row.grid_columnconfigure(1, weight=1)
@@ -162,40 +168,42 @@ class TabMedical(ctk.CTkFrame):
             btn = ctk.CTkButton(
                 cat_box,
                 text=cat,
-                height=30,
-                corner_radius=15,
+                height=28,
+                width=0,
+                corner_radius=14,
                 font=ui_font(11, "bold"),
                 command=lambda c=cat: self._select_category(c),
             )
-            btn.pack(side="left", padx=3)
+            btn.pack(side="left", padx=2)
             self._cat_buttons[cat] = btn
 
         self.entry_search = ctk.CTkEntry(
             top_row,
-            height=30,
-            placeholder_text="🔍 Buscar medkit, stim o efecto (ej: Salewa, SJ6, Propital, MULE)...",
-            font=ui_font(12),
+            height=28,
+            placeholder_text="🔍 Buscar medkit, stim o efecto (Salewa, SJ6, Propital, MULE)...",
+            font=ui_font(11),
             fg_color=C_BG_DEEP,
             border_color=C_BORDER,
             text_color=C_WHITE,
         )
-        self.entry_search.grid(row=0, column=1, sticky="ew", padx=(12, 0))
+        self.entry_search.grid(row=0, column=1, sticky="ew", padx=(8, 0))
         self.entry_search.bind("<KeyRelease>", self._on_search_key)
 
         # Fila 1: Chips de Síntoma / Necesidad
         sym_row = ctk.CTkFrame(bar, fg_color="transparent")
-        sym_row.grid(row=1, column=0, sticky="ew", padx=10, pady=(4, 8))
+        sym_row.grid(row=1, column=0, sticky="ew", padx=10, pady=(2, 8))
 
         for sym_key, sym_label in get_symptom_filters():
             btn = ctk.CTkButton(
                 sym_row,
                 text=sym_label,
-                height=28,
+                height=26,
+                width=0,
                 corner_radius=6,
-                font=ui_font(11, "bold"),
+                font=ui_font(10, "bold"),
                 command=lambda sk=sym_key: self._select_symptom(sk),
             )
-            btn.pack(side="left", padx=3)
+            btn.pack(side="left", padx=2)
             self._sym_buttons[sym_key] = btn
 
         self._update_filter_styles()
@@ -311,104 +319,116 @@ class TabMedical(ctk.CTkFrame):
     def _render_batch(self, items: List[Dict[str, Any]], start_idx: int, token: int):
         if not self.winfo_exists() or token != self._render_token:
             return
-        batch_size = 16
+        batch_size = 12
         end_idx = min(start_idx + batch_size, len(items))
         for item in items[start_idx:end_idx]:
             self._create_row(item)
         if end_idx < len(items):
-            self.after(2, lambda: self._render_batch(items, end_idx, token))
+            self.after(8, lambda: self._render_batch(items, end_idx, token))
 
     def _create_row(self, item: Dict[str, Any]):
         iid = item["id"]
         is_sel = iid == self.selected_item_id
         cat = item["category"]
         cat_color = MED_CATEGORY_COLORS.get(cat, C_SLATE_700)
+        row_bg = C_BG_PANEL if is_sel else C_BG_DEEP
 
-        card = ctk.CTkFrame(
+        card = tk.Frame(
             self.scroll_items,
-            fg_color=C_BG_PANEL if is_sel else C_BG_DEEP,
-            corner_radius=6,
-            border_width=2 if is_sel else 1,
-            border_color=THEME["accent_gold"] if is_sel else C_BORDER,
+            bg=row_bg,
+            highlightbackground=THEME["accent_gold"] if is_sel else C_BORDER,
+            highlightthickness=2 if is_sel else 1,
+            bd=0,
+            cursor="hand2",
         )
         card.pack(fill="x", padx=4, pady=3)
         card.grid_columnconfigure(1, weight=1)
 
-        img_box = ctk.CTkFrame(
+        img_box = tk.Frame(
             card,
-            width=68,
-            height=52,
-            fg_color="#080C14",
-            corner_radius=6,
-            border_width=1,
-            border_color=THEME["accent_gold"] if is_sel else C_BORDER,
+            width=66,
+            height=50,
+            bg="#080C14",
+            highlightbackground=THEME["accent_gold"] if is_sel else C_BORDER,
+            highlightthickness=1,
+            bd=0,
         )
-        img_box.grid(row=0, column=0, rowspan=2, padx=(8, 10), pady=7)
+        img_box.grid(row=0, column=0, rowspan=2, padx=(8, 10), pady=6)
         img_box.grid_propagate(False)
 
-        icon = self._get_ctk_icon(iid, max_w=60, max_h=44)
+        icon = self._get_tk_icon(iid, max_w=58, max_h=44)
         if icon is not None:
-            lbl_img = ctk.CTkLabel(img_box, text="", image=icon)
+            lbl_img = tk.Label(img_box, text="", image=icon, bg="#080C14", bd=0)
         else:
-            lbl_img = ctk.CTkLabel(img_box, text="💊", font=ui_font(20), text_color=THEME["accent_gold"])
-        lbl_img.pack(expand=True)
+            lbl_img = tk.Label(img_box, text="💊", font=ui_font(18), bg="#080C14", fg=THEME["accent_gold"], bd=0)
+        lbl_img.pack(expand=True, fill="both")
 
-        top = ctk.CTkFrame(card, fg_color="transparent")
-        top.grid(row=0, column=1, sticky="ew", padx=2, pady=(7, 2))
-        top.grid_columnconfigure(0, weight=1)
-
-        lbl_name = ctk.CTkLabel(
-            top,
+        lbl_name = tk.Label(
+            card,
             text=item["name"],
-            font=ui_font(13, "bold"),
-            text_color=THEME["accent_gold"] if is_sel else C_WHITE,
+            font=ui_font(12, "bold"),
+            bg=row_bg,
+            fg=THEME["accent_gold"] if is_sel else C_WHITE,
             anchor="w",
+            bd=0,
         )
-        lbl_name.grid(row=0, column=0, sticky="w")
+        lbl_name.grid(row=0, column=1, sticky="ew", padx=2, pady=(6, 1))
 
-        meta = ctk.CTkFrame(card, fg_color="transparent")
-        meta.grid(row=1, column=1, sticky="w", padx=2, pady=(0, 7))
+        meta = tk.Frame(card, bg=row_bg, bd=0)
+        meta.grid(row=1, column=1, sticky="w", padx=2, pady=(0, 6))
 
-        ctk.CTkLabel(
+        cat_lbl = tk.Label(
             meta,
             text=f" {cat} ",
-            font=ui_font(10, "bold"),
-            fg_color=cat_color,
-            text_color=C_WHITE,
-            corner_radius=4,
-        ).pack(side="left", padx=(0, 6))
+            font=ui_font(9, "bold"),
+            bg=cat_color,
+            fg=C_WHITE,
+            padx=4,
+            pady=1,
+            bd=0,
+        )
+        cat_lbl.pack(side="left", padx=(0, 6))
 
-        ctk.CTkLabel(
+        stats_lbl = tk.Label(
             meta,
             text=f"⏱ {item['use_time']}  •  📦 {item['uses']}",
-            font=ui_font(11),
-            text_color=C_TEXT_MUTED,
-        ).pack(side="left")
+            font=ui_font(10),
+            bg=row_bg,
+            fg=C_TEXT_MUTED,
+            bd=0,
+        )
+        stats_lbl.pack(side="left")
 
-        for widget in (card, img_box, lbl_img, top, lbl_name, meta):
+        for widget in (card, img_box, lbl_img, lbl_name, meta, cat_lbl, stats_lbl):
             widget.bind("<Button-1>", lambda _e, item_id=iid: self._on_select_item(item_id))
 
         self._row_widgets[iid] = {
             "card": card,
             "img_box": img_box,
             "lbl_name": lbl_name,
+            "meta": meta,
+            "stats_lbl": stats_lbl,
         }
 
     def _apply_row_style(self, item_id: Optional[str], selected: bool):
         rw = self._row_widgets.get(item_id or "")
-        if not rw:
+        if not rw or not rw["card"].winfo_exists():
             return
+        row_bg = C_BG_PANEL if selected else C_BG_DEEP
         rw["card"].configure(
-            fg_color=C_BG_PANEL if selected else C_BG_DEEP,
-            border_width=2 if selected else 1,
-            border_color=THEME["accent_gold"] if selected else C_BORDER,
+            bg=row_bg,
+            highlightbackground=THEME["accent_gold"] if selected else C_BORDER,
+            highlightthickness=2 if selected else 1,
         )
         rw["img_box"].configure(
-            border_color=THEME["accent_gold"] if selected else C_BORDER,
+            highlightbackground=THEME["accent_gold"] if selected else C_BORDER,
         )
         rw["lbl_name"].configure(
-            text_color=THEME["accent_gold"] if selected else C_WHITE,
+            bg=row_bg,
+            fg=THEME["accent_gold"] if selected else C_WHITE,
         )
+        rw["meta"].configure(bg=row_bg)
+        rw["stats_lbl"].configure(bg=row_bg)
 
     def _on_select_item(self, item_id: str):
         if self.selected_item_id == item_id:

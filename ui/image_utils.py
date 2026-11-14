@@ -6,7 +6,7 @@ pre-escalados para que los cambios de mapa, boss o trader tomen 0 ms.
 import os
 import threading
 from typing import Optional, Callable, Tuple, Dict, Any
-from PIL import Image
+from PIL import Image, ImageTk
 import customtkinter as ctk
 from core.maps_data import normalize_map_key
 from core.image_cache import (
@@ -28,6 +28,8 @@ from core.image_cache import (
 
 # Caché en memoria RAM de instancias CTkImage (acceso en O(1) = 0 ms)
 _CTK_IMAGE_RAM_CACHE: Dict[str, ctk.CTkImage] = {}
+_TK_PHOTO_RAM_CACHE: Dict[str, Any] = {}
+_RAM_CACHE_LOCK = threading.Lock()
 _STORY_FULL_PIL_CACHE: Dict[Tuple[str, Tuple[int, int]], Image.Image] = {}
 _STORY_FULL_PIL_CACHE_MAX = 6
 
@@ -35,6 +37,7 @@ _STORY_FULL_PIL_CACHE_MAX = 6
 def clear_image_ram_cache() -> None:
     """Limpia el caché en memoria RAM de imágenes CTkImage."""
     _CTK_IMAGE_RAM_CACHE.clear()
+    _TK_PHOTO_RAM_CACHE.clear()
     _STORY_FULL_PIL_CACHE.clear()
 
 
@@ -387,8 +390,10 @@ def get_gear_ctk_icon(
         return None
     mw, mh = max_size
     ram_key = f"gear:{cache_key}:{mw}x{mh}"
-    if ram_key in _CTK_IMAGE_RAM_CACHE:
-        return _CTK_IMAGE_RAM_CACHE[ram_key]
+    with _RAM_CACHE_LOCK:
+        cached = _CTK_IMAGE_RAM_CACHE.get(ram_key)
+    if cached is not None:
+        return cached
 
     from core.gear_cache import get_gear_icon_path, ensure_gear_icon_async
 
@@ -402,7 +407,8 @@ def get_gear_ctk_icon(
                 th = max(1, int(round(ih * scale)))
                 resized = rgba.resize((tw, th), Image.Resampling.LANCZOS)
                 ctk_img = ctk.CTkImage(light_image=resized, dark_image=resized, size=(tw, th))
-                _CTK_IMAGE_RAM_CACHE[ram_key] = ctk_img
+                with _RAM_CACHE_LOCK:
+                    _CTK_IMAGE_RAM_CACHE[ram_key] = ctk_img
                 return ctk_img
         except Exception:
             return None
@@ -415,10 +421,66 @@ def get_gear_ctk_icon(
         def _after_dl(downloaded_path: str):
             built = _build_ctk_from_path(downloaded_path)
             if built:
-                on_ready(built)
+                try:
+                    on_ready(built)
+                except Exception:
+                    pass
 
         ensure_gear_icon_async(cache_key, icon_url, on_ready=_after_dl)
     return None
+
+
+def get_resized_ctk_image(
+    cache_key: str,
+    path: str,
+    max_size: Tuple[int, int],
+) -> Optional[ctk.CTkImage]:
+    """Carga, pre-escala en PIL y cachea en RAM un CTkImage para miniaturas locales."""
+    if not path or not os.path.exists(path):
+        return None
+    mw, mh = max_size
+    ram_key = f"thumb:{cache_key}:{mw}x{mh}"
+    with _RAM_CACHE_LOCK:
+        cached = _CTK_IMAGE_RAM_CACHE.get(ram_key)
+    if cached is not None:
+        return cached
+    try:
+        with Image.open(path) as img:
+            rgba = img.convert("RGBA")
+            rgba.thumbnail((mw, mh), Image.Resampling.LANCZOS)
+            tw, th = max(1, rgba.size[0]), max(1, rgba.size[1])
+            ctk_img = ctk.CTkImage(light_image=rgba.copy(), dark_image=rgba.copy(), size=(tw, th))
+            with _RAM_CACHE_LOCK:
+                _CTK_IMAGE_RAM_CACHE[ram_key] = ctk_img
+            return ctk_img
+    except Exception:
+        return None
+
+
+def get_resized_tk_image(
+    cache_key: str,
+    path: str,
+    max_size: Tuple[int, int],
+) -> Optional[ImageTk.PhotoImage]:
+    """Carga, pre-escala en PIL y cachea en RAM un PhotoImage nativo para widgets tk.Label sin CTkCanvas."""
+    if not path or not os.path.exists(path):
+        return None
+    mw, mh = max_size
+    ram_key = f"tk:{cache_key}:{mw}x{mh}"
+    with _RAM_CACHE_LOCK:
+        cached = _TK_PHOTO_RAM_CACHE.get(ram_key)
+    if cached is not None:
+        return cached
+    try:
+        with Image.open(path) as img:
+            rgba = img.convert("RGBA")
+            rgba.thumbnail((mw, mh), Image.Resampling.LANCZOS)
+            tk_img = ImageTk.PhotoImage(rgba)
+            with _RAM_CACHE_LOCK:
+                _TK_PHOTO_RAM_CACHE[ram_key] = tk_img
+            return tk_img
+    except Exception:
+        return None
 
 
 

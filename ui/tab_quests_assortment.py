@@ -98,8 +98,11 @@ class AssortmentViewMixin:
 
             def make_cb(label_widget):
                 def _cb(new_img):
-                    if label_widget.winfo_exists():
-                        self.after(0, lambda: label_widget.configure(image=new_img))
+                    if self.winfo_exists() and label_widget.winfo_exists():
+                        try:
+                            self.after(0, lambda: label_widget.winfo_exists() and label_widget.configure(image=new_img))
+                        except Exception:
+                            pass
                 return _cb
 
             ctk_img = get_trader_ctk_image(t_name, size=(60, 60), widget_callback=make_cb(img_lbl))

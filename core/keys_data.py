@@ -21,6 +21,13 @@ os.makedirs(KEYS_DIR, exist_ok=True)
 _KEY_ICONS_FETCHING = False
 _KEY_ICONS_FETCHED = False
 
+DIRECT_KEY_ICON_URLS: Dict[str, str] = {
+    "the_labyrinth_labrys_access_keycard": (
+        "https://static.wikia.nocookie.net/escapefromtarkov_gamepedia/images/1/17/"
+        "Labrys_access_keycard_icon.png/revision/latest?cb=20250328181401"
+    ),
+}
+
 
 KEY_MAPS_ORDER = [
     "Todos",
@@ -35,6 +42,8 @@ KEY_MAPS_ORDER = [
     "The Lab",
     "Ground Zero",
     "The Labyrinth",
+    "Icebreaker",
+    "Terminal",
 ]
 
 KEY_CATEGORIES_ORDER = [
@@ -565,13 +574,14 @@ KEYS_CATALOG: List[Dict[str, Any]] = [
         "name": "Object #11SR keycard",
         "short_name": "11SR Keycard",
         "map": "Interchange",
-        "category": "Extracto / Utilidad",
+        "category": "Keycard",
+        "secondary_categories": ["Extracto / Utilidad"],
         "uses": 15,
         "quests": [],
         "opens": "Extracción secreta Saferoom Exfil debajo de Burger Spot (requiere corriente).",
         "loot": "Extracción segura con loot de armas, oro y bitcoins.",
         "spawns": "Bolsillos de Killa, Scavs y Raiders.",
-        "verdict": "EXTRACTO CLAVE",
+        "verdict": "KEYCARD / EXTRACTO",
         "approx_value": "Alto (200k - 350k ₽)",
     },
     {
@@ -758,6 +768,94 @@ KEYS_CATALOG: List[Dict[str, Any]] = [
         "verdict": "EXTRACTO CLAVE",
         "approx_value": "Alto (Llave de extracción única)",
     },
+    {
+        "id": "the_labyrinth_labrys_access_keycard",
+        "name": "Labrys access keycard",
+        "short_name": "Labrys Access",
+        "map": "The Labyrinth",
+        "category": "Keycard",
+        "uses": 1,
+        "quests": ["Offensive Reconnaissance (Mechanic)"],
+        "opens": "Acceso/tránsito a The Labyrinth desde el sótano del ala oeste de Health Resort en Shoreline (requiere Knossos LLC facility key).",
+        "loot": "Acceso al complejo subterráneo de The Labyrinth y sus zonas restringidas.",
+        "spawns": "Trueque con Jaeger LL1, Cultist Circle (Labrys research notes) y recompensas de misión.",
+        "verdict": "KEYCARD / ACCESO",
+        "approx_value": "Alto (Acceso único a Labyrinth)",
+    },
+
+    # =========================================================
+    # ICEBREAKER (BOREAS) & TERMINAL
+    # =========================================================
+    {
+        "id": "icebreaker_boreas_crew_quarters_keycard",
+        "name": "Boreas crew quarters keycard",
+        "short_name": "Boreas Crew Quarters",
+        "map": "Icebreaker",
+        "category": "Keycard",
+        "uses": 10,
+        "quests": [],
+        "opens": "Camarotes de tripulación del buque nuclear Boreas en el mapa Icebreaker.",
+        "loot": "Suministros tácticos, electrónica y equipamiento de Black Division.",
+        "spawns": "Spawns fijos en el nivel 3 del rompehielos Boreas.",
+        "verdict": "KEYCARD",
+        "approx_value": "Variable (Historia Boreas)",
+    },
+    {
+        "id": "icebreaker_boreas_engine_room_keycard",
+        "name": "Boreas engine room keycard",
+        "short_name": "Boreas Engine Room",
+        "map": "Icebreaker",
+        "category": "Keycard",
+        "uses": 10,
+        "quests": [],
+        "opens": "Sala de máquinas (Deck -2: Engine Room) del buque Boreas en Icebreaker.",
+        "loot": "Zona principal de The Wedge y escuadrón Black Division, equipamiento militar y electrónica.",
+        "spawns": "Spawns dentro del buque Boreas y Black Division.",
+        "verdict": "KEYCARD",
+        "approx_value": "Variable (Historia Boreas)",
+    },
+    {
+        "id": "icebreaker_compartment_c1_keycard",
+        "name": "Compartment C-1 keycard",
+        "short_name": "Compartment C-1",
+        "map": "Icebreaker",
+        "category": "Keycard",
+        "uses": 10,
+        "quests": [],
+        "opens": "Compartimento C-1 en el interior del buque Boreas (Icebreaker).",
+        "loot": "Botín de compartimentos internos del rompehielos.",
+        "spawns": "Spawns a bordo del Boreas.",
+        "verdict": "KEYCARD",
+        "approx_value": "Variable (Historia Boreas)",
+    },
+    {
+        "id": "icebreaker_compartment_c3_keycard",
+        "name": "Compartment C-3 keycard",
+        "short_name": "Compartment C-3",
+        "map": "Icebreaker",
+        "category": "Keycard",
+        "uses": 10,
+        "quests": [],
+        "opens": "Compartimento C-3 en el interior del buque Boreas (Icebreaker).",
+        "loot": "Botín de compartimentos internos del rompehielos.",
+        "spawns": "Spawns a bordo del Boreas.",
+        "verdict": "KEYCARD",
+        "approx_value": "Variable (Historia Boreas)",
+    },
+    {
+        "id": "terminal_black_division_keycard",
+        "name": "Black Division keycard",
+        "short_name": "Black Division",
+        "map": "Terminal",
+        "category": "Keycard",
+        "uses": 10,
+        "quests": [],
+        "opens": "Puertas cerradas operadas por Black Division en la zona portuaria de Terminal.",
+        "loot": "Equipamiento táctico de Black Division y armas de alto tier.",
+        "spawns": "Spawn garantizado en caja de armas (6x2) en el edificio de la terminal portuaria.",
+        "verdict": "KEYCARD",
+        "approx_value": "Alto (Endgame Terminal)",
+    },
 
     # =========================================================
     # GROUND ZERO
@@ -840,8 +938,9 @@ def filter_keys(
     for item in KEYS_CATALOG:
         if map_filter and map_filter != "Todos" and item["map"] != map_filter:
             continue
-        if category_filter and category_filter != "Todas" and item["category"] != category_filter:
-            continue
+        if category_filter and category_filter != "Todas":
+            if item["category"] != category_filter and category_filter not in item.get("secondary_categories", ()):
+                continue
         if only_missing_quest:
             if not item.get("quests") or item["id"] in owned:
                 continue
@@ -909,74 +1008,82 @@ def fetch_key_icons_async(on_done: Optional[Callable[[], None]] = None) -> None:
         }
         wiki_api = "https://escapefromtarkov.fandom.com/api.php"
         try:
-            resp = requests.get(
-                wiki_api,
-                params={
-                    "action": "parse",
-                    "page": "Keys_&_Intel",
-                    "prop": "text",
-                    "format": "json",
-                },
-                headers=api_headers,
-                timeout=20,
-            )
-            if resp.status_code == 200:
-                html = ((resp.json().get("parse") or {}).get("text") or {}).get("*", "")
-                url_by_name: Dict[str, str] = {}
-                for row in re.findall(r"<tr[^>]*>(.*?)</tr>", html, re.S):
-                    m_img = re.search(
-                        r'(?:data-src|src)=["\'](https://static\.wikia\.nocookie\.net/[^"\']+)["\']',
-                        row,
+            url_by_name: Dict[str, str] = {}
+            needs_wiki = any(k["id"] not in DIRECT_KEY_ICON_URLS for k in missing)
+            if needs_wiki:
+                resp = requests.get(
+                    wiki_api,
+                    params={
+                        "action": "parse",
+                        "page": "Keys_&_Intel",
+                        "prop": "text",
+                        "format": "json",
+                    },
+                    headers=api_headers,
+                    timeout=20,
+                )
+                if resp.status_code == 200:
+                    html = ((resp.json().get("parse") or {}).get("text") or {}).get("*", "")
+                    for row in re.findall(r"<tr[^>]*>(.*?)</tr>", html, re.S):
+                        m_img = re.search(
+                            r'(?:data-src|src)=["\'](https://static\.wikia\.nocookie\.net/[^"\']+)["\']',
+                            row,
+                        )
+                        if not m_img:
+                            continue
+                        img_url = m_img.group(1).replace("&amp;", "&")
+                        if "data:image" in img_url:
+                            continue
+                        for m_title in re.findall(r'<a[^>]+title=["\']([^"\']+)["\']', row):
+                            t_clean = html_lib.unescape(m_title).strip().lower()
+                            if t_clean and t_clean not in url_by_name:
+                                url_by_name[t_clean] = img_url
+
+            wiki_aliases = {
+                "customs_zb013": "zb-1013 key",
+                "shoreline_tape_key": "key with tape",
+                "gz_terragroup_scientist": "terragroup",
+                "gz_tarbank_safe": "tarbank",
+                "labs_access_card": "labs access keycard",
+            }
+
+            def _download_one(k: Dict[str, Any]) -> bool:
+                img_url = DIRECT_KEY_ICON_URLS.get(k["id"])
+                k_name = k["name"].strip().lower()
+                k_short = k["short_name"].strip().lower()
+                alias = wiki_aliases.get(k["id"], "")
+                if not img_url and url_by_name:
+                    img_url = (
+                        url_by_name.get(k_name)
+                        or url_by_name.get(k_short)
+                        or (url_by_name.get(alias) if alias else None)
                     )
-                    if not m_img:
-                        continue
-                    img_url = m_img.group(1).replace("&amp;", "&")
-                    if "data:image" in img_url:
-                        continue
-                    for m_title in re.findall(r'<a[^>]+title=["\']([^"\']+)["\']', row):
-                        t_clean = html_lib.unescape(m_title).strip().lower()
-                        if t_clean and t_clean not in url_by_name:
-                            url_by_name[t_clean] = img_url
-
-                wiki_aliases = {
-                    "customs_zb013": "zb-1013 key",
-                    "shoreline_tape_key": "key with tape",
-                    "gz_terragroup_scientist": "terragroup",
-                    "gz_tarbank_safe": "tarbank",
-                    "labs_access_card": "labs access keycard",
-                }
-
-                def _download_one(k: Dict[str, Any]) -> bool:
-                    k_name = k["name"].strip().lower()
-                    k_short = k["short_name"].strip().lower()
-                    alias = wiki_aliases.get(k["id"], "")
-                    img_url = url_by_name.get(k_name) or url_by_name.get(k_short) or (url_by_name.get(alias) if alias else None)
-                    if not img_url:
-                        for wiki_title, w_url in url_by_name.items():
-                            if (
-                                k_name in wiki_title
-                                or wiki_title in k_name
-                                or (len(k_short) >= 4 and k_short in wiki_title)
-                                or (alias and alias in wiki_title)
-                            ):
-                                img_url = w_url
-                                break
-                    if not img_url:
-                        return False
-                    try:
-                        img_resp = requests.get(img_url, headers=img_headers, timeout=10)
-                        if img_resp.status_code == 200 and len(img_resp.content) > 100:
-                            dst = os.path.join(KEYS_DIR, f"{k['id']}.png")
-                            with Image.open(io.BytesIO(img_resp.content)) as im:
-                                im.convert("RGBA").save(dst, "PNG")
-                            return True
-                    except Exception:
-                        pass
+                if not img_url and url_by_name:
+                    for wiki_title, w_url in url_by_name.items():
+                        if (
+                            k_name in wiki_title
+                            or wiki_title in k_name
+                            or (len(k_short) >= 4 and k_short in wiki_title)
+                            or (alias and alias in wiki_title)
+                        ):
+                            img_url = w_url
+                            break
+                if not img_url:
                     return False
+                try:
+                    img_resp = requests.get(img_url, headers=img_headers, timeout=10)
+                    if img_resp.status_code == 200 and len(img_resp.content) > 100:
+                        dst = os.path.join(KEYS_DIR, f"{k['id']}.png")
+                        with Image.open(io.BytesIO(img_resp.content)) as im:
+                            im.convert("RGBA").save(dst, "PNG")
+                        return True
+                except Exception:
+                    pass
+                return False
 
-                with ThreadPoolExecutor(max_workers=8) as pool:
-                    results = list(pool.map(_download_one, missing))
-                downloaded_any = any(results)
+            with ThreadPoolExecutor(max_workers=8) as pool:
+                results = list(pool.map(_download_one, missing))
+            downloaded_any = any(results)
             _KEY_ICONS_FETCHED = True
         except Exception:
             pass

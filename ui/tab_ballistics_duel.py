@@ -17,6 +17,8 @@ class DuelMixin:
     # --- Comparador Versus (Side-by-Side Duel Pro - Calibre y Munición) ---
 
     def _build_duel_area(self):
+        if getattr(self, "duel_frame", None) is not None:
+            return
         self.duel_frame = ctk.CTkFrame(self, fg_color="transparent")
         self.duel_frame.grid_columnconfigure(0, weight=1)
         self.duel_frame.grid_rowconfigure(1, weight=1)
@@ -218,6 +220,7 @@ class DuelMixin:
             self._exit_armor_mode()
         self.is_duel_mode = not self.is_duel_mode
         if self.is_duel_mode:
+            self._build_duel_area()
             self.legend_frame.grid_remove()
             self.scroll_frame.grid_remove()
             self.pager.grid_remove()
@@ -226,13 +229,16 @@ class DuelMixin:
             self._init_duel_dropdowns()
             self._render_duel_content()
         else:
-            self.duel_frame.grid_remove()
+            if self.duel_frame is not None:
+                self.duel_frame.grid_remove()
             self.legend_frame.grid(row=1, column=0, padx=0, pady=(0, 6), sticky="ew")
             self.scroll_frame.grid(row=2, column=0, sticky="nsew")
             self.pager.grid(row=3, column=0, pady=(6, 0), sticky="ew")
             self.btn_duel.configure(text="⚔️ Comparador Versus", fg_color=C_SLATE_800, text_color=C_TEXT)
 
     def _init_duel_dropdowns(self):
+        if getattr(self, "duel_frame", None) is None:
+            return
         try:
             ds = get_datastore()
             all_ammo = ds.get_ammo(caliber="TODOS", sort_by="penetration_power", descending=True)

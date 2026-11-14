@@ -3,7 +3,8 @@ TarkovScope - Pestaña Táctica: Contenedores, Mochilas & Rigs Tácticos
 Permite explorar Pouches seguros (Kappa/Gamma/Theta), Cajas de alijo (Junkbox/THICC/SICC/Docs),
 Mochilas y Rigs tácticos (con filtro de slots 2x2 / 1x3, eficiencia y diagrama de grilla real).
 """
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
+import tkinter as tk
 import customtkinter as ctk
 
 from core.config import THEME
@@ -38,6 +39,9 @@ CAT_BADGE_COLORS = {
 }
 
 
+CONTAINER_PAGE_SIZE = 30
+
+
 class TabContainers(ctk.CTkFrame):
     """Pestaña de Contenedores, Mochilas & Rigs Tácticos con diagramas de grilla y SICC vs Docs."""
 
@@ -52,8 +56,10 @@ class TabContainers(ctk.CTkFrame):
         self.selected_id: Optional[str] = all_items[0]["id"] if all_items else None
         self._render_token: int = 0
         self._search_job: Optional[str] = None
+        self._page: int = 0
+        self._filtered_items: List[Dict[str, Any]] = []
         self._cat_btns: Dict[str, ctk.CTkButton] = {}
-        self._row_refs: Dict[str, ctk.CTkFrame] = {}
+        self._row_refs: Dict[str, Tuple[Any, ...]] = {}
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(2, weight=1)
@@ -196,16 +202,66 @@ class TabContainers(ctk.CTkFrame):
         split.grid_columnconfigure(1, weight=1)
         split.grid_rowconfigure(0, weight=1)
 
+        left_col = ctk.CTkFrame(split, fg_color="transparent")
+        left_col.grid(row=0, column=0, padx=(0, 8), sticky="nsew")
+        left_col.grid_rowconfigure(0, weight=1)
+        left_col.grid_columnconfigure(0, weight=1)
+
         self.list_scroll = ctk.CTkScrollableFrame(
-            split,
-            width=430,
+            left_col,
+            width=410,
             fg_color=THEME["bg_deep"],
             corner_radius=10,
             border_width=1,
             border_color=THEME["border"],
         )
-        self.list_scroll.grid(row=0, column=0, padx=(0, 8), sticky="nsew")
+        self.list_scroll.grid(row=0, column=0, sticky="nsew")
         self.list_scroll.grid_columnconfigure(0, weight=1)
+
+        pager = ctk.CTkFrame(
+            left_col,
+            fg_color=THEME["bg_card"],
+            corner_radius=8,
+            border_width=1,
+            border_color=THEME["border"],
+            height=36,
+        )
+        pager.grid(row=1, column=0, pady=(6, 0), sticky="ew")
+        pager.grid_columnconfigure(1, weight=1)
+
+        self.prev_btn = ctk.CTkButton(
+            pager,
+            text="◀ Ant.",
+            width=72,
+            height=26,
+            corner_radius=6,
+            fg_color=C_SLATE_700,
+            hover_color=THEME["border"],
+            font=ui_font(11, "bold"),
+            command=self._prev_page,
+        )
+        self.prev_btn.grid(row=0, column=0, padx=6, pady=5)
+
+        self.page_lbl = ctk.CTkLabel(
+            pager,
+            text="Pág. 1 / 1",
+            font=ui_font(11, "bold"),
+            text_color=C_TEXT_MUTED,
+        )
+        self.page_lbl.grid(row=0, column=1, padx=4, pady=5)
+
+        self.next_btn = ctk.CTkButton(
+            pager,
+            text="Sig. ▶",
+            width=72,
+            height=26,
+            corner_radius=6,
+            fg_color=C_SLATE_700,
+            hover_color=THEME["border"],
+            font=ui_font(11, "bold"),
+            command=self._next_page,
+        )
+        self.next_btn.grid(row=0, column=2, padx=6, pady=5)
 
         self.detail_scroll = ctk.CTkScrollableFrame(
             split,
@@ -246,6 +302,17 @@ class TabContainers(ctk.CTkFrame):
             self.after_cancel(self._search_job)
         self._search_job = self.after(140, self._schedule_render)
 
+    def _prev_page(self):
+        if self._page > 0:
+            self._page -= 1
+            self._render_page()
+
+    def _next_page(self):
+        total_pages = max(1, (len(self._filtered_items) + CONTAINER_PAGE_SIZE - 1) // CONTAINER_PAGE_SIZE)
+        if self._page + 1 < total_pages:
+            self._page += 1
+            self._render_page()
+
     def _schedule_render(self):
         self._search_job = None
         if not self.winfo_exists():
@@ -257,15 +324,18 @@ class TabContainers(ctk.CTkFrame):
             only_2x2_rigs=bool(self.only_2x2.get()),
             only_1x3_rigs=bool(self.only_1x3.get()),
         )
+        self._filtered_items = items
+        self._page = 0
         self.count_lbl.configure(text=f"{len(items)} ítems")
-        self._render_token += 1
-        token = self._render_token
-        self._row_refs.clear()
-
-        for child in self.list_scroll.winfo_children():
-            child.destroy()
 
         if not items:
+            self._render_token += 1
+            self._row_refs.clear()
+            for child in self.list_scroll.winfo_children():
+                child.destroy()
+            self.page_lbl.configure(text="Pág. 1 / 1")
+            self.prev_btn.configure(state="disabled")
+            self.next_btn.configure(state="disabled")
             ctk.CTkLabel(
                 self.list_scroll,
                 text="No se encontraron contenedores/mochilas/rigs con ese filtro.",
@@ -282,49 +352,111 @@ class TabContainers(ctk.CTkFrame):
             sel = next(it for it in items if it["id"] == self.selected_id)
             self._show_detail(sel)
 
-        def draw_batch(start: int = 0, batch_size: int = 16):
+        self._render_page()
+
+    def _render_page(self):
+        if not self.winfo_exists():
+            return
+        items = self._filtered_items
+        total = len(items)
+        total_pages = max(1, (total + CONTAINER_PAGE_SIZE - 1) // CONTAINER_PAGE_SIZE)
+        if self._page >= total_pages:
+            self._page = max(0, total_pages - 1)
+
+        start_idx = self._page * CONTAINER_PAGE_SIZE
+        end_idx = min(start_idx + CONTAINER_PAGE_SIZE, total)
+        page_slice = items[start_idx:end_idx]
+
+        self.page_lbl.configure(text=f"Pág. {self._page + 1} / {total_pages} ({start_idx + 1}-{end_idx})")
+        self.prev_btn.configure(state="normal" if self._page > 0 else "disabled")
+        self.next_btn.configure(state="normal" if (self._page + 1) < total_pages else "disabled")
+
+        self._render_token += 1
+        token = self._render_token
+        self._row_refs.clear()
+
+        for child in self.list_scroll.winfo_children():
+            child.destroy()
+
+        try:
+            self.list_scroll._parent_canvas.yview_moveto(0.0)
+        except Exception:
+            pass
+
+        def draw_batch(start: int = 0, batch_size: int = 15):
             if token != self._render_token or not self.winfo_exists():
                 return
-            end = min(start + batch_size, len(items))
+            end = min(start + batch_size, len(page_slice))
             for idx in range(start, end):
-                self._create_item_card(idx, items[idx])
-            if end < len(items):
+                self._create_item_card(idx, page_slice[idx])
+            if end < len(page_slice):
                 self.after(4, lambda: draw_batch(end, batch_size))
 
         draw_batch(0)
 
+    def _style_row(self, row_id: Optional[str], selected: bool):
+        if not row_id:
+            return
+        refs = self._row_refs.get(row_id)
+        if not refs:
+            return
+        card, icon_lbl, name_lbl, sub_lbl = refs
+        if not card.winfo_exists():
+            return
+        bg = THEME["bg_card_hover"] if selected else THEME["bg_card"]
+        card.configure(
+            bg=bg,
+            highlightbackground=THEME["accent_gold"] if selected else THEME["border_soft"],
+            highlightthickness=2 if selected else 1,
+        )
+        icon_lbl.configure(fg_color=bg)
+        name_lbl.configure(bg=bg)
+        sub_lbl.configure(bg=bg)
+
     def _create_item_card(self, row_idx: int, item: Dict[str, Any]):
         is_sel = item["id"] == self.selected_id
-        card = ctk.CTkFrame(
+        row_bg = THEME["bg_card_hover"] if is_sel else THEME["bg_card"]
+
+        card = tk.Frame(
             self.list_scroll,
-            fg_color=THEME["bg_card_hover"] if is_sel else THEME["bg_card"],
-            corner_radius=8,
-            border_width=2 if is_sel else 1,
-            border_color=THEME["accent_gold"] if is_sel else THEME["border_soft"],
+            bg=row_bg,
+            highlightbackground=THEME["accent_gold"] if is_sel else THEME["border_soft"],
+            highlightthickness=2 if is_sel else 1,
+            bd=0,
+            cursor="hand2",
         )
         card.grid(row=row_idx, column=0, padx=6, pady=3, sticky="ew")
         card.grid_columnconfigure(1, weight=1)
-        self._row_refs[item["id"]] = card
 
-        icon_lbl = ctk.CTkLabel(card, text="", width=48, height=40)
+        icon_lbl = ctk.CTkLabel(card, text="", width=48, height=40, fg_color=row_bg)
         icon_lbl.grid(row=0, column=0, rowspan=2, padx=(8, 8), pady=6)
+
+        def _on_icon_ready(im: ctk.CTkImage):
+            if self.winfo_exists():
+                try:
+                    self.after(0, lambda: icon_lbl.winfo_exists() and icon_lbl.configure(image=im))
+                except Exception:
+                    pass
+
         img = get_gear_ctk_icon(
             item.get("cache_key", ""),
             item.get("icon_url", ""),
             max_size=(46, 38),
-            on_ready=lambda im: self.after(0, lambda: icon_lbl.winfo_exists() and icon_lbl.configure(image=im)),
+            on_ready=_on_icon_ready,
         )
         if img is not None:
             icon_lbl.configure(image=img)
 
-        name_lbl = ctk.CTkLabel(
+        name_lbl = tk.Label(
             card,
             text=item["name"],
-            font=ui_font(12, "bold"),
-            text_color=C_WHITE,
+            font=ui_font(11, "bold"),
+            bg=row_bg,
+            fg=C_WHITE,
             anchor="w",
-            wraplength=255,
+            wraplength=240,
             justify="left",
+            bd=0,
         )
         name_lbl.grid(row=0, column=1, padx=(0, 6), pady=(6, 1), sticky="ew")
 
@@ -333,38 +465,40 @@ class TabContainers(ctk.CTkFrame):
         sub_txt = f"{item.get('category', '')}  •  Ext: {ext}  •  Efic: {eff}x"
         if item.get("has_2x2"):
             sub_txt += "  •  [2x2]"
-        sub_lbl = ctk.CTkLabel(
+        sub_lbl = tk.Label(
             card,
             text=sub_txt,
-            font=ui_font(11),
-            text_color=C_TEXT_DIM,
+            font=ui_font(10),
+            bg=row_bg,
+            fg=C_TEXT_DIM,
             anchor="w",
+            bd=0,
         )
         sub_lbl.grid(row=1, column=1, padx=(0, 6), pady=(0, 6), sticky="ew")
 
         b_bg, b_fg = CAT_BADGE_COLORS.get(item.get("category", ""), ("#334155", "#FFFFFF"))
-        badge = ctk.CTkLabel(
+        badge = tk.Label(
             card,
             text=f"{item.get('slots', 0)}s",
-            width=46,
-            height=24,
-            corner_radius=6,
-            fg_color=b_bg,
-            text_color=b_fg,
-            font=ui_font(11, "bold"),
+            width=5,
+            bg=b_bg,
+            fg=b_fg,
+            font=ui_font(10, "bold"),
+            padx=6,
+            pady=4,
+            bd=0,
         )
         badge.grid(row=0, column=2, rowspan=2, padx=(4, 8))
 
+        self._row_refs[item["id"]] = (card, icon_lbl, name_lbl, sub_lbl)
+
         def _on_click(_e=None, target=item):
-            self.selected_id = target["id"]
-            for kid, frame in self._row_refs.items():
-                if frame.winfo_exists():
-                    sel = kid == target["id"]
-                    frame.configure(
-                        fg_color=THEME["bg_card_hover"] if sel else THEME["bg_card"],
-                        border_width=2 if sel else 1,
-                        border_color=THEME["accent_gold"] if sel else THEME["border_soft"],
-                    )
+            prev_id = self.selected_id
+            new_id = target["id"]
+            if prev_id != new_id:
+                self.selected_id = new_id
+                self._style_row(prev_id, False)
+                self._style_row(new_id, True)
             self._show_detail(target)
 
         for w in (card, icon_lbl, name_lbl, sub_lbl, badge):
@@ -388,11 +522,18 @@ class TabContainers(ctk.CTkFrame):
 
         big_icon = ctk.CTkLabel(hdr, text="", width=92, height=84)
         big_icon.grid(row=0, column=0, rowspan=2, padx=12, pady=10)
+        def _on_big_ready(im: ctk.CTkImage):
+            if self.winfo_exists():
+                try:
+                    self.after(0, lambda: big_icon.winfo_exists() and big_icon.configure(image=im))
+                except Exception:
+                    pass
+
         img = get_gear_ctk_icon(
             item.get("cache_key", ""),
             item.get("icon_url", ""),
             max_size=(88, 80),
-            on_ready=lambda im: self.after(0, lambda: big_icon.winfo_exists() and big_icon.configure(image=im)),
+            on_ready=_on_big_ready,
         )
         if img is not None:
             big_icon.configure(image=img)
