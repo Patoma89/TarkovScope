@@ -31,9 +31,14 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 Source: "dist\TTC.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "ttc.ico"; DestDir: "{app}"; Flags: ignoreversion
+Source: "cache\avatars\*"; DestDir: "{app}\cache\avatars"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "cache\gear\*"; DestDir: "{app}\cache\gear"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "cache\keys\*"; DestDir: "{app}\cache\keys"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "cache\maps\*"; DestDir: "{app}\cache\maps"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "cache\medical\*"; DestDir: "{app}\cache\medical"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "cache\story_chapters\*"; DestDir: "{app}\cache\story_chapters"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "cache\thumbs\*"; DestDir: "{app}\cache\thumbs"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "cache\trader_stocks\*"; DestDir: "{app}\cache\trader_stocks"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "cache\weapons\*"; DestDir: "{app}\cache\weapons"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]

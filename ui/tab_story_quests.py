@@ -119,8 +119,8 @@ class TabStoryQuests(StoryGuideMixin, ctk.CTkFrame):
                 corner_radius=5,
                 border_width=1,
                 border_color=THEME["accent_gold"] if is_act else C_BORDER,
-                fg_color="#1E2536" if is_act else C_BG_PANEL_ALT,
-                hover_color="#273147",
+                fg_color=THEME["active_tab_bg"] if is_act else C_BG_PANEL_ALT,
+                hover_color=THEME["btn_hover"],
                 text_color=C_WHITE if is_act else C_TEXT_MUTED,
                 font=ui_font(12, "bold"),
                 command=lambda k=sv_key: self._set_subview(k)
@@ -233,7 +233,7 @@ class TabStoryQuests(StoryGuideMixin, ctk.CTkFrame):
         for k, btn in self.subview_buttons.items():
             is_act = (k == sv_key)
             btn.configure(
-                fg_color="#1E2536" if is_act else C_BG_PANEL_ALT,
+                fg_color=THEME["active_tab_bg"] if is_act else C_BG_PANEL_ALT,
                 border_color=THEME["accent_gold"] if is_act else C_BORDER,
                 text_color=C_WHITE if is_act else C_TEXT_MUTED
             )

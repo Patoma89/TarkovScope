@@ -6,7 +6,7 @@ import customtkinter as ctk
 from typing import Any, Dict, List
 from core.config import THEME
 from core.trader_assortment_data import get_trader_assortment, get_trader_requirements
-from ui.theme import C_BG_DARKEST, C_BG_DEEP, C_BG_PANEL, C_BLUE, C_BORDER, C_BORDER_SOFT, C_GREEN_LIGHT, C_RED_DARK, C_SLATE_700, C_SLATE_800, C_TEXT, C_TEXT_DIM, C_TEXT_MUTED, C_TEXT_SOFT, C_WHITE, ui_font
+from ui.theme import C_BG_DARKEST, C_BG_DEEP, C_BG_PANEL, C_BG_PANEL_ALT, C_BLUE, C_BORDER, C_BORDER_SOFT, C_GREEN_LIGHT, C_RED_DARK, C_SLATE_700, C_SLATE_800, C_TEXT, C_TEXT_DIM, C_TEXT_MUTED, C_TEXT_SOFT, C_WHITE, ui_font
 from ui.image_utils import get_trader_ctk_image, get_trader_stock_ctk_image, get_weapon_or_part_ctk_image
 
 
@@ -84,10 +84,10 @@ class AssortmentViewMixin:
 
             card = ctk.CTkFrame(
                 traders_row,
-                fg_color="#141820",
+                fg_color=C_BG_PANEL_ALT,
                 corner_radius=4,
                 border_width=2,
-                border_color=THEME["accent_gold"] if is_sel else "#2A303C",
+                border_color=THEME["accent_gold"] if is_sel else C_BORDER_SOFT,
                 cursor="hand2"
             )
             card.grid(row=0, column=idx, padx=3, pady=2, sticky="nsew")
@@ -124,7 +124,7 @@ class AssortmentViewMixin:
         self.selected_assort_trader = trader_name
         for t_key, card in self.assort_trader_cards.items():
             is_sel = (t_key == trader_name)
-            card.configure(border_color=THEME["accent_gold"] if is_sel else "#2A303C")
+            card.configure(border_color=THEME["accent_gold"] if is_sel else C_BORDER_SOFT)
             if t_key in self.assort_trader_name_lbls:
                 self.assort_trader_name_lbls[t_key].configure(
                     text_color=C_WHITE if is_sel else C_TEXT_DIM
@@ -425,7 +425,7 @@ class AssortmentViewMixin:
         card.grid_columnconfigure(0, weight=1)
 
         # Header
-        top_bar = ctk.CTkFrame(card, fg_color="#161B24", corner_radius=8)
+        top_bar = ctk.CTkFrame(card, fg_color=THEME["btn_surface"], corner_radius=8)
         top_bar.grid(row=0, column=0, padx=14, pady=(14, 10), sticky="ew")
         top_bar.grid_columnconfigure(0, weight=1)
 

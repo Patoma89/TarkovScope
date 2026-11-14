@@ -79,11 +79,11 @@ class TabBallistics(ArmorMixin, DuelMixin, ctk.CTkFrame):
             width=220,
             height=32,
             fg_color=C_BG_PANEL,
-            border_color="#2E3646",
-            button_color="#252F42",
+            border_color=THEME["border"],
+            button_color=THEME["active_tab_bg"],
             button_hover_color=C_SLATE_700,
             dropdown_fg_color=C_BG_PANEL,
-            dropdown_hover_color="#252F42",
+            dropdown_hover_color=THEME["active_tab_bg"],
             dropdown_text_color=C_TEXT,
             text_color=C_TEXT,
             font=ui_font(size=12, weight="bold"),
@@ -468,7 +468,7 @@ class TabBallistics(ArmorMixin, DuelMixin, ctk.CTkFrame):
         render_batch(0)
 
     def _create_aligned_ammo_row(self, grid_row: int, a: Dict[str, Any]):
-        row_bg = "#141820" if grid_row % 2 == 1 else "#0F1218"
+        row_bg = THEME["bg_panel_alt"] if grid_row % 2 == 1 else C_BG_DARKEST
         self.table_grid.grid_rowconfigure(grid_row, minsize=32)
 
         pen = float(a.get("penetration_power", 0))

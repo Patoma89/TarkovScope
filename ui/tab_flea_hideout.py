@@ -33,7 +33,7 @@ class FleaHideoutMixin:
         # Cabecera de tabla de Hideout
         hdr = ctk.CTkFrame(
             self.results_scroll,
-            fg_color="#141821",
+            fg_color=THEME["bg_panel_alt"],
             corner_radius=4,
             border_width=1,
             border_color=C_BORDER
@@ -70,8 +70,8 @@ class FleaHideoutMixin:
 
     def _create_hideout_row(self, grid_row: int, mod: Dict[str, Any]):
         is_done = bool(mod.get("is_completed"))
-        row_bg = "#0E1C16" if is_done else ("#0C0E13" if grid_row % 2 == 0 else "#10141B")
-        border_col = C_GREEN if is_done else "#232936"
+        row_bg = THEME["bg_row_done"] if is_done else (C_BG_DARKEST if grid_row % 2 == 0 else THEME["bg_panel_alt"])
+        border_col = C_GREEN if is_done else C_BORDER_SOFT
 
         row_frame = ctk.CTkFrame(
             self.results_scroll,
@@ -214,7 +214,7 @@ class FleaHideoutMixin:
 
         prog_hdr = ctk.CTkFrame(
             self.results_scroll,
-            fg_color="#141821",
+            fg_color=THEME["bg_panel_alt"],
             corner_radius=6,
             border_width=1,
             border_color=THEME["accent_gold"]
@@ -353,7 +353,7 @@ class FleaHideoutMixin:
 
         banner = ctk.CTkFrame(
             self.results_scroll,
-            fg_color="#141821",
+            fg_color=THEME["bg_panel_alt"],
             corner_radius=6,
             border_width=1,
             border_color=THEME["accent_gold"]

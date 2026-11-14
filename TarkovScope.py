@@ -156,8 +156,8 @@ class TarkovScopeApp(ctk.CTk):
             logo_frame,
             text="🔍 Buscar... (Ctrl+K)",
             font=ui_font(12, "bold"),
-            fg_color="#141824",
-            hover_color="#1F2637",
+            fg_color=THEME["btn_surface"],
+            hover_color=THEME["btn_hover"],
             border_width=1,
             border_color=THEME["accent_gold"],
             text_color=C_TEXT,
@@ -171,13 +171,13 @@ class TarkovScopeApp(ctk.CTk):
         # Botón de Modo Ventana Siempre Visible (Always on Top)
         self.btn_topmost = ctk.CTkButton(
             logo_frame,
-            text="📌 Fijar Arriba: Desactivado",
+            text="📌 Fijar Arriba: ACTIVO" if self._always_on_top else "📌 Fijar Arriba: Desactivado",
             font=ui_font(11, "bold"),
-            fg_color="transparent",
+            fg_color=THEME["active_tab_bg"] if self._always_on_top else "transparent",
             hover_color=C_BG_ROW,
             border_width=1,
-            border_color=C_BORDER,
-            text_color=C_TEXT_DIM,
+            border_color=THEME["accent_blue"] if self._always_on_top else C_BORDER,
+            text_color=C_WHITE if self._always_on_top else C_TEXT_DIM,
             height=28,
             corner_radius=6,
             anchor="w",
@@ -217,7 +217,7 @@ class TarkovScopeApp(ctk.CTk):
         self.skin_menu.grid(row=0, column=1, sticky="ew")
 
         # 2. Separador Superior
-        sep = ctk.CTkFrame(self.sidebar, height=1, fg_color="#232936")
+        sep = ctk.CTkFrame(self.sidebar, height=1, fg_color=THEME["border_soft"])
         sep.grid(row=1, column=0, padx=16, pady=(0, 12), sticky="ew")
 
         # 3. Contenedor de Botones de Navegación (Sin números, alineación limpia)
@@ -264,7 +264,7 @@ class TarkovScopeApp(ctk.CTk):
         footer_frame.grid(row=4, column=0, padx=16, pady=18, sticky="ew")
         footer_frame.grid_columnconfigure(0, weight=1)
 
-        sep_bot = ctk.CTkFrame(footer_frame, height=1, fg_color="#232936")
+        sep_bot = ctk.CTkFrame(footer_frame, height=1, fg_color=THEME["border_soft"])
         sep_bot.grid(row=0, column=0, pady=(0, 12), sticky="ew")
 
         self.db_status_lbl = ctk.CTkLabel(
@@ -286,10 +286,10 @@ class TarkovScopeApp(ctk.CTk):
             backup_row,
             text="📤 Exportar",
             font=ui_font(11, "bold"),
-            fg_color="#141824",
-            hover_color="#242E42",
+            fg_color=THEME["btn_surface"],
+            hover_color=THEME["btn_hover"],
             border_width=1,
-            border_color="#2E3748",
+            border_color=THEME["border_alt"],
             text_color=C_TEXT_MUTED,
             height=28,
             corner_radius=5,
@@ -301,10 +301,10 @@ class TarkovScopeApp(ctk.CTk):
             backup_row,
             text="📥 Importar",
             font=ui_font(11, "bold"),
-            fg_color="#141824",
-            hover_color="#242E42",
+            fg_color=THEME["btn_surface"],
+            hover_color=THEME["btn_hover"],
             border_width=1,
-            border_color="#2E3748",
+            border_color=THEME["border_alt"],
             text_color=C_TEXT_MUTED,
             height=28,
             corner_radius=5,
@@ -319,7 +319,7 @@ class TarkovScopeApp(ctk.CTk):
             fg_color=C_BG_ROW,
             hover_color=C_BORDER_ALT,
             border_width=1,
-            border_color="#384152",
+            border_color=THEME["border_alt"],
             text_color=C_TEXT,
             height=36,
             corner_radius=6,
@@ -331,10 +331,10 @@ class TarkovScopeApp(ctk.CTk):
             footer_frame,
             text=f"🔄 Buscar Actualización (v{APP_VERSION})",
             font=ui_font(11, "bold"),
-            fg_color="#141824",
-            hover_color="#242E42",
+            fg_color=THEME["btn_surface"],
+            hover_color=THEME["btn_hover"],
             border_width=1,
-            border_color="#2E3748",
+            border_color=THEME["border_alt"],
             text_color=C_TEXT_MUTED,
             height=28,
             corner_radius=5,
@@ -420,7 +420,7 @@ class TarkovScopeApp(ctk.CTk):
             )
         if selected_key in self.nav_buttons:
             self.nav_buttons[selected_key].configure(
-                fg_color="#1E2536",
+                fg_color=THEME["active_tab_bg"],
                 border_color=THEME["accent_gold"],
                 text_color=C_WHITE
             )

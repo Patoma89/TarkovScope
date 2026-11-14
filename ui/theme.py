@@ -110,12 +110,41 @@ def get_active_skin_id() -> str:
     return _ACTIVE_SKIN_ID
 
 
+_SYNCED_COLOR_NAMES = (
+    "C_TEXT", "C_TEXT_SOFT", "C_TEXT_MUTED", "C_TEXT_DIM", "C_BLUE",
+    "C_BORDER", "C_BORDER_SOFT", "C_BORDER_ALT",
+    "C_BG_DEEP", "C_BG_DARKEST", "C_BG_INSET",
+    "C_BG_PANEL", "C_BG_PANEL_ALT", "C_BG_PANEL_ALT2",
+    "C_SLATE_800", "C_SLATE_700", "C_BG_ROW", "C_BG_ROW_ALT",
+    "C_GREEN_LIGHT", "C_GREEN", "C_EMERALD", "C_RED", "C_RED_DARK", "C_AMBER",
+)
+
+
+def _sync_imported_color_constants() -> None:
+    """Propaga los valores actualizados de C_* a los módulos UI que los importaron por nombre."""
+    mod_globals = globals()
+    new_vals = {name: mod_globals[name] for name in _SYNCED_COLOR_NAMES if name in mod_globals}
+    for mod_name, mod in list(sys.modules.items()):
+        if mod is None or mod_name == __name__:
+            continue
+        if not (mod_name == "__main__" or mod_name == "TarkovScope" or mod_name.startswith("ui.")):
+            continue
+        mod_dict = getattr(mod, "__dict__", None)
+        if not isinstance(mod_dict, dict):
+            continue
+        for c_name, c_val in new_vals.items():
+            if c_name in mod_dict:
+                mod_dict[c_name] = c_val
+
+
 def apply_ui_skin(skin_id: str) -> str:
-    """Aplica una de las 3 skins tácticas a THEME, constantes C_* y tipografía activa."""
+    """Aplica una de las 3 skins tácticas a THEME, constantes C_* (en todos los módulos) y tipografía activa."""
     global _ACTIVE_SKIN_ID, FONT_FAMILY
-    global C_TEXT, C_TEXT_MUTED, C_TEXT_DIM, C_BLUE, C_BORDER, C_BORDER_SOFT, C_BORDER_ALT
+    global C_TEXT, C_TEXT_SOFT, C_TEXT_MUTED, C_TEXT_DIM, C_BLUE
+    global C_BORDER, C_BORDER_SOFT, C_BORDER_ALT
     global C_BG_DEEP, C_BG_DARKEST, C_BG_INSET, C_BG_PANEL, C_BG_PANEL_ALT, C_BG_PANEL_ALT2
-    global C_BG_ROW, C_BG_ROW_ALT, C_GREEN, C_GREEN_LIGHT
+    global C_SLATE_800, C_SLATE_700, C_BG_ROW, C_BG_ROW_ALT
+    global C_GREEN_LIGHT, C_GREEN, C_EMERALD, C_RED, C_RED_DARK, C_AMBER
 
     valid_id = apply_skin_to_theme(skin_id)
     _ACTIVE_SKIN_ID = valid_id
@@ -137,17 +166,31 @@ def apply_ui_skin(skin_id: str) -> str:
     })
 
     C_TEXT = THEME["text_main"]
+    C_TEXT_SOFT = THEME.get("text_soft", "#E2E8F0")
     C_TEXT_MUTED = THEME["text_muted"]
     C_TEXT_DIM = THEME.get("text_dim", "#94A3B8")
     C_BLUE = THEME["accent_blue"]
     C_BORDER = THEME["border"]
     C_BORDER_SOFT = THEME.get("border_soft", "#262C38")
+    C_BORDER_ALT = THEME.get("border_alt", "#384152")
     C_BG_DEEP = THEME.get("bg_deep", "#0D1016")
+    C_BG_DARKEST = THEME.get("bg_darkest", "#090B0E")
+    C_BG_INSET = THEME.get("bg_inset", "#0B0D11")
     C_BG_PANEL = THEME["bg_card"]
-    C_BG_PANEL_ALT2 = THEME["bg_card_hover"]
+    C_BG_PANEL_ALT = THEME.get("bg_panel_alt", "#131721")
+    C_BG_PANEL_ALT2 = THEME.get("bg_panel_alt2", "#161B26")
+    C_SLATE_800 = THEME.get("slate_800", "#1E293B")
+    C_SLATE_700 = THEME.get("slate_700", "#334155")
     C_BG_ROW = THEME.get("bg_row", "#1A202C")
     C_BG_ROW_ALT = THEME.get("bg_row_alt", "#222938")
+    C_GREEN_LIGHT = THEME.get("green_light", "#4ADE80")
     C_GREEN = THEME["accent_green"]
+    C_EMERALD = THEME.get("emerald", "#10B981")
+    C_RED = THEME["accent_red"]
+    C_RED_DARK = THEME.get("red_dark", "#DC2626")
+    C_AMBER = THEME["accent_yellow"]
+
+    _sync_imported_color_constants()
     return valid_id
 
 

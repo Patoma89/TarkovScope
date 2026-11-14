@@ -211,8 +211,8 @@ class AddMarkerDialog(ctk.CTkToplevel):
             text="Cancelar",
             width=105,
             height=34,
-            fg_color="#161B24",
-            hover_color="#262F3F",
+            fg_color=THEME["btn_surface"],
+            hover_color=THEME["btn_hover"],
             text_color=C_TEXT_MUTED,
             font=ui_font(size=12, weight="bold"),
             command=self.destroy

@@ -8,7 +8,7 @@ import sys
 import requests
 import logging
 from typing import Dict, Optional, Tuple, Any
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageOps
 from core.config import CACHE_DIR
 from core.maps_data import normalize_map_key, get_map_extractions_with_coords, get_map_tactical_pois
 
@@ -309,54 +309,74 @@ _BOSS_STICKER_PIL_CACHE: Dict[Tuple[str, int], Image.Image] = {}
 
 def get_boss_chibi_sticker(boss_id: str, target_size: int = 56) -> Optional[Image.Image]:
     """
-    Carga y escala la miniatura en estilo sticker chibi del Boss para dibujarla
-    en los puntos de spawn tácticos de los mapas con 0 ms de latencia.
+    Genera el marcador circular oficial del Boss para mapas tácticos a partir de su
+    retrato real en `cache/avatars/`, con recorte centrado en el rostro y anillo táctico.
     """
     clean_id = (boss_id or "boss").lower().strip()
     cache_key = (clean_id, target_size)
     if cache_key in _BOSS_STICKER_PIL_CACHE:
         return _BOSS_STICKER_PIL_CACHE[cache_key]
 
-    sticker_path = os.path.join(CACHE_DIR, "boss_stickers", f"{clean_id}.png")
-    if not os.path.exists(sticker_path):
-        alt_ids = {
-            "the_goons": "the_goons",
-            "goons": "the_goons",
-            "knight": "the_goons",
-            "priest": "cultists",
-            "cultist": "cultists",
-        }
-        mapped_id = alt_ids.get(clean_id, clean_id)
-        sticker_path = os.path.join(CACHE_DIR, "boss_stickers", f"{mapped_id}.png")
+    alt_ids = {
+        "the_goons": "the_goons",
+        "goons": "the_goons",
+        "knight": "the_goons",
+        "big_pipe": "the_goons",
+        "birdeye": "the_goons",
+        "priest": "cultists",
+        "cultist": "cultists",
+    }
+    lookup_ids = [clean_id]
+    mapped_id = alt_ids.get(clean_id)
+    if mapped_id and mapped_id not in lookup_ids:
+        lookup_ids.append(mapped_id)
 
-    if not os.path.exists(sticker_path) and hasattr(sys, '_MEIPASS'):
-        bundle_stk = os.path.join(sys._MEIPASS, "cache", "boss_stickers", f"{clean_id}.png")
-        if os.path.exists(bundle_stk):
-            sticker_path = bundle_stk
+    avatar_path = ""
+    for cand in lookup_ids:
+        cand_path = get_cached_avatar_path(cand)
+        if os.path.exists(cand_path):
+            avatar_path = cand_path
+            break
 
-    if os.path.exists(sticker_path):
-        try:
-            stk = Image.open(sticker_path).convert("RGBA")
-            stk.thumbnail((target_size, target_size), Image.Resampling.LANCZOS)
-            _BOSS_STICKER_PIL_CACHE[cache_key] = stk
-            return stk
-        except Exception as e:
-            logger.warning("Error cargando boss sticker para %s: %s", clean_id, e)
+    if not avatar_path:
+        for cand in lookup_ids:
+            url = BOSS_IMAGE_URLS.get(cand)
+            if url:
+                save_to = get_cached_avatar_path(cand)
+                if download_and_save_image(url, save_to):
+                    avatar_path = save_to
+                    break
 
-    avatar_path = get_cached_avatar_path(clean_id)
-    if os.path.exists(avatar_path):
+    if avatar_path and os.path.exists(avatar_path):
         try:
             av = Image.open(avatar_path).convert("RGBA")
-            av.thumbnail((target_size - 8, target_size - 8), Image.Resampling.LANCZOS)
-            aw, ah = av.size
-            bg = Image.new("RGBA", (aw + 8, ah + 8), (0, 0, 0, 0))
-            d = ImageDraw.Draw(bg)
-            d.ellipse([0, 0, aw + 7, ah + 7], fill=(255, 255, 255, 255), outline=(15, 23, 42, 255), width=2)
-            bg.paste(av, (4, 4), av)
-            _BOSS_STICKER_PIL_CACHE[cache_key] = bg
-            return bg
-        except Exception:
-            pass
+            pad = max(3, target_size // 12)
+            inner = max(16, target_size - (pad * 2))
+            portrait = ImageOps.fit(
+                av,
+                (inner, inner),
+                Image.Resampling.LANCZOS,
+                centering=(0.5, 0.22),
+            )
+
+            # Máscara circular suavizada (4x supersampling) para evitar bordes dentados
+            mask_hr = Image.new("L", (inner * 4, inner * 4), 0)
+            ImageDraw.Draw(mask_hr).ellipse([0, 0, inner * 4 - 1, inner * 4 - 1], fill=255)
+            mask = mask_hr.resize((inner, inner), Image.Resampling.LANCZOS)
+
+            badge = Image.new("RGBA", (target_size, target_size), (0, 0, 0, 0))
+            draw = ImageDraw.Draw(badge)
+            draw.ellipse(
+                [0, 0, target_size - 1, target_size - 1],
+                fill=(15, 23, 42, 245),
+                outline=(229, 115, 47, 255),
+                width=max(2, pad - 1),
+            )
+            badge.paste(portrait, (pad, pad), mask)
+            _BOSS_STICKER_PIL_CACHE[cache_key] = badge
+            return badge
+        except Exception as e:
+            logger.warning("Error generando retrato circular de boss %s: %s", clean_id, e)
 
     return None
 

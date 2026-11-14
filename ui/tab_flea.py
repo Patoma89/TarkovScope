@@ -213,7 +213,7 @@ class TabFleaAndItems(FleaBartersMixin, FleaHideoutMixin, ctk.CTkFrame):
             width=95,
             height=34,
             corner_radius=5,
-            fg_color="#161B24",
+            fg_color=THEME["btn_surface"],
             hover_color=C_RED_DARK,
             border_width=1,
             border_color=C_BORDER,

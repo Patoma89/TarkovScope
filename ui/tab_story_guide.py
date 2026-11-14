@@ -57,10 +57,10 @@ class StoryGuideMixin:
                     text=b_lbl,
                     height=28,
                     corner_radius=5,
-                    fg_color="#252F42" if is_b else "#161B26",
-                    hover_color="#313E57",
+                    fg_color=THEME["active_tab_bg"] if is_b else THEME["btn_surface"],
+                    hover_color=THEME["btn_hover"],
                     border_width=1,
-                    border_color=THEME["accent_gold"] if is_b else "#2D3648",
+                    border_color=THEME["accent_gold"] if is_b else THEME["border"],
                     text_color=C_WHITE if is_b else C_TEXT_MUTED,
                     font=ui_font(11, "bold"),
                     command=lambda bk=b_key: self._select_ticket_branch(bk)

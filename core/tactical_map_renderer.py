@@ -283,7 +283,7 @@ def render_map_with_user_markers(
 
                     # Etiqueta de Boss con % PvE
                     short_b_name = b.get("name", "Boss").split(" (")[0]
-                    b_lbl = f"⚠ {short_b_name} ({m_pve})" if m_pve else f"⚠ {short_b_name}"
+                    b_lbl = f"BOSS: {short_b_name} ({m_pve})" if m_pve else f"BOSS: {short_b_name}"
                     bb = draw.textbbox((0, 0), b_lbl, font=font_poi)
                     bw, bh = bb[2] - bb[0], bb[3] - bb[1]
                     px = min(max(4, bx - bw // 2), w - bw - 12)
@@ -317,10 +317,10 @@ def render_map_with_user_markers(
                 # Colores según facción
                 if is_scav:
                     outline_col = (245, 158, 11, 255)
-                    prefix = "🟠 SCAV: "
+                    prefix = "SCAV: "
                 else:
                     outline_col = (16, 185, 129, 255)
-                    prefix = "🟢 EXT: "
+                    prefix = "EXT: "
 
                 # Punto en coordenadas exactas
                 draw.ellipse([ex_x - 3, ex_y - 3, ex_x + 3, ex_y + 3], fill=outline_col, outline=(255, 255, 255, 220), width=1)
@@ -361,10 +361,10 @@ def render_map_with_user_markers(
 
                 if p_type == "key":
                     p_col = (168, 85, 247, 255)  # Violeta táctico para Llaves / Marked
-                    p_prefix = "🔑 "
+                    p_prefix = "KEY: "
                 else:
                     p_col = (6, 182, 212, 255)   # Cian brillante para Cajas Fuertes / Botín Top
-                    p_prefix = "💎 "
+                    p_prefix = "LOOT: "
 
                 draw.ellipse(
                     [px_c - 5, py_c - 5, px_c + 5, py_c + 5],

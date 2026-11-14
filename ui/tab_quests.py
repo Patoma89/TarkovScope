@@ -20,7 +20,7 @@ from core.datastore import get_datastore
 from ui.theme import ui_font
 from ui.image_utils import get_trader_ctk_image
 from ui.map_viewer_modal import open_map_viewer_modal
-from ui.theme import C_AMBER, C_BG_DARKEST, C_BG_DEEP, C_BG_PANEL, C_BG_ROW, C_BG_ROW_ALT, C_BORDER, C_BORDER_ALT, C_BORDER_SOFT, C_GREEN, C_GREEN_LIGHT, C_SLATE_800, C_TEXT, C_TEXT_DIM, C_TEXT_MUTED, C_TEXT_SOFT, C_WHITE
+from ui.theme import C_AMBER, C_BG_DARKEST, C_BG_DEEP, C_BG_PANEL, C_BG_PANEL_ALT, C_BG_ROW, C_BG_ROW_ALT, C_BLUE, C_BORDER, C_BORDER_ALT, C_BORDER_SOFT, C_EMERALD, C_GREEN, C_GREEN_LIGHT, C_SLATE_800, C_TEXT, C_TEXT_DIM, C_TEXT_MUTED, C_TEXT_SOFT, C_WHITE
 from ui.quest_guide_modal import QuestGuideModal, extract_required_keys
 from ui.tab_quests_assortment import AssortmentViewMixin
 
@@ -69,10 +69,10 @@ MAP_FILTER_OPTIONS = [
     "The Lab",
 ]
 
-COL_CHECK_W = 50
-COL_QUEST_W = 245
-COL_OBJ_W = 365
-COL_REW_W = 245
+COL_CHECK_W = 52
+COL_QUEST_W = 280
+COL_OBJ_W = 460
+COL_REW_W = 300
 
 
 class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
@@ -95,6 +95,11 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
         self.current_page = 0
         self._render_token = 0
         self._debounce_job: Optional[str] = None
+        self._resize_job: Optional[str] = None
+        self._col_widths = (COL_CHECK_W, COL_QUEST_W, COL_OBJ_W, COL_REW_W)
+        self._row_frames: List[tk.Frame] = []
+        self._wrap_targets: List[tuple] = []
+        self._table_hdr_inner: Optional[ctk.CTkFrame] = None
 
         # Estado Vista 2: Assortment & Barters
         self.selected_assort_trader = "Prapor"
@@ -158,8 +163,8 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
             corner_radius=6,
             border_width=1,
             border_color=THEME["accent_gold"],
-            fg_color="#1E2536",
-            hover_color="#273147",
+            fg_color=THEME["active_tab_bg"],
+            hover_color=THEME["btn_hover"],
             text_color=C_WHITE,
             command=lambda: self._switch_subtab("quests")
         )
@@ -174,7 +179,7 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
             border_width=1,
             border_color=C_BORDER,
             fg_color="transparent",
-            hover_color="#1F2637",
+            hover_color=THEME["btn_hover"],
             text_color=C_TEXT_DIM,
             command=lambda: self._switch_subtab("assortment")
         )
@@ -184,7 +189,7 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
             switcher_bar,
             text="Escape from Tarkov Wiki Database",
             font=ui_font(11, "bold"),
-            text_color="#64748B"
+            text_color=C_TEXT_DIM
         )
         self.subtab_info_lbl.grid(row=0, column=2, padx=14, pady=5, sticky="e")
 
@@ -193,7 +198,7 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
         if subtab_key == "quests":
             self.quests_view.tkraise()
             self.btn_subtab_quests.configure(
-                fg_color="#1E2536",
+                fg_color=THEME["active_tab_bg"],
                 border_color=THEME["accent_gold"],
                 text_color=C_WHITE
             )
@@ -212,7 +217,7 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
                 self._setup_assortment_view()
             self.assortment_view.tkraise()
             self.btn_subtab_assort.configure(
-                fg_color="#1E2536",
+                fg_color=THEME["active_tab_bg"],
                 border_color=THEME["accent_gold"],
                 text_color=C_WHITE
             )
@@ -263,10 +268,10 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
             height=28,
             width=150,
             corner_radius=5,
-            fg_color="#252F42" if self.selected_trader == "TODOS" else C_BG_ROW,
+            fg_color=THEME["active_tab_bg"] if self.selected_trader == "TODOS" else C_BG_ROW,
             hover_color=C_BORDER_ALT,
             border_width=1,
-            border_color=C_WHITE if self.selected_trader == "TODOS" else "#384152",
+            border_color=C_WHITE if self.selected_trader == "TODOS" else C_BORDER_ALT,
             text_color=C_TEXT,
             font=ui_font(12, "bold"),
             command=lambda: self._select_trader("TODOS")
@@ -299,10 +304,10 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
 
             card = ctk.CTkFrame(
                 traders_row,
-                fg_color="#141820",
+                fg_color=C_BG_PANEL_ALT,
                 corner_radius=4,
                 border_width=2,
-                border_color=C_WHITE if is_sel else "#2A303C",
+                border_color=C_WHITE if is_sel else C_BORDER_SOFT,
                 cursor="hand2"
             )
             card.grid(row=0, column=idx, padx=3, pady=2, sticky="nsew")
@@ -375,7 +380,7 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
                 border_width=1,
                 border_color=THEME["accent_gold"] if is_act else C_BORDER,
                 fg_color=C_BG_ROW_ALT if is_act else C_BG_PANEL,
-                hover_color="#2A3244",
+                hover_color=THEME["btn_hover"],
                 text_color=C_WHITE if is_act else C_TEXT_MUTED,
                 font=ui_font(12, "bold"),
                 command=lambda mk=m_key: self._set_progression_mode(mk)
@@ -426,42 +431,91 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
         self.search_entry.grid(row=0, column=1, padx=0, sticky="ew")
         self.search_entry.bind("<KeyRelease>", self._on_search_key_debounced)
 
+    @staticmethod
+    def _compute_col_widths(canvas_width: int) -> tuple:
+        avail = max(780, canvas_width)
+        w0 = COL_CHECK_W
+        rem_total = max(720, avail - w0)
+        w1 = max(255, min(320, int(rem_total * 0.27)))
+        rem = max(460, rem_total - w1)
+        w2 = int(rem * 0.60)
+        w3 = rem - w2
+        return (w0, w1, w2, w3)
+
+    @staticmethod
+    def _apply_col_widths(frame, widths: tuple) -> None:
+        for col_idx, w in enumerate(widths):
+            frame.grid_columnconfigure(col_idx, minsize=w, weight=0)
+
+    def _on_list_canvas_configure(self, event=None) -> None:
+        canvas_w = getattr(event, "width", 0) or 0
+        if canvas_w <= 100:
+            return
+        new_widths = self._compute_col_widths(canvas_w)
+        if new_widths == self._col_widths:
+            return
+        self._col_widths = new_widths
+        if self._resize_job is not None:
+            try:
+                self.after_cancel(self._resize_job)
+            except Exception:
+                pass
+        self._resize_job = self.after(45, self._sync_table_column_widths)
+
+    def _sync_table_column_widths(self) -> None:
+        self._resize_job = None
+        if not self.winfo_exists():
+            return
+        widths = self._col_widths
+        if self._table_hdr_inner is not None and self._table_hdr_inner.winfo_exists():
+            self._apply_col_widths(self._table_hdr_inner, widths)
+        for rf in list(self._row_frames):
+            if rf.winfo_exists():
+                self._apply_col_widths(rf, widths)
+        w1, w2, w3 = widths[1], widths[2], widths[3]
+        for lbl, col_idx in list(self._wrap_targets):
+            if lbl.winfo_exists():
+                if col_idx == 1:
+                    lbl.configure(wraplength=max(180, w1 - 24))
+                elif col_idx == 2:
+                    lbl.configure(wraplength=max(240, w2 - 24))
+                else:
+                    lbl.configure(wraplength=max(180, w3 - 24))
+
     def _build_wiki_table_header(self):
         hdr = ctk.CTkFrame(
             self.quests_view,
-            fg_color="#141821",
+            fg_color=C_BG_PANEL_ALT,
             corner_radius=6,
             border_width=1,
             border_color=C_BORDER,
             height=36
         )
         hdr.grid(row=2, column=0, padx=0, pady=(0, 2), sticky="ew")
-        hdr.grid_columnconfigure(0, minsize=COL_CHECK_W, weight=0)
-        hdr.grid_columnconfigure(1, minsize=COL_QUEST_W, weight=0)
-        hdr.grid_columnconfigure(2, minsize=COL_OBJ_W, weight=3)
-        hdr.grid_columnconfigure(3, minsize=COL_REW_W, weight=2)
+        hdr.grid_columnconfigure(0, weight=1)
+
+        # Compensar offset izquierdo (~7px) y barra de scroll derecha (~23px) del CTkScrollableFrame
+        hdr_inner = ctk.CTkFrame(hdr, fg_color="transparent")
+        hdr_inner.grid(row=0, column=0, padx=(7, 23), pady=2, sticky="ew")
+        self._table_hdr_inner = hdr_inner
+        self._apply_col_widths(hdr_inner, self._col_widths)
 
         cols = [
-            (0, "✓", COL_CHECK_W, "center"),
-            (1, "Misión (Quest)  ▴▾", COL_QUEST_W, "center"),
-            (2, "Objetivos Tácticos  ▴▾", COL_OBJ_W, "center"),
-            (3, "Recompensas & Guía  ▴▾", COL_REW_W, "center"),
+            (0, "✓", "center"),
+            (1, "Misión (Quest)  ▴▾", "w"),
+            (2, "Objetivos Tácticos  ▴▾", "w"),
+            (3, "Recompensas & Guía  ▴▾", "w"),
         ]
-        for col_idx, text, min_w, anchor in cols:
-            cell = ctk.CTkFrame(
-                hdr,
-                fg_color="transparent",
-                corner_radius=0
-            )
-            cell.grid(row=0, column=col_idx, padx=2, pady=4, sticky="nsew")
-            ctk.CTkLabel(
-                cell,
+        for col_idx, text, anchor in cols:
+            pad_x = 4 if col_idx == 0 else 10
+            lbl = ctk.CTkLabel(
+                hdr_inner,
                 text=text,
-                width=min_w - 10,
                 font=ui_font(13, "bold"),
                 text_color=C_WHITE,
                 anchor=anchor
-            ).pack(fill="both", expand=True, padx=4, pady=2)
+            )
+            lbl.grid(row=0, column=col_idx, padx=pad_x, pady=4, sticky="ew")
 
     def _build_quest_list_area(self):
         self.scroll_frame = ctk.CTkScrollableFrame(
@@ -473,6 +527,8 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
         )
         self.scroll_frame.grid(row=3, column=0, sticky="nsew")
         self.scroll_frame.grid_columnconfigure(0, weight=1)
+        if hasattr(self.scroll_frame, "_parent_canvas"):
+            self.scroll_frame._parent_canvas.bind("<Configure>", self._on_list_canvas_configure, add="+")
 
     def _build_pagination_bar(self):
         pager = ctk.CTkFrame(
@@ -491,8 +547,8 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
             text="◀ Anterior",
             width=110,
             height=28,
-            fg_color="#161B24",
-            hover_color="#262F3F",
+            fg_color=THEME["btn_surface"],
+            hover_color=THEME["btn_hover"],
             text_color=C_TEXT,
             font=ui_font(12, "bold"),
             command=self._prev_page
@@ -512,8 +568,8 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
             text="Siguiente ▶",
             width=110,
             height=28,
-            fg_color="#161B24",
-            hover_color="#262F3F",
+            fg_color=THEME["btn_surface"],
+            hover_color=THEME["btn_hover"],
             text_color=C_TEXT,
             font=ui_font(12, "bold"),
             command=self._next_page
@@ -535,14 +591,14 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
         self.selected_trader = trader_name
         for t_key, card in self.trader_cards.items():
             is_sel = trader_name == "TODOS" or t_key == trader_name
-            card.configure(border_color=C_WHITE if is_sel else "#2A303C")
+            card.configure(border_color=C_WHITE if is_sel else C_BORDER_SOFT)
             if t_key in self.trader_name_labels:
                 self.trader_name_labels[t_key].configure(
                     text_color=C_WHITE if is_sel else C_TEXT_MUTED
                 )
         self.all_traders_btn.configure(
-            border_color=C_WHITE if trader_name == "TODOS" else "#384152",
-            fg_color="#252F42" if trader_name == "TODOS" else C_BG_ROW
+            border_color=C_WHITE if trader_name == "TODOS" else C_BORDER_ALT,
+            fg_color=THEME["active_tab_bg"] if trader_name == "TODOS" else C_BG_ROW
         )
         self.trader_note_lbl.configure(text=TRADER_NOTES.get(trader_name, ""))
         self._reset_and_apply_filters()
@@ -611,6 +667,15 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
 
         for w in self.scroll_frame.winfo_children():
             w.destroy()
+        self._row_frames.clear()
+        self._wrap_targets.clear()
+
+        if hasattr(self.scroll_frame, "_parent_canvas"):
+            cw = self.scroll_frame._parent_canvas.winfo_width()
+            if cw > 100:
+                self._col_widths = self._compute_col_widths(cw)
+                if self._table_hdr_inner is not None and self._table_hdr_inner.winfo_exists():
+                    self._apply_col_widths(self._table_hdr_inner, self._col_widths)
 
         total_items = len(self.filtered_quests)
         total_pages = max(1, (total_items + self.PAGE_SIZE - 1) // self.PAGE_SIZE)
@@ -655,8 +720,9 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
 
     def _create_wiki_quest_row(self, row_idx: int, q: Dict[str, Any]):
         is_done = bool(q.get("is_completed"))
-        row_bg = "#0E1C16" if is_done else ("#0C0E13" if row_idx % 2 == 0 else "#10141B")
-        border_col = C_GREEN if is_done else "#232936"
+        row_bg = THEME["bg_row_done"] if is_done else (C_BG_DARKEST if row_idx % 2 == 0 else C_BG_PANEL_ALT)
+        border_col = C_GREEN if is_done else C_BORDER_SOFT
+        w0, w1, w2, w3 = self._col_widths
 
         row_frame = tk.Frame(
             self.scroll_frame,
@@ -666,10 +732,8 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
             bd=0,
         )
         row_frame.grid(row=row_idx, column=0, padx=0, pady=0, sticky="ew")
-        row_frame.grid_columnconfigure(0, minsize=COL_CHECK_W, weight=0)
-        row_frame.grid_columnconfigure(1, minsize=COL_QUEST_W, weight=0)
-        row_frame.grid_columnconfigure(2, minsize=COL_OBJ_W, weight=3)
-        row_frame.grid_columnconfigure(3, minsize=COL_REW_W, weight=2)
+        self._apply_col_widths(row_frame, self._col_widths)
+        self._row_frames.append(row_frame)
 
         # Columna 0: Checkbox centrado
         chk_cell = tk.Frame(row_frame, bg=row_bg, bd=0)
@@ -687,15 +751,15 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
             border_width=2,
             border_color=C_TEXT_DIM,
             fg_color=THEME["accent_green"],
-            hover_color="#16A34A",
+            hover_color=C_EMERALD,
             bg_color=row_bg,
             command=lambda q_obj=q: self._on_toggle_quest(q_obj)
         )
         chk.pack(expand=True, padx=(12, 4), pady=8)
 
-        # Columna 1: Quest Title + Badges + Cadena Correlativa
+        # Columna 1: Quest Title + Badges (en filas acotadas para no estirar la columna) + Cadena
         quest_cell = tk.Frame(row_frame, bg=row_bg, bd=0)
-        quest_cell.grid(row=0, column=1, padx=8, pady=10, sticky="nsew")
+        quest_cell.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
 
         title_lbl = tk.Label(
             quest_cell,
@@ -705,10 +769,11 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
             fg=C_GREEN_LIGHT if is_done else THEME["accent_gold"],
             anchor="w",
             justify="left",
-            wraplength=COL_QUEST_W - 24,
+            wraplength=max(180, w1 - 24),
             bd=0,
         )
         title_lbl.pack(fill="x", anchor="w")
+        self._wrap_targets.append((title_lbl, 1))
 
         badges_row = tk.Frame(quest_cell, bg=row_bg, bd=0)
         badges_row.pack(fill="x", anchor="w", pady=(4, 2))
@@ -742,7 +807,7 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
                 badges_row,
                 text=" LIGHTKEEPER ",
                 font=ui_font(9, "bold"),
-                bg="#06B6D4",
+                bg=C_BLUE,
                 fg=C_BG_DARKEST,
                 padx=4,
                 pady=1,
@@ -750,52 +815,63 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
             ).pack(side="left", padx=(0, 4))
 
         primary_map = q.get("primary_map", "Cualquier Mapa")
-        if primary_map and primary_map != "Cualquier Mapa":
-            ctk.CTkButton(
-                badges_row,
-                text=f"📍 {primary_map}",
-                height=20,
-                width=70,
-                corner_radius=3,
-                fg_color="#1E3A8A",
-                hover_color="#2563EB",
-                text_color=C_WHITE,
-                bg_color=row_bg,
-                font=ui_font(10, "bold"),
-                command=lambda mp=primary_map: open_map_viewer_modal(self, mp)
-            ).pack(side="left", padx=(0, 4))
-
         req_keys = extract_required_keys(q)
-        for r_key in req_keys:
-            tk.Label(
-                badges_row,
-                text=f" 🔑 Llave: {r_key} ",
-                font=ui_font(9, "bold"),
-                bg="#854D0E",
-                fg="#FEF08A",
-                padx=4,
-                pady=1,
-                bd=0,
-            ).pack(side="left", padx=(0, 4))
+        if (primary_map and primary_map != "Cualquier Mapa") or req_keys:
+            meta_row = tk.Frame(quest_cell, bg=row_bg, bd=0)
+            meta_row.pack(fill="x", anchor="w", pady=(2, 2))
+            if primary_map and primary_map != "Cualquier Mapa":
+                ctk.CTkButton(
+                    meta_row,
+                    text=f"📍 {primary_map}",
+                    height=20,
+                    width=70,
+                    corner_radius=3,
+                    fg_color="#1E3A8A",
+                    hover_color="#2563EB",
+                    text_color=C_WHITE,
+                    bg_color=row_bg,
+                    font=ui_font(10, "bold"),
+                    command=lambda mp=primary_map: open_map_viewer_modal(self, mp)
+                ).pack(side="left", padx=(0, 4))
+
+            if req_keys:
+                keys_txt = "  •  ".join(f"🔑 {rk}" for rk in req_keys)
+                key_lbl = tk.Label(
+                    quest_cell,
+                    text=keys_txt,
+                    font=ui_font(10, "bold"),
+                    bg="#422006",
+                    fg="#FEF08A",
+                    anchor="w",
+                    justify="left",
+                    wraplength=max(180, w1 - 24),
+                    padx=5,
+                    pady=2,
+                    bd=0,
+                )
+                key_lbl.pack(fill="x", anchor="w", pady=(2, 2))
+                self._wrap_targets.append((key_lbl, 1))
 
         unlocks = q.get("unlocks_titles", [])
         prereqs = q.get("prereq_titles", [])
         if unlocks:
             u_txt = ", ".join(unlocks[:2]) + (f" (+{len(unlocks)-2})" if len(unlocks) > 2 else "")
-            tk.Label(
+            u_lbl = tk.Label(
                 quest_cell,
                 text=f"↳ Desbloquea: {u_txt}",
                 font=ui_font(11, "bold"),
                 bg=row_bg,
-                fg="#60A5FA",
+                fg=C_BLUE,
                 anchor="w",
                 justify="left",
-                wraplength=COL_QUEST_W - 24,
+                wraplength=max(180, w1 - 24),
                 bd=0,
-            ).pack(fill="x", anchor="w", pady=(2, 0))
+            )
+            u_lbl.pack(fill="x", anchor="w", pady=(2, 0))
+            self._wrap_targets.append((u_lbl, 1))
         elif prereqs:
             p_txt = ", ".join(prereqs[:2])
-            tk.Label(
+            p_lbl = tk.Label(
                 quest_cell,
                 text=f"🔗 Previa: {p_txt}",
                 font=ui_font(11),
@@ -803,43 +879,49 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
                 fg=C_TEXT_DIM,
                 anchor="w",
                 justify="left",
-                wraplength=COL_QUEST_W - 24,
+                wraplength=max(180, w1 - 24),
                 bd=0,
-            ).pack(fill="x", anchor="w", pady=(2, 0))
+            )
+            p_lbl.pack(fill="x", anchor="w", pady=(2, 0))
+            self._wrap_targets.append((p_lbl, 1))
 
         # Columna 2: Objectives
         obj_cell = tk.Frame(row_frame, bg=row_bg, bd=0)
         obj_cell.grid(row=0, column=2, padx=10, pady=10, sticky="nsew")
 
         obj_lines = q.get("objectives_lines") or ["• Consultar detalles en la Wiki."]
-        tk.Label(
+        obj_lbl = tk.Label(
             obj_cell,
             text="\n".join(obj_lines[:8]),
             font=ui_font(13),
             bg=row_bg,
             fg=C_TEXT,
-            anchor="w",
+            anchor="nw",
             justify="left",
-            wraplength=COL_OBJ_W + 40,
+            wraplength=max(240, w2 - 24),
             bd=0,
-        ).pack(fill="both", expand=True, anchor="w")
+        )
+        obj_lbl.pack(fill="both", expand=True, anchor="nw")
+        self._wrap_targets.append((obj_lbl, 2))
 
         # Columna 3: Rewards
         rew_cell = tk.Frame(row_frame, bg=row_bg, bd=0)
         rew_cell.grid(row=0, column=3, padx=10, pady=10, sticky="nsew")
 
         rew_lines = q.get("rewards_lines") or [f"• +{q.get('exp', 0):,} EXP"]
-        tk.Label(
+        rew_lbl = tk.Label(
             rew_cell,
             text="\n".join(rew_lines[:7]),
             font=ui_font(13),
             bg=row_bg,
             fg=C_TEXT_SOFT,
-            anchor="w",
+            anchor="nw",
             justify="left",
-            wraplength=COL_REW_W - 20,
+            wraplength=max(180, w3 - 24),
             bd=0,
-        ).pack(fill="x", anchor="w")
+        )
+        rew_lbl.pack(fill="x", anchor="nw")
+        self._wrap_targets.append((rew_lbl, 3))
 
         actions_row = tk.Frame(rew_cell, bg=row_bg, bd=0)
         actions_row.pack(fill="x", pady=(6, 0))
@@ -847,7 +929,7 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
         ctk.CTkButton(
             actions_row,
             text="📖 Guía Táctica",
-            width=116,
+            width=112,
             height=24,
             corner_radius=4,
             fg_color="#1E3A8A",
@@ -856,13 +938,13 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
             bg_color=row_bg,
             font=ui_font(11, "bold"),
             command=lambda quest_obj=q: self._open_quest_guide_modal(quest_obj)
-        ).pack(side="left", padx=(0, 4))
+        ).pack(side="left", padx=(0, 6))
 
         if q.get("wiki_url"):
             ctk.CTkButton(
                 actions_row,
                 text="Wiki ↗",
-                width=62,
+                width=60,
                 height=24,
                 corner_radius=4,
                 fg_color=C_BG_ROW,
@@ -871,7 +953,7 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
                 bg_color=row_bg,
                 font=ui_font(11, "bold"),
                 command=lambda u=q["wiki_url"]: webbrowser.open(u)
-            ).pack(side="right")
+            ).pack(side="left")
 
     def _open_quest_guide_modal(self, q: Dict[str, Any]):
         QuestGuideModal(self, q, on_toggle_callback=self._on_toggle_quest)

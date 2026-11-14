@@ -99,7 +99,7 @@ class GlobalSearchModal(ctk.CTkToplevel):
             fg_color=C_BG_DEEP,
             corner_radius=8,
             border_width=1,
-            border_color="#232936"
+            border_color=THEME["border_soft"]
         )
         self.results_scroll.grid(row=2, column=0, padx=18, pady=6, sticky="nsew")
         self.results_scroll.grid_columnconfigure(0, weight=1)

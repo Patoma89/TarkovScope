@@ -46,12 +46,44 @@ class TestPalette(unittest.TestCase):
     def test_palette_constants_are_valid_and_unique(self):
         from ui import theme
 
-        names = [n for n in dir(theme) if n.startswith("C_")]
-        self.assertGreater(len(names), 10)
-        values = [getattr(theme, n).upper() for n in names]
-        for n in names:
-            self.assertRegex(getattr(theme, n), HEX, n)
-        self.assertEqual(len(values), len(set(values)), "colores duplicados bajo distinto nombre")
+        orig_skin = theme.get_active_skin_id()
+        try:
+            for skin_id in config.THEME_SKINS:
+                theme.apply_ui_skin(skin_id)
+                names = [n for n in dir(theme) if n.startswith("C_")]
+                self.assertGreater(len(names), 10)
+                values = [getattr(theme, n).upper() for n in names]
+                for n in names:
+                    self.assertRegex(getattr(theme, n), HEX, f"{skin_id}.{n}")
+                self.assertEqual(len(values), len(set(values)), f"colores duplicados en skin {skin_id}")
+        finally:
+            theme.apply_ui_skin(orig_skin)
+
+    def test_apply_ui_skin_syncs_imported_ui_modules(self):
+        from ui import theme
+        from ui import tab_quests
+
+        orig_skin = theme.get_active_skin_id()
+        try:
+            theme.apply_ui_skin("labs_nvg")
+            self.assertEqual(tab_quests.C_BG_DEEP, config.THEME_SKINS["labs_nvg"]["bg_deep"])
+            self.assertEqual(tab_quests.C_BG_DARKEST, config.THEME_SKINS["labs_nvg"]["bg_darkest"])
+            theme.apply_ui_skin("tarkov_classic")
+            self.assertEqual(tab_quests.C_BG_DEEP, config.THEME_SKINS["tarkov_classic"]["bg_deep"])
+        finally:
+            theme.apply_ui_skin(orig_skin)
+
+    def test_boss_map_portraits_and_icebreaker_map_assets(self):
+        from core.bosses_data import BOSSES_DATA
+        from core.image_cache import get_boss_chibi_sticker, get_cached_map_path, load_map_image
+
+        self.assertTrue(os.path.exists(get_cached_map_path("Icebreaker")))
+        ice_img = load_map_image("Icebreaker", (780, 480))
+        self.assertGreater(ice_img.size[0], 400)
+        for boss in BOSSES_DATA:
+            icon = get_boss_chibi_sticker(boss["id"], target_size=52)
+            self.assertIsNotNone(icon, f"Falta retrato circular de {boss['id']}")
+            self.assertEqual(icon.size, (52, 52))
 
 
 class TestDataStore(unittest.TestCase):
