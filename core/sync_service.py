@@ -18,6 +18,7 @@ from core.database import (
 )
 from core.datastore import get_datastore
 from core.image_cache import prebake_all_assets
+from core.quest_route_data import refresh_route_dataset
 
 logger = logging.getLogger("TarkovScope.SyncService")
 
@@ -107,6 +108,14 @@ class SyncService:
             if quests_resp.status_code == 200:
                 quests_list = quests_resp.json()
                 insert_quests_and_fir(quests_list, traders_dict, items_dict, self.db_path)
+
+            # 4b. Posiciones de objetivos, spawns PMC y extracciones (Quest Tracker, tarkov.dev)
+            update_progress(85, "Actualizando posiciones de objetivos y spawns para rutas...")
+            try:
+                if not refresh_route_dataset(timeout=30):
+                    logger.warning("No se pudo actualizar el dataset de rutas; se conserva el local")
+            except Exception as e:
+                logger.warning("Fallo al actualizar el dataset de rutas: %s", e)
 
             # 5. Pre-bake de miniaturas y recarga en RAM
             update_progress(90, "Optimizando planos 2D y caché en RAM...")

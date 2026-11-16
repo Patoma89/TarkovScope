@@ -1,0 +1,20 @@
+{
+ "zoom": 3,
+ "origin_px": [
+  -63,
+  139
+ ],
+ "source": "tiles",
+ "tiles": "64/80",
+ "map": "interchange",
+ "transform": [
+  0.265,
+  150.6,
+  0.265,
+  134.6
+ ],
+ "coordinateRotation": 180,
+ "width": 2186,
+ "height": 1841,
+ "image": "interchange.jpg"
+}

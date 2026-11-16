@@ -1,0 +1,20 @@
+{
+ "zoom": 3,
+ "origin_px": [
+  20,
+  357
+ ],
+ "source": "tiles",
+ "tiles": "48/48",
+ "map": "shoreline",
+ "transform": [
+  0.16,
+  83.2,
+  0.16,
+  111.1
+ ],
+ "coordinateRotation": 180,
+ "width": 1998,
+ "height": 1323,
+ "image": "shoreline.jpg"
+}

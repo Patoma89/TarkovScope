@@ -32,6 +32,8 @@ from ui.tab_weapons import TabWeapons
 from ui.tab_ballistics import TabBallistics
 from ui.tab_containers import TabContainers
 from ui.tab_quests import TabQuests
+from ui.tab_quest_tracker import TabQuestTracker
+from ui.tab_progression_planner import TabProgressionPlanner
 from ui.tab_maps import TabMaps
 from ui.tab_flea import TabFlea
 from ui.tab_lore import TabLore
@@ -40,7 +42,10 @@ from ui.tab_keys import TabKeys
 from ui.tab_medical import TabMedical
 from ui.tab_pmc_systems import TabPMCSystems
 from ui.global_search_modal import GlobalSearchModal
-from ui.theme import C_AMBER, C_BG_DEEP, C_BG_ROW, C_BORDER, C_BORDER_ALT, C_GREEN, C_RED, C_TEXT, C_TEXT_DIM, C_TEXT_MUTED, C_WHITE
+from ui.theme import C_AMBER, C_BADGE_NEW, C_BG_DEEP, C_BG_ROW, C_BORDER, C_BORDER_ALT, C_GREEN, C_RED, C_TEXT, C_TEXT_DIM, C_TEXT_MUTED, C_WHITE
+
+# Pestañas nuevas: llevan el badge "NEW" en el menú lateral.
+NEW_TAB_KEYS = {"quest_tracker", "progression_planner"}
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 logger = logging.getLogger("TarkovScope.Main")
@@ -101,6 +106,8 @@ class TarkovScopeApp(ctk.CTk):
             "bosses": TabBosses,
             "maps": TabMaps,
             "quests": TabQuests,
+            "quest_tracker": TabQuestTracker,
+            "progression_planner": TabProgressionPlanner,
             "story_quests": TabStoryQuests,
             "weapons": TabWeapons,
             "ballistics": TabBallistics,
@@ -230,6 +237,8 @@ class TarkovScopeApp(ctk.CTk):
             ("bosses", "Bosses & Spawns"),
             ("maps", "Mapas & Extracciones"),
             ("quests", "Quests & Traders"),
+            ("quest_tracker", "Quest Tracker & Rutas"),
+            ("progression_planner", "Planner de Progresión"),
             ("story_quests", "Quests de la Historia"),
             ("weapons", "Armas & Gunsmith"),
             ("ballistics", "Balística & Blindaje"),
@@ -258,6 +267,21 @@ class TarkovScopeApp(ctk.CTk):
             )
             btn.grid(row=idx, column=0, padx=0, pady=2, sticky="ew")
             self.nav_buttons[tab_key] = btn
+            if tab_key in NEW_TAB_KEYS:
+                badge = ctk.CTkLabel(
+                    btn,
+                    text="NEW",
+                    font=ui_font(10, "bold"),
+                    fg_color=C_BADGE_NEW,
+                    text_color=C_WHITE,
+                    corner_radius=4,
+                    width=34,
+                    height=18,
+                    cursor="hand2",
+                )
+                badge.place(relx=1.0, rely=0.5, x=-8, anchor="e")
+                # El badge tapa parte del botón: que el clic sobre él también cambie de pestaña.
+                badge.bind("<Button-1>", lambda _e, k=tab_key: self.switch_tab(k))
 
         # 4. Pie de Barra Lateral
         footer_frame = ctk.CTkFrame(self.sidebar, fg_color="transparent")
@@ -452,7 +476,7 @@ class TarkovScopeApp(ctk.CTk):
                 if success:
                     clear_image_ram_cache()
                     self.db_status_lbl.configure(text="● Caché RAM Zero-Lag activo", text_color=C_GREEN)
-                    for tab_key in ("ballistics", "quests", "maps"):
+                    for tab_key in ("ballistics", "quests", "maps", "quest_tracker", "progression_planner"):
                         if tab_key in self.tabs and hasattr(self.tabs[tab_key], "reload_data"):
                             self.tabs[tab_key].reload_data()
                 else:

@@ -1,0 +1,20 @@
+{
+ "zoom": 3,
+ "origin_px": [
+  14,
+  503
+ ],
+ "source": "tiles",
+ "tiles": "48/54",
+ "map": "customs",
+ "transform": [
+  0.239,
+  168.65,
+  0.239,
+  136.35
+ ],
+ "coordinateRotation": 180,
+ "width": 2047,
+ "height": 1041,
+ "image": "customs.jpg"
+}

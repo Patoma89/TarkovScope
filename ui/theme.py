@@ -233,6 +233,7 @@ C_EMERALD = "#10B981"  # Esmeralda
 C_RED = "#EF4444"  # Rojo de alerta
 C_RED_DARK = "#DC2626"  # Rojo oscuro
 C_AMBER = "#F59E0B"  # Ambar
+C_BADGE_NEW = "#16A34A"  # Verde del badge "NEW" (contraste suficiente para texto blanco)
 
 # Aplicar skin guardada al cargar el módulo (por defecto EFT Hideout)
 apply_ui_skin(get_user_preference("ui_skin", "tarkov_classic"))

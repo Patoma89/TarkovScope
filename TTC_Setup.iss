@@ -37,6 +37,8 @@ Source: "cache\gear\*"; DestDir: "{app}\cache\gear"; Flags: ignoreversion recurs
 Source: "cache\keys\*"; DestDir: "{app}\cache\keys"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "cache\maps\*"; DestDir: "{app}\cache\maps"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "cache\medical\*"; DestDir: "{app}\cache\medical"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "cache\route_data\*"; DestDir: "{app}\cache\route_data"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "cache\route_maps\*"; DestDir: "{app}\cache\route_maps"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "cache\story_chapters\*"; DestDir: "{app}\cache\story_chapters"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "cache\thumbs\*"; DestDir: "{app}\cache\thumbs"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "cache\trader_stocks\*"; DestDir: "{app}\cache\trader_stocks"; Flags: ignoreversion recursesubdirs createallsubdirs

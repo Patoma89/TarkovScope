@@ -1,0 +1,19 @@
+{
+ "zoom": 2.800039799158295,
+ "origin_px": [
+  -717.3534532791641,
+  -1390.1334881021476
+ ],
+ "source": "svg",
+ "map": "lighthouse",
+ "transform": [
+  0.2,
+  0,
+  0.2,
+  0
+ ],
+ "coordinateRotation": 180,
+ "width": 1476,
+ "height": 2400,
+ "image": "lighthouse.jpg"
+}
