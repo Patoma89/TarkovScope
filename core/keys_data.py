@@ -14,7 +14,7 @@ import requests
 from PIL import Image
 from typing import List, Dict, Any, Optional, Set, Callable
 
-from core.config import CACHE_DIR, TARKOV_DEV_GRAPHQL_URL
+from core.config import CACHE_DIR, TARKOV_DEV_GRAPHQL_URL, resolve_cache_read_path
 
 KEYS_DIR = os.path.join(CACHE_DIR, "keys")
 os.makedirs(KEYS_DIR, exist_ok=True)
@@ -978,7 +978,7 @@ def get_key_stats(owned_ids: Optional[Set[str]] = None) -> Dict[str, int]:
 
 def get_key_icon_path(key_id: str) -> Optional[str]:
     """Devuelve la ruta en caché local del icono de una llave si ya fue descargado."""
-    path = os.path.join(KEYS_DIR, f"{key_id}.png")
+    path = resolve_cache_read_path("keys", f"{key_id}.png", min_bytes=101)
     return path if os.path.exists(path) and os.path.getsize(path) > 100 else None
 
 

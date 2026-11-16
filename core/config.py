@@ -3,6 +3,8 @@ TarkovScope - Configuración Global, Rutas y Paleta de Alto Contraste Profesiona
 """
 import os
 import sys
+import tempfile
+from typing import Callable, Dict, List, Optional
 
 APP_NAME = "TTC (Tactical Tarkov Companion)"
 APP_FULL_NAME = "TTC (Tactical Tarkov Companion)"
@@ -10,16 +12,84 @@ APP_VERSION = "1.3.1"
 APP_AUTHOR = "Patoma89"
 GITHUB_REPO = "Patoma89/TarkovScope"
 
-# Directorio raíz del proyecto
-if getattr(sys, 'frozen', False):
-    BASE_DIR = os.path.dirname(sys.executable)
-    BUNDLE_DIR = getattr(sys, '_MEIPASS', BASE_DIR)
-else:
-    BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-    BUNDLE_DIR = BASE_DIR
 
-DATA_DIR = os.path.join(BASE_DIR, "data")
-CACHE_DIR = os.path.join(BASE_DIR, "cache")
+def _is_dir_writable(dir_path: str) -> bool:
+    """Verifica con un archivo temporal real si el usuario actual tiene permiso de escritura."""
+    if not dir_path or not os.path.isdir(dir_path):
+        return False
+    try:
+        with tempfile.NamedTemporaryFile(dir=dir_path, prefix=".ttc_w_", delete=True):
+            pass
+        return True
+    except OSError:
+        return False
+
+
+def resolve_runtime_paths(
+    is_frozen: bool,
+    executable_path: Optional[str] = None,
+    meipass_dir: Optional[str] = None,
+    localappdata_dir: Optional[str] = None,
+    writable_checker: Optional[Callable[[str], bool]] = None,
+) -> Dict[str, str]:
+    """Resuelve rutas de lectura/escritura soportando instalación en carpetas protegidas (Program Files).
+
+    Si el ejecutable corre desde un directorio sin permisos de escritura para el usuario estándar
+    (p. ej. `C:\\Program Files (x86)\\TTC`), los datos editables (`data/` y `cache/`) se almacenan en
+    `%LOCALAPPDATA%\\TTC` mientras se conserva el acceso de solo lectura a la caché preinstalada.
+    """
+    checker = writable_checker or _is_dir_writable
+    if not is_frozen:
+        repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        return {
+            "install_dir": repo_root,
+            "bundle_dir": repo_root,
+            "data_dir": os.path.join(repo_root, "data"),
+            "cache_dir": os.path.join(repo_root, "cache"),
+            "readonly_cache_dir": "",
+        }
+
+    install_dir = os.path.dirname(os.path.abspath(executable_path or sys.executable))
+    bundle_dir = meipass_dir or install_dir
+    install_data_dir = os.path.join(install_dir, "data")
+    install_writable = checker(install_dir) and (
+        not os.path.exists(install_data_dir) or checker(install_data_dir)
+    )
+    if install_writable:
+        return {
+            "install_dir": install_dir,
+            "bundle_dir": bundle_dir,
+            "data_dir": install_data_dir,
+            "cache_dir": os.path.join(install_dir, "cache"),
+            "readonly_cache_dir": "",
+        }
+
+    user_root = os.path.join(
+        localappdata_dir or os.environ.get("LOCALAPPDATA") or os.path.expanduser("~"),
+        "TTC",
+    )
+    return {
+        "install_dir": install_dir,
+        "bundle_dir": bundle_dir,
+        "data_dir": os.path.join(user_root, "data"),
+        "cache_dir": os.path.join(user_root, "cache"),
+        "readonly_cache_dir": os.path.join(install_dir, "cache"),
+    }
+
+
+_RUNTIME_PATHS = resolve_runtime_paths(
+    is_frozen=getattr(sys, "frozen", False),
+    executable_path=sys.executable,
+    meipass_dir=getattr(sys, "_MEIPASS", None),
+    localappdata_dir=os.environ.get("LOCALAPPDATA"),
+)
+
+BASE_DIR = _RUNTIME_PATHS["install_dir"]
+BUNDLE_DIR = _RUNTIME_PATHS["bundle_dir"]
+DATA_DIR = _RUNTIME_PATHS["data_dir"]
+CACHE_DIR = _RUNTIME_PATHS["cache_dir"]
+READONLY_CACHE_DIR = _RUNTIME_PATHS["readonly_cache_dir"]
+
 DB_PATH = os.path.join(DATA_DIR, "tarkov_data.db")
 WIKI_QUESTS_JSON_PATH = os.path.join(DATA_DIR, "wiki_quests_459.json")
 WIKI_HIDEOUT_JSON_PATH = os.path.join(DATA_DIR, "wiki_hideout_modules.json")
@@ -28,44 +98,52 @@ WIKI_AMMO_JSON_PATH = os.path.join(DATA_DIR, "wiki_ammunition.json")
 os.makedirs(DATA_DIR, exist_ok=True)
 os.makedirs(CACHE_DIR, exist_ok=True)
 
+
+def get_cache_read_candidates(*subpaths: str) -> List[str]:
+    """Devuelve candidatos en orden de prioridad: caché editable, caché de instalación y bundle _MEIPASS."""
+    candidates: List[str] = [os.path.join(CACHE_DIR, *subpaths)]
+    if READONLY_CACHE_DIR:
+        candidates.append(os.path.join(READONLY_CACHE_DIR, *subpaths))
+    bundle_candidate = os.path.join(BUNDLE_DIR, "cache", *subpaths)
+    if bundle_candidate not in candidates:
+        candidates.append(bundle_candidate)
+    return candidates
+
+
+def resolve_cache_read_path(*subpaths: str, min_bytes: int = 1) -> str:
+    """Retorna la primera ruta existente en caché o la ruta editable destino si aún no existe."""
+    candidates = get_cache_read_candidates(*subpaths)
+    for cand in candidates:
+        if os.path.exists(cand) and os.path.getsize(cand) >= min_bytes:
+            return cand
+    return candidates[0]
+
+
+def _seed_frozen_data_file(filename: str, overwrite: bool = False) -> None:
+    dst = os.path.join(DATA_DIR, filename)
+    if os.path.exists(dst) and not overwrite:
+        return
+    for src_dir in (os.path.join(BASE_DIR, "data"), os.path.join(BUNDLE_DIR, "data")):
+        src = os.path.join(src_dir, filename)
+        if os.path.abspath(src) != os.path.abspath(dst) and os.path.exists(src):
+            try:
+                import shutil
+                shutil.copy2(src, dst)
+                return
+            except Exception:
+                pass
+
+
 # Inicialización de datos empaquetados en ejecutable standalone PyInstaller
-if getattr(sys, 'frozen', False):
-    import shutil
-    bundled_db = os.path.join(BUNDLE_DIR, "data", "tarkov_data.db")
-    if not os.path.exists(DB_PATH) and os.path.exists(bundled_db):
-        try:
-            shutil.copy2(bundled_db, DB_PATH)
-        except Exception:
-            pass
-
-    bundled_ammo = os.path.join(BUNDLE_DIR, "data", "wiki_ammunition.json")
-    if not os.path.exists(WIKI_AMMO_JSON_PATH) and os.path.exists(bundled_ammo):
-        try:
-            shutil.copy2(bundled_ammo, WIKI_AMMO_JSON_PATH)
-        except Exception:
-            pass
-
-    bundled_q = os.path.join(BUNDLE_DIR, "data", "wiki_quests_459.json")
-    if not os.path.exists(WIKI_QUESTS_JSON_PATH) and os.path.exists(bundled_q):
-        try:
-            shutil.copy2(bundled_q, WIKI_QUESTS_JSON_PATH)
-        except Exception:
-            pass
-
-    bundled_h = os.path.join(BUNDLE_DIR, "data", "wiki_hideout_modules.json")
-    if not os.path.exists(WIKI_HIDEOUT_JSON_PATH) and os.path.exists(bundled_h):
-        try:
-            shutil.copy2(bundled_h, WIKI_HIDEOUT_JSON_PATH)
-        except Exception:
-            pass
-
-    bundled_story = os.path.join(BUNDLE_DIR, "data", "wiki_story_chapters_full.json")
-    story_dst = os.path.join(DATA_DIR, "wiki_story_chapters_full.json")
-    if os.path.exists(bundled_story):
-        try:
-            shutil.copy2(bundled_story, story_dst)
-        except Exception:
-            pass
+if getattr(sys, "frozen", False):
+    for _fname, _overwrite in (
+        ("tarkov_data.db", False),
+        ("wiki_ammunition.json", False),
+        ("wiki_quests_459.json", False),
+        ("wiki_hideout_modules.json", False),
+        ("wiki_story_chapters_full.json", True),
+    ):
+        _seed_frozen_data_file(_fname, overwrite=_overwrite)
 
 # Endpoints de datos de la comunidad de Tarkov
 TARKOV_DATA_BASE_URL = "https://raw.githubusercontent.com/TarkovTracker/tarkovdata/master/"

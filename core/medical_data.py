@@ -6,7 +6,7 @@ Módulo de lógica pura (sin dependencias de UI).
 import os
 from typing import List, Dict, Any, Optional
 
-from core.config import CACHE_DIR
+from core.config import CACHE_DIR, resolve_cache_read_path
 
 MEDICAL_DIR = os.path.join(CACHE_DIR, "medical")
 os.makedirs(MEDICAL_DIR, exist_ok=True)
@@ -568,7 +568,7 @@ MEDICAL_CATALOG: List[Dict[str, Any]] = [
 
 def get_medical_icon_path(item_id: str) -> Optional[str]:
     """Devuelve la ruta local en cache/medical/<id>.png si existe."""
-    p = os.path.join(MEDICAL_DIR, f"{item_id}.png")
+    p = resolve_cache_read_path("medical", f"{item_id}.png", min_bytes=101)
     return p if os.path.exists(p) and os.path.getsize(p) > 100 else None
 
 

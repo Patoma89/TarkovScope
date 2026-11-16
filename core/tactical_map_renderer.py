@@ -16,6 +16,7 @@ from core.maps_data import (
 )
 from core.bosses_data import BOSSES_DATA, get_boss_map_spawn_chance
 from core.image_cache import (
+    BOSS_MAPS_DIR,
     _get_font,
     load_map_image,
     load_full_res_map_image,
@@ -174,10 +175,12 @@ def load_boss_spawn_map_image(
     composed = Image.alpha_composite(base, overlay)
 
     try:
-        composed.save(hd_path, "PNG")
+        hd_write = os.path.join(BOSS_MAPS_DIR, os.path.basename(hd_path))
+        thumb_write = os.path.join(BOSS_MAPS_DIR, os.path.basename(thumb_path))
+        composed.save(hd_write, "PNG")
         thumb_img = composed.copy()
         thumb_img.thumbnail(target_size, Image.Resampling.LANCZOS)
-        thumb_img.save(thumb_path, "PNG")
+        thumb_img.save(thumb_write, "PNG")
     except Exception as e:
         logger.warning("No se pudo guardar mapa de boss pre-generado: %s", e)
         thumb_img = composed.copy()

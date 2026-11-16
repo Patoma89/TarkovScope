@@ -85,6 +85,40 @@ class TestPalette(unittest.TestCase):
             self.assertIsNotNone(icon, f"Falta retrato circular de {boss['id']}")
             self.assertEqual(icon.size, (52, 52))
 
+    def test_resolve_runtime_paths_falls_back_when_install_dir_is_readonly(self):
+        from core.config import resolve_runtime_paths
+
+        ro_exe = r"C:\Program Files (x86)\TTC\TTC.exe"
+        meipass = r"C:\Temp\_MEI123"
+        localapp = r"C:\Users\tester\AppData\Local"
+        paths = resolve_runtime_paths(
+            is_frozen=True,
+            executable_path=ro_exe,
+            meipass_dir=meipass,
+            localappdata_dir=localapp,
+            writable_checker=lambda _p: False,
+        )
+        self.assertEqual(paths["install_dir"], os.path.abspath(r"C:\Program Files (x86)\TTC"))
+        self.assertEqual(paths["data_dir"], os.path.join(localapp, "TTC", "data"))
+        self.assertEqual(paths["cache_dir"], os.path.join(localapp, "TTC", "cache"))
+        self.assertEqual(
+            paths["readonly_cache_dir"],
+            os.path.join(os.path.abspath(r"C:\Program Files (x86)\TTC"), "cache"),
+        )
+
+        wr_paths = resolve_runtime_paths(
+            is_frozen=True,
+            executable_path=ro_exe,
+            meipass_dir=meipass,
+            localappdata_dir=localapp,
+            writable_checker=lambda _p: True,
+        )
+        self.assertEqual(
+            wr_paths["data_dir"],
+            os.path.join(os.path.abspath(r"C:\Program Files (x86)\TTC"), "data"),
+        )
+        self.assertEqual(wr_paths["readonly_cache_dir"], "")
+
 
 class TestDataStore(unittest.TestCase):
     def setUp(self):

@@ -9,7 +9,7 @@ import requests
 import logging
 from typing import Dict, Optional, Tuple, Any
 from PIL import Image, ImageDraw, ImageFont, ImageOps
-from core.config import CACHE_DIR
+from core.config import CACHE_DIR, resolve_cache_read_path
 from core.maps_data import normalize_map_key, get_map_extractions_with_coords, get_map_tactical_pois
 
 logger = logging.getLogger("TarkovScope.ImageCache")
@@ -82,71 +82,44 @@ def _get_font(size: int, bold: bool = True) -> ImageFont.FreeTypeFont:
 
 
 def get_cached_image_path(name: str) -> str:
-    """Retorna la ruta del archivo de avatar en caché, soportando PyInstaller _MEIPASS."""
+    """Retorna la ruta del archivo de avatar en caché (writable, instalación o _MEIPASS)."""
     clean_name = name.lower().replace(" ", "_") + ".png"
-    local_p = os.path.join(AVATARS_DIR, clean_name)
-    if not os.path.exists(local_p) and hasattr(sys, '_MEIPASS'):
-        bundle_p = os.path.join(sys._MEIPASS, "cache", "avatars", clean_name)
-        if os.path.exists(bundle_p):
-            return bundle_p
-    return local_p
+    return resolve_cache_read_path("avatars", clean_name)
 
 
 get_cached_avatar_path = get_cached_image_path
 
 
 def get_cached_map_path(map_id: str) -> str:
-    """Retorna la ruta del archivo de plano de mapa original en caché, soportando PyInstaller _MEIPASS."""
+    """Retorna la ruta del archivo de plano de mapa original en caché (writable, instalación o _MEIPASS)."""
     norm_key = normalize_map_key(map_id)
-    local_p = os.path.join(MAPS_DIR, f"{norm_key}.png")
-    if not os.path.exists(local_p) and hasattr(sys, '_MEIPASS'):
-        bundle_p = os.path.join(sys._MEIPASS, "cache", "maps", f"{norm_key}.png")
-        if os.path.exists(bundle_p):
-            return bundle_p
-    return local_p
+    return resolve_cache_read_path("maps", f"{norm_key}.png")
 
 
 def get_trader_stock_image_path(trader_name: str, loyalty_level: int) -> str:
     """Retorna la ruta al archivo PNG de la cuadrícula de inventario oficial del comerciante."""
     clean_trader = trader_name.replace(" ", "").capitalize()
     file_name = f"{clean_trader}{loyalty_level}Stock.png"
-    local_p = os.path.join(TRADER_STOCKS_DIR, file_name)
-    if not os.path.exists(local_p) and hasattr(sys, '_MEIPASS'):
-        bundle_p = os.path.join(sys._MEIPASS, "cache", "trader_stocks", file_name)
-        if os.path.exists(bundle_p):
-            return bundle_p
-    return local_p
+    return resolve_cache_read_path("trader_stocks", file_name)
 
 
 def get_cached_map_thumb_path(map_id: str, size: Tuple[int, int]) -> str:
-    """Retorna la ruta del thumbnail pre-escalado en disco, soportando PyInstaller _MEIPASS."""
+    """Retorna la ruta del thumbnail pre-escalado en disco (writable, instalación o _MEIPASS)."""
     norm_key = normalize_map_key(map_id)
     thumb_name = f"map_{norm_key}_{size[0]}x{size[1]}.png"
-    local_p = os.path.join(THUMBS_DIR, thumb_name)
-    if not os.path.exists(local_p) and hasattr(sys, '_MEIPASS'):
-        bundle_p = os.path.join(sys._MEIPASS, "cache", "thumbs", thumb_name)
-        if os.path.exists(bundle_p):
-            return bundle_p
-    return local_p
+    return resolve_cache_read_path("thumbs", thumb_name)
 
 
 def get_boss_spawn_map_paths(boss_id: str, map_name: str, thumb_size: Tuple[int, int] = (740, 450)) -> Tuple[str, str]:
-    """Retorna (ruta_thumb, ruta_hd) del mapa de spawns de un Boss, soportando PyInstaller _MEIPASS."""
+    """Retorna (ruta_thumb, ruta_hd) del mapa de spawns de un Boss (writable, instalación o _MEIPASS)."""
     norm_map = normalize_map_key(map_name)
     clean_boss = boss_id.lower().strip()
     thumb_name = f"boss_{clean_boss}_{norm_map}_{thumb_size[0]}x{thumb_size[1]}.png"
     hd_name = f"boss_{clean_boss}_{norm_map}_hd.png"
-    thumb_path = os.path.join(BOSS_MAPS_DIR, thumb_name)
-    hd_path = os.path.join(BOSS_MAPS_DIR, hd_name)
-    if not os.path.exists(thumb_path) and hasattr(sys, '_MEIPASS'):
-        bundle_t = os.path.join(sys._MEIPASS, "cache", "boss_maps", thumb_name)
-        if os.path.exists(bundle_t):
-            thumb_path = bundle_t
-    if not os.path.exists(hd_path) and hasattr(sys, '_MEIPASS'):
-        bundle_h = os.path.join(sys._MEIPASS, "cache", "boss_maps", hd_name)
-        if os.path.exists(bundle_h):
-            hd_path = bundle_h
-    return thumb_path, hd_path
+    return (
+        resolve_cache_read_path("boss_maps", thumb_name),
+        resolve_cache_read_path("boss_maps", hd_name),
+    )
 
 
 def is_image_cached(name: str) -> bool:
@@ -213,27 +186,26 @@ def load_avatar(name: str, url: Optional[str] = None, size: tuple = (80, 80)) ->
     """Carga el avatar desde la caché de miniaturas o lo genera una única vez."""
     clean_name = name.lower().replace(" ", "_")
     thumb_name = f"avatar_{clean_name}_{size[0]}x{size[1]}.png"
-    thumb_path = os.path.join(THUMBS_DIR, thumb_name)
-    if not os.path.exists(thumb_path) and hasattr(sys, '_MEIPASS'):
-        bundle_t = os.path.join(sys._MEIPASS, "cache", "thumbs", thumb_name)
-        if os.path.exists(bundle_t):
-            thumb_path = bundle_t
+    thumb_read = resolve_cache_read_path("thumbs", thumb_name)
+    thumb_write = os.path.join(THUMBS_DIR, thumb_name)
 
-    if os.path.exists(thumb_path):
+    if os.path.exists(thumb_read):
         try:
-            return Image.open(thumb_path).convert("RGBA")
+            return Image.open(thumb_read).convert("RGBA")
         except Exception:
             pass
 
     raw_path = get_cached_image_path(name)
     if not os.path.exists(raw_path) and url:
-        download_and_save_image(url, raw_path)
+        raw_write = os.path.join(AVATARS_DIR, f"{clean_name}.png")
+        download_and_save_image(url, raw_write)
+        raw_path = raw_write
 
     if os.path.exists(raw_path):
         try:
             img = Image.open(raw_path).convert("RGBA")
             img = img.resize(size, Image.Resampling.LANCZOS)
-            img.save(thumb_path, "PNG")
+            img.save(thumb_write, "PNG")
             return img
         except Exception:
             pass
@@ -248,6 +220,7 @@ def load_map_image(map_id: str, target_size: Tuple[int, int] = (780, 480)) -> Im
     """
     norm_key = normalize_map_key(map_id)
     thumb_path = get_cached_map_thumb_path(norm_key, target_size)
+    thumb_write = os.path.join(THUMBS_DIR, f"map_{norm_key}_{target_size[0]}x{target_size[1]}.png")
 
     # 1. Lectura instantánea de miniatura pre-horneada (Sin LANCZOS en vivo)
     if os.path.exists(thumb_path):
@@ -261,13 +234,15 @@ def load_map_image(map_id: str, target_size: Tuple[int, int] = (780, 480)) -> Im
     if not os.path.exists(raw_path):
         url = MAP_IMAGE_URLS.get(norm_key)
         if url:
-            download_and_save_image(url, raw_path)
+            raw_write = os.path.join(MAPS_DIR, f"{norm_key}.png")
+            download_and_save_image(url, raw_write)
+            raw_path = raw_write
 
     if os.path.exists(raw_path):
         try:
             img = Image.open(raw_path).convert("RGBA")
             img.thumbnail(target_size, Image.Resampling.LANCZOS)
-            img.save(thumb_path, "PNG")
+            img.save(thumb_write, "PNG")
             return img
         except Exception as e:
             logger.warning("Error pre-generando miniatura para %s: %s", norm_key, e)
@@ -470,18 +445,16 @@ def load_weapon_or_part_image(
     del tamaño exacto solicitado, guardando la miniatura en cache/thumbs/ para 0 ms de carga.
     """
     clean_key = image_key.lower().strip()
-    thumb_path = os.path.join(THUMBS_DIR, f"wpn_{clean_key}_{target_size[0]}x{target_size[1]}.png")
-    if os.path.exists(thumb_path):
+    wpn_thumb_name = f"wpn_{clean_key}_{target_size[0]}x{target_size[1]}.png"
+    thumb_read = resolve_cache_read_path("thumbs", wpn_thumb_name)
+    thumb_write = os.path.join(THUMBS_DIR, wpn_thumb_name)
+    if os.path.exists(thumb_read):
         try:
-            return Image.open(thumb_path).convert("RGBA")
+            return Image.open(thumb_read).convert("RGBA")
         except Exception:
             pass
 
-    raw_path = os.path.join(WEAPONS_DIR, f"{clean_key}.png")
-    if not os.path.exists(raw_path) and hasattr(sys, '_MEIPASS'):
-        bundle_wpn = os.path.join(sys._MEIPASS, "cache", "weapons", f"{clean_key}.png")
-        if os.path.exists(bundle_wpn):
-            raw_path = bundle_wpn
+    raw_path = resolve_cache_read_path("weapons", f"{clean_key}.png")
     w_box, h_box = target_size
     canvas = Image.new("RGBA", (w_box, h_box), (18, 22, 29, 255))
     draw = ImageDraw.Draw(canvas)
@@ -496,7 +469,7 @@ def load_weapon_or_part_image(
             ox = (w_box - sw) // 2
             oy = (h_box - sh) // 2
             canvas.alpha_composite(src, (ox, oy))
-            canvas.save(thumb_path, "PNG")
+            canvas.save(thumb_write, "PNG")
             return canvas
         except Exception as e:
             logger.warning("Error procesando imagen de arma/pieza %s: %s", clean_key, e)

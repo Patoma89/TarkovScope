@@ -15,7 +15,7 @@ from PIL import Image
 from requests.adapters import HTTPAdapter
 from urllib3.util import Retry
 
-from core.config import BUNDLE_DIR, CACHE_DIR
+from core.config import BUNDLE_DIR, CACHE_DIR, READONLY_CACHE_DIR
 
 GEAR_CACHE_DIR = os.path.join(CACHE_DIR, "gear")
 BUNDLED_GEAR_CACHE_DIR = os.path.join(BUNDLE_DIR, "cache", "gear")
@@ -58,7 +58,11 @@ def get_gear_icon_path(cache_key: str) -> Optional[str]:
     safe_key = os.path.basename(cache_key.strip())
     if not safe_key:
         return None
-    for base_dir in (GEAR_CACHE_DIR, BUNDLED_GEAR_CACHE_DIR):
+    candidate_dirs = [GEAR_CACHE_DIR]
+    if READONLY_CACHE_DIR:
+        candidate_dirs.append(os.path.join(READONLY_CACHE_DIR, "gear"))
+    candidate_dirs.append(BUNDLED_GEAR_CACHE_DIR)
+    for base_dir in candidate_dirs:
         p = os.path.join(base_dir, f"{safe_key}.png")
         if os.path.exists(p) and os.path.getsize(p) > 80:
             return p

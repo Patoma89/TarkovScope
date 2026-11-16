@@ -255,18 +255,10 @@ def get_trader_stock_ctk_image(
 
 
 def _resolve_story_asset_path(*subpaths: str) -> str:
-    """Resuelve rutas dentro de cache/story_chapters tanto en desarrollo como en PyInstaller (_MEIPASS)."""
-    import sys
-    from core.config import CACHE_DIR
+    """Resuelve rutas dentro de cache/story_chapters en desarrollo, instalación protegida o _MEIPASS."""
+    from core.config import resolve_cache_read_path
 
-    p1 = os.path.join(CACHE_DIR, "story_chapters", *subpaths)
-    if os.path.exists(p1):
-        return p1
-    if hasattr(sys, "_MEIPASS"):
-        p2 = os.path.join(sys._MEIPASS, "cache", "story_chapters", *subpaths)
-        if os.path.exists(p2):
-            return p2
-    return p1
+    return resolve_cache_read_path("story_chapters", *subpaths)
 
 
 def get_story_chapter_icon_ctk(icon_file: str, size: Tuple[int, int] = (28, 28)) -> Optional[ctk.CTkImage]:
