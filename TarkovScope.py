@@ -126,6 +126,7 @@ class TarkovScopeApp(ctk.CTk):
 
         self.switch_tab("quests")
         self._check_initial_sync()
+        self.after(150, self._prewarm_background_caches)
 
     def _build_sidebar(self):
         """Barra de navegación lateral limpia, tipográfica y con alto contraste."""
@@ -524,9 +525,12 @@ class TarkovScopeApp(ctk.CTk):
         self._current_tab_key = selected_key
         self._active_nav_key = selected_key
 
+        was_cached = selected_key in self.tabs
         target_frame = self._get_or_create_tab(selected_key)
         target_frame.grid(row=0, column=0, sticky="nsew")
         target_frame.tkraise()
+        if was_cached and hasattr(target_frame, "on_tab_activated"):
+            target_frame.on_tab_activated()
         if hasattr(target_frame, "_refresh_scrollregion"):
             self.after(20, target_frame._refresh_scrollregion)
 
@@ -547,6 +551,21 @@ class TarkovScopeApp(ctk.CTk):
     def _check_initial_sync(self):
         if not is_db_populated():
             self.start_sync_in_background()
+
+    def _prewarm_background_caches(self):
+        """Pre-carga en segundo plano datasets pesados para que Quest Tracker, Planner e Historia abran en 0 ms."""
+        def worker():
+            try:
+                from core.quest_route_data import load_route_dataset
+                load_route_dataset()
+            except Exception:
+                pass
+            try:
+                get_datastore().get_wiki_story_chapters()
+            except Exception:
+                pass
+
+        threading.Thread(target=worker, daemon=True).start()
 
     def start_sync_in_background(self):
         self.sync_btn.configure(state="disabled", text=tr("sidebar.syncing", "Sincronizando..."))
@@ -572,8 +591,12 @@ class TarkovScopeApp(ctk.CTk):
                     clear_image_ram_cache()
                     self.db_status_lbl.configure(text=tr("sidebar.db_ready", "● Caché RAM Zero-Lag activo"), text_color=C_GREEN)
                     for tab_key in ("ballistics", "quests", "maps", "quest_tracker", "progression_planner"):
-                        if tab_key in self.tabs and hasattr(self.tabs[tab_key], "reload_data"):
-                            self.tabs[tab_key].reload_data()
+                        tab_obj = self.tabs.get(tab_key)
+                        if tab_obj and hasattr(tab_obj, "reload_data"):
+                            try:
+                                tab_obj.reload_data(force=True)
+                            except TypeError:
+                                tab_obj.reload_data()
                 else:
                     self.db_status_lbl.configure(text="● Error al sincronizar", text_color=C_RED)
 
@@ -713,7 +736,7 @@ class TarkovScopeApp(ctk.CTk):
             ok = get_datastore().import_profile(data)
             if ok:
                 self.db_status_lbl.configure(text="✓ Perfil restaurado correctamente", text_color=C_GREEN)
-                for tab_key in ("quests", "flea", "maps"):
+                for tab_key in ("quests", "flea", "maps", "quest_tracker", "progression_planner"):
                     if tab_key in self.tabs and hasattr(self.tabs[tab_key], "reload_data"):
                         self.tabs[tab_key].reload_data()
             else:
@@ -723,7 +746,24 @@ class TarkovScopeApp(ctk.CTk):
             self.db_status_lbl.configure(text="✕ Error al importar perfil", text_color=C_RED)
 
 
+_APP_MUTEX_HANDLE = None
+
+
+def _acquire_app_mutex() -> None:
+    """Crea el mutex nombrado de Windows para que el instalador Inno Setup detecte instancias activas."""
+    global _APP_MUTEX_HANDLE
+    if sys.platform.startswith("win"):
+        try:
+            import ctypes
+            _APP_MUTEX_HANDLE = ctypes.windll.kernel32.CreateMutexW(
+                None, False, "TTC_TacticalTarkovCompanion_Mutex"
+            )
+        except Exception:
+            pass
+
+
 def main():
+    _acquire_app_mutex()
     app = TarkovScopeApp()
     app.mainloop()
 

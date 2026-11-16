@@ -51,6 +51,30 @@ class TestUpdater(unittest.TestCase):
         self.assertEqual(res["installer_name"], "TTC_Setup_v1.2.exe")
 
     @patch("core.updater.requests.get")
+    def test_check_github_release_prefers_setup_exe_over_portable(self, mock_get):
+        mock_resp = MagicMock()
+        mock_resp.status_code = 200
+        mock_resp.json.return_value = {
+            "tag_name": "v1.4.1",
+            "html_url": "https://github.com/Patoma89/TarkovScope/releases/tag/v1.4.1",
+            "body": "Installer priority test",
+            "assets": [
+                {
+                    "name": "TTC.exe",
+                    "browser_download_url": "https://example.com/TTC.exe",
+                },
+                {
+                    "name": "TTC_Setup_v1.4.1.exe",
+                    "browser_download_url": "https://example.com/TTC_Setup_v1.4.1.exe",
+                },
+            ],
+        }
+        mock_get.return_value = mock_resp
+
+        res = check_github_release(repo="Patoma89/TarkovScope", current_version="1.4.0")
+        self.assertEqual(res["installer_name"], "TTC_Setup_v1.4.1.exe")
+
+    @patch("core.updater.requests.get")
     def test_check_github_release_handles_404_gracefully(self, mock_get):
         mock_resp = MagicMock()
         mock_resp.status_code = 404

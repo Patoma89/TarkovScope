@@ -8,18 +8,30 @@ mejor extracción. Datos de posiciones: tarkov.dev (core/quest_route_data.py).
 import json
 import logging
 import threading
+import tkinter as tk
 from typing import Any, Dict, List, Optional, Set, Tuple
 
 import customtkinter as ctk
 
 from core.config import THEME
+from core.datastore import get_datastore
 from core.i18n import t_ui
-from core.progression_plan_store import load_config as load_progression_config
-from core.quest_route_data import get_route_maps, get_tasks_for_map, load_route_dataset, objective_label
+from core.progression_plan_store import (
+    get_completed_quest_keys,
+    load_config as load_progression_config,
+    sync_quest_completion,
+)
+from core.quest_route_data import (
+    get_route_maps,
+    get_tasks_for_map,
+    load_route_dataset,
+    normalize_quest_name,
+    objective_label,
+)
 from core.quest_route_planner import RoutePlan, Stop, plan_route, rank_spawns
 from core.route_map_renderer import render_route_map, world_to_view
 from core.user_data import get_user_preference, set_user_preference
-from ui.theme import (C_BG_DARKEST, C_BLUE, C_EMERALD, C_GREEN_LIGHT, C_TEXT, C_TEXT_DIM, C_TEXT_MUTED,
+from ui.theme import (C_BG_DARKEST, C_BLUE, C_BORDER, C_EMERALD, C_GREEN, C_GREEN_LIGHT, C_TEXT, C_TEXT_DIM, C_TEXT_MUTED,
                       C_WHITE, ui_font)
 
 PREF_ACTIVE = "quest_tracker_active"
@@ -41,8 +53,10 @@ class TabQuestTracker(ctk.CTkFrame):
         self.maps: List[Dict[str, Any]] = []
         self.map_key: str = ""
         self.active: Set[str] = self._load_active()
+        self.completed_keys: Set[str] = set()
         self.spawn_index: int = -1  # -1 = automático
         self.only_active = ctk.BooleanVar(value=False)
+        self.hide_completed = ctk.BooleanVar(value=False)
         self.zoom_route = ctk.BooleanVar(value=True)
         self._render_token = 0
         self._view: Optional[Dict[str, Any]] = None
@@ -76,7 +90,7 @@ class TabQuestTracker(ctk.CTkFrame):
         side.grid(row=0, column=0, padx=(0, 12), sticky="nsew")
         side.grid_propagate(False)
         side.grid_columnconfigure(0, weight=1)
-        side.grid_rowconfigure(5, weight=1)
+        side.grid_rowconfigure(6, weight=1)
 
         ctk.CTkLabel(side, text="QUEST TRACKER", font=ui_font(17, "bold"),
                      text_color=THEME["accent_orange"]).grid(row=0, column=0, padx=16, pady=(16, 2), sticky="w")
@@ -90,22 +104,26 @@ class TabQuestTracker(ctk.CTkFrame):
         self.map_menu.grid(row=2, column=0, padx=14, pady=(0, 8), sticky="ew")
 
         # Sin textvariable: CustomTkinter oculta el placeholder si la entrada tiene variable.
-        self.search_entry = ctk.CTkEntry(side, placeholder_text="Buscar quest...",
+        self.search_entry = ctk.CTkEntry(side, placeholder_text=t_ui("Buscar quest...", "Search quest..."),
                                          font=ui_font(13), height=32, fg_color=THEME["bg_inset"],
                                          border_color=THEME["border"])
         self.search_entry.grid(row=3, column=0, padx=14, pady=(0, 6), sticky="ew")
         self.search_entry.bind("<KeyRelease>", lambda _e: self._on_search_key())
 
         opts = ctk.CTkFrame(side, fg_color="transparent")
-        opts.grid(row=4, column=0, padx=14, pady=(0, 6), sticky="ew")
-        ctk.CTkCheckBox(opts, text="Solo activas", variable=self.only_active, command=self._populate_quests,
+        opts.grid(row=4, column=0, padx=14, pady=(0, 2), sticky="ew")
+        ctk.CTkCheckBox(opts, text=t_ui("Solo activas", "Active only"), variable=self.only_active, command=self._populate_quests,
                         font=ui_font(12, "bold"), text_color=C_TEXT, fg_color=THEME["accent_orange"],
                         height=22, width=24).pack(side="left")
-        self.count_lbl = ctk.CTkLabel(opts, text="", font=ui_font(12), text_color=C_TEXT_DIM)
-        self.count_lbl.pack(side="right")
+        ctk.CTkCheckBox(opts, text=t_ui("Ocultar hechas", "Hide done"), variable=self.hide_completed, command=self._populate_quests,
+                        font=ui_font(12, "bold"), text_color=C_TEXT_MUTED, fg_color=THEME["accent_green"],
+                        height=22, width=24).pack(side="right")
+
+        self.count_lbl = ctk.CTkLabel(side, text="", font=ui_font(11), text_color=C_TEXT_DIM)
+        self.count_lbl.grid(row=5, column=0, padx=16, pady=(0, 4), sticky="w")
 
         self.quest_scroll = ctk.CTkScrollableFrame(side, fg_color="transparent")
-        self.quest_scroll.grid(row=5, column=0, padx=6, pady=(0, 10), sticky="nsew")
+        self.quest_scroll.grid(row=6, column=0, padx=6, pady=(0, 10), sticky="nsew")
         self.quest_scroll.grid_columnconfigure(0, weight=1)
 
     def _build_main(self):
@@ -151,9 +169,26 @@ class TabQuestTracker(ctk.CTkFrame):
     def _tasks_here(self, map_key: Optional[str] = None) -> List[Dict[str, Any]]:
         return get_tasks_for_map(map_key or self.map_key, self.dataset, self.faction)
 
-    def reload_data(self):
-        self.dataset = load_route_dataset(force=True)
+    def _refresh_completed_state(self) -> bool:
+        """Sincroniza el conjunto de quests completadas desde Quests & Traders y Planner. True si cambió."""
+        new_keys = get_completed_quest_keys(
+            get_datastore(),
+            self.dataset.get("progression"),
+            self.faction,
+        )
+        pruned = {n for n in self.active if normalize_quest_name(n) not in new_keys}
+        active_changed = pruned != self.active
+        if active_changed:
+            self.active = pruned
+            self._save_active()
+        changed = (new_keys != self.completed_keys) or active_changed
+        self.completed_keys = new_keys
+        return changed
+
+    def reload_data(self, force: bool = False):
+        self.dataset = load_route_dataset(force=force)
         self.faction = self._load_faction()
+        self._refresh_completed_state()
         self.maps = get_route_maps(self.dataset)
         if not self.maps:
             self.map_menu.configure(values=["Sin datos"])
@@ -190,12 +225,27 @@ class TabQuestTracker(ctk.CTkFrame):
         self._populate_quests()
         self._recalculate()
 
+    def on_tab_activated(self):
+        new_faction = self._load_faction()
+        faction_changed = new_faction != self.faction
+        self.faction = new_faction
+        was_active = set(self.active)
+        state_changed = self._refresh_completed_state()
+        if state_changed or faction_changed:
+            self._populate_quests()
+            if faction_changed or self.active != was_active:
+                self._recalculate()
+
     def load_plan(self, map_key: str, quest_names: List[str], caption: str = "") -> None:
         """Lo usa el Planner de Progresión: carga el mapa y deja activas solo las quests de esa raid."""
-        self.active = set(quest_names)
+        self.faction = self._load_faction()
+        self._refresh_completed_state()
+        self.active = {
+            n for n in quest_names
+            if normalize_quest_name(n) not in self.completed_keys
+        }
         self._save_active()
         self.only_active.set(True)
-        self.faction = self._load_faction()
         if caption:
             self.tip_lbl.configure(text=f"{caption}  ·  {TIP_TEXT}", text_color=THEME["accent_gold"])
         if map_key in self.dataset.get("maps", {}):
@@ -220,14 +270,35 @@ class TabQuestTracker(ctk.CTkFrame):
             return
         query = self.search_entry.get().strip().lower()
         tasks = self._tasks_here()
-        n_active = sum(1 for t in tasks if t["name"] in self.active)
-        self.count_lbl.configure(text=f"{n_active} activas · {len(tasks)} en el mapa")
-        tasks.sort(key=lambda t: (t["name"] not in self.active, t["name"].lower()))
-        visible = [t for t in tasks
-                   if (not self.only_active.get() or t["name"] in self.active)
-                   and (not query or query in t["name"].lower())]
+        done_set = self.completed_keys
+        n_done = sum(1 for t in tasks if normalize_quest_name(t["name"]) in done_set)
+        n_active = sum(
+            1 for t in tasks
+            if t["name"] in self.active and normalize_quest_name(t["name"]) not in done_set
+        )
+        self.count_lbl.configure(
+            text=t_ui(
+                f"{n_active} en ruta · {n_done} hechas · {len(tasks)} total",
+                f"{n_active} active · {n_done} done · {len(tasks)} total",
+            )
+        )
+        tasks.sort(
+            key=lambda t: (
+                normalize_quest_name(t["name"]) in done_set,
+                t["name"] not in self.active,
+                t["name"].lower(),
+            )
+        )
+        hide_done = self.hide_completed.get()
+        only_act = self.only_active.get()
+        visible = [
+            t for t in tasks
+            if (not hide_done or normalize_quest_name(t["name"]) not in done_set)
+            and (not only_act or (t["name"] in self.active and normalize_quest_name(t["name"]) not in done_set))
+            and (not query or query in t["name"].lower())
+        ]
         if not visible:
-            ctk.CTkLabel(self.quest_scroll, text="Ninguna quest coincide.", font=ui_font(12),
+            ctk.CTkLabel(self.quest_scroll, text=t_ui("Ninguna quest coincide.", "No quests match."), font=ui_font(12),
                          text_color=C_TEXT_DIM).grid(row=0, column=0, pady=12)
             return
 
@@ -242,21 +313,40 @@ class TabQuestTracker(ctk.CTkFrame):
         render_batch(0)
 
     def _quest_row(self, row: int, t: Dict[str, Any]):
-        is_active = t["name"] in self.active
+        is_done = normalize_quest_name(t["name"]) in self.completed_keys
+        is_active = (not is_done) and (t["name"] in self.active)
         var = ctk.BooleanVar(value=is_active)
         n_pos = sum(1 for o in t["objectives"] if o.get("candidates"))
         sub = f"{t['trader'] or 'Trader'} · {n_pos} punto(s) en el mapa"
-        cell = ctk.CTkFrame(self.quest_scroll, fg_color=THEME["bg_row"] if is_active else "transparent",
-                            corner_radius=6)
+        row_bg = THEME["bg_row_done"] if is_done else (THEME["bg_row"] if is_active else "transparent")
+        cell = ctk.CTkFrame(self.quest_scroll, fg_color=row_bg, corner_radius=6)
         cell.grid(row=row, column=0, sticky="ew", pady=1)
         cell.grid_columnconfigure(0, weight=1)
-        ctk.CTkCheckBox(cell, text=t["name"], variable=var, font=ui_font(13, "bold"),
-                        text_color=C_WHITE if is_active else C_TEXT_MUTED,
-                        fg_color=THEME["accent_orange"], height=22,
-                        command=lambda name=t["name"], v=var: self._toggle_quest(name, v.get())
-                        ).grid(row=0, column=0, padx=8, pady=(5, 0), sticky="w")
+        chk = ctk.CTkCheckBox(
+            cell, text=t["name"], variable=var, font=ui_font(13, "bold"),
+            text_color=C_GREEN_LIGHT if is_done else (C_WHITE if is_active else C_TEXT_MUTED),
+            fg_color=THEME["accent_orange"], height=22,
+            state="disabled" if is_done else "normal",
+            command=lambda name=t["name"], v=var: self._toggle_quest(name, v.get()),
+        )
+        chk.grid(row=0, column=0, padx=(8, 4), pady=(5, 0), sticky="w")
+        done_btn = ctk.CTkButton(
+            cell,
+            text=t_ui("✓ Hecha", "✓ Done") if is_done else "✓",
+            width=66 if is_done else 30,
+            height=22,
+            corner_radius=5,
+            border_width=1,
+            border_color=C_GREEN if is_done else C_BORDER,
+            fg_color=THEME["bg_row_done"] if is_done else THEME["btn_surface"],
+            hover_color=THEME["btn_hover"] if is_done else C_EMERALD,
+            text_color=C_GREEN_LIGHT if is_done else C_TEXT_DIM,
+            font=ui_font(11, "bold"),
+            command=lambda name=t["name"], new_done=(not is_done): self._toggle_quest_completed(name, new_done),
+        )
+        done_btn.grid(row=0, column=1, padx=(2, 6), pady=(5, 0), sticky="e")
         ctk.CTkLabel(cell, text=sub, font=ui_font(11), text_color=C_TEXT_DIM
-                     ).grid(row=1, column=0, padx=38, pady=(0, 4), sticky="w")
+                     ).grid(row=1, column=0, columnspan=2, padx=38, pady=(0, 4), sticky="w")
 
     def _toggle_quest(self, name: str, on: bool):
         if on:
@@ -266,6 +356,20 @@ class TabQuestTracker(ctk.CTkFrame):
         self._save_active()
         self._populate_quests()
         self._recalculate()
+
+    def _toggle_quest_completed(self, name: str, done: bool):
+        sync_quest_completion(
+            name,
+            done,
+            datastore=get_datastore(),
+            progression=self.dataset.get("progression"),
+            faction=self.faction,
+        )
+        was_active = name in self.active
+        self._refresh_completed_state()
+        self._populate_quests()
+        if was_active:
+            self._recalculate()
 
     def _on_spawn_menu(self, label: str):
         spawns = self._current_map().get("spawns", [])
@@ -349,9 +453,15 @@ class TabQuestTracker(ctk.CTkFrame):
             except Exception as exc:
                 logger.exception("Fallo al calcular la ruta del Quest Tracker")
                 err = str(exc) or exc.__class__.__name__
-                self.after(0, lambda: self._apply_error(token, err))
+                try:
+                    self.after(0, lambda: self._apply_error(token, err))
+                except (RuntimeError, tk.TclError):
+                    pass
                 return
-            self.after(0, lambda: self._apply_result(token, img, view, plan, ranking, chosen, loose, len(stops)))
+            try:
+                self.after(0, lambda: self._apply_result(token, img, view, plan, ranking, chosen, loose, len(stops)))
+            except (RuntimeError, tk.TclError):
+                pass
 
         threading.Thread(target=worker, daemon=True).start()
 

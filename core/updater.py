@@ -103,13 +103,23 @@ def check_github_release(
 
     installer_url: Optional[str] = None
     installer_name: Optional[str] = None
+    fallback_url: Optional[str] = None
+    fallback_name: Optional[str] = None
     for asset in payload.get("assets") or []:
         name = str(asset.get("name") or "")
         dl_url = str(asset.get("browser_download_url") or "")
-        if name.lower().endswith(".exe") and dl_url:
-            installer_url = dl_url
-            installer_name = name
-            break
+        low = name.lower()
+        if low.endswith(".exe") and dl_url:
+            if "setup" in low or "installer" in low:
+                installer_url = dl_url
+                installer_name = name
+                break
+            if fallback_url is None:
+                fallback_url = dl_url
+                fallback_name = name
+    if installer_url is None:
+        installer_url = fallback_url
+        installer_name = fallback_name
 
     return {
         "ok": True,

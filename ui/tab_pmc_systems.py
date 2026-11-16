@@ -412,8 +412,14 @@ class TabPMCSystems(ctk.CTkFrame):
     def _render_skills_batch(self, items: List[Dict[str, Any]], start: int, token: int):
         if not self.winfo_exists() or token != self._skill_token:
             return
-        batch_size = 12
+        batch_size = 8
         end = min(start + batch_size, len(items))
+        scale = self._get_widget_scaling() if hasattr(self, "_get_widget_scaling") else 1.0
+        title_font_base = ui_font(12, "bold")
+        title_tk_font = (title_font_base.cget("family"), -int(round(12 * scale)), title_font_base.cget("weight"))
+        cat_font_base = ui_font(9, "bold")
+        cat_tk_font = (cat_font_base.cget("family"), -int(round(9 * scale)), cat_font_base.cget("weight"))
+
         for idx in range(start, end):
             sk = items[idx]
             is_sel = sk["id"] == self.selected_skill_id
@@ -421,10 +427,11 @@ class TabPMCSystems(ctk.CTkFrame):
             c = idx % 4
             bg_c, fg_c = SKILL_CAT_COLORS.get(sk["category"], (C_SLATE_700, C_WHITE))
             has_req = "Nv." in sk.get("requirements", "")
+            tile_bg = THEME["active_tab_bg"] if is_sel else C_BG_ROW
 
             tile = ctk.CTkFrame(
                 self.skill_list_scroll,
-                fg_color=THEME["active_tab_bg"] if is_sel else C_BG_ROW,
+                fg_color=tile_bg,
                 corner_radius=10,
                 border_width=2 if is_sel else 1,
                 border_color=THEME["accent_gold"] if is_sel else C_BORDER,
@@ -434,28 +441,30 @@ class TabPMCSystems(ctk.CTkFrame):
             tile.grid_columnconfigure(0, weight=1)
             self._skill_row_refs[sk["id"]] = tile
 
-            # Barra superior sutil con categoría y marca de requisito
-            top_strip = ctk.CTkFrame(tile, fg_color="transparent")
+            # Barra superior liviana con categoría y marca de requisito
+            top_strip = tk.Frame(tile, bg=tile_bg, bd=0)
             top_strip.grid(row=0, column=0, padx=7, pady=(6, 2), sticky="ew")
             top_strip.grid_columnconfigure(0, weight=1)
 
-            cat_lbl = ctk.CTkLabel(
+            cat_lbl = tk.Label(
                 top_strip,
                 text=f" {sk['category'][:3].upper()} ",
-                font=ui_font(9, "bold"),
-                fg_color=bg_c,
-                text_color=fg_c,
-                corner_radius=4,
-                height=16,
+                font=cat_tk_font,
+                bg=bg_c,
+                fg=fg_c,
+                bd=0,
+                padx=2,
+                pady=1,
             )
             cat_lbl.grid(row=0, column=0, sticky="w")
 
-            req_mark = ctk.CTkLabel(
+            req_mark = tk.Label(
                 top_strip,
                 text="🔑" if has_req else "",
-                font=ui_font(10),
-                text_color=C_AMBER,
-                height=16,
+                font=cat_tk_font,
+                bg=tile_bg,
+                fg=C_AMBER,
+                bd=0,
             )
             req_mark.grid(row=0, column=1, sticky="e")
 
@@ -485,13 +494,15 @@ class TabPMCSystems(ctk.CTkFrame):
             icon_lbl.grid(row=0, column=0)
 
             # Nombre abajo del ícono
-            title_lbl = ctk.CTkLabel(
+            title_lbl = tk.Label(
                 tile,
                 text=sk.get("short_name", sk["name"]),
-                font=ui_font(12, "bold"),
-                text_color=C_WHITE if is_sel else C_TEXT_SOFT,
-                wraplength=118,
+                font=title_tk_font,
+                bg=tile_bg,
+                fg=C_WHITE if is_sel else C_TEXT_SOFT,
+                wraplength=int(118 * scale),
                 justify="center",
+                bd=0,
             )
             title_lbl.grid(row=2, column=0, padx=6, pady=(0, 8), sticky="ew")
 
@@ -499,7 +510,7 @@ class TabPMCSystems(ctk.CTkFrame):
                 widget.bind("<Button-1>", lambda _e, s=sk: self._select_skill(s))
 
         if end < len(items):
-            self.after(4, lambda: self._render_skills_batch(items, end, token))
+            self.after(2, lambda: self._render_skills_batch(items, end, token))
 
     def _select_skill(self, sk: Dict[str, Any]):
         prev_id = self.selected_skill_id

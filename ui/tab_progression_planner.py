@@ -30,6 +30,7 @@ from core.progression_plan_store import (
     save_config,
     save_progress,
     set_manual_reputation,
+    sync_quest_completion,
 )
 from core.quest_route_data import APP_MAP_LABELS, OBJECTIVE_TYPE_LABELS, PLANNABLE_TRADERS, load_route_dataset, normalize_quest_name
 from core.progression_planner import ANYWHERE, PlannerState, RaidPlan, Selection, build_raid_plan, select_quests
@@ -297,8 +298,8 @@ class TabProgressionPlanner(ctk.CTkFrame):
         self._recalculate()
 
     # ------------------------------------------------------------------ datos
-    def reload_data(self):
-        ds = load_route_dataset(force=True)
+    def reload_data(self, force: bool = False):
+        ds = load_route_dataset(force=force)
         self.progression = ds.get("progression", {})
         self._quest_names = quest_names(self.progression, self.cfg.get("faction", "BEAR"))
         self._render_goals()
@@ -308,18 +309,32 @@ class TabProgressionPlanner(ctk.CTkFrame):
         self._import_quests_tab()
         self._recalculate()
 
-    def _import_quests_tab(self):
+    def on_tab_activated(self):
+        if not self.progression.get("tasks"):
+            return
+        prev_done = set(self.progress["done"])
+        prev_obj = set(self.progress["objectives"])
+        latest = load_progress()
+        self.progress["done"] = latest["done"]
+        self.progress["objectives"] = latest["objectives"]
+        changed = self._import_quests_tab()
+        if changed or self.progress["done"] != prev_done or self.progress["objectives"] != prev_obj or self.plan is None:
+            self._recalculate()
+
+    def _import_quests_tab(self) -> bool:
         """Sincroniza con Quests & Traders: lo que se marque o desmarque allí manda."""
         completed, known = quests_tab_state(get_datastore())
         new_done = reconcile_done(self.progression, self.progress["done"], completed, known,
                                   self.cfg.get("faction", "BEAR"))
-        if new_done != self.progress["done"]:
+        changed = new_done != self.progress["done"]
+        if changed:
             removed = self.progress["done"] - new_done
             self.progress["done"] = new_done
             self.progress["objectives"] = drop_task_objectives(self.progress["objectives"], removed)
             save_progress(self.progress)
         self.sync_lbl.configure(text=f"{len(self.progress['done'])} quests completadas registradas "
                                      f"(incluye las marcadas en Quests & Traders).")
+        return changed
 
     def _state(self) -> PlannerState:
         rep = effective_reputation(self.progression, self.cfg.get("reps", {}), self.progress["done"])
@@ -352,9 +367,15 @@ class TabProgressionPlanner(ctk.CTkFrame):
             except Exception as exc:  # no dejar la UI colgada en "Calculando…"
                 logger.exception("Fallo al calcular el plan de progresión")
                 err = str(exc) or exc.__class__.__name__
-                self.after(0, lambda: self._apply_error(token, err))
+                try:
+                    self.after(0, lambda: self._apply_error(token, err))
+                except (RuntimeError, tk.TclError):
+                    pass
                 return
-            self.after(0, lambda: self._apply(token, sel, plan, state, goals))
+            try:
+                self.after(0, lambda: self._apply(token, sel, plan, state, goals))
+            except (RuntimeError, tk.TclError):
+                pass
 
         threading.Thread(target=worker, daemon=True).start()
 
@@ -398,9 +419,19 @@ class TabProgressionPlanner(ctk.CTkFrame):
                 self.progress["objectives"] = drop_task_objectives(self.progress["objectives"], [tid])
             if tid in tasks:
                 push_completion_to_quests_tab(ds, tasks[tid]["name"], done)
+                if done:
+                    sync_quest_completion(
+                        tasks[tid]["name"],
+                        True,
+                        datastore=None,
+                        progression=self.progression,
+                        faction=self.cfg.get("faction", "BEAR"),
+                    )
         for key in objective_keys:
             self.progress["objectives"].add(key)
         save_progress(self.progress)
+        self.sync_lbl.configure(text=f"{len(self.progress['done'])} quests completadas registradas "
+                                     f"(incluye las marcadas en Quests & Traders).")
         self._recalculate()
 
     def _complete_raid(self, raid):

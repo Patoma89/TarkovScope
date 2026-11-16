@@ -285,6 +285,71 @@ class TestPlanStore(unittest.TestCase):
         result = reconcile_done(self._prog(), done, ["Administrator"], ["Debut", "Administrator"], "USEC")
         self.assertEqual(result, {"adm_u", "new"})
 
+    def test_sync_quest_completion_across_all_three_stores(self):
+        import json
+        import os
+        import tempfile
+        from core.database import init_db
+        from core.progression_plan_store import (
+            PREF_TRACKER_ACTIVE,
+            get_completed_quest_keys,
+            load_progress,
+            sync_quest_completion,
+        )
+        from core.user_data import get_user_preference, set_user_preference
+
+        class FakeDS:
+            def __init__(self):
+                self._quests = [
+                    {"id": 1, "title": "Debut", "is_completed": 0},
+                    {"id": 2, "title": "Administrator", "is_completed": 0},
+                ]
+
+            def get_quests(self):
+                return list(self._quests)
+
+            def toggle_quest(self, qid):
+                for q in self._quests:
+                    if q["id"] == qid:
+                        q["is_completed"] = 0 if q["is_completed"] else 1
+                        return bool(q["is_completed"])
+                return False
+
+        tmp = tempfile.NamedTemporaryFile(suffix=".db", delete=False)
+        tmp.close()
+        try:
+            init_db(tmp.name)
+            ds = FakeDS()
+            prog = self._prog()
+            set_user_preference(PREF_TRACKER_ACTIVE, json.dumps(["Debut", "Quest Nueva"]), tmp.name)
+
+            # 1) Marcar desde Quest Tracker/Planner sincroniza DataStore, Planner y quita de ruta activa
+            sync_quest_completion("Debut", True, datastore=ds, progression=prog, faction="USEC", db_path=tmp.name)
+            self.assertEqual(ds._quests[0]["is_completed"], 1)
+            self.assertIn("deb", load_progress(tmp.name)["done"])
+            self.assertEqual(json.loads(get_user_preference(PREF_TRACKER_ACTIVE, "[]", tmp.name)), ["Quest Nueva"])
+            keys = get_completed_quest_keys(ds, progression=prog, faction="USEC", db_path=tmp.name)
+            self.assertIn("debut", keys)
+
+            # 2) Desmarcar en cualquiera de las 3 limpia en todas
+            sync_quest_completion("Debut", False, datastore=ds, progression=prog, faction="USEC", db_path=tmp.name)
+            self.assertEqual(ds._quests[0]["is_completed"], 0)
+            self.assertNotIn("deb", load_progress(tmp.name)["done"])
+            keys = get_completed_quest_keys(ds, progression=prog, faction="USEC", db_path=tmp.name)
+            self.assertNotIn("debut", keys)
+
+            # 3) Quest solo de tarkov.dev (no existe en DataStore) también sincroniza entre Tracker y Planner
+            sync_quest_completion("Quest Nueva", True, datastore=ds, progression=prog, faction="USEC", db_path=tmp.name)
+            self.assertIn("new", load_progress(tmp.name)["done"])
+            keys = get_completed_quest_keys(ds, progression=prog, faction="USEC", db_path=tmp.name)
+            self.assertIn("questnueva", keys)
+        finally:
+            for suffix in ("", "-wal", "-shm"):
+                try:
+                    os.remove(tmp.name + suffix)
+                except OSError:
+                    pass
+
 
 class TestWikiFetch(unittest.TestCase):
     def test_fetch_quest_pages_batches_in_parallel(self):

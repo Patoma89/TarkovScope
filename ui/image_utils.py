@@ -274,7 +274,7 @@ def get_story_chapter_icon_ctk(icon_file: str, size: Tuple[int, int] = (28, 28))
         return None
     try:
         pil_img = Image.open(path).convert("RGBA")
-        pil_img = pil_img.resize(size, Image.Resampling.LANCZOS)
+        pil_img = pil_img.resize(size, Image.Resampling.BILINEAR)
         ctk_img = ctk.CTkImage(light_image=pil_img, dark_image=pil_img, size=size)
         _CTK_IMAGE_RAM_CACHE[cache_key] = ctk_img
         return ctk_img
@@ -297,7 +297,7 @@ def get_story_chapter_banner_ctk(banner_file: str, target_width: int = 860) -> O
         pil_img = Image.open(path).convert("RGBA")
         w, h = pil_img.size
         new_h = max(80, int(h * (target_width / w)))
-        pil_img = pil_img.resize((target_width, new_h), Image.Resampling.LANCZOS)
+        pil_img = pil_img.resize((target_width, new_h), Image.Resampling.BILINEAR)
         ctk_img = ctk.CTkImage(light_image=pil_img, dark_image=pil_img, size=(target_width, new_h))
         _CTK_IMAGE_RAM_CACHE[cache_key] = ctk_img
         return ctk_img
@@ -321,7 +321,7 @@ def get_story_gallery_ctk_image(
         return None
     try:
         pil_img = Image.open(path).convert("RGBA")
-        pil_img.thumbnail(max_size, Image.Resampling.LANCZOS)
+        pil_img.thumbnail(max_size, Image.Resampling.BILINEAR)
         ctk_img = ctk.CTkImage(light_image=pil_img, dark_image=pil_img, size=pil_img.size)
         _CTK_IMAGE_RAM_CACHE[cache_key] = ctk_img
         return ctk_img

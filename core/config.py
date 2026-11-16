@@ -162,9 +162,10 @@ THEME_SKIN_META = {
     "tarkov_classic": {"label": "EFT Hideout", "use_tarkov_font": True},
     "labs_nvg": {"label": "Labs NVG", "use_tarkov_font": True},
     "tactical_slate": {"label": "Tactical Slate", "use_tarkov_font": False},
+    "halloween_cultist": {"label": "🎃 Halloween", "use_tarkov_font": True},
 }
 
-# Paletas tácticas (3 Skins seleccionables, solo valores hex #RRGGBB)
+# Paletas tácticas (4 Skins seleccionables, solo valores hex #RRGGBB)
 THEME_SKINS = {
     "tarkov_classic": {
         "bg_dark": "#0B0B09",          # Negro carbón menú EFT
@@ -268,6 +269,41 @@ THEME_SKINS = {
         "red_dark": "#DC2626",
         "accent_yellow": "#F59E0B",    # Ámbar brillante de alto contraste
         "accent_green": "#22C55E",     # Verde esmeralda brillante
+        "green_light": "#4ADE80",
+        "emerald": "#10B981",
+    },
+    "halloween_cultist": {
+        "bg_dark": "#0B0710",          # Obsidiana nocturna evento Halloween
+        "bg_darkest": "#07050B",
+        "bg_inset": "#09060E",
+        "bg_deep": "#100B17",
+        "bg_card": "#171122",          # Panel púrpura-carbón ritual Cultista
+        "bg_panel_alt": "#140F1E",
+        "bg_panel_alt2": "#1A1326",
+        "bg_card_hover": "#231933",
+        "bg_row": "#1D152B",
+        "bg_row_alt": "#261C38",
+        "bg_row_done": "#132318",
+        "active_tab_bg": "#2B1B24",
+        "btn_surface": "#1E1629",
+        "btn_hover": "#2E213D",
+        "slate_800": "#241B35",
+        "slate_700": "#372A4D",
+        "border": "#44325B",
+        "border_soft": "#312344",
+        "border_alt": "#573D6E",
+        "text_main": "#FFF7ED",        # Blanco hueso cálido de alto contraste
+        "text_soft": "#FDE7D4",
+        "text_muted": "#D8C3B8",
+        "text_dim": "#A28C88",
+        "accent_gold": "#FF8A2B",      # Calabaza luminosa Jack-o'-lantern
+        "accent_orange": "#F97316",    # Naranja Halloween intenso
+        "accent_olive": "#5E467A",     # Púrpura Cultista
+        "accent_blue": "#A78BFA",      # Violeta espectral
+        "accent_red": "#F43F5E",       # Carmesí Blood Moon
+        "red_dark": "#BE123C",
+        "accent_yellow": "#FACC15",    # Amarillo vela ritual
+        "accent_green": "#22C55E",     # Verde tóxico Cultista
         "green_light": "#4ADE80",
         "emerald": "#10B981",
     },

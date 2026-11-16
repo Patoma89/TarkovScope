@@ -17,6 +17,7 @@ import customtkinter as ctk
 from typing import List, Dict, Any, Optional
 from core.config import THEME
 from core.datastore import get_datastore
+from core.progression_plan_store import sync_quest_completion
 from ui.theme import ui_font
 from ui.image_utils import get_trader_ctk_image
 from ui.map_viewer_modal import open_map_viewer_modal
@@ -100,6 +101,7 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
         self._row_frames: List[tk.Frame] = []
         self._wrap_targets: List[tuple] = []
         self._table_hdr_inner: Optional[ctk.CTkFrame] = None
+        self._last_completed_sig: Optional[frozenset] = None
 
         # Estado Vista 2: Assortment & Barters
         self.selected_assort_trader = "Prapor"
@@ -615,6 +617,13 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
     def reload_data(self):
         self._reset_and_apply_filters()
 
+    def on_tab_activated(self):
+        ds = get_datastore()
+        all_quests = ds.get_quests(trader_filter="TODOS", progression_mode="ALL")
+        sig = frozenset(q["id"] for q in all_quests if q.get("is_completed") == 1)
+        if sig != self._last_completed_sig:
+            self._apply_filters()
+
     def _reset_and_apply_filters(self):
         self._debounce_job = None
         self.current_page = 0
@@ -624,15 +633,21 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
         ds = get_datastore()
         all_quests_global = ds.get_quests(trader_filter="TODOS", progression_mode="ALL")
         total_global = len(all_quests_global)
-        done_global = sum(1 for q in all_quests_global if q.get("is_completed") == 1)
+        completed_ids = [q["id"] for q in all_quests_global if q.get("is_completed") == 1]
+        self._last_completed_sig = frozenset(completed_ids)
+        done_global = len(completed_ids)
 
         if self.selected_trader == "TODOS":
             pct = int((done_global / total_global) * 100) if total_global > 0 else 0
             self.stats_lbl.configure(text=f"Total Quests: {done_global} / {total_global} ({pct}%)")
         else:
-            tr_quests = ds.get_quests(trader_filter=self.selected_trader, progression_mode="ALL")
-            tr_tot = len(tr_quests)
-            tr_done = sum(1 for q in tr_quests if q.get("is_completed") == 1)
+            tr_tot = 0
+            tr_done = 0
+            for q in all_quests_global:
+                if q.get("trader_name") == self.selected_trader:
+                    tr_tot += 1
+                    if q.get("is_completed") == 1:
+                        tr_done += 1
             self.stats_lbl.configure(
                 text=f"{self.selected_trader}: {tr_done}/{tr_tot}  •  Total Juego: {done_global}/{total_global}"
             )
@@ -960,6 +975,7 @@ class TabQuests(AssortmentViewMixin, ctk.CTkFrame):
 
     def _on_toggle_quest(self, q: Dict[str, Any]):
         new_state = get_datastore().toggle_quest(q["id"])
+        sync_quest_completion(q.get("title", ""), bool(new_state), datastore=None)
         unlocks = q.get("unlocks_titles", [])
         if new_state and unlocks:
             self.unlock_notice_lbl.configure(

@@ -12,6 +12,9 @@ DefaultDirName={localappdata}\TTC
 DefaultGroupName=TTC (Tactical Tarkov Companion)
 DisableDirPage=no
 DisableProgramGroupPage=yes
+DirExistsWarning=no
+CloseApplications=yes
+CloseApplicationsFilter=TTC.exe
 PrivilegesRequired=lowest
 OutputDir=dist_installer
 OutputBaseFilename=TTC_Setup_v1.4.0
@@ -117,4 +120,113 @@ begin
       Result := False;
     end;
   end;
+end;
+
+function ExtractExePath(const RawCmd: string): string;
+var
+  S: string;
+  P: Integer;
+begin
+  S := Trim(RawCmd);
+  if S = '' then
+  begin
+    Result := '';
+    exit;
+  end;
+  if Copy(S, 1, 1) = '"' then
+  begin
+    Delete(S, 1, 1);
+    P := Pos('"', S);
+    if P > 0 then
+      S := Copy(S, 1, P - 1);
+  end
+  else
+  begin
+    P := Pos(' /', S);
+    if P > 0 then
+      S := Copy(S, 1, P - 1);
+  end;
+  Result := Trim(S);
+end;
+
+function NormDir(const DirPath: string): string;
+begin
+  Result := Uppercase(RemoveBackslashUnlessRoot(Trim(DirPath)));
+end;
+
+function ReadUninstallEntry(const RootKey: Integer; out UninstExe: string; out InstallLoc: string): Boolean;
+var
+  SubKey: string;
+  RawUninst: string;
+begin
+  Result := False;
+  UninstExe := '';
+  InstallLoc := '';
+  SubKey := 'Software\Microsoft\Windows\CurrentVersion\Uninstall\{8E9A3F21-6C4D-4F18-9A1E-7C52B8D3E110}_is1';
+  if not RegKeyExists(RootKey, SubKey) then
+    exit;
+  if not RegQueryStringValue(RootKey, SubKey, 'UninstallString', RawUninst) then
+    RegQueryStringValue(RootKey, SubKey, 'QuietUninstallString', RawUninst);
+  UninstExe := ExtractExePath(RawUninst);
+  RegQueryStringValue(RootKey, SubKey, 'InstallLocation', InstallLoc);
+  if InstallLoc = '' then
+    RegQueryStringValue(RootKey, SubKey, 'Inno Setup: App Path', InstallLoc);
+  if (InstallLoc = '') and (UninstExe <> '') then
+    InstallLoc := ExtractFileDir(UninstExe);
+  Result := (UninstExe <> '') and FileExists(UninstExe);
+end;
+
+procedure PreserveUserDatabaseIfNeeded(const OldDir: string; const NewDir: string);
+var
+  OldDb: string;
+  NewDb: string;
+begin
+  if (OldDir = '') or (NewDir = '') or (NormDir(OldDir) = NormDir(NewDir)) then
+    exit;
+  OldDb := AddBackslash(OldDir) + 'data\tarkov_data.db';
+  NewDb := AddBackslash(NewDir) + 'data\tarkov_data.db';
+  if FileExists(OldDb) and (not FileExists(NewDb)) then
+  begin
+    ForceDirectories(AddBackslash(NewDir) + 'data');
+    FileCopy(OldDb, NewDb, False);
+  end;
+end;
+
+procedure UninstallPriorEntry(const RootKey: Integer; const RequireAdmin: Boolean; const TargetDir: string);
+var
+  UninstExe: string;
+  OldDir: string;
+  ResultCode: Integer;
+begin
+  if not ReadUninstallEntry(RootKey, UninstExe, OldDir) then
+    exit;
+  { Si está en HKCU en exactamente la misma carpeta, Inno Setup actualiza in-place sin desinstalar primero }
+  if (not RequireAdmin) and (NormDir(OldDir) = NormDir(TargetDir)) then
+    exit;
+
+  PreserveUserDatabaseIfNeeded(OldDir, TargetDir);
+
+  if RequireAdmin then
+    ShellExec('runas', UninstExe, '/VERYSILENT /SUPPRESSMSGBOXES /NORESTART', '', SW_HIDE, ewWaitUntilTerminated, ResultCode)
+  else
+    Exec(UninstExe, '/VERYSILENT /SUPPRESSMSGBOXES /NORESTART', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+end;
+
+function PrepareToInstall(var NeedsRestart: Boolean): string;
+var
+  TargetDir: string;
+  ResultCode: Integer;
+begin
+  Result := '';
+  TargetDir := WizardDirValue;
+
+  { Cerrar cualquier instancia previa en ejecución para poder reemplazar TTC.exe sin bloqueos }
+  Exec(ExpandConstant('{sys}\taskkill.exe'), '/F /IM TTC.exe', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+  Sleep(250);
+
+  { Eliminar versiones previas registradas en HKLM (32/64 bits) o en otra carpeta de HKCU para evitar duplicados }
+  if IsWin64 then
+    UninstallPriorEntry(HKLM64, True, TargetDir);
+  UninstallPriorEntry(HKLM32, True, TargetDir);
+  UninstallPriorEntry(HKCU, False, TargetDir);
 end;

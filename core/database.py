@@ -36,10 +36,15 @@ from core.user_data import (  # noqa: F401 (re-export)
 )
 
 logger = logging.getLogger("TarkovScope.Database")
+_INITIALIZED_DB_PATHS: Set[str] = set()
 
 
 def init_db(db_path: str = DB_PATH) -> None:
     """Crea las tablas e índices necesarios si no existen."""
+    abs_path = os.path.abspath(db_path)
+    if abs_path in _INITIALIZED_DB_PATHS and os.path.exists(abs_path) and os.path.getsize(abs_path) > 0:
+        return
+
     with get_db_connection(db_path) as conn:
         cursor = conn.cursor()
 
@@ -169,6 +174,7 @@ def init_db(db_path: str = DB_PATH) -> None:
             if has_legacy_hex > 0 or has_modern == 0:
                 seed_wiki_ammunition(db_path)
 
+    _INITIALIZED_DB_PATHS.add(abs_path)
     logger.info("Base de datos SQLite inicializada correctamente en %s", db_path)
 
 
