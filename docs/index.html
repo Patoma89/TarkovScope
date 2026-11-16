@@ -1053,7 +1053,7 @@
           <ul class="module-list">
             <li>Cálculo TSP de ruta óptima con nodos exactos sobre el plano topográfico 2D.</li>
             <li>Agrupación inteligente de objetivos superpuestos en una misma incursión.</li>
-            <li>Indicadores de llaves requeridas y extracciones cercanas al último objetivo.</li>
+            <li>Indicadores de llaves requeridas, estado completado sincronizado en las 3 pestañas y extracción óptima.</li>
           </ul>
         </article>
 
@@ -1066,7 +1066,7 @@
           <ul class="module-list">
             <li>Árbol de dependencias automático que prioriza desbloqueos y cuellos de botella.</li>
             <li>Resumen de ítems FiR, llaves y niveles requeridos para cada meta elegida.</li>
-            <li>Selector global de idioma <strong>ES / EN</strong>, 3 skins y Patch Notes integrados.</li>
+            <li>Selector global de idioma <strong>ES / EN</strong>, 4 skins (incluyendo <strong>🎃 Halloween</strong>) y Patch Notes integrados.</li>
           </ul>
         </article>
 
@@ -1201,7 +1201,7 @@
           <span class="arch-badge">CLEAN ARCHITECTURE</span>
           <h3>Separación Core / UI</h3>
           <p>
-            Lógica de negocio pura en <code>core/</code> totalmente desacoplada de la interfaz gráfica en <code>ui/</code>, respaldada por 132 pruebas unitarias automáticas.
+            Lógica de negocio pura en <code>core/</code> totalmente desacoplada de la interfaz gráfica en <code>ui/</code>, respaldada por 134 pruebas unitarias automáticas.
           </p>
         </div>
 
@@ -1244,8 +1244,8 @@
               Instalador oficial (<code>TTC_Setup_v1.4.0.exe</code>) compilado con PyInstaller e Inno Setup con packs de iconos, mapas y avatares listos offline.
             </p>
             <ul class="module-list" style="margin-bottom: 24px;">
-              <li>Nuevo en v1.4.0: Quest Tracker con rutas, Planner de Progresión, selector ES/EN, Modding Studio PRO (110/110 PNGs), 35 Skills Wiki y Patch Notes.</li>
-              <li>Compatible con Windows 10 y Windows 11 (64-bit), 3 skins completas y almacenamiento seguro en <code>LocalAppData</code>.</li>
+              <li>Nuevo en v1.4.0: Quest Tracker con rutas, Planner de Progresión, sync de quests en 3 pestañas, selector ES/EN, Modding Studio PRO, 35 Skills Wiki y skin 🎃 Halloween.</li>
+              <li>Compatible con Windows 10 y Windows 11 (64-bit), 4 skins completas, reemplazo limpio de versiones previas y almacenamiento seguro en <code>LocalAppData</code>.</li>
               <li>Funciona 100% offline, sin telemetría y con auto-updater seguro desde GitHub.</li>
             </ul>
           </div>
@@ -1372,7 +1372,7 @@
         desc: "Selecciona tus misiones activas en cualquier mapa y elige tu punto de spawn: TTC calcula en milisegundos el recorrido más corto entre objetivos hasta la extracción recomendada.",
         highlights: [
           { icon: "📍", title: "Ruta Más Corta en Mapa 2D", text: "Traza paso a paso el orden óptimo de objetivos desde tu spawn para minimizar exposición." },
-          { icon: "🗝️", title: "Checklist de Llaves por Raid", text: "Detecta automáticamente qué llaves necesitas llevar en el Docs/SICC antes de desplegar." },
+          { icon: "🗝️", title: "Sync en 3 Pestañas & Llaves", text: "Detecta llaves necesarias y sincroniza al instante las misiones completadas entre Quests & Traders, Tracker y Planner." },
           { icon: "🚪", title: "Extracción Inteligente", text: "Sugiere la salida más cercana al último punto de interés según tu facción y mapa." }
         ],
         footerLeft: "MOTOR: quest_route_planner.py + route_map_renderer.py",
@@ -1441,10 +1441,10 @@
       lore: {
         tag: "MÓDULO 06 // NARRATIVA OFICIAL",
         title: "Capítulos de Historia & Lore de Tarkov",
-        desc: "Recorre la historia completa del conflicto de Norvinsk y TerraGroup a través de los 10 capítulos oficiales, con soporte completo para las 3 skins tácticas (Tarkov Classic, Labs NVG y Tactical Slate) y selector ES/EN.",
+        desc: "Recorre la historia completa del conflicto de Norvinsk y TerraGroup a través de los 10 capítulos oficiales, con soporte completo para las 4 skins tácticas (Tarkov Classic, Labs NVG, Tactical Slate y 🎃 Halloween) y selector ES/EN.",
         highlights: [
           { icon: "📜", title: "10 Capítulos Completos", text: "Guías paso a paso de la línea principal con banners panorámicos e imágenes de referencia." },
-          { icon: "🎨", title: "Skins & Smooth Scroll", text: "Desplazamiento fluido adaptado al instante a Tarkov Classic, Labs NVG y Tactical Slate." },
+          { icon: "🎨", title: "4 Skins & Smooth Scroll", text: "Desplazamiento fluido adaptado al instante a Tarkov Classic, Labs NVG, Tactical Slate y 🎃 Halloween." },
           { icon: "🔗", title: "Contexto Integrado", text: "Conecta personajes, facciones, comerciantes y ubicaciones clave dentro de la misma aplicación." }
         ],
         footerLeft: "ARCHIVO: story_quests_data.py (CAP. 1–10)",
