@@ -22,6 +22,7 @@ from core.pmc_systems_data import (
     filter_skills,
     filter_transits,
 )
+from ui.image_utils import get_gear_ctk_icon
 from ui.theme import (
     C_AMBER,
     C_BG_DEEP,
@@ -255,7 +256,8 @@ class TabPMCSystems(ctk.CTkFrame):
             border_color=THEME["border"],
         )
         self.skill_list_scroll.grid(row=0, column=0, padx=(0, 8), sticky="nsew")
-        self.skill_list_scroll.grid_columnconfigure(0, weight=1)
+        for col in range(4):
+            self.skill_list_scroll.grid_columnconfigure(col, weight=1, uniform="skill_tile")
 
         right_scroll = ctk.CTkScrollableFrame(
             body,
@@ -392,7 +394,7 @@ class TabPMCSystems(ctk.CTkFrame):
                 text="No se encontraron skills para ese filtro.",
                 font=ui_font(13),
                 text_color=C_TEXT_DIM,
-            ).grid(row=0, column=0, padx=20, pady=30)
+            ).grid(row=0, column=0, columnspan=4, padx=20, pady=30)
             self._render_skill_detail(None)
             return
 
@@ -406,71 +408,90 @@ class TabPMCSystems(ctk.CTkFrame):
     def _render_skills_batch(self, items: List[Dict[str, Any]], start: int, token: int):
         if not self.winfo_exists() or token != self._skill_token:
             return
-        batch_size = 8
+        batch_size = 12
         end = min(start + batch_size, len(items))
         for idx in range(start, end):
             sk = items[idx]
             is_sel = sk["id"] == self.selected_skill_id
-            row = ctk.CTkFrame(
+            r = idx // 4
+            c = idx % 4
+            bg_c, fg_c = SKILL_CAT_COLORS.get(sk["category"], (C_SLATE_700, C_WHITE))
+            has_req = "Nv." in sk.get("requirements", "")
+
+            tile = ctk.CTkFrame(
                 self.skill_list_scroll,
-                fg_color=C_BG_ROW_ALT if is_sel else C_BG_ROW,
-                corner_radius=8,
-                border_width=1,
+                fg_color=THEME["active_tab_bg"] if is_sel else C_BG_ROW,
+                corner_radius=10,
+                border_width=2 if is_sel else 1,
                 border_color=THEME["accent_gold"] if is_sel else C_BORDER,
                 cursor="hand2",
             )
-            row.grid(row=idx, column=0, padx=8, pady=4, sticky="ew")
-            row.grid_columnconfigure(0, weight=1)
-            self._skill_row_refs[sk["id"]] = row
+            tile.grid(row=r, column=c, padx=5, pady=5, sticky="nsew")
+            tile.grid_columnconfigure(0, weight=1)
+            self._skill_row_refs[sk["id"]] = tile
 
-            top = ctk.CTkFrame(row, fg_color="transparent")
-            top.grid(row=0, column=0, padx=10, pady=(8, 2), sticky="ew")
-            top.grid_columnconfigure(0, weight=1)
+            # Barra superior sutil con categoría y marca de requisito
+            top_strip = ctk.CTkFrame(tile, fg_color="transparent")
+            top_strip.grid(row=0, column=0, padx=7, pady=(6, 2), sticky="ew")
+            top_strip.grid_columnconfigure(0, weight=1)
 
-            name_lbl = ctk.CTkLabel(
-                top,
-                text=sk["name"],
-                font=ui_font(13, "bold"),
-                text_color=C_WHITE,
-                anchor="w",
-            )
-            name_lbl.grid(row=0, column=0, sticky="w")
-
-            bg_c, fg_c = SKILL_CAT_COLORS.get(sk["category"], (C_SLATE_700, C_WHITE))
-            badge = ctk.CTkLabel(
-                top,
-                text=f" {sk['category']} ",
-                font=ui_font(10, "bold"),
+            cat_lbl = ctk.CTkLabel(
+                top_strip,
+                text=f" {sk['category'][:3].upper()} ",
+                font=ui_font(9, "bold"),
                 fg_color=bg_c,
                 text_color=fg_c,
-                corner_radius=6,
-                height=20,
+                corner_radius=4,
+                height=16,
             )
-            badge.grid(row=0, column=1, padx=(8, 0), sticky="e")
+            cat_lbl.grid(row=0, column=0, sticky="w")
 
-            req_lbl = ctk.CTkLabel(
-                row,
-                text=f"Requisitos: {sk['requirements']}",
-                font=ui_font(11, "bold"),
-                text_color=C_AMBER if "Nv." in sk["requirements"] else C_TEXT_DIM,
-                anchor="w",
-                wraplength=470,
-                justify="left",
+            req_mark = ctk.CTkLabel(
+                top_strip,
+                text="🔑" if has_req else "",
+                font=ui_font(10),
+                text_color=C_AMBER,
+                height=16,
             )
-            req_lbl.grid(row=1, column=0, padx=10, pady=(0, 2), sticky="w")
+            req_mark.grid(row=0, column=1, sticky="e")
 
-            lvl_lbl = ctk.CTkLabel(
-                row,
-                text=sk["how_to_level"],
-                font=ui_font(11),
-                text_color=C_TEXT_MUTED,
-                anchor="w",
-                wraplength=470,
-                justify="left",
+            # Medallón / tazo con el ícono oficial
+            icon_box = ctk.CTkFrame(
+                tile,
+                width=74,
+                height=74,
+                fg_color=C_BG_DEEP,
+                corner_radius=12,
+                border_width=1,
+                border_color=THEME["accent_gold"] if is_sel else THEME["border_soft"],
             )
-            lvl_lbl.grid(row=2, column=0, padx=10, pady=(0, 8), sticky="w")
+            icon_box.grid(row=1, column=0, padx=10, pady=(2, 4))
+            icon_box.grid_propagate(False)
+            icon_box.grid_columnconfigure(0, weight=1)
+            icon_box.grid_rowconfigure(0, weight=1)
 
-            for widget in (row, top, name_lbl, badge, req_lbl, lvl_lbl):
+            icon_img = get_gear_ctk_icon(sk.get("cache_key", ""), max_size=(60, 60))
+            icon_lbl = ctk.CTkLabel(
+                icon_box,
+                text="" if icon_img else sk["short_name"][:2].upper(),
+                image=icon_img,
+                font=ui_font(16, "bold"),
+                text_color=THEME["accent_gold"],
+            )
+            icon_lbl.grid(row=0, column=0)
+
+            # Nombre abajo del ícono
+            title_lbl = ctk.CTkLabel(
+                tile,
+                text=sk.get("short_name", sk["name"]),
+                font=ui_font(12, "bold"),
+                text_color=C_WHITE if is_sel else C_TEXT_SOFT,
+                wraplength=118,
+                justify="center",
+            )
+            title_lbl.grid(row=2, column=0, padx=6, pady=(0, 8), sticky="ew")
+
+            for widget in (tile, top_strip, cat_lbl, req_mark, icon_box, icon_lbl, title_lbl):
                 widget.bind("<Button-1>", lambda _e, s=sk: self._select_skill(s))
 
         if end < len(items):
@@ -485,7 +506,8 @@ class TabPMCSystems(ctk.CTkFrame):
                 frame = self._skill_row_refs.get(sid or "")
                 if frame and frame.winfo_exists():
                     frame.configure(
-                        fg_color=C_BG_ROW_ALT if sel else C_BG_ROW,
+                        fg_color=THEME["active_tab_bg"] if sel else C_BG_ROW,
+                        border_width=2 if sel else 1,
                         border_color=THEME["accent_gold"] if sel else C_BORDER,
                     )
         self._render_skill_detail(sk)
@@ -496,7 +518,7 @@ class TabPMCSystems(ctk.CTkFrame):
         if not sk:
             ctk.CTkLabel(
                 self.skill_detail_card,
-                text="Seleccioná una skill para ver efectos, perk élite y consejos.",
+                text="Seleccioná una skill para ver qué hace, cómo se sube y su bonus al maxear.",
                 font=ui_font(12),
                 text_color=C_TEXT_DIM,
             ).pack(padx=16, pady=20)
@@ -504,56 +526,109 @@ class TabPMCSystems(ctk.CTkFrame):
 
         bg_c, fg_c = SKILL_CAT_COLORS.get(sk["category"], (C_SLATE_700, C_WHITE))
         top = ctk.CTkFrame(self.skill_detail_card, fg_color="transparent")
-        top.grid(row=0, column=0, padx=14, pady=(12, 4), sticky="ew")
-        top.grid_columnconfigure(0, weight=1)
+        top.grid(row=0, column=0, padx=14, pady=(12, 6), sticky="ew")
+        top.grid_columnconfigure(1, weight=1)
+
+        icon_box = ctk.CTkFrame(
+            top,
+            width=72,
+            height=72,
+            fg_color=C_BG_DEEP,
+            corner_radius=12,
+            border_width=2,
+            border_color=THEME["accent_gold"],
+        )
+        icon_box.grid(row=0, column=0, padx=(0, 12), sticky="w")
+        icon_box.grid_propagate(False)
+        icon_box.grid_columnconfigure(0, weight=1)
+        icon_box.grid_rowconfigure(0, weight=1)
+
+        detail_img = get_gear_ctk_icon(sk.get("cache_key", ""), max_size=(60, 60))
+        ctk.CTkLabel(
+            icon_box,
+            text="" if detail_img else sk["short_name"][:2].upper(),
+            image=detail_img,
+            font=ui_font(18, "bold"),
+            text_color=THEME["accent_gold"],
+        ).grid(row=0, column=0)
+
+        meta_col = ctk.CTkFrame(top, fg_color="transparent")
+        meta_col.grid(row=0, column=1, sticky="ew")
+        meta_col.grid_columnconfigure(0, weight=1)
 
         ctk.CTkLabel(
-            top,
+            meta_col,
             text=sk["name"],
-            font=ui_font(15, "bold"),
+            font=ui_font(16, "bold"),
             text_color=THEME["accent_gold"],
             anchor="w",
+            wraplength=340,
+            justify="left",
         ).grid(row=0, column=0, sticky="w")
 
+        badges_row = ctk.CTkFrame(meta_col, fg_color="transparent")
+        badges_row.grid(row=1, column=0, pady=(4, 0), sticky="w")
+
         ctk.CTkLabel(
-            top,
+            badges_row,
             text=f" {sk['category']} ",
             font=ui_font(11, "bold"),
             fg_color=bg_c,
             text_color=fg_c,
             corner_radius=6,
             height=22,
-        ).grid(row=0, column=1, sticky="e")
+        ).pack(side="left", padx=(0, 6))
+
+        ctk.CTkLabel(
+            badges_row,
+            text=" 👑 Nv. Máximo: 51 (Élite) ",
+            font=ui_font(10, "bold"),
+            fg_color=C_BG_DEEP,
+            text_color=THEME["accent_gold"],
+            corner_radius=6,
+            height=22,
+        ).pack(side="left")
 
         sections = [
-            ("🔑 REQUISITOS EN QUESTS / HIDEOUT", sk["requirements"], C_AMBER),
-            ("📊 EFECTOS POR NIVEL", sk["effects"], C_TEXT_SOFT),
-            ("👑 PERK ÉLITE (NIVEL 51)", sk["elite_perk"], C_GREEN_LIGHT),
-            ("🚀 MÉTODO ÓPTIMO DE LEVEO", sk["how_to_level"], C_BLUE),
+            ("📊 QUÉ HACE (EFECTOS POR NIVEL)", sk["effects"], C_TEXT_SOFT, C_BG_DEEP, C_BORDER),
+            ("👑 AL MAXEAR (NIVEL ÉLITE — NV. 51)", sk["elite_perk"], "#FEF3C7", "#1D180F", THEME["accent_gold"]),
+            ("🚀 CÓMO SE SUBE (MÉTODO DE LEVEO)", sk["how_to_level"], C_TEXT_SOFT, C_BG_DEEP, C_BORDER),
+            ("🔑 REQUISITOS EN QUESTS / HIDEOUT", sk["requirements"], C_AMBER if "Nv." in sk["requirements"] else C_TEXT_MUTED, C_BG_DEEP, C_BORDER),
         ]
-        for idx, (title, body_text, color) in enumerate(sections, start=1):
+        if sk.get("note"):
+            sections.append(("⚠️ NOTA DE LA WIKI", sk["note"], "#FDE68A", "#221810", C_AMBER))
+
+        title_colors = {
+            "📊 QUÉ HACE (EFECTOS POR NIVEL)": C_GREEN_LIGHT,
+            "👑 AL MAXEAR (NIVEL ÉLITE — NV. 51)": THEME["accent_gold"],
+            "🚀 CÓMO SE SUBE (MÉTODO DE LEVEO)": C_BLUE,
+            "🔑 REQUISITOS EN QUESTS / HIDEOUT": C_AMBER,
+            "⚠️ NOTA DE LA WIKI": C_AMBER,
+        }
+
+        for idx, (title, body_text, text_col, box_bg, box_border) in enumerate(sections, start=1):
             box = ctk.CTkFrame(
                 self.skill_detail_card,
-                fg_color=C_BG_DEEP,
+                fg_color=box_bg,
                 corner_radius=8,
                 border_width=1,
-                border_color=C_BORDER,
+                border_color=box_border,
             )
             box.grid(row=idx, column=0, padx=12, pady=4, sticky="ew")
             ctk.CTkLabel(
                 box,
                 text=title,
                 font=ui_font(11, "bold"),
-                text_color=color,
-            ).pack(padx=10, pady=(6, 1), anchor="w")
+                text_color=title_colors.get(title, C_TEXT_SOFT),
+            ).pack(padx=10, pady=(6, 2), anchor="w")
             ctk.CTkLabel(
                 box,
                 text=body_text,
                 font=ui_font(12),
-                text_color=C_TEXT_SOFT,
+                text_color=text_col,
                 wraplength=415,
                 justify="left",
-            ).pack(padx=10, pady=(0, 7), anchor="w")
+            ).pack(padx=10, pady=(0, 8), anchor="w")
 
         ctk.CTkFrame(self.skill_detail_card, fg_color="transparent", height=6).grid(
             row=len(sections) + 1, column=0

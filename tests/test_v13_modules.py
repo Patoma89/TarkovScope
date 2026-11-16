@@ -123,8 +123,16 @@ class TestBartersAndKeepSell(unittest.TestCase):
 
 class TestPMCSystemsData(unittest.TestCase):
     def test_skills_and_transits_filters(self):
+        self.assertEqual(len(pmc_systems_data.PMC_SKILLS_CATALOG), 35)
+        for sk in pmc_systems_data.PMC_SKILLS_CATALOG:
+            self.assertTrue(sk.get("short_name"), sk["id"])
+            self.assertTrue(sk.get("effects"), sk["id"])
+            self.assertTrue(sk.get("elite_perk"), sk["id"])
+            self.assertTrue(sk.get("how_to_level"), sk["id"])
+            self.assertIsNotNone(gear_cache.get_gear_icon_path(sk["cache_key"]), sk["id"])
+
         phys = pmc_systems_data.filter_skills(category="Física")
-        self.assertGreaterEqual(len(phys), 5)
+        self.assertEqual(len(phys), 7)
         self.assertTrue(all(s["category"] == "Física" for s in phys))
 
         str_hits = pmc_systems_data.filter_skills(query="Strength")

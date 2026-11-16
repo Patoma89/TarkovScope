@@ -6,153 +6,759 @@ Módulo de lógica pura (sin dependencias de UI).
 from typing import Any, Dict, List
 
 
-PMC_SKILLS_CATALOG: List[Dict[str, Any]] = [{'id': 'strength',
-  'name': 'Strength (Fuerza)',
-  'category': 'Física',
-  'requirements': 'Batya (Historia Nv. 15) · Vents Nv. 3 (Nv. 2)',
-  'effects': '+0.6% límite de peso por nivel (+30% Élite), +0.4% velocidad de movimiento/sprint, +0.4% salto y '
-             'distancia de granadas.',
-  'elite_perk': 'Las armas equipadas en bandolera y espalda dejan de sumar peso al personaje; +50% chance de golpe '
-                'crítico cuerpo a cuerpo.',
-  'how_to_level': 'Caminar o esprintar con sobrepeso (amarillo/naranja, >55-60% peso máximo), lanzar granadas, usar el '
-                  'Gimnasio del Hideout y completar quests que otorguen puntos.'},
- {'id': 'endurance',
-  'name': 'Endurance (Resistencia)',
-  'category': 'Física',
-  'requirements': 'Heating Nv. 2 (Nv. 1) · Security Nv. 2 (Nv. 2)',
-  'effects': '+1% stamina por nivel (+50% Élite), -0.6% costo de salto, +2% contención de respiración al apuntar.',
-  'elite_perk': '+20% stamina adicional (+70% total), mayor resistencia en brazos al apuntar y respiración '
-                'independiente de energía.',
-  'how_to_level': 'Correr y caminar SIN sobrepeso (<33.77% de tu peso máximo límite) al inicio del raid antes de '
-                  'lootear pesado, más sesiones en el Gimnasio.'},
- {'id': 'vitality',
-  'name': 'Vitality (Vitalidad)',
-  'category': 'Física',
-  'requirements': 'Medstation Nv. 3 (Nv. 3)',
-  'effects': '-1.2% probabilidad de sufrir hemorragia por nivel y reduce chance de muerte instantánea por extremidad '
-             'negra.',
-  'elite_perk': 'Todas las hemorragias se detienen solas (leves en 20s, graves en 30s) y regeneración de vida en '
-                'combate.',
-  'how_to_level': 'Recibir daño (0.01 pts cada 5 HP recibidos) y sufrir pérdida de sangre (+0.3 pts). Tip: curarse '
-                  "daño por alambre de púas/fuego controladamente o completar 'Get a Foothold' / 'Decontamination "
-                  "Service'."},
- {'id': 'health',
-  'name': 'Health (Salud)',
-  'category': 'Física',
-  'requirements': 'Health Care Privacy Pt. 4 (Nv. 4) · Medstation Nv. 2 (Nv. 2)',
-  'effects': 'Acelera recuperación fuera de raid, reduce probabilidad de fracturas (-60% Élite) y reduce consumo de '
-             'energía/hidratación.',
-  'elite_perk': 'Reduce severamente riesgo de fracturas y desgaste metabólico durante raids largos.',
-  'how_to_level': 'Sube automáticamente cada vez que subís Strength, Endurance o Vitality (gana puntos proporcionales '
-                  'al entrenamiento físico).'},
- {'id': 'metabolism',
-  'name': 'Metabolism (Metabolismo)',
-  'category': 'Física',
-  'requirements': 'Nutrition Unit Nv. 3 (Nv. 3)',
-  'effects': '+1% duración y eficacia de comida/bebida por nivel, reduce caída de skills físicos por hambre/sed.',
-  'elite_perk': 'Inmunidad total a perder salud o sufrir desmayos por 0 Energía o 0 Hidratación.',
-  'how_to_level': 'Comer y beber dentro del raid cada vez que gastes energía o hidratación (Golden Star / Mayo + '
-                  'botella de agua en el seguro acelera muchísimo).'},
- {'id': 'stress_resistance',
-  'name': 'Stress Resistance (Resistencia al Estrés)',
-  'category': 'Física',
-  'requirements': 'Batya (Historia Nv. 10)',
-  'effects': 'Reduce el temblor de manos al recibir daño, disminuye el efecto de visión túnel / tremor y baja la '
-             'probabilidad de shock por dolor.',
-  'elite_perk': 'Modo Berserk al recibir daño crítico: resistencia temporal a supresión y dolor.',
-  'how_to_level': 'Correr con extremidades fracturadas o negras sin usar analgésicos durante unos segundos, o pelear '
-                  'herido.'},
- {'id': 'immunity',
-  'name': 'Immunity (Inmunidad)',
-  'category': 'Física',
-  'requirements': 'Sin requisito obligatorio de Hideout',
-  'effects': 'Reduce la duración y severidad de efectos negativos de venenos, radiación, toxinas y debuffs de '
-             'estimulantes.',
-  'elite_perk': 'Reducción del 90% de efectos secundarios negativos de stims y veneno.',
-  'how_to_level': 'Usar comida/bebida o stims que dejan efectos temporales y esperar a que pasen sus debuffs (ej. '
-                  'Obdolbos, Mayo, SJ6).'},
- {'id': 'bolt_action_rifles',
-  'name': 'Bolt-action Rifles (Cerrojo / Sniper)',
-  'category': 'Combate',
-  'requirements': 'Make an Impression (Nv. 10) · Wet Job Pt. 6 / Psycho Sniper',
-  'effects': '+0.5% velocidad de recarga y +0.8% velocidad de apuntado con rifles de cerrojo por nivel.',
-  'elite_perk': 'Recarga ultrarrápida y mayor control en disparos de larga distancia.',
-  'how_to_level': 'Recargar repetidamente rifles de cerrojo sin cargador (Mosin / VPO-215 / DVL) en raid, impactar '
-                  "disparos a larga distancia y usar la quest 'Mentor' de Peacekeeper (+3 niveles) en nivel 7+."},
- {'id': 'throwables',
-  'name': 'Throwables (Granadas)',
-  'category': 'Combate',
-  'requirements': 'Sin requisito fijo (muy útil para Grenadier)',
-  'effects': 'Aumenta distancia máxima y velocidad de lanzamiento de granadas hasta +25%.',
-  'elite_perk': 'Alcance máximo y menor consumo de stamina de brazo al preparar lanzamientos.',
-  'how_to_level': 'Lanzar granadas (F-1, RGD-5, flashes Zarya o humo M18 económicas) en cada raid; las primeras 4 por '
-                  'raid dan rendimiento óptimo (129%/100%).'},
- {'id': 'search',
-  'name': 'Search (Búsqueda)',
-  'category': 'Práctica',
-  'requirements': 'Scavenger (Nv. 9)',
-  'effects': 'Aumenta la velocidad al inspeccionar mochilas, cajas, cajones y bolsillos hasta +50%.',
-  'elite_perk': 'Permite examinar 2 contenedores o ranuras simultáneamente (doble loot speed).',
-  'how_to_level': 'Abrir y revisar la mayor cantidad posible de archivadores, chaquetas, mochilas y cuerpos (Scavs '
-                  'aunque no tengan buen loot).'},
- {'id': 'covert_movement',
-  'name': 'Covert Movement (Sigilo)',
-  'category': 'Práctica',
-  'requirements': 'Sin requisito obligatorio',
-  'effects': 'Reduce el ruido generado al caminar lento y apuntar agachado sobre madera, vidrio y metal.',
-  'elite_perk': 'Movimiento lento completamente silencioso en la mayoría de superficies estándar.',
-  'how_to_level': 'Caminar a velocidad mínima (rueda del mouse abajo) sin sobrepeso durante tramos tácticos.'},
- {'id': 'crafting',
-  'name': 'Crafting (Fabricación)',
-  'category': 'Práctica',
-  'requirements': 'Escala producción del Hideout',
-  'effects': 'Reduce el tiempo de crafteo en el Hideout (hasta -37.5% al máximo).',
-  'elite_perk': 'Permite producir 2 recetas simultáneas por estación del Hideout.',
-  'how_to_level': 'Alternar crafteos distintos en Workbench, Medstation, Lavatory y Nutrition Unit (repetir '
-                  'exactamente la misma receta seguida da mucha menos XP).'},
- {'id': 'hideout_management',
-  'name': 'Hideout Management',
-  'category': 'Práctica',
-  'requirements': 'Library (Nv. 5)',
-  'effects': 'Aumenta bonificaciones de cada módulo, alarga duración de combustible/filtros y mejora el bono del '
-             'Sacred Amulet.',
-  'elite_perk': '+2 slots extra en Generador, Air Filter y Water Collector.',
-  'how_to_level': 'Construir módulos del Hideout y consumir combustible, filtros FP-100 y filtros de agua mientras '
-                  'mantenés crafteos activos.'},
- {'id': 'weapon_maintenance',
-  'name': 'Weapon Maintenance (Mantenimiento)',
-  'category': 'Práctica',
-  'requirements': 'Sin requisito obligatorio',
-  'effects': 'Reduce el desgaste permanente al reparar armas y aumenta la probabilidad de aplicar Enhancements (bonos '
-             'dorados/azules).',
-  'elite_perk': 'Mayor chance de Enhancements raros y menor pérdida de durabilidad máxima.',
-  'how_to_level': 'Reparar armas dañadas de Scavs o Raids usando Weapon Repair Kits (en alijo, antes de venderlas a '
-                  'Mechanic).'},
- {'id': 'attention',
-  'name': 'Attention (Atención)',
-  'category': 'Mental',
-  'requirements': 'Intelligence Center Nv. 2 (Nv. 3) · Water Collector Nv. 2 (Nv. 3)',
-  'effects': 'Acelera el tiempo para revelar ítems al lootear y mejora chance de encontrar mejor botín al abrir '
-             'contenedores.',
-  'elite_perk': '50% de probabilidad de examinar un ítem instantáneamente al aparecer.',
-  'how_to_level': 'Llevar ítems encontrados al inventario y volver a soltarlos si hace falta; revisar contenedores '
-                  'nuevos en cada raid.'},
- {'id': 'perception',
-  'name': 'Perception (Percepción)',
-  'category': 'Mental',
-  'requirements': 'Clave para PvP y detección temprana',
-  'effects': 'Aumenta el rango de audición (+0.3% por nivel -> +15% en Élite) y el radio del punto blanco de detección '
-             'de loot.',
-  'elite_perk': 'Máxima distancia auditiva de pasos/recargas combinable con auriculares ComTac V/VI.',
-  'how_to_level': 'Recoger cualquier ítem suelto del suelo/cajas dentro del raid (especialmente los primeros ítems de '
-                  'cada partida).'},
- {'id': 'surgery',
-  'name': 'Surgery (Cirugía)',
-  'category': 'Práctica',
-  'requirements': 'Clave para supervivencia en Squad/Solo',
-  'effects': 'Acelera tiempo de uso de CMS / Surv12 y reduce la pérdida de HP máximo de extremidades reparadas.',
-  'elite_perk': 'La extremidad operada conserva prácticamente el 100% de su HP máximo original y tarda mucho menos.',
-  'how_to_level': 'Reparar extremidades en negro usando CMS o Surv12 en raid.'}]
+PMC_SKILLS_CATALOG: List[Dict[str, Any]] = [
+    # --- FÍSICA (7) ---
+    {
+        "id": "endurance",
+        "name": "Endurance (Resistencia)",
+        "short_name": "Endurance",
+        "category": "Física",
+        "cache_key": "skill_endurance",
+        "requirements": "Heating Nv. 2 (Nv. 1) · Security Nv. 2 (Nv. 2)",
+        "effects": (
+            "• +1% stamina máxima por nivel (+50% en Nv. 50)\n"
+            "• -0.6% costo de stamina al saltar por nivel (-30% en Élite)\n"
+            "• +2% duración de contención de respiración al apuntar (+100% en Élite)\n"
+            "• -1% tiempo de recuperación de respiración por nivel (-50% en Élite)"
+        ),
+        "elite_perk": (
+            "• +20% stamina adicional (+70% total acumulado)\n"
+            "• Mayor resistencia en brazos al apuntar\n"
+            "• La recuperación de respiración deja de depender del nivel de energía"
+        ),
+        "how_to_level": (
+            "• Caminar o esprintar SIN sobrepeso (<33.77% de tu peso máximo límite)\n"
+            "• Sesiones de entrenamiento en el Gimnasio del Hideout\n"
+            "• Quests: A Life Lesson · Never Too Late To Learn"
+        ),
+        "note": "",
+    },
+    {
+        "id": "strength",
+        "name": "Strength (Fuerza)",
+        "short_name": "Strength",
+        "category": "Física",
+        "cache_key": "skill_strength",
+        "requirements": "Batya (Historia Nv. 15) · Vents Nv. 3 (Nv. 2)",
+        "effects": (
+            "• +0.6% límite de carga por nivel (+30% en Élite: hasta ~100 kg)\n"
+            "• +0.4% velocidad de movimiento/sprint y altura de salto (+20% en Élite)\n"
+            "• +0.6% potencia de golpe cuerpo a cuerpo (+30% en Élite)\n"
+            "• +0.4% distancia de lanzamiento de granadas (+20% en Élite)\n"
+            "• -0.4% consumo de stamina de brazo al apuntar (+20% en Élite)"
+        ),
+        "elite_perk": (
+            "• Las armas equipadas en bandolera (sling) y espalda dejan de sumar peso al personaje\n"
+            "• +50% probabilidad de golpe crítico cuerpo a cuerpo"
+        ),
+        "how_to_level": (
+            "• Caminar o esprintar con sobrepeso (>33.77% de tu peso máximo límite)\n"
+            "• Lanzar granadas y golpear con armas cuerpo a cuerpo\n"
+            "• Sesiones en el Gimnasio · Quests: A Life Lesson · Never Too Late To Learn"
+        ),
+        "note": "",
+    },
+    {
+        "id": "vitality",
+        "name": "Vitality (Vitalidad)",
+        "short_name": "Vitality",
+        "category": "Física",
+        "cache_key": "skill_vitality",
+        "requirements": "Medstation Nv. 3 (Nv. 3)",
+        "effects": (
+            "• -1.2% probabilidad de sufrir hemorragia por nivel (-60% en Élite)\n"
+            "• -0.5% probabilidad de muerte instantánea por extremidad en negro (-20% en Élite)"
+        ),
+        "elite_perk": (
+            "• Todas las hemorragias se detienen solas (leves tras 20s y graves tras 30s sin usar vendas/torniquetes)\n"
+            "• Mayor regeneración de salud en combate"
+        ),
+        "how_to_level": (
+            "• 0.01 pts por cada 5 de daño recibido (+0.3 pts al sufrir sangrado)\n"
+            "• Tip: recibir sangrado grave y usar Propital para aguantar daño constante\n"
+            "• Quests: Get a Foothold · Profit Retention · Decontamination Service"
+        ),
+        "note": "",
+    },
+    {
+        "id": "health",
+        "name": "Health (Salud)",
+        "short_name": "Health",
+        "category": "Física",
+        "cache_key": "skill_health",
+        "requirements": "Health Care Privacy Pt. 4 (Nv. 4) · Medstation Nv. 2 (Nv. 2)",
+        "effects": (
+            "• -1.2% probabilidad de fractura en extremidades (-60% en Élite)\n"
+            "• -0.6% consumo de energía por nivel (-30% en Élite)\n"
+            "• -0.6% tasa de deshidratación por nivel (-30% en Élite)"
+        ),
+        "elite_perk": (
+            "• Absorción de daño (Damage absorption)"
+        ),
+        "how_to_level": (
+            "• Gana automáticamente el 25% de los puntos que subas en Endurance, Strength o Vitality\n"
+            "• Quests: Get a Foothold · Profit Retention · Beneath The Streets"
+        ),
+        "note": "⚠️ Nota Wiki: la mecánica exacta de 'Damage absorption' del nivel Élite no tiene reducción de daño verificada.",
+    },
+    {
+        "id": "metabolism",
+        "name": "Metabolism (Metabolismo)",
+        "short_name": "Metabolism",
+        "category": "Física",
+        "cache_key": "skill_metabolism",
+        "requirements": "Nutrition Unit Nv. 3 (Nv. 3)",
+        "effects": (
+            "• +1% efectos positivos de comida y bebida por nivel (+50% en Élite)\n"
+            "• -1% duración de efectos negativos de estimulantes, comida y agua (-50% en Élite)"
+        ),
+        "elite_perk": (
+            "• Inmunidad total al daño de salud por agotamiento (0 Energía) y deshidratación (0 Agua)"
+        ),
+        "how_to_level": (
+            "• Restaurar energía o hidratación DENTRO del raid (depende de cuánta energía/agua recuperes, no funciona en el alijo)\n"
+            "• Quests: Never Too Late To Learn · A Life Lesson"
+        ),
+        "note": "En nivel Élite, la regeneración de stamina sigue penalizada si llegás a 0 de energía o agua.",
+    },
+    {
+        "id": "stress_resistance",
+        "name": "Stress Resistance",
+        "short_name": "Stress Res.",
+        "category": "Física",
+        "cache_key": "skill_stress_resistance",
+        "requirements": "Batya (Historia Nv. 10)",
+        "effects": (
+            "• -1% probabilidad de sufrir shock por dolor (-50% en Élite)\n"
+            "• -1.2% oscilación de tremor/temblor por nivel (-60% en Élite)"
+        ),
+        "elite_perk": (
+            "• Acceso al modo Berserk al recibir daño crítico"
+        ),
+        "how_to_level": (
+            "• 0.033 pts/s mientras tengas menos de 130 HP totales · 0.33 pts al recibir efecto Dolor\n"
+            "• Quests: Profitable Venture · Bullshit · Safety Guarantee · The Guide · Night Sweep · TerraGroup Employee"
+        ),
+        "note": "",
+    },
+    {
+        "id": "immunity",
+        "name": "Immunity (Inmunidad)",
+        "short_name": "Immunity",
+        "category": "Física",
+        "cache_key": "skill_immunity",
+        "requirements": "Sin requisito obligatorio",
+        "effects": (
+            "• -1% intensidad de efectos negativos de stims, comida y agua (+50% resistencia en Élite)\n"
+            "• -1% potencia de efectos de veneno (+50% en Élite)\n"
+            "• +0.6% duración de analgésicos por nivel (+30% en Élite)"
+        ),
+        "elite_perk": (
+            "• +90% probabilidad de inmunidad a efectos negativos de estimulantes, comida y agua\n"
+            "• +90% probabilidad de inmunidad contra venenos"
+        ),
+        "how_to_level": (
+            "• Usar y sobrevivir hasta que terminen debuffs de stims/bebidas (~0.0045 pts/s; ej. Max Energy, 2A2-(b-TG), Obdolbos 2)\n"
+            "• Quests: Get a Foothold · Profit Retention · Decontamination Service · Crisis"
+        ),
+        "note": "",
+    },
+
+    # --- COMBATE (15) ---
+    {
+        "id": "aim_drills",
+        "name": "Aim Drills (Apuntado)",
+        "short_name": "Aim Drills",
+        "category": "Combate",
+        "cache_key": "skill_aim_drills",
+        "requirements": "Sin requisito obligatorio",
+        "effects": (
+            "• +1% velocidad al apuntar (ADS) por nivel (+50% en Élite)\n"
+            "• -1% ruido al apuntar por nivel (-50% en Élite)"
+        ),
+        "elite_perk": (
+            "• Cero temblor de manos durante los primeros 2 segundos tras apuntar sin importar la stamina\n"
+            "• Reduce drásticamente el temblor con tremor o fractura durante los primeros 2 segundos al apuntar"
+        ),
+        "how_to_level": (
+            "• 0.2 puntos por cada impacto acertado a enemigos apuntando con la mira (ADS)\n"
+            "• Quests: Profitable Venture · Consolation Prize · Safety Guarantee"
+        ),
+        "note": "",
+    },
+    {
+        "id": "assault_rifles",
+        "name": "Assault Rifles (Fusiles de Asalto)",
+        "short_name": "Assault Rifles",
+        "category": "Combate",
+        "cache_key": "skill_assault_rifles",
+        "requirements": "Batya (Historia Nv. 10)",
+        "effects": (
+            "• +0.4% velocidad de recarga (+20% en Élite) y +0.8% velocidad de cambio de arma (+40% en Élite)\n"
+            "• -0.3% retroceso (-15% en Élite) y +0.2% ergonomía (+10% en Élite) con fusiles/carabinas de asalto"
+        ),
+        "elite_perk": (
+            "• Apuntado firme durante los primeros 3 segundos bajo cualquier condición de stamina\n"
+            "• Duplica la ganancia de Maestría (Mastering) de estas armas"
+        ),
+        "how_to_level": (
+            "• Impactar enemigos, recargar y ciclar/vaciar recámaras con rifles y carabinas de asalto\n"
+            "• Quests: The Cleaner · Consolation Prize"
+        ),
+        "note": "",
+    },
+    {
+        "id": "bolt_action_rifles",
+        "name": "Bolt-action Rifles (Cerrojo)",
+        "short_name": "Bolt-action",
+        "category": "Combate",
+        "cache_key": "skill_bolt_action_rifles",
+        "requirements": "Make an Impression (Nv. 10) · Psycho Sniper",
+        "effects": (
+            "• +0.4% velocidad de recarga (+20% en Élite) y +0.8% velocidad de cambio de arma (+40% en Élite)\n"
+            "• -0.3% retroceso (-15% en Élite) y +0.2% ergonomía (+10% en Élite) con rifles de cerrojo"
+        ),
+        "elite_perk": (
+            "• Apuntado firme durante los primeros 3 segundos bajo cualquier condición de stamina\n"
+            "• Duplica la ganancia de Maestría (Mastering) de rifles de cerrojo"
+        ),
+        "how_to_level": (
+            "• Impactar enemigos, recargar (ej. Mosin/VPO-215) y ciclar cerrojo en raid\n"
+            "• Quests: Shooter Born in Heaven · Psycho Sniper · Hunting Trip · Mentor (+3 niveles)"
+        ),
+        "note": "",
+    },
+    {
+        "id": "dmrs",
+        "name": "DMRs (Rifles Tirador)",
+        "short_name": "DMRs",
+        "category": "Combate",
+        "cache_key": "skill_dmrs",
+        "requirements": "Sin requisito obligatorio",
+        "effects": (
+            "• +0.4% velocidad de recarga (+20% en Élite) y +0.8% velocidad de cambio de arma (+40% en Élite)\n"
+            "• -0.3% retroceso (-15% en Élite) y +0.2% ergonomía (+10% en Élite) con DMRs"
+        ),
+        "elite_perk": (
+            "• Apuntado firme durante los primeros 3 segundos bajo cualquier condición de stamina\n"
+            "• Duplica la ganancia de Maestría (Mastering) de DMRs"
+        ),
+        "how_to_level": (
+            "• Impactar enemigos, recargar y ciclar recámara con rifles DMR (SR-25, RSASS, SVD, M1A)\n"
+            "• Quests: The Cleaner · Consolation Prize"
+        ),
+        "note": "",
+    },
+    {
+        "id": "light_machine_guns",
+        "name": "Light Machine Guns (LMGs)",
+        "short_name": "LMGs",
+        "category": "Combate",
+        "cache_key": "skill_light_machine_guns",
+        "requirements": "Batya (Historia Nv. 5)",
+        "effects": (
+            "• +0.4% velocidad de recarga (+20% en Élite) y +0.8% velocidad de cambio de arma (+40% en Élite)\n"
+            "• -0.3% retroceso (-15% en Élite) y +0.2% ergonomía (+10% en Élite) con ametralladoras ligeras"
+        ),
+        "elite_perk": (
+            "• Apuntado firme durante los primeros 3 segundos bajo cualquier condición de stamina\n"
+            "• Duplica la ganancia de Maestría (Mastering) de LMGs"
+        ),
+        "how_to_level": (
+            "• Impactar enemigos, recargar y ciclar con LMGs (RPD, PKM, M60) o armas fijas montadas\n"
+            "• Quests: Consolation Prize · Getting Some Air · Unique Experience"
+        ),
+        "note": "",
+    },
+    {
+        "id": "heavy_machine_guns",
+        "name": "Heavy Machine Guns (HMGs)",
+        "short_name": "HMGs",
+        "category": "Combate",
+        "cache_key": "skill_heavy_machine_guns",
+        "requirements": "Sin requisito obligatorio",
+        "effects": (
+            "• +0.4% velocidad de recarga (+20% Élite) y +0.8% cambio de arma (+40% Élite)\n"
+            "• -0.3% retroceso (-15% Élite) y +0.2% ergonomía (+10% Élite)"
+        ),
+        "elite_perk": (
+            "• Apuntado firme durante 3 segundos con cualquier stamina y doble Maestría"
+        ),
+        "how_to_level": (
+            "• Actualmente solo sube completando quests: Consolation Prize · Getting Some Air · Unique Experience"
+        ),
+        "note": "⚠️ Nota Wiki: esta skill todavía no está implementada correctamente en combate.",
+    },
+    {
+        "id": "pistols",
+        "name": "Pistols (Pistolas)",
+        "short_name": "Pistols",
+        "category": "Combate",
+        "cache_key": "skill_pistols",
+        "requirements": "Sin requisito obligatorio",
+        "effects": (
+            "• +0.4% velocidad de recarga (+20% en Élite) y +0.8% velocidad de cambio de arma (+40% en Élite)\n"
+            "• -0.3% retroceso (-15% en Élite) y +0.2% ergonomía (+10% en Élite) con pistolas"
+        ),
+        "elite_perk": (
+            "• Apuntado firme durante los primeros 3 segundos bajo cualquier condición de stamina\n"
+            "• Duplica la ganancia de Maestría (Mastering) de pistolas"
+        ),
+        "how_to_level": (
+            "• Impactar enemigos, recargar y vaciar recámara con pistolas\n"
+            "• Quests: Escort · Consolation Prize · Special Equipment · Trophies"
+        ),
+        "note": "",
+    },
+    {
+        "id": "revolvers",
+        "name": "Revolvers (Revólveres)",
+        "short_name": "Revolvers",
+        "category": "Combate",
+        "cache_key": "skill_revolvers",
+        "requirements": "Sin requisito obligatorio",
+        "effects": (
+            "• +0.4% velocidad de recarga (+20% en Élite) y +0.8% velocidad de cambio de arma (+40% en Élite)\n"
+            "• -0.3% retroceso (-15% en Élite) y +0.2% ergonomía (+10% en Élite) con revólveres"
+        ),
+        "elite_perk": (
+            "• Apuntado firme durante los primeros 3 segundos bajo cualquier condición de stamina\n"
+            "• Duplica la ganancia de Maestría (Mastering) de revólveres"
+        ),
+        "how_to_level": (
+            "• Impactar enemigos y recargar revólveres (incluye la escopeta revólver MTs-255-12)\n"
+            "• Quests: Consolation Prize · Special Equipment · Trophies"
+        ),
+        "note": "",
+    },
+    {
+        "id": "shotguns",
+        "name": "Shotguns (Escopetas)",
+        "short_name": "Shotguns",
+        "category": "Combate",
+        "cache_key": "skill_shotguns",
+        "requirements": "Sin requisito obligatorio",
+        "effects": (
+            "• +0.4% velocidad de recarga (+20% en Élite) y +0.8% velocidad de cambio de arma (+40% en Élite)\n"
+            "• -0.3% retroceso (-15% en Élite) y +0.2% ergonomía (+10% en Élite) con escopetas"
+        ),
+        "elite_perk": (
+            "• Apuntado firme durante los primeros 3 segundos bajo cualquier condición de stamina\n"
+            "• Duplica la ganancia de Maestría (Mastering) de escopetas"
+        ),
+        "how_to_level": (
+            "• Impactar enemigos, recargar cartuchos y ciclar escopetas\n"
+            "• Quests: Night Sweep · Consolation Prize · Silent Caliber"
+        ),
+        "note": "",
+    },
+    {
+        "id": "submachine_guns",
+        "name": "Submachine Guns (SMGs)",
+        "short_name": "SMGs",
+        "category": "Combate",
+        "cache_key": "skill_submachine_guns",
+        "requirements": "Sin requisito obligatorio",
+        "effects": (
+            "• +0.4% velocidad de recarga (+20% en Élite) y +0.8% velocidad de cambio de arma (+40% en Élite)\n"
+            "• -0.3% retroceso (-15% en Élite) y +0.2% ergonomía (+10% en Élite) con subfusiles"
+        ),
+        "elite_perk": (
+            "• Apuntado firme durante los primeros 3 segundos bajo cualquier condición de stamina\n"
+            "• Duplica la ganancia de Maestría (Mastering) de subfusiles"
+        ),
+        "how_to_level": (
+            "• Impactar enemigos, recargar y ciclar con subfusiles\n"
+            "• Quests: Insomnia · Consolation Prize · Intimidator · Counteraction · TerraGroup Employee"
+        ),
+        "note": "",
+    },
+    {
+        "id": "grenade_launchers",
+        "name": "Grenade Launchers",
+        "short_name": "Launchers",
+        "category": "Combate",
+        "cache_key": "skill_grenade_launchers",
+        "requirements": "Sin requisito obligatorio",
+        "effects": (
+            "• +0.4% velocidad de recarga (+20% en Élite) y +0.8% velocidad de cambio de arma (+40% en Élite)\n"
+            "• -0.3% retroceso (-15% en Élite) y +0.2% ergonomía (+10% en Élite) con lanzagranadas"
+        ),
+        "elite_perk": (
+            "• Apuntado firme durante los primeros 3 segundos bajo cualquier condición de stamina\n"
+            "• Duplica la ganancia de Maestría (Mastering)"
+        ),
+        "how_to_level": (
+            "• Impactar enemigos con lanzagranadas acoplados (underbarrel) y lanzagranadas\n"
+            "• Quests: Consolation Prize · The Art of Explosion · Escort"
+        ),
+        "note": "",
+    },
+    {
+        "id": "underbarrel_launchers",
+        "name": "Underbarrel Launchers",
+        "short_name": "UGLs",
+        "category": "Combate",
+        "cache_key": "skill_underbarrel_launchers",
+        "requirements": "Sin requisito obligatorio",
+        "effects": (
+            "• +0.4% velocidad de recarga (+20% Élite) y +0.8% cambio de arma (+40% Élite)\n"
+            "• -0.3% retroceso (-15% Élite) y +0.2% ergonomía (+10% Élite)"
+        ),
+        "elite_perk": (
+            "• Apuntado firme durante 3 segundos con cualquier stamina y doble Maestría"
+        ),
+        "how_to_level": (
+            "• Actualmente solo sube completando quests: Consolation Prize · The Art of Explosion · Escort"
+        ),
+        "note": "⚠️ Nota Wiki: esta skill todavía no está implementada por separado en partida.",
+    },
+    {
+        "id": "melee",
+        "name": "Melee (Cuerpo a Cuerpo)",
+        "short_name": "Melee",
+        "category": "Combate",
+        "cache_key": "skill_melee",
+        "requirements": "Sin requisito obligatorio",
+        "effects": (
+            "• Marcadores de posición heredados (+0.4% recarga / -0.3% retroceso / +0.2% ergo)"
+        ),
+        "elite_perk": (
+            "• Efectos placeholder sin impacto real actualmente"
+        ),
+        "how_to_level": (
+            "• Golpear enemigos con armas cuerpo a cuerpo\n"
+            "• Quests: Escort · Consolation Prize"
+        ),
+        "note": "⚠️ Nota Wiki: sus efectos son placeholders y actualmente no tienen uso práctico.",
+    },
+    {
+        "id": "throwables",
+        "name": "Throwables (Granadas)",
+        "short_name": "Throwables",
+        "category": "Combate",
+        "cache_key": "skill_throwables",
+        "requirements": "Sin requisito obligatorio (clave para Grenadier)",
+        "effects": (
+            "• +0.5% fuerza/distancia de lanzamiento por nivel (+25% en Élite)\n"
+            "• -1% consumo de energía al lanzar (-50% en Élite)\n"
+            "• Aumenta la velocidad de lanzamiento"
+        ),
+        "elite_perk": (
+            "• Lanzar granadas deja de consumir energía/stamina\n"
+            "• La fatiga deja de afectar la precisión de tus lanzamientos"
+        ),
+        "how_to_level": (
+            "• Lanzar granadas (F-1, RGD-5, flashes o humo) en cada raid\n"
+            "• Quests: Consolation Prize · The Huntsman Path - Control"
+        ),
+        "note": "",
+    },
+    {
+        "id": "troubleshooting",
+        "name": "Troubleshooting (Encasquillamientos)",
+        "short_name": "Troubleshooting",
+        "category": "Combate",
+        "cache_key": "skill_troubleshooting",
+        "requirements": "Sin requisito obligatorio",
+        "effects": (
+            "• +0.5% velocidad para solucionar fallas/encasquillamientos de arma por nivel (+25% en Élite)"
+        ),
+        "elite_perk": (
+            "• Identifica el tipo de falla al instante SIN tener que inspeccionar el arma\n"
+            "• -50% chance de repetir falla por cargador, durabilidad del arma o cartucho tras reparar una falla de ese mismo origen"
+        ),
+        "how_to_level": (
+            "• Reparar encasquillamientos/fallas de arma en raid\n"
+            "• Quests: Psycho Sniper · Profitable Venture · A Life Lesson · Safety Guarantee · Never Too Late To Learn · Goals and Means · Consolation Prize"
+        ),
+        "note": "",
+    },
+
+    # --- PRÁCTICA (9) ---
+    {
+        "id": "covert_movement",
+        "name": "Covert Movement (Sigilo)",
+        "short_name": "Covert Mov.",
+        "category": "Práctica",
+        "cache_key": "skill_covert_movement",
+        "requirements": "Sin requisito obligatorio",
+        "effects": (
+            "• -1.2% ruido de pasos en superficies comunes (-60% en Élite)\n"
+            "• -0.6% ruido de pasos en superficies ruidosas/raras (-30% en Élite)\n"
+            "• +1% velocidad caminando en sigilo (+50% en Élite)\n"
+            "• -1.2% ruido de armas y equipo al moverte (-60% en Élite)"
+        ),
+        "elite_perk": (
+            "• El movimiento en sigilo se vuelve igual de silencioso en TODAS las superficies (-60% ruido total)"
+        ),
+        "how_to_level": (
+            "• Caminar por debajo del 25% de velocidad (el ícono del parlante en el HUD debe no mostrar barras); suma al detenerte\n"
+            "• Quests: Profitable Venture · Safety Guarantee · Connections Up North · The Huntsman Path - Sadist"
+        ),
+        "note": "",
+    },
+    {
+        "id": "crafting",
+        "name": "Crafting (Fabricación)",
+        "short_name": "Crafting",
+        "category": "Práctica",
+        "cache_key": "skill_crafting",
+        "requirements": "Clave para velocidad del Hideout",
+        "effects": (
+            "• -0.75% tiempo de crafteo de ítems por nivel (-37.5% en Élite)\n"
+            "• -0.75% tiempo en producciones cíclicas (excepto Bitcoin Farm) (-37.5% en Élite)"
+        ),
+        "elite_perk": (
+            "• Permite fabricar hasta 2 recetas diferentes a la vez dentro de una misma estación del Hideout (incluye Scav Case)"
+        ),
+        "how_to_level": (
+            "• Alternar entre 2 recetas distintas en el mismo módulo (+5 pts al terminar; repetir siempre la misma receta NO da puntos) · 1.5 pts cada 8h\n"
+            "• Quests: Get a Foothold · Never Too Late To Learn · Profit Retention · A Life Lesson"
+        ),
+        "note": "",
+    },
+    {
+        "id": "hideout_management",
+        "name": "Hideout Management",
+        "short_name": "Hideout Mgmt",
+        "category": "Práctica",
+        "cache_key": "skill_hideout_management",
+        "requirements": "Library (Biblioteca requiere Nv. 5)",
+        "effects": (
+            "• +1% a todos los bonus porcentuales de zonas del Hideout (+50% en Élite)\n"
+            "• -0.5% consumo de combustible, filtros de aire y filtros de agua (-25% en Élite)"
+        ),
+        "elite_perk": (
+            "• +2 ranuras extra para bidones de combustible en el Generador\n"
+            "• +2 ranuras para filtros de agua y +2 para filtros de aire\n"
+            "• +2 monedas al límite máximo de almacenamiento en la Bitcoin Farm (5 total)"
+        ),
+        "how_to_level": (
+            "• Mejorar módulos, consumir combustible/filtros, craftear y usar la Scav Case\n"
+            "• Quests: The Choice · Never Too Late To Learn · Profit Retention · A Life Lesson · Get a Foothold"
+        ),
+        "note": "",
+    },
+    {
+        "id": "heavy_vests",
+        "name": "Heavy Vests (Blindaje Pesado)",
+        "short_name": "Heavy Vests",
+        "category": "Práctica",
+        "cache_key": "skill_heavy_vests",
+        "requirements": "Sin requisito obligatorio (Acero, Cerámica, Combinado, Titanio)",
+        "effects": (
+            "• -0.5% penalización de velocidad al llevar blindaje pesado (-25% en Élite)\n"
+            "• -0.4% daño contundente (blunt) en zonas protegidas (-20% en Élite)\n"
+            "• -1% desgaste al usar kits de reparación (-50% en Élite)\n"
+            "• Desde Nv. 3: chance de añadir mejora naranja (-3% a -11% daño recibido)"
+        ),
+        "elite_perk": (
+            "• Probabilidad de desviar/rebotar balas en blindaje pesado\n"
+            "• 50% de probabilidad de NO consumir durabilidad máxima al reparar\n"
+            "• Desbloquea mejora rara al reparar (-20% daño recibido)"
+        ),
+        "how_to_level": (
+            "• Reparar blindajes pesados (Acero/Cerámica/Titanio/Combinado) con Body armor repair kit (0.4 pts cada 10 pts) y recibir daño en placas\n"
+            "• Quests: Safety Guarantee · Profitable Venture"
+        ),
+        "note": "",
+    },
+    {
+        "id": "light_vests",
+        "name": "Light Vests (Blindaje Ligero)",
+        "short_name": "Light Vests",
+        "category": "Práctica",
+        "cache_key": "skill_light_vests",
+        "requirements": "Sin requisito obligatorio (Aramida, Aluminio, UHMWPE)",
+        "effects": (
+            "• -0.6% penalización de velocidad al llevar blindaje ligero (-30% en Élite)\n"
+            "• -0.6% daño cuerpo a cuerpo recibido en zonas cubiertas (-30% en Élite)\n"
+            "• -0.8% desgaste al usar kits de reparación (-40% en Élite)\n"
+            "• Desde Nv. 3: chance de añadir mejora naranja (-3% a -11% daño recibido)"
+        ),
+        "elite_perk": (
+            "• Las partes del cuerpo cubiertas por blindaje ligero se vuelven INMUNES a hemorragias\n"
+            "• 50% de probabilidad de NO consumir durabilidad máxima al reparar\n"
+            "• Desbloquea mejora rara al reparar (-20% daño recibido)"
+        ),
+        "how_to_level": (
+            "• Reparar blindajes ligeros (Aramida/Aluminio/UHMWPE) con Body armor repair kit (0.4 pts cada 10 pts) y absorber daño\n"
+            "• Quests: Safety Guarantee · Profitable Venture"
+        ),
+        "note": "",
+    },
+    {
+        "id": "mag_drills",
+        "name": "Mag Drills (Cargadores)",
+        "short_name": "Mag Drills",
+        "category": "Práctica",
+        "cache_key": "skill_mag_drills",
+        "requirements": "Clave para recarga táctica de cargadores",
+        "effects": (
+            "• +0.6% velocidad de carga de balas (+30% en Élite) y -0.6% tiempo de descarga (-30%)\n"
+            "• -0.8% tiempo de chequeo de cargador (-40% en Élite)\n"
+            "• Nv. 10: estimación numérica (~15) · Nv. 20: cantidad exacta de balas restantes"
+        ),
+        "elite_perk": (
+            "• Los cargadores se revisan INSTANTÁNEAMENTE al moverlos a tu inventario\n"
+            "• La carga de balas acelera progresivamente con cada bala introducida"
+        ),
+        "how_to_level": (
+            "• Cargar, descargar y revisar cargadores en raid (incluye tubos de escopetas)\n"
+            "• Quests: A Life Lesson · Never Too Late To Learn · Best Job in the World · Escort · Intimidator"
+        ),
+        "note": "",
+    },
+    {
+        "id": "search",
+        "name": "Search (Búsqueda)",
+        "short_name": "Search",
+        "category": "Práctica",
+        "cache_key": "skill_search",
+        "requirements": "Scavenger (Nv. 9)",
+        "effects": (
+            "• +1% velocidad de búsqueda (+50% en Élite)"
+        ),
+        "elite_perk": (
+            "• Permite inspeccionar 2 contenedores o compartimentos (ej. mochila + rig) SIMULTÁNEAMENTE"
+        ),
+        "how_to_level": (
+            "• Revisar contenedores de loot/cuerpos y recoger loot suelto\n"
+            "• Quests: Bullshit · Get a Foothold · Profit Retention · Night Sweep"
+        ),
+        "note": "Nota Wiki: la velocidad de búsqueda actual depende principalmente de Attention, pero el perk Élite de Search (doble búsqueda) sí funciona.",
+    },
+    {
+        "id": "surgery",
+        "name": "Surgery (Cirugía)",
+        "short_name": "Surgery",
+        "category": "Práctica",
+        "cache_key": "skill_surgery",
+        "requirements": "Clave para supervivencia en Raid",
+        "effects": (
+            "• +0.4% velocidad de cirugía por nivel (+20% en Élite)\n"
+            "• -1% penalización de HP máximo perdido tras operar (-50% en Élite)"
+        ),
+        "elite_perk": (
+            "• +20% velocidad de cirugía extra (+40% total)\n"
+            "• -100% penalización de HP: las extremidades negras quedan restauradas con el 100% de su HP máximo"
+        ),
+        "how_to_level": (
+            "• 1.1 puntos por cada extremidad en negro operada en raid con CMS o Surv12\n"
+            "• Quests: Get a Foothold · Profit Retention · Beneath The Streets · Crisis"
+        ),
+        "note": "",
+    },
+    {
+        "id": "weapon_maintenance",
+        "name": "Weapon Maintenance",
+        "short_name": "Weapon Maint.",
+        "category": "Práctica",
+        "cache_key": "skill_weapon_maintenance",
+        "requirements": "Sin requisito obligatorio",
+        "effects": (
+            "• -0.5% desgaste del arma al disparar (-25% en Élite)\n"
+            "• -1% probabilidad de pérdida de durabilidad máxima al reparar (-50% en Élite)\n"
+            "• Desde Nv. 3: chance de mejora naranja en dispersión (-3% a -11%) o fallas (-5% a -16%)"
+        ),
+        "elite_perk": (
+            "• -50% probabilidad de desgaste permanente al usar Weapon Repair Kits\n"
+            "• Desbloquea mejoras raras al reparar: -20% dispersión y -30% chance de encasquillamiento"
+        ),
+        "how_to_level": (
+            "• Reparar armas en el alijo con Weapon repair kit (0.4 pts cada ~5 pts de durabilidad reparada)\n"
+            "• Quests: Safety Guarantee · Consolation Prize · Profitable Venture · Goals and Means · Calibration"
+        ),
+        "note": "",
+    },
+
+    # --- MENTAL (4) ---
+    {
+        "id": "attention",
+        "name": "Attention (Atención)",
+        "short_name": "Attention",
+        "category": "Mental",
+        "cache_key": "skill_attention",
+        "requirements": "Intelligence Center Nv. 2 (Nv. 3) · Water Collector Nv. 2 (Nv. 3)",
+        "effects": (
+            "• +2% velocidad al lootear contenedores por nivel (+100% en Élite)\n"
+            "• +2% velocidad de examinación de objetos por nivel (+100% en Élite)"
+        ),
+        "elite_perk": (
+            "• Duplica la experiencia (EXP) obtenida al lootear\n"
+            "• +50% probabilidad de descubrir/revelar un ítem al instante al abrir un contenedor"
+        ),
+        "how_to_level": (
+            "• Recoger loot suelto y revelar objetos en contenedores (0.08 pts por ítem)\n"
+            "• Quests: Profitable Venture · Safety Guarantee · Get a Foothold · Profit Retention · Silent Caliber"
+        ),
+        "note": "",
+    },
+    {
+        "id": "charisma",
+        "name": "Charisma (Carisma)",
+        "short_name": "Charisma",
+        "category": "Mental",
+        "cache_key": "skill_charisma",
+        "requirements": "Progreso compartido entre tu PMC y tu Scav",
+        "effects": (
+            "• -0.1% costo de reemplazo de misiones diarias/semanales (-5% en Élite)\n"
+            "• -0.1% precios de curación post-raid, seguros y extracciones pagas (-5% en Élite)"
+        ),
+        "elite_perk": (
+            "• 10% de descuento en envíos de la Scav Case\n"
+            "• -50% reducción en penalizaciones de Scav Karma con Fence (aplica también con +6.0)\n"
+            "• Añade 1 misión diaria operacional adicional"
+        ),
+        "how_to_level": (
+            "• Recibe 10% de tu EXP en Intellect y 20% de Attention/Perception\n"
+            "• Usar Scav Case (0.4 pts), asegurar equipo (0.4 pts/200k ₽) y reparar con Traders (0.4 pts/10k ₽)\n"
+            "• Quests: Special Order · A Life Lesson · Antique Enthusiast · Regulated Materials · Never Too Late To Learn"
+        ),
+        "note": "",
+    },
+    {
+        "id": "intellect",
+        "name": "Intellect (Intelecto)",
+        "short_name": "Intellect",
+        "category": "Mental",
+        "cache_key": "skill_intellect",
+        "requirements": "Sin requisito obligatorio",
+        "effects": (
+            "• +2% velocidad al examinar objetos por nivel (+100% en Élite)\n"
+            "• +2% efectividad al reparar armas (+100% en Élite)\n"
+            "• -0.5% consumo de usos de kits de reparación por nivel (-25% en Élite)"
+        ),
+        "elite_perk": (
+            "• Contador de munición, intuir contenido sin buscar y sin necesidad de manual (actualmente inactivos en el juego)"
+        ),
+        "how_to_level": (
+            "• Craftear ítems en el Hideout y reparar armas/blindajes con Repair Kits (~0.4 pts cada 10 durabilidad)\n"
+            "• Quests: Shooter Born in Heaven · A Life Lesson · Setting Priorities · Calibration · Never Too Late To Learn"
+        ),
+        "note": "⚠️ Nota Wiki: los efectos Élite de Intellect actualmente no funcionan en el juego.",
+    },
+    {
+        "id": "perception",
+        "name": "Perception (Percepción)",
+        "short_name": "Perception",
+        "category": "Mental",
+        "cache_key": "skill_perception",
+        "requirements": "Sin requisito obligatorio",
+        "effects": (
+            "• +2% radio de detección visual de loot (punto blanco en pantalla) por nivel (+100% en Élite)"
+        ),
+        "elite_perk": (
+            "• Notificación / detección mejorada de proximidad de loot"
+        ),
+        "how_to_level": (
+            "• Recoger todo tipo de loot suelto y dentro de contenedores\n"
+            "• Quests: Profitable Venture · Safety Guarantee · Get a Foothold · Profit Retention"
+        ),
+        "note": "",
+    },
+]
 
 
 SKILL_LEVELING_MECHANICS: Dict[str, Any] = {'max_level': '51 (Nivel Élite — hasta 60 temporalmente con estimulantes/comida)',
@@ -428,8 +1034,10 @@ def filter_skills(category: str = "Todas", query: str = "") -> List[Dict[str, An
         if q:
             hay = " ".join([
                 sk.get("name", ""),
+                sk.get("short_name", ""),
                 sk.get("requirements", ""),
                 sk.get("effects", ""),
+                sk.get("elite_perk", ""),
                 sk.get("how_to_level", ""),
             ]).lower()
             if q not in hay:
