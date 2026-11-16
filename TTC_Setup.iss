@@ -10,6 +10,7 @@ AppSupportURL=https://github.com/Patoma89/TarkovScope/issues
 AppUpdatesURL=https://github.com/Patoma89/TarkovScope/releases
 DefaultDirName={localappdata}\TTC
 DefaultGroupName=TTC (Tactical Tarkov Companion)
+DisableDirPage=no
 DisableProgramGroupPage=yes
 PrivilegesRequired=lowest
 OutputDir=dist_installer
@@ -74,4 +75,44 @@ begin
     SetEnvironmentVariableNull('TK_LIBRARY', 0);
 
   Result := True;
+end;
+
+function IsInsideTempPath(const DirPath: string): Boolean;
+var
+  UpperDir: string;
+  TempEnv: string;
+  TmpEnv: string;
+begin
+  UpperDir := Uppercase(AddBackslash(Trim(DirPath)));
+  TempEnv := Uppercase(AddBackslash(Trim(GetEnv('TEMP'))));
+  TmpEnv := Uppercase(AddBackslash(Trim(GetEnv('TMP'))));
+
+  Result := (Pos('\APPDATA\LOCAL\TEMP\', UpperDir) > 0) or
+            (Pos('\WINDOWS\TEMP\', UpperDir) > 0) or
+            ((TempEnv <> '\') and (Pos(TempEnv, UpperDir) = 1)) or
+            ((TmpEnv <> '\') and (Pos(TmpEnv, UpperDir) = 1));
+end;
+
+procedure InitializeWizard();
+begin
+  { Nunca reutilizar una ruta previa ubicada dentro de Temp; si ocurre, volver a LocalAppData\TTC }
+  if IsInsideTempPath(WizardForm.DirEdit.Text) then
+    WizardForm.DirEdit.Text := ExpandConstant('{localappdata}\TTC');
+end;
+
+function NextButtonClick(CurPageID: Integer): Boolean;
+begin
+  Result := True;
+  if CurPageID = wpSelectDir then
+  begin
+    if IsInsideTempPath(WizardDirValue) then
+    begin
+      MsgBox(
+        'No se recomienda instalar TTC dentro de una carpeta temporal (Temp), porque Windows o un limpiador puede borrar la aplicación.' + #13#10#13#10 +
+        'Por favor elegí otra carpeta (por ejemplo: ' + ExpandConstant('{localappdata}\TTC') + ').',
+        mbError, MB_OK
+      );
+      Result := False;
+    end;
+  end;
 end;
