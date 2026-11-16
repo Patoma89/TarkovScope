@@ -1565,6 +1565,18 @@ ATTACHMENTS_CATALOG: Dict[str, Dict[str, Any]] = {
         "loyalty_level": 2,
         "price_rubles": 8200
     },
+    "mag_pmag_d60": {
+        "id": "mag_pmag_d60",
+        "name": "Tambor Magpul PMAG D-60 60 cartuchos 5.56x45",
+        "category": "magazine",
+        "ergo_delta": -10.0,
+        "recoil_pct_delta": 0.0,
+        "weight_delta_kg": 0.58,
+        "velocity_delta_pct": 0.0,
+        "trader": "Mechanic",
+        "loyalty_level": 4,
+        "price_rubles": 58000
+    },
     "mag_ak_std_30": {
         "id": "mag_ak_std_30",
         "name": "Cargador de polímero AK-74 30 cartuchos 5.45",
@@ -2290,15 +2302,144 @@ def get_attachment_image_key(part_id: str) -> str:
     return ATTACHMENT_IMAGE_KEYS.get(part_id, part_id)
 
 
+def _is_part_compatible(slot_name: str, part_id: str, weapon: Dict[str, Any]) -> bool:
+    """Determina si un accesorio es compatible con la plataforma y calibre del arma dada."""
+    wid = weapon.get("id", "")
+    cal = weapon.get("caliber", "").lower()
+    cat = weapon.get("category", "")
+
+    # Cualquier pieza ya usada en default_slots o presets propios del arma siempre es válida
+    own_parts = set(weapon.get("default_slots", {}).values())
+    for preset in (weapon.get("presets") or {}).values():
+        own_parts.update(preset.values())
+    if part_id in own_parts:
+        return True
+
+    # Rieles universales (empuñaduras, ópticas y láseres/linternas)
+    if slot_name == "foregrip":
+        return True
+    if slot_name == "optic":
+        if cat == "Pistolas":
+            return part_id in {"optic_trijicon_rmr", "optic_pk06", "optic_aimpoint_t1"}
+        return True
+    if slot_name == "tactical":
+        if cat == "Pistolas":
+            return part_id in {"tac_surefire_xc1", "tac_surefire_x400", "tac_olight_baldr_pro", "tac_ncstar_blue", "tac_steiner_lastac"}
+        return True
+
+    # Clasificación por plataforma
+    is_shotgun = cat == "Escopetas"
+    is_pistol = cat == "Pistolas"
+    is_bolt = cat == "Francotirador (Bolt)"
+    is_smg = cat == "Subfusiles (SMG)"
+    is_ak = wid.startswith(("ak", "rpk", "sag", "vpo136", "vpo209", "sks")) and wid != "ak50"
+    is_ar15 = wid in {"m4a1", "hk416", "tx15", "adar", "mcx300", "scar_l", "mdr_556", "aug_a1", "aug_a3", "g36", "velociraptor"}
+    is_762_nato = any(c in cal for c in ("7.62x51", "6.8x51", "7.62x54", ".338", ".50", "12.7"))
+    is_556 = "5.56" in cal or ".300" in cal
+
+    if slot_name == "barrel":
+        if is_shotgun:
+            return part_id.startswith("barrel_mp133")
+        if is_ak:
+            return part_id.startswith("barrel_ak")
+        if wid in {"mk47", "rd704"}:
+            return part_id.startswith("barrel_mk47")
+        if wid == "spear":
+            return part_id.startswith("barrel_spear")
+        if is_bolt:
+            return part_id.startswith("barrel_dvl")
+        if is_762_nato:
+            return part_id.startswith(("barrel_sa58", "barrel_spear"))
+        if is_ar15:
+            return part_id.startswith("barrel_m4")
+        if is_smg:
+            return part_id.startswith("barrel_vector")
+        return True
+
+    if slot_name == "muzzle":
+        if is_shotgun:
+            return part_id.startswith("muzzle_mp133")
+        if is_pistol or is_smg:
+            if ".45" in cal:
+                return part_id == "muzzle_vector_silencer"
+            if "9x39" in cal:
+                return part_id in {"muzzle_sa58_prs", "muzzle_kac_qdc_762", "muzzle_ak_dtk1"}
+            return part_id in {"muzzle_osprey9", "muzzle_vector_silencer"}
+        if is_762_nato:
+            return part_id in {"muzzle_spear_slx", "muzzle_sa58_prs", "muzzle_kac_qdc_762"}
+        if "7.62x39" in cal or ".366" in cal:
+            return part_id in {"muzzle_ak_dtk1", "muzzle_zenit_dtk4m", "muzzle_mk47_brake"}
+        if is_ak or "5.45" in cal:
+            return part_id.startswith("muzzle_ak")
+        if is_556 or is_ar15:
+            return part_id.startswith("muzzle_m4") or part_id in {"muzzle_surefire_rc2", "muzzle_saker_asr"}
+        return True
+
+    if slot_name == "handguard":
+        if is_shotgun:
+            return part_id.startswith("hg_mp133")
+        if is_ak or wid in {"pp19", "saiga9"}:
+            return part_id.startswith("hg_ak")
+        if wid in {"mk47", "rd704"}:
+            return part_id in {"hg_mk47_std", "hg_ak_b10m", "hg_ak_b30"}
+        if wid == "spear":
+            return part_id == "hg_spear_std"
+        if is_762_nato:
+            return part_id in {"hg_sa58_quad", "hg_spear_std", "hg_m4_mk16", "hg_m4_ris2"}
+        if is_ar15:
+            return part_id.startswith("hg_m4")
+        return True
+
+    if slot_name == "pistol_grip":
+        if is_shotgun:
+            return part_id == "pg_mp133_pistol"
+        if is_ak or wid in {"pp19", "saiga9", "saiga12", "pkm", "pkp"}:
+            return part_id.startswith("pg_ak")
+        return part_id.startswith("pg_") and not part_id.startswith(("pg_ak", "pg_mp133"))
+
+    if slot_name == "stock":
+        if is_shotgun:
+            return part_id.startswith("stock_mp133")
+        if is_bolt:
+            return part_id in {"stock_dvl_folding", "stock_magpul_prs"}
+        if wid in {"vector45", "vector9", "mp7a1", "mp7a2", "mp9", "mp9n", "mp5", "mp5k", "ump45", "uzi", "uzi_pro", "sr2m", "kedr", "kedrb", "klin"}:
+            return part_id == "stock_vector_std"
+        if is_ak or wid in {"pp19", "saiga9", "saiga12", "sr3m", "9a91", "vsk94"}:
+            return part_id.startswith("stock_ak") or (wid in {"ak12", "rpk16"} and part_id.startswith(("stock_colt", "stock_magpul", "stock_sopmod", "stock_moe")))
+        return part_id.startswith(("stock_colt", "stock_magpul", "stock_sopmod", "stock_moe"))
+
+    if slot_name == "magazine":
+        if is_shotgun:
+            return part_id.startswith("mag_mp133")
+        if is_pistol or is_smg:
+            return part_id == "mag_vector_30"
+        if is_bolt:
+            return part_id == "mag_dvl_10"
+        if wid == "spear":
+            return part_id.startswith("mag_spear")
+        if is_762_nato:
+            return part_id in {"mag_sa58_20", "mag_sa58_30", "mag_dvl_10", "mag_spear_20", "mag_spear_25"}
+        if is_ak and ("5.45" in cal or "7.62x39" in cal or ".366" in cal or "5.56" in cal):
+            return part_id.startswith("mag_ak")
+        if is_556 or is_ar15:
+            return part_id in {"mag_stanag_30", "mag_pmag_30", "mag_pmag_d60"}
+        return True
+
+    return True
+
+
 def get_available_attachments_for_slot(slot_name: str, weapon_id: str) -> List[Dict[str, Any]]:
     """
     Retorna la lista ordenada de accesorios compatibles para una ranura específica y arma.
     Siempre incluye la opción 'none' al inicio para permitir desmontar piezas secundarias.
     """
+    weapon = MODDABLE_WEAPONS.get(weapon_id, {})
     res = [ATTACHMENTS_CATALOG["none"]]
     for item in ATTACHMENTS_CATALOG.values():
         if item["id"] == "none":
             continue
-        if item.get("category") == slot_name:
+        if item.get("category") != slot_name:
+            continue
+        if not weapon or _is_part_compatible(slot_name, item["id"], weapon):
             res.append(item)
     return res

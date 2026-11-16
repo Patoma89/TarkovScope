@@ -182,23 +182,56 @@ def _fit_contain(img: Image.Image, max_w: int, max_h: int, allow_upscale: float 
     return img.resize((nw, nh), Image.Resampling.LANCZOS)
 
 
-# Posiciones normalizadas de los recuadros de accesorios alrededor del arma (estilo EFT Inspect, cañón a la izquierda)
+# Posiciones normalizadas de los recuadros de accesorios alrededor del arma (9 ranuras clickeables)
 _SLOT_LAYOUT: List[Tuple[str, str, Tuple[int, int, int, int], Tuple[float, float], Tuple[float, float]]] = [
-    ("muzzle", "BOCA", (56, 189, 248, 255), (0.14, 0.17), (0.31, 0.44)),
-    ("optic", "ÓPTICA", (212, 184, 134, 255), (0.42, 0.17), (0.51, 0.37)),
-    ("tactical", "TÁCTICO", (239, 68, 68, 255), (0.70, 0.17), (0.41, 0.44)),
-    ("handguard", "GUARDAMANOS", (148, 163, 184, 255), (0.12, 0.83), (0.41, 0.49)),
-    ("foregrip", "EMPUÑADURA", (96, 165, 250, 255), (0.31, 0.83), (0.43, 0.52)),
-    ("magazine", "CARGADOR", (245, 158, 11, 255), (0.50, 0.83), (0.52, 0.60)),
-    ("pistol_grip", "PISTOLETE", (168, 85, 247, 255), (0.69, 0.83), (0.58, 0.57)),
-    ("stock", "CULATA", (52, 211, 153, 255), (0.88, 0.83), (0.66, 0.48)),
+    ("barrel", "CAÑÓN", (148, 163, 184, 255), (0.13, 0.165), (0.28, 0.46)),
+    ("muzzle", "BOCA", (56, 189, 248, 255), (0.37, 0.165), (0.21, 0.45)),
+    ("optic", "ÓPTICA", (212, 184, 134, 255), (0.63, 0.165), (0.50, 0.36)),
+    ("tactical", "TÁCTICO", (239, 68, 68, 255), (0.87, 0.165), (0.41, 0.44)),
+    ("handguard", "GUARDAM.", (148, 163, 184, 255), (0.11, 0.835), (0.38, 0.49)),
+    ("foregrip", "EMPUÑAD.", (96, 165, 250, 255), (0.305, 0.835), (0.43, 0.53)),
+    ("magazine", "CARGADOR", (245, 158, 11, 255), (0.50, 0.835), (0.52, 0.61)),
+    ("pistol_grip", "PISTOLETE", (168, 85, 247, 255), (0.695, 0.835), (0.58, 0.58)),
+    ("stock", "CULATA", (52, 211, 153, 255), (0.89, 0.835), (0.68, 0.48)),
 ]
+
+
+def get_slot_hitboxes(
+    weapon_id: str,
+    target_size: Tuple[int, int] = (920, 310),
+) -> List[Dict[str, Any]]:
+    """Retorna los rectángulos (x1, y1, x2, y2) de cada ranura sobre el canvas para hacer el diagrama interactivo."""
+    w, h = target_size
+    weapon = MODDABLE_WEAPONS.get(weapon_id, MODDABLE_WEAPONS["m4a1"])
+    supported = set(weapon.get("supported_slots", []))
+    box_w = max(108, min(156, int(w * 0.165)))
+    box_h = max(42, min(54, int(h * 0.168)))
+    boxes: List[Dict[str, Any]] = []
+    for slot_key, slot_lbl, accent_rgba, (bcx_p, bcy_p), (ax_p, ay_p) in _SLOT_LAYOUT:
+        if supported and slot_key not in supported:
+            continue
+        bx = max(8, min(w - box_w - 8, int(w * bcx_p) - box_w // 2))
+        by = max(24, min(h - box_h - 6, int(h * bcy_p) - box_h // 2))
+        boxes.append({
+            "slot_key": slot_key,
+            "slot_lbl": slot_lbl,
+            "accent_rgba": accent_rgba,
+            "bcy_p": bcy_p,
+            "ax": int(w * ax_p),
+            "ay": int(h * ay_p),
+            "bx": bx,
+            "by": by,
+            "bw": box_w,
+            "bh": box_h,
+        })
+    return boxes
 
 
 def render_weapon_workbench_composite(
     weapon_id: str,
     slots: Dict[str, str],
-    target_size: Tuple[int, int] = (680, 260)
+    target_size: Tuple[int, int] = (680, 260),
+    active_slot: str = "",
 ) -> Image.Image:
     """
     Genera la vista de armería estilo Escape from Tarkov con la imagen real del arma
@@ -264,10 +297,10 @@ def render_weapon_workbench_composite(
         wy = center_top + (center_h - wh) // 2
         if not is_bare_receiver:
             draw.rounded_rectangle(
-                [wx - 10, wy - 6, wx + ww + 10, wy + wh + 6],
-                radius=8,
-                fill=(0, 0, 0, 255),
-                outline=(45, 56, 76, 200),
+                [wx - 12, wy - 7, wx + ww + 12, wy + wh + 7],
+                radius=10,
+                fill=(13, 17, 26, 200),
+                outline=(52, 66, 92, 190),
                 width=1,
             )
         canvas.alpha_composite(wpn_fit, (wx, wy))
@@ -285,50 +318,61 @@ def render_weapon_workbench_composite(
         draw.text((w // 2 - (tb[2] - tb[0]) // 2, h // 2 - (tb[3] - tb[1]) // 2), fb_txt, fill=(245, 243, 236, 255), font=font_fb)
 
     # 3. Recuadros reales de accesorios estilo EFT alrededor del arma
-    supported = set(weapon.get("supported_slots", []))
-    box_w = max(92, min(122, int(w * 0.165)))
-    box_h = max(36, min(46, int(h * 0.165)))
     font_slot = _get_font(8, bold=True)
     font_part = _get_font(9, bold=True)
+    font_stat = _get_font(8, bold=False)
 
-    for slot_key, slot_lbl, accent_rgba, (bcx_p, bcy_p), (ax_p, ay_p) in _SLOT_LAYOUT:
-        if supported and slot_key not in supported:
-            continue
+    for hb in get_slot_hitboxes(weapon_id, target_size):
+        slot_key = hb["slot_key"]
+        slot_lbl = hb["slot_lbl"]
+        accent_rgba = hb["accent_rgba"]
+        bcy_p = hb["bcy_p"]
+        ax, ay = hb["ax"], hb["ay"]
+        bx, by, box_w, box_h = hb["bx"], hb["by"], hb["bw"], hb["bh"]
+
         part_id = slots.get(slot_key, "none")
         is_equipped = part_id != "none"
+        is_active = bool(active_slot and slot_key == active_slot)
         part = ATTACHMENTS_CATALOG.get(part_id, ATTACHMENTS_CATALOG["none"])
 
-        bx = max(8, min(w - box_w - 8, int(w * bcx_p) - box_w // 2))
-        by = max(24, min(h - box_h - 6, int(h * bcy_p) - box_h // 2))
-
-        ax, ay = int(w * ax_p), int(h * ay_p)
-        line_col = (accent_rgba[0], accent_rgba[1], accent_rgba[2], 140 if is_equipped else 45)
+        line_col = gold if is_active else (accent_rgba[0], accent_rgba[1], accent_rgba[2], 150 if is_equipped else 45)
         edge_y = by + box_h if bcy_p < 0.5 else by
-        draw.line([(bx + box_w // 2, edge_y), (ax, ay)], fill=line_col, width=1)
-        draw.ellipse([ax - 2, ay - 2, ax + 2, ay + 2], fill=line_col)
+        draw.line([(bx + box_w // 2, edge_y), (ax, ay)], fill=line_col, width=2 if is_active else 1)
+        draw.ellipse([ax - 3 if is_active else ax - 2, ay - 3 if is_active else ay - 2, ax + 3 if is_active else ax + 2, ay + 3 if is_active else ay + 2], fill=line_col)
 
-        fill_col = (18, 24, 34, 240) if is_equipped else (13, 17, 24, 195)
-        border_col = accent_rgba if is_equipped else (42, 52, 68, 180)
-        draw.rounded_rectangle([bx, by, bx + box_w, by + box_h], radius=4, fill=fill_col, outline=border_col, width=1)
+        fill_col = (24, 31, 46, 245) if is_active else ((18, 24, 34, 240) if is_equipped else (13, 17, 24, 195))
+        border_col = (212, 184, 134, 255) if is_active else (accent_rgba if is_equipped else (42, 52, 68, 180))
+        draw.rounded_rectangle([bx, by, bx + box_w, by + box_h], radius=5, fill=fill_col, outline=border_col, width=2 if is_active else 1)
 
-        icon_box = box_h - 8
+        icon_box = box_h - 10
         if is_equipped:
             p_img_key = get_attachment_image_key(part_id)
             p_pil = _load_raw_png(p_img_key)
             if p_pil:
                 p_fit = _fit_contain(p_pil, icon_box, icon_box)
                 pw, ph = p_fit.size
-                canvas.alpha_composite(p_fit, (bx + 4 + (icon_box - pw) // 2, by + 4 + (icon_box - ph) // 2))
+                canvas.alpha_composite(p_fit, (bx + 4 + (icon_box - pw) // 2, by + 5 + (icon_box - ph) // 2))
             text_x = bx + icon_box + 7
         else:
-            text_x = bx + 6
+            text_x = bx + 7
 
-        draw.text((text_x, by + 4), slot_lbl, fill=accent_rgba if is_equipped else (100, 116, 139, 255), font=font_slot)
+        draw.text((text_x, by + 4), slot_lbl, fill=(212, 184, 134, 255) if is_active else (accent_rgba if is_equipped else (100, 116, 139, 255)), font=font_slot)
         p_name = part.get("name", "Vacío").split(" (")[0] if is_equipped else "Vacío"
-        max_chars = 11 if is_equipped else 14
+        max_chars = 14 if is_equipped else 16
         if len(p_name) > max_chars:
             p_name = p_name[:max_chars - 1] + "…"
-        draw.text((text_x, by + 16), p_name, fill=(248, 250, 252, 255) if is_equipped else (100, 116, 139, 200), font=font_part)
+        draw.text((text_x, by + 15), p_name, fill=(248, 250, 252, 255) if is_equipped else (100, 116, 139, 200), font=font_part)
+
+        if is_equipped and box_h >= 44:
+            e_d = part.get("ergo_delta", 0.0)
+            r_d = part.get("recoil_pct_delta", 0.0)
+            stat_bits = []
+            if e_d:
+                stat_bits.append(f"{e_d:+g}E")
+            if r_d:
+                stat_bits.append(f"{r_d:+g}%R")
+            if stat_bits:
+                draw.text((text_x, by + 29), " ".join(stat_bits), fill=(110, 231, 183, 255), font=font_stat)
 
     # 4. Cabecera superior estilo EFT Inspect
     font_hdr = _get_font(11, bold=True)

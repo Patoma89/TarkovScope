@@ -507,5 +507,5 @@ def load_weapon_or_part_image(
     tw, th = tb[2] - tb[0], tb[3] - tb[1]
     draw.text(((w_box - tw) // 2 + 3, (h_box - th) // 2), badge_text, fill=(248, 250, 252, 255), font=font_b)
 
-    canvas.save(thumb_path, "PNG")
+    canvas.save(thumb_write, "PNG")
     return canvas

@@ -218,6 +218,64 @@ class TestV13GlobalSearch(unittest.TestCase):
         self.assertTrue(any(h["tab"] == "medical" for h in med_hits))
 
 
+class TestModdingStudioPRO(unittest.TestCase):
+    def test_all_110_weapons_have_factory_pngs_and_valid_presets(self):
+        from core.image_cache import WEAPONS_DIR
+        from core.weapon_modding_data import (
+            ATTACHMENTS_CATALOG,
+            MODDABLE_WEAPONS,
+            get_available_attachments_for_slot,
+        )
+
+        self.assertGreaterEqual(len(MODDABLE_WEAPONS), 110)
+        for wid, w in MODDABLE_WEAPONS.items():
+            png_path = os.path.join(WEAPONS_DIR, f"factory_{wid}.png")
+            self.assertTrue(os.path.exists(png_path), f"Falta factory_{wid}.png")
+            for slot_key, part_id in w.get("default_slots", {}).items():
+                self.assertIn(part_id, ATTACHMENTS_CATALOG, f"{wid}.default.{slot_key}")
+            for pname, pdict in w.get("presets", {}).items():
+                for slot_key, part_id in pdict.items():
+                    self.assertIn(part_id, ATTACHMENTS_CATALOG, f"{wid}.{pname}.{slot_key}")
+            for sk in w.get("supported_slots", []):
+                compat = [p for p in get_available_attachments_for_slot(sk, wid) if p["id"] != "none"]
+                self.assertTrue(compat, f"{wid} sin piezas compatibles en {sk}")
+
+    def test_platform_compatibility_and_optimizers(self):
+        from core.weapon_modding_data import ATTACHMENTS_CATALOG, get_available_attachments_for_slot
+        from core.weapon_modding_engine import (
+            auto_optimize_build,
+            calculate_build_stats,
+            compare_part_against_equipped,
+        )
+        from core.weapon_visual_compositor import get_slot_hitboxes, render_weapon_workbench_composite
+
+        ak_barrels = {p["id"] for p in get_available_attachments_for_slot("barrel", "ak74n")}
+        self.assertIn("barrel_ak74_std", ak_barrels)
+        self.assertNotIn("barrel_m4_406mm", ak_barrels)
+
+        ak_mags = {p["id"] for p in get_available_attachments_for_slot("magazine", "ak74n")}
+        self.assertIn("mag_ak_std_30", ak_mags)
+        self.assertNotIn("mag_mp133_8", ak_mags)
+
+        m4_meta = auto_optimize_build("m4a1", goal="meta_recoil", max_ll=4)
+        m4_ll2 = auto_optimize_build("m4a1", goal="meta_recoil", max_ll=2)
+        s_meta = calculate_build_stats("m4a1", m4_meta)
+        s_ll2 = calculate_build_stats("m4a1", m4_ll2)
+        self.assertLessEqual(s_meta["final_recoil_v"], s_ll2["final_recoil_v"])
+        for pid in m4_ll2.values():
+            if pid != "none":
+                self.assertLessEqual(ATTACHMENTS_CATALOG[pid]["loyalty_level"], 2)
+
+        delta = compare_part_against_equipped("m4a1", m4_ll2, "muzzle", "muzzle_m4_wave")
+        self.assertIn("ergo_diff", delta)
+        self.assertIn("recoil_v_diff", delta)
+
+        hitboxes = get_slot_hitboxes("m4a1", (920, 310))
+        self.assertGreaterEqual(len(hitboxes), 8)
+        img = render_weapon_workbench_composite("hk416", m4_meta, (920, 310), active_slot="optic")
+        self.assertEqual(img.size, (920, 310))
+
+
 class TestCoreLayerIsolation(unittest.TestCase):
     def test_v13_core_modules_never_import_tkinter(self):
         for mod in (armor_data, barters_data, containers_data, gear_cache, pmc_systems_data):

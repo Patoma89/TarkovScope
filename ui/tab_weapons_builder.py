@@ -19,13 +19,16 @@ from core.weapon_modding_data import (
     get_attachment_image_key
 )
 from core.weapon_modding_engine import (
+    auto_optimize_build,
     calculate_build_stats,
+    compare_part_against_equipped,
     export_build_to_json,
     export_shopping_list_text,
     export_build_to_base64,
     import_build_from_base64,
     import_build_from_json
 )
+from core.weapon_visual_compositor import get_slot_hitboxes
 from ui.theme import (
     C_AMBER, C_BG_DARKEST, C_BG_DEEP, C_BG_INSET, C_BG_PANEL, C_BG_PANEL_ALT,
     C_BG_PANEL_ALT2, C_BORDER, C_BORDER_ALT, C_EMERALD, C_GREEN, C_GREEN_LIGHT,
@@ -316,29 +319,50 @@ class WeaponPickerModal(ctk.CTkToplevel):
             corner_radius=8,
             border_width=2 if is_current else 1,
             border_color=border_c,
+            cursor="hand2",
         )
         card.grid(row=row, column=col, sticky="ew", padx=6, pady=5)
-        card.grid_columnconfigure(0, weight=1)
+        card.grid_columnconfigure(1, weight=1)
+
+        thumb_box = ctk.CTkFrame(
+            card,
+            width=96,
+            height=48,
+            fg_color=C_BG_DARKEST,
+            corner_radius=6,
+            border_width=1,
+            border_color=C_BORDER,
+        )
+        thumb_box.grid(row=0, column=0, rowspan=2, padx=(10, 10), pady=8)
+        thumb_box.grid_propagate(False)
+        thumb_box.grid_columnconfigure(0, weight=1)
+        thumb_box.grid_rowconfigure(0, weight=1)
+
+        w_img = get_weapon_or_part_ctk_image(f"factory_{w_id}", size=(88, 40), label_fallback=w["name"])
+        thumb_lbl = ctk.CTkLabel(thumb_box, text="", image=w_img)
+        thumb_lbl.grid(row=0, column=0)
 
         top = ctk.CTkFrame(card, fg_color="transparent")
-        top.grid(row=0, column=0, sticky="ew", padx=12, pady=(9, 2))
+        top.grid(row=0, column=1, sticky="ew", padx=(0, 8), pady=(9, 2))
         top.grid_columnconfigure(0, weight=1)
 
-        ctk.CTkLabel(
+        name_lbl = ctk.CTkLabel(
             top,
             text=w["name"],
             font=ui_font(13, "bold"),
             text_color=THEME["accent_gold"] if is_current else C_WHITE,
             anchor="w",
-        ).grid(row=0, column=0, sticky="w")
+        )
+        name_lbl.grid(row=0, column=0, sticky="w")
 
-        ctk.CTkLabel(
+        cal_lbl = ctk.CTkLabel(
             top,
             text=w.get("caliber", ""),
             font=ui_font(11, "bold"),
             text_color=C_EMERALD,
             anchor="e",
-        ).grid(row=0, column=1, sticky="e", padx=(8, 0))
+        )
+        cal_lbl.grid(row=0, column=1, sticky="e", padx=(8, 0))
 
         meta = (
             f"{w.get('category', '')}  •  "
@@ -346,18 +370,19 @@ class WeaponPickerModal(ctk.CTkToplevel):
             f"Ergo: {w.get('base_ergo', 0)}  •  "
             f"V.Rec: {w.get('base_recoil_v', 0)}"
         )
-        ctk.CTkLabel(
+        meta_lbl = ctk.CTkLabel(
             card,
             text=meta,
             font=ui_font(11),
             text_color=C_TEXT_MUTED,
             anchor="w",
-        ).grid(row=1, column=0, sticky="ew", padx=12, pady=(0, 9))
+        )
+        meta_lbl.grid(row=1, column=1, sticky="ew", padx=(0, 8), pady=(0, 9))
 
         select_btn = ctk.CTkButton(
             card,
-            text="✓ Activa" if is_current else "Seleccionar",
-            width=92,
+            text="✓ Activa" if is_current else "Elegir",
+            width=74,
             height=28,
             fg_color=THEME["accent_gold"] if is_current else C_SLATE_800,
             hover_color=THEME["accent_gold"],
@@ -365,9 +390,9 @@ class WeaponPickerModal(ctk.CTkToplevel):
             font=ui_font(11, "bold"),
             command=lambda wid=w_id: self._pick(wid),
         )
-        select_btn.grid(row=0, column=1, rowspan=2, padx=(4, 12), pady=8)
+        select_btn.grid(row=0, column=2, rowspan=2, padx=(4, 10), pady=8)
 
-        for widget in (card, top):
+        for widget in (card, thumb_box, thumb_lbl, top, name_lbl, cal_lbl, meta_lbl):
             widget.bind("<Button-1>", lambda _e, wid=w_id: self._pick(wid))
 
     def _pick(self, weapon_id: str):
@@ -584,8 +609,13 @@ class WeaponBuilderMixin:
         self.builder_weapon_category = MODDABLE_WEAPONS["m4a1"].get("category", "Rifles de Asalto")
         self.builder_slots = dict(MODDABLE_WEAPONS["m4a1"]["default_slots"])
         self.builder_active_slot = "muzzle"  # Ranura activa por defecto
+        self.builder_max_ll: int = 4
+        self.builder_part_sort: str = "recoil"
+        self._blueprint_size = (920, 310)
         self.builder_slot_buttons: Dict[str, ctk.CTkButton] = {}
         self.builder_preset_buttons: Dict[str, ctk.CTkButton] = {}
+        self._ll_filter_btns: Dict[int, ctk.CTkButton] = {}
+        self._sort_btns: Dict[str, ctk.CTkButton] = {}
         self.builder_stat_labels: Dict[str, ctk.CTkLabel] = {}
         self.builder_stat_bars: Dict[str, ctk.CTkProgressBar] = {}
 
@@ -753,6 +783,31 @@ class WeaponBuilderMixin:
             btn.pack(side="left", padx=3)
             self.builder_preset_buttons[p_name] = btn
 
+        # Auto-Optimizadores Pro (1-clic para cualquier arma y LL activo)
+        ctk.CTkLabel(
+            self.presets_bar,
+            text="  |  Auto-Optimizar:",
+            font=ui_font(11, "bold"),
+            text_color=THEME["accent_gold"],
+        ).pack(side="left", padx=(6, 4))
+
+        for goal_key, goal_lbl, g_col in [
+            ("meta_recoil", "⚡ Meta Recoil", "#0F766E"),
+            ("max_ergo", "🎯 Max Ergo", "#4338CA"),
+            ("budget", "💰 Económica", "#92400E"),
+        ]:
+            ctk.CTkButton(
+                self.presets_bar,
+                text=goal_lbl,
+                height=26,
+                corner_radius=4,
+                fg_color=g_col,
+                hover_color=THEME["accent_gold"],
+                text_color=C_WHITE,
+                font=ui_font(11, "bold"),
+                command=lambda gk=goal_key: self._apply_auto_optimize(gk),
+            ).pack(side="left", padx=2)
+
         # Botón Reset Fábrica
         ctk.CTkButton(
             self.presets_bar,
@@ -764,7 +819,14 @@ class WeaponBuilderMixin:
             text_color=C_TEXT_SOFT,
             font=ui_font(11, "bold"),
             command=self._reset_to_factory_defaults
-        ).pack(side="left", padx=3)
+        ).pack(side="right", padx=3)
+
+    def _apply_auto_optimize(self, goal: str):
+        max_ll = getattr(self, "builder_max_ll", 4)
+        self.builder_slots = auto_optimize_build(self.builder_weapon_id, goal=goal, max_ll=max_ll)
+        self._rebuild_slot_selector_bar()
+        self._render_parts_for_active_slot()
+        self._refresh_pro_builder_ui()
 
     def _on_category_changed(self, selected_category: str):
         self.builder_weapon_category = selected_category
@@ -842,8 +904,9 @@ class WeaponBuilderMixin:
         bp_box.grid(row=0, column=0, sticky="nsew", padx=8, pady=(8, 4))
         bp_box.grid_columnconfigure(0, weight=1)
 
-        self.lbl_blueprint_img = ctk.CTkLabel(bp_box, text="")
+        self.lbl_blueprint_img = ctk.CTkLabel(bp_box, text="", cursor="hand2")
         self.lbl_blueprint_img.pack(fill="both", expand=True, pady=4)
+        self.lbl_blueprint_img.bind("<Button-1>", self._on_blueprint_clicked)
 
         # Fila Inferior del Escenario: Telemetría Balística en Barras Horizontales
         telemetry = ctk.CTkFrame(stage, fg_color=C_BG_PANEL, corner_radius=6)
@@ -953,19 +1016,19 @@ class WeaponBuilderMixin:
             text_color=THEME["accent_gold"],
             anchor="w"
         )
-        self.lbl_active_slot_hdr.grid(row=0, column=0, sticky="w", padx=10, pady=6)
+        self.lbl_active_slot_hdr.grid(row=0, column=0, sticky="w", padx=10, pady=(6, 2))
 
         self.entry_part_search = ctk.CTkEntry(
             parts_hdr,
-            width=220,
+            width=210,
             height=28,
-            placeholder_text="🔍 Filtrar pieza...",
+            placeholder_text="🔍 Filtrar pieza o trader...",
             font=ui_font(11),
             fg_color=C_BG_DEEP,
             border_color=C_BORDER,
             text_color=C_WHITE
         )
-        self.entry_part_search.grid(row=0, column=1, padx=4, pady=6)
+        self.entry_part_search.grid(row=0, column=1, padx=4, pady=(6, 2))
         self.entry_part_search.bind("<KeyRelease>", self._on_part_search_key)
 
         self.btn_unequip_slot = ctk.CTkButton(
@@ -979,7 +1042,55 @@ class WeaponBuilderMixin:
             font=ui_font(11, "bold"),
             command=lambda: self._equip_part_in_active_slot("none")
         )
-        self.btn_unequip_slot.grid(row=0, column=2, padx=(4, 8), pady=6)
+        self.btn_unequip_slot.grid(row=0, column=2, padx=(4, 8), pady=(6, 2))
+
+        # Fila 2 de cabecera: Filtro Trader LL Máx + Ordenamiento instantáneo
+        ctrl_row = ctk.CTkFrame(parts_hdr, fg_color="transparent")
+        ctrl_row.grid(row=1, column=0, columnspan=3, sticky="ew", padx=10, pady=(2, 6))
+
+        ctk.CTkLabel(
+            ctrl_row,
+            text="Trader Máx:",
+            font=ui_font(10, "bold"),
+            text_color=C_TEXT_DIM,
+        ).pack(side="left", padx=(0, 4))
+
+        self._ll_filter_btns.clear()
+        for ll_val, ll_lbl in [(1, "LL1"), (2, "LL2"), (3, "LL3"), (4, "Todos / LL4")]:
+            b_ll = ctk.CTkButton(
+                ctrl_row,
+                text=ll_lbl,
+                height=24,
+                width=42 if ll_val < 4 else 80,
+                corner_radius=5,
+                font=ui_font(10, "bold"),
+                command=lambda v=ll_val: self._set_builder_max_ll(v),
+            )
+            b_ll.pack(side="left", padx=2)
+            self._ll_filter_btns[ll_val] = b_ll
+
+        ctk.CTkLabel(
+            ctrl_row,
+            text="   Ordenar:",
+            font=ui_font(10, "bold"),
+            text_color=C_TEXT_DIM,
+        ).pack(side="left", padx=(8, 4))
+
+        self._sort_btns.clear()
+        for s_key, s_lbl in [("recoil", "🔥 Recoil"), ("ergo", "⚡ Ergo"), ("price", "💰 Precio"), ("balanced", "⚖️ Equilib.")]:
+            b_s = ctk.CTkButton(
+                ctrl_row,
+                text=s_lbl,
+                height=24,
+                width=74,
+                corner_radius=5,
+                font=ui_font(10, "bold"),
+                command=lambda k=s_key: self._set_part_sort(k),
+            )
+            b_s.pack(side="left", padx=2)
+            self._sort_btns[s_key] = b_s
+
+        self._update_parts_ctrl_styles()
 
         self.parts_palette_scroll = ctk.CTkScrollableFrame(
             right_panel,
@@ -1052,15 +1163,58 @@ class WeaponBuilderMixin:
 
             self.builder_slot_buttons[slot_key] = card
 
+    def _on_blueprint_clicked(self, event):
+        """Permite seleccionar una ranura haciendo clic directamente sobre su recuadro en el plano."""
+        if not hasattr(self, "lbl_blueprint_img") or not self.lbl_blueprint_img.winfo_exists():
+            return
+        w_lbl = max(1, self.lbl_blueprint_img.winfo_width())
+        h_lbl = max(1, self.lbl_blueprint_img.winfo_height())
+        bw, bh = getattr(self, "_blueprint_size", (920, 310))
+        off_x = (w_lbl - bw) / 2.0
+        off_y = (h_lbl - bh) / 2.0
+        ix = event.x - off_x
+        iy = event.y - off_y
+        for hb in get_slot_hitboxes(self.builder_weapon_id, (bw, bh)):
+            if hb["bx"] <= ix <= hb["bx"] + hb["bw"] and hb["by"] <= iy <= hb["by"] + hb["bh"]:
+                self._on_slot_button_clicked(hb["slot_key"])
+                return
+
+    def _set_builder_max_ll(self, max_ll: int):
+        self.builder_max_ll = max_ll
+        self._update_parts_ctrl_styles()
+        self._render_parts_for_active_slot()
+
+    def _set_part_sort(self, sort_key: str):
+        self.builder_part_sort = sort_key
+        self._update_parts_ctrl_styles()
+        self._render_parts_for_active_slot()
+
+    def _update_parts_ctrl_styles(self):
+        for ll_val, btn in getattr(self, "_ll_filter_btns", {}).items():
+            active = ll_val == getattr(self, "builder_max_ll", 4)
+            btn.configure(
+                fg_color=THEME["accent_gold"] if active else C_SLATE_800,
+                text_color=C_BG_DARKEST if active else C_TEXT_SOFT,
+                hover_color=THEME["accent_gold"] if active else C_SLATE_700,
+            )
+        for s_key, btn in getattr(self, "_sort_btns", {}).items():
+            active = s_key == getattr(self, "builder_part_sort", "recoil")
+            btn.configure(
+                fg_color="#0284C7" if active else C_SLATE_800,
+                text_color=C_WHITE if active else C_TEXT_SOFT,
+                hover_color="#0369A1" if active else C_SLATE_700,
+            )
+
     def _on_slot_button_clicked(self, slot_key: str):
         self.builder_active_slot = slot_key
         if hasattr(self, "entry_part_search"):
             self.entry_part_search.delete(0, "end")
         self._rebuild_slot_selector_bar()
         self._render_parts_for_active_slot()
+        self._refresh_pro_builder_ui()
 
     def _render_parts_for_active_slot(self):
-        """Renderiza los accesorios compatibles en lotes (batch rendering) con filtro instantáneo."""
+        """Renderiza los accesorios compatibles en lotes (batch rendering) con filtro LL, orden y comparativa."""
         self._parts_render_token = getattr(self, "_parts_render_token", 0) + 1
         token = self._parts_render_token
 
@@ -1069,16 +1223,38 @@ class WeaponBuilderMixin:
 
         slot_key = self.builder_active_slot
         all_parts = get_available_attachments_for_slot(slot_key, self.builder_weapon_id)
-        query = self.entry_part_search.get().strip().lower() if hasattr(self, "entry_part_search") else ""
-        if query:
-            parts = [
-                p for p in all_parts
-                if query in p.get("name", "").lower() or query in p.get("trader", "").lower()
-            ]
-        else:
-            parts = all_parts
-
+        max_ll = getattr(self, "builder_max_ll", 4)
         cur_equipped_id = self.builder_slots.get(slot_key, "none")
+        query = self.entry_part_search.get().strip().lower() if hasattr(self, "entry_part_search") else ""
+
+        filtered = []
+        for p in all_parts:
+            pid = p["id"]
+            if pid != "none" and pid != cur_equipped_id:
+                if int(p.get("loyalty_level", 1) or 1) > max_ll:
+                    continue
+            if query:
+                if query not in p.get("name", "").lower() and query not in p.get("trader", "").lower():
+                    continue
+            filtered.append(p)
+
+        sort_mode = getattr(self, "builder_part_sort", "recoil")
+
+        def _sort_key(p: Dict[str, Any]):
+            if p["id"] == cur_equipped_id:
+                return (-2, 0.0)
+            if p["id"] == "none":
+                return (2, 0.0)
+            if sort_mode == "ergo":
+                return (0, -float(p.get("ergo_delta", 0.0)), float(p.get("recoil_pct_delta", 0.0)))
+            if sort_mode == "price":
+                return (0, int(p.get("price_rubles", 0)), float(p.get("recoil_pct_delta", 0.0)))
+            if sort_mode == "balanced":
+                score = (-float(p.get("recoil_pct_delta", 0.0)) * 1.5) + float(p.get("ergo_delta", 0.0))
+                return (0, -score, int(p.get("price_rubles", 0)))
+            return (0, float(p.get("recoil_pct_delta", 0.0)), -float(p.get("ergo_delta", 0.0)))
+
+        parts = sorted(filtered, key=_sort_key)
 
         slot_label = dict(MOD_SLOTS).get(slot_key, slot_key)
         icon = SLOT_ICONS.get(slot_key, "🔩")
@@ -1219,6 +1395,32 @@ class WeaponBuilderMixin:
                 fg=C_GREEN_LIGHT,
                 bd=0,
             ).pack(side="left", padx=4)
+
+            # Comparativa instantánea Δ vs pieza equipada actualmente
+            if not is_equipped:
+                delta = compare_part_against_equipped(
+                    self.builder_weapon_id,
+                    self.builder_slots,
+                    self.builder_active_slot,
+                    p_id,
+                )
+                d_bits = []
+                if delta["ergo_diff"] != 0:
+                    d_bits.append(f"{delta['ergo_diff']:+d} Ergo")
+                if delta["recoil_v_diff"] != 0:
+                    d_bits.append(f"{delta['recoil_v_diff']:+d} RecV")
+                if d_bits:
+                    is_better = delta["recoil_v_diff"] < 0 or (delta["recoil_v_diff"] == 0 and delta["ergo_diff"] > 0)
+                    tk.Label(
+                        badges_row,
+                        text=f" Δ actual: {' · '.join(d_bits)} ",
+                        font=ui_font(9, "bold"),
+                        bg="#064E3B" if is_better else "#3B1D1E",
+                        fg="#A7F3D0" if is_better else "#FECACA",
+                        padx=4,
+                        pady=1,
+                        bd=0,
+                    ).pack(side="left", padx=(6, 0))
         else:
             tk.Label(
                 badges_row,
@@ -1268,7 +1470,8 @@ class WeaponBuilderMixin:
                 bp_new = get_dynamic_weapon_composite_ctk_image(
                     self.builder_weapon_id,
                     self.builder_slots,
-                    target_size=(920, 310)
+                    target_size=getattr(self, "_blueprint_size", (920, 310)),
+                    active_slot=self.builder_active_slot,
                 )
                 self.lbl_blueprint_img.configure(image=bp_new)
             self.after(0, _ui_refresh)
@@ -1279,7 +1482,8 @@ class WeaponBuilderMixin:
         bp_ctk = get_dynamic_weapon_composite_ctk_image(
             self.builder_weapon_id,
             self.builder_slots,
-            target_size=(920, 310)
+            target_size=getattr(self, "_blueprint_size", (920, 310)),
+            active_slot=self.builder_active_slot,
         )
         self.lbl_blueprint_img.configure(image=bp_ctk)
 

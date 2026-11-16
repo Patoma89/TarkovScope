@@ -12,7 +12,8 @@ from typing import Dict, Any, List, Optional, Tuple
 from core.weapon_modding_data import (
     MODDABLE_WEAPONS,
     ATTACHMENTS_CATALOG,
-    MOD_SLOTS
+    MOD_SLOTS,
+    get_available_attachments_for_slot,
 )
 
 
@@ -262,3 +263,94 @@ def import_build_from_json(json_string: str) -> Optional[Dict[str, Any]]:
         return None
     except Exception:
         return None
+
+
+def compare_part_against_equipped(
+    weapon_id: str,
+    current_slots: Dict[str, str],
+    slot_key: str,
+    candidate_part_id: str,
+) -> Dict[str, Any]:
+    """
+    Calcula el delta exacto en stats del arma y costo al reemplazar la pieza equipada
+    en `slot_key` por `candidate_part_id`.
+    """
+    before = calculate_build_stats(weapon_id, current_slots)
+    trial_slots = dict(current_slots)
+    trial_slots[slot_key] = candidate_part_id
+    after = calculate_build_stats(weapon_id, trial_slots)
+
+    return {
+        "ergo_diff": after["final_ergo"] - before["final_ergo"],
+        "recoil_v_diff": after["final_recoil_v"] - before["final_recoil_v"],
+        "recoil_h_diff": after["final_recoil_h"] - before["final_recoil_h"],
+        "weight_diff": round(after["final_weight_kg"] - before["final_weight_kg"], 2),
+        "price_diff": after["total_cost_rubles"] - before["total_cost_rubles"],
+    }
+
+
+def auto_optimize_build(
+    weapon_id: str,
+    goal: str = "meta_recoil",
+    max_ll: int = 4,
+) -> Dict[str, str]:
+    """
+    Calcula automáticamente la mejor combinación compatible de accesorios para cualquier arma
+    respetando el objetivo táctico ('meta_recoil', 'max_ergo', 'balanced', 'budget') y LL máximo.
+    """
+    weapon = MODDABLE_WEAPONS.get(weapon_id, MODDABLE_WEAPONS["m4a1"])
+    supported = weapon.get("supported_slots") or [sk for sk, _ in MOD_SLOTS]
+    default_slots = weapon.get("default_slots", {})
+    result: Dict[str, str] = {}
+
+    for slot_key in supported:
+        candidates = get_available_attachments_for_slot(slot_key, weapon_id)
+        # Filtrar por LL máximo (si no hay ninguno válido, mantener pieza de fábrica o 'none')
+        eligible = [
+            p for p in candidates
+            if p["id"] != "none" and int(p.get("loyalty_level", 1) or 1) <= max_ll
+        ]
+        if not eligible:
+            fallback_id = default_slots.get(slot_key, "none")
+            result[slot_key] = fallback_id if fallback_id in ATTACHMENTS_CATALOG else "none"
+            continue
+
+        if goal == "max_ergo":
+            best = max(
+                eligible,
+                key=lambda p: (
+                    float(p.get("ergo_delta", 0.0)),
+                    -float(p.get("recoil_pct_delta", 0.0)),
+                    -int(p.get("price_rubles", 0)),
+                ),
+            )
+        elif goal == "budget":
+            # Mejor relación beneficio/rublo con piezas económicas
+            best = max(
+                eligible,
+                key=lambda p: (
+                    (-float(p.get("recoil_pct_delta", 0.0)) * 2.0 + float(p.get("ergo_delta", 0.0)))
+                    / max(1.0, int(p.get("price_rubles", 1)) / 5000.0),
+                    -int(p.get("price_rubles", 0)),
+                ),
+            )
+        elif goal == "balanced":
+            best = max(
+                eligible,
+                key=lambda p: (
+                    (-float(p.get("recoil_pct_delta", 0.0)) * 1.6) + float(p.get("ergo_delta", 0.0)),
+                    -int(p.get("price_rubles", 0)),
+                ),
+            )
+        else:  # meta_recoil
+            best = max(
+                eligible,
+                key=lambda p: (
+                    -float(p.get("recoil_pct_delta", 0.0)),
+                    float(p.get("ergo_delta", 0.0)),
+                    -int(p.get("price_rubles", 0)),
+                ),
+            )
+        result[slot_key] = best["id"]
+
+    return result

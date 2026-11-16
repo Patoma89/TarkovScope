@@ -357,14 +357,15 @@ def get_story_gallery_full_pil(gallery_file: str, max_size: Tuple[int, int] = (1
 def get_dynamic_weapon_composite_ctk_image(
     weapon_id: str,
     slots: Dict[str, str],
-    target_size: Tuple[int, int] = (680, 260)
+    target_size: Tuple[int, int] = (680, 260),
+    active_slot: str = "",
 ) -> ctk.CTkImage:
     """
     Genera el plano esquemático dinámico del arma con accesorios montados en tiempo real (<1 ms).
     Permite ver visualmente cómo cambia el arma al instalar cada silenciador, mira, culata o cargador.
     """
     from core.weapon_visual_compositor import render_weapon_workbench_composite
-    pil_img = render_weapon_workbench_composite(weapon_id, slots, target_size)
+    pil_img = render_weapon_workbench_composite(weapon_id, slots, target_size, active_slot=active_slot)
     return ctk.CTkImage(light_image=pil_img, dark_image=pil_img, size=target_size)
 
 
