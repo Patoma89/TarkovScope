@@ -8,6 +8,7 @@ import tkinter as tk
 import customtkinter as ctk
 
 from core.config import THEME
+from core.i18n import t_ui
 from core.containers_data import (
     CONTAINER_CATEGORIES,
     SICC_VS_DOCS_COMPARISON,
@@ -82,21 +83,24 @@ class TabContainers(ctk.CTkFrame):
 
         ctk.CTkLabel(
             hdr,
-            text="🎒 RIGS, MOCHILAS & CONTENEDORES DE ALIJO",
+            text=t_ui("🎒 RIGS, MOCHILAS & CONTENEDORES DE ALIJO", "🎒 RIGS, BACKPACKS & STASH CONTAINERS"),
             font=ui_font(16, "bold"),
             text_color=THEME["accent_gold"],
         ).grid(row=0, column=0, padx=14, pady=(10, 2), sticky="w")
 
         ctk.CTkLabel(
             hdr,
-            text="Pouches seguros (Kappa / Gamma / Theta), cajas de almacenamiento, eficiencia real, layouts de grilla y comparativa SICC vs Docs.",
+            text=t_ui(
+                "Pouches seguros (Kappa / Gamma / Theta), cajas de almacenamiento, eficiencia real, layouts de grilla y comparativa SICC vs Docs.",
+                "Secure containers (Kappa / Gamma / Theta), storage cases, real efficiency, grid layouts & SICC vs Docs comparison.",
+            ),
             font=ui_font(12),
             text_color=C_TEXT_DIM,
         ).grid(row=1, column=0, padx=14, pady=(0, 10), sticky="w")
 
         ctk.CTkButton(
             hdr,
-            text="⚖️ Ver SICC vs Docs Case",
+            text=t_ui("⚖️ Ver SICC vs Docs Case", "⚖️ View SICC vs Docs Case"),
             width=185,
             height=34,
             corner_radius=8,

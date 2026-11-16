@@ -10,6 +10,7 @@ import tkinter as tk
 import customtkinter as ctk
 
 from core.config import THEME
+from core.i18n import t_ui
 from core.pmc_systems_data import (
     BTR_SERVICE_DATA,
     PMC_SKILLS_CATALOG,
@@ -111,14 +112,17 @@ class TabPMCSystems(ctk.CTkFrame):
 
         ctk.CTkLabel(
             hdr,
-            text="📈 SISTEMAS DE PMC: SKILLS, SCAV KARMA & BTR",
+            text=t_ui("📈 SISTEMAS DE PMC: SKILLS, SCAV KARMA & BTR", "📈 PMC SYSTEMS: SKILLS, SCAV KARMA & BTR"),
             font=ui_font(15, "bold"),
             text_color=THEME["accent_gold"],
         ).grid(row=0, column=0, padx=14, pady=(8, 2), sticky="w")
 
         ctk.CTkLabel(
             hdr,
-            text="Guía táctica de progresión: skills sin fatiga, Scav Karma (Fence), tarifas BTR y Transits.",
+            text=t_ui(
+                "Guía táctica de progresión: skills sin fatiga, Scav Karma (Fence), tarifas BTR y Transits.",
+                "Progression guide: raid fatigue & Elite perks, Scav Karma (Fence), BTR rates & Transits.",
+            ),
             font=ui_font(11),
             text_color=C_TEXT_DIM,
         ).grid(row=1, column=0, padx=14, pady=(0, 8), sticky="w")
@@ -127,7 +131,7 @@ class TabPMCSystems(ctk.CTkFrame):
         seg_bar.grid(row=0, column=1, rowspan=2, padx=12, pady=8, sticky="e")
 
         views = [
-            ("skills", "📈 Skills & Leveo"),
+            ("skills", t_ui("📈 Skills & Leveo", "📈 Skills & Leveling")),
             ("karma", "⚖️ Scav Karma"),
             ("btr_transits", "🚐 BTR & Transits"),
         ]

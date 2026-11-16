@@ -21,6 +21,8 @@ import core.armor_data as armor_data
 import core.barters_data as barters_data
 import core.containers_data as containers_data
 import core.gear_cache as gear_cache
+import core.i18n as i18n
+import core.patch_notes_data as patch_notes_data
 import core.pmc_systems_data as pmc_systems_data
 from core.ballistics import simulate_plate_and_aramid
 from core.database import init_db, seed_wiki_ammunition
@@ -276,9 +278,46 @@ class TestModdingStudioPRO(unittest.TestCase):
         self.assertEqual(img.size, (920, 310))
 
 
+class TestI18n(unittest.TestCase):
+    def test_supported_langs_and_translation_helpers(self):
+        self.assertEqual(i18n.SUPPORTED_LANGS, {"es": "Español", "en": "English"})
+
+        prev = i18n.get_active_lang()
+        try:
+            with patch("core.i18n.set_user_preference") as mock_set:
+                self.assertEqual(i18n.set_active_lang("en"), "en")
+                mock_set.assert_called_with("ui_lang", "en")
+                self.assertEqual(i18n.t_ui("Hola", "Hello"), "Hello")
+                self.assertEqual(i18n.tr("nav.quests"), "Quests & Traders")
+
+                # Invalid language falls back to "es"
+                self.assertEqual(i18n.set_active_lang("fr"), "es")
+                self.assertEqual(i18n.t_ui("Hola", "Hello"), "Hola")
+                self.assertEqual(i18n.tr("nav.quests"), "Quests & Traders")
+                self.assertEqual(i18n.tr("missing_key", "Fallback"), "Fallback")
+        finally:
+            i18n._ACTIVE_LANG = prev
+
+
+class TestPatchNotesData(unittest.TestCase):
+    def test_patch_notes_bilingual_structure(self):
+        es_notes = patch_notes_data.get_patch_notes("es")
+        en_notes = patch_notes_data.get_patch_notes("en")
+        self.assertGreaterEqual(len(es_notes), 5)
+        self.assertEqual(len(es_notes), len(en_notes))
+        for es_rel, en_rel in zip(es_notes, en_notes):
+            self.assertEqual(es_rel["version"], en_rel["version"])
+            self.assertTrue(es_rel["title"])
+            self.assertTrue(en_rel["title"])
+            self.assertGreater(len(es_rel["items"]), 0)
+            for item in es_rel["items"]:
+                self.assertIn(item["kind"], {"NEW", "IMPROVED", "FIX"})
+                self.assertTrue(item["text"])
+
+
 class TestCoreLayerIsolation(unittest.TestCase):
     def test_v13_core_modules_never_import_tkinter(self):
-        for mod in (armor_data, barters_data, containers_data, gear_cache, pmc_systems_data):
+        for mod in (armor_data, barters_data, containers_data, gear_cache, i18n, patch_notes_data, pmc_systems_data):
             with open(mod.__file__, encoding="utf-8") as fh:
                 src = fh.read()
             self.assertNotIn("customtkinter", src, mod.__name__)

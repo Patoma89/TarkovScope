@@ -11,8 +11,9 @@ Búsqueda instantánea indexada en memoria RAM sobre:
 import customtkinter as ctk
 from typing import Callable, Optional, List, Dict, Any
 from core.config import THEME
-from ui.theme import ui_font
 from core.datastore import get_datastore
+from core.i18n import tr
+from ui.theme import ui_font
 from ui.theme import C_BG_DARKEST, C_BG_DEEP, C_BG_PANEL_ALT, C_RED_DARK, C_TEXT, C_TEXT_DIM, C_TEXT_MUTED, C_WHITE
 
 
@@ -23,7 +24,7 @@ class GlobalSearchModal(ctk.CTkToplevel):
         self._debounce_job: Optional[str] = None
         self._results: List[Dict[str, Any]] = []
 
-        self.title("Buscador Global Táctico — TTC Spotlight (Ctrl + K)")
+        self.title(tr("search.title"))
         self.geometry("780x560")
         self.minsize(680, 480)
         self.configure(fg_color="#0A0C10")
@@ -80,7 +81,7 @@ class GlobalSearchModal(ctk.CTkToplevel):
 
         self.search_entry = ctk.CTkEntry(
             search_box,
-            placeholder_text="Buscar quests, bosses, mapas, munición, blindaje, llaves, stims, barters o skills...",
+            placeholder_text=tr("search.placeholder"),
             font=ui_font(15),
             height=46,
             fg_color=C_BG_PANEL_ALT,
@@ -104,7 +105,7 @@ class GlobalSearchModal(ctk.CTkToplevel):
         self.results_scroll.grid(row=2, column=0, padx=18, pady=6, sticky="nsew")
         self.results_scroll.grid_columnconfigure(0, weight=1)
 
-        self._render_empty_state("Escribe al menos 2 letras para buscar instantáneamente en todo TarkovScope...")
+        self._render_empty_state(tr("search.empty_hint"))
 
     def _build_footer(self):
         ft = ctk.CTkFrame(self, fg_color="transparent", height=32)
@@ -113,7 +114,7 @@ class GlobalSearchModal(ctk.CTkToplevel):
 
         ctk.CTkLabel(
             ft,
-            text="Tip: Puedes presionar Ctrl + K desde cualquier ventana de la app para abrir este buscador.",
+            text=tr("search.tip"),
             font=ui_font(11),
             text_color="#64748B"
         ).grid(row=0, column=0, sticky="w")

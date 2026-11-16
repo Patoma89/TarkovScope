@@ -20,12 +20,14 @@ if current_dir not in sys.path:
 from core.config import APP_NAME, APP_VERSION, THEME, THEME_SKIN_META, BUNDLE_DIR, BASE_DIR
 from core.database import init_db, is_db_populated
 from core.datastore import get_datastore
+from core.i18n import SUPPORTED_LANGS, get_active_lang, set_active_lang, tr
 from core.sync_service import SyncService
 from core.updater import check_github_release
-from core.user_data import set_user_preference
+from core.user_data import get_user_preference, set_user_preference
 from ui.image_utils import clear_image_ram_cache
 import ui.theme as theme_mod
 from ui.theme import THEME_SETTINGS, ui_font, apply_ui_skin, get_active_skin_id
+from ui.patch_notes_modal import PatchNotesModal
 from ui.update_modal import UpdateDialog
 from ui.tab_bosses import TabBosses
 from ui.tab_weapons import TabWeapons
@@ -44,8 +46,11 @@ from ui.tab_pmc_systems import TabPMCSystems
 from ui.global_search_modal import GlobalSearchModal
 from ui.theme import C_AMBER, C_BADGE_NEW, C_BG_DEEP, C_BG_ROW, C_BORDER, C_BORDER_ALT, C_GREEN, C_RED, C_TEXT, C_TEXT_DIM, C_TEXT_MUTED, C_WHITE
 
-# Pestañas nuevas: llevan el badge "NEW" en el menú lateral.
-NEW_TAB_KEYS = {"quest_tracker", "progression_planner"}
+# Pestañas con badge "NEW" auto-descartable al visitarlas por primera vez en esa versión.
+NEW_TAB_VERSIONS: Dict[str, str] = {
+    "quest_tracker": "1.3.1",
+    "progression_planner": "1.3.1",
+}
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 logger = logging.getLogger("TarkovScope.Main")
@@ -135,7 +140,7 @@ class TarkovScopeApp(ctk.CTk):
         self.sidebar.grid(row=0, column=0, sticky="nsew", padx=0, pady=0)
         self.sidebar.grid_propagate(False)
         self.sidebar.grid_columnconfigure(0, weight=1)
-        self.sidebar.grid_rowconfigure(3, weight=1)
+        self.sidebar.grid_rowconfigure(2, weight=1)
 
         # 1. Bloque de Marca / Título
         logo_frame = ctk.CTkFrame(self.sidebar, fg_color="transparent")
@@ -161,7 +166,7 @@ class TarkovScopeApp(ctk.CTk):
         # Botón de Búsqueda Global Rápida (Spotlight / Command Palette)
         self.search_btn = ctk.CTkButton(
             logo_frame,
-            text="🔍 Buscar... (Ctrl+K)",
+            text=tr("sidebar.search"),
             font=ui_font(12, "bold"),
             fg_color=THEME["btn_surface"],
             hover_color=THEME["btn_hover"],
@@ -178,7 +183,7 @@ class TarkovScopeApp(ctk.CTk):
         # Botón de Modo Ventana Siempre Visible (Always on Top)
         self.btn_topmost = ctk.CTkButton(
             logo_frame,
-            text="📌 Fijar Arriba: ACTIVO" if self._always_on_top else "📌 Fijar Arriba: Desactivado",
+            text=tr("sidebar.topmost_on") if self._always_on_top else tr("sidebar.topmost_off"),
             font=ui_font(11, "bold"),
             fg_color=THEME["active_tab_bg"] if self._always_on_top else "transparent",
             hover_color=C_BG_ROW,
@@ -199,7 +204,7 @@ class TarkovScopeApp(ctk.CTk):
 
         ctk.CTkLabel(
             skin_row,
-            text="🎨 Skin:",
+            text=tr("sidebar.skin"),
             font=ui_font(11, "bold"),
             text_color=theme_mod.C_TEXT_DIM
         ).grid(row=0, column=0, padx=(2, 6), sticky="w")
@@ -223,51 +228,90 @@ class TarkovScopeApp(ctk.CTk):
         self.skin_menu.set(active_skin_label)
         self.skin_menu.grid(row=0, column=1, sticky="ew")
 
+        # Selector de Idioma (Español / English)
+        lang_row = ctk.CTkFrame(logo_frame, fg_color="transparent")
+        lang_row.grid(row=5, column=0, pady=(4, 0), sticky="ew")
+        lang_row.grid_columnconfigure(1, weight=1)
+
+        ctk.CTkLabel(
+            lang_row,
+            text=tr("sidebar.lang"),
+            font=ui_font(11, "bold"),
+            text_color=theme_mod.C_TEXT_DIM
+        ).grid(row=0, column=0, padx=(2, 6), sticky="w")
+
+        self._lang_label_to_id = {v: k for k, v in SUPPORTED_LANGS.items()}
+        active_lang_label = SUPPORTED_LANGS.get(get_active_lang(), "Español")
+        self.lang_menu = ctk.CTkOptionMenu(
+            lang_row,
+            values=list(self._lang_label_to_id.keys()),
+            height=26,
+            font=ui_font(11, "bold"),
+            fg_color=theme_mod.C_BG_PANEL,
+            button_color=theme_mod.C_BORDER,
+            button_hover_color=theme_mod.C_BG_ROW_ALT,
+            dropdown_fg_color=theme_mod.C_BG_PANEL,
+            dropdown_hover_color=theme_mod.C_BG_ROW_ALT,
+            text_color=THEME["accent_gold"],
+            command=self._on_lang_changed
+        )
+        self.lang_menu.set(active_lang_label)
+        self.lang_menu.grid(row=0, column=1, sticky="ew")
+
         # 2. Separador Superior
         sep = ctk.CTkFrame(self.sidebar, height=1, fg_color=THEME["border_soft"])
-        sep.grid(row=1, column=0, padx=16, pady=(0, 12), sticky="ew")
+        sep.grid(row=1, column=0, padx=16, pady=(0, 6), sticky="ew")
 
-        # 3. Contenedor de Botones de Navegación (Sin números, alineación limpia)
-        nav_container = ctk.CTkFrame(self.sidebar, fg_color="transparent")
-        nav_container.grid(row=2, column=0, padx=14, pady=0, sticky="ew")
+        # 3. Contenedor de Botones de Navegación (Scrollable para no cortar el footer en 740p)
+        nav_container = ctk.CTkScrollableFrame(
+            self.sidebar,
+            fg_color="transparent",
+            corner_radius=0,
+            scrollbar_button_color=theme_mod.C_BORDER_SOFT,
+            scrollbar_button_hover_color=THEME["accent_gold"],
+        )
+        nav_container.grid(row=2, column=0, padx=8, pady=0, sticky="nsew")
         nav_container.grid_columnconfigure(0, weight=1)
 
         self.nav_buttons: Dict[str, ctk.CTkButton] = {}
         nav_items = [
-            ("bosses", "Bosses & Spawns"),
-            ("maps", "Mapas & Extracciones"),
-            ("quests", "Quests & Traders"),
-            ("quest_tracker", "Quest Tracker & Rutas"),
-            ("progression_planner", "Planner de Progresión"),
-            ("story_quests", "Quests de la Historia"),
-            ("weapons", "Armas & Gunsmith"),
-            ("ballistics", "Balística & Blindaje"),
-            ("containers", "Rigs, Mochilas & Cajas"),
-            ("flea", "Hideout, Barters & FiR"),
-            ("keys", "Llaves & Intel"),
-            ("medical", "Medicina & Stims"),
-            ("pmc_systems", "PMC, Skills & Sistemas"),
-            ("lore", "Story & Lore"),
+            ("bosses", tr("nav.bosses")),
+            ("maps", tr("nav.maps")),
+            ("quests", tr("nav.quests")),
+            ("quest_tracker", tr("nav.quest_tracker")),
+            ("progression_planner", tr("nav.progression_planner")),
+            ("story_quests", tr("nav.story_quests")),
+            ("weapons", tr("nav.weapons")),
+            ("ballistics", tr("nav.ballistics")),
+            ("containers", tr("nav.containers")),
+            ("flea", tr("nav.flea")),
+            ("keys", tr("nav.keys")),
+            ("medical", tr("nav.medical")),
+            ("pmc_systems", tr("nav.pmc_systems")),
+            ("lore", tr("nav.lore")),
         ]
 
+        self._new_badges: Dict[str, ctk.CTkLabel] = {}
+        seen_new_tabs = self._load_seen_new_tabs()
         for idx, (tab_key, label_text) in enumerate(nav_items):
             btn = ctk.CTkButton(
                 nav_container,
                 text=f"  {label_text}",
-                font=ui_font(13, "bold"),
+                font=ui_font(12, "bold"),
                 fg_color="transparent",
                 text_color=C_TEXT_MUTED,
                 hover_color=C_BG_ROW,
                 border_width=1,
                 border_color=C_BG_DEEP,
                 anchor="w",
-                height=34,
+                height=30,
                 corner_radius=6,
                 command=lambda k=tab_key: self.switch_tab(k)
             )
-            btn.grid(row=idx, column=0, padx=0, pady=2, sticky="ew")
+            btn.grid(row=idx, column=0, padx=2, pady=1, sticky="ew")
             self.nav_buttons[tab_key] = btn
-            if tab_key in NEW_TAB_KEYS:
+            target_ver = NEW_TAB_VERSIONS.get(tab_key)
+            if target_ver and seen_new_tabs.get(tab_key) != target_ver:
                 badge = ctk.CTkLabel(
                     btn,
                     text="NEW",
@@ -282,18 +326,19 @@ class TarkovScopeApp(ctk.CTk):
                 badge.place(relx=1.0, rely=0.5, x=-8, anchor="e")
                 # El badge tapa parte del botón: que el clic sobre él también cambie de pestaña.
                 badge.bind("<Button-1>", lambda _e, k=tab_key: self.switch_tab(k))
+                self._new_badges[tab_key] = badge
 
         # 4. Pie de Barra Lateral
         footer_frame = ctk.CTkFrame(self.sidebar, fg_color="transparent")
-        footer_frame.grid(row=4, column=0, padx=16, pady=18, sticky="ew")
+        footer_frame.grid(row=3, column=0, padx=16, pady=(6, 12), sticky="ew")
         footer_frame.grid_columnconfigure(0, weight=1)
 
         sep_bot = ctk.CTkFrame(footer_frame, height=1, fg_color=THEME["border_soft"])
-        sep_bot.grid(row=0, column=0, pady=(0, 12), sticky="ew")
+        sep_bot.grid(row=0, column=0, pady=(0, 8), sticky="ew")
 
         self.db_status_lbl = ctk.CTkLabel(
             footer_frame,
-            text="● Caché RAM Zero-Lag activo",
+            text=tr("sidebar.db_ready"),
             font=ui_font(12, "bold"),
             text_color=C_GREEN,
             anchor="w"
@@ -308,7 +353,7 @@ class TarkovScopeApp(ctk.CTk):
 
         self.btn_export = ctk.CTkButton(
             backup_row,
-            text="📤 Exportar",
+            text=tr("sidebar.export"),
             font=ui_font(11, "bold"),
             fg_color=THEME["btn_surface"],
             hover_color=THEME["btn_hover"],
@@ -323,7 +368,7 @@ class TarkovScopeApp(ctk.CTk):
 
         self.btn_import = ctk.CTkButton(
             backup_row,
-            text="📥 Importar",
+            text=tr("sidebar.import"),
             font=ui_font(11, "bold"),
             fg_color=THEME["btn_surface"],
             hover_color=THEME["btn_hover"],
@@ -338,7 +383,7 @@ class TarkovScopeApp(ctk.CTk):
 
         self.sync_btn = ctk.CTkButton(
             footer_frame,
-            text="Sincronizar Datos",
+            text=tr("sidebar.sync"),
             font=ui_font(13, "bold"),
             fg_color=C_BG_ROW,
             hover_color=C_BORDER_ALT,
@@ -351,9 +396,24 @@ class TarkovScopeApp(ctk.CTk):
         )
         self.sync_btn.grid(row=3, column=0, pady=(0, 6), sticky="ew")
 
+        self.patch_notes_btn = ctk.CTkButton(
+            footer_frame,
+            text=tr("sidebar.patch_notes"),
+            font=ui_font(11, "bold"),
+            fg_color=THEME["btn_surface"],
+            hover_color=THEME["btn_hover"],
+            border_width=1,
+            border_color=THEME["border_alt"],
+            text_color=THEME["accent_gold"],
+            height=28,
+            corner_radius=5,
+            command=self.open_patch_notes
+        )
+        self.patch_notes_btn.grid(row=4, column=0, pady=(0, 6), sticky="ew")
+
         self.update_btn = ctk.CTkButton(
             footer_frame,
-            text=f"🔄 Buscar Actualización (v{APP_VERSION})",
+            text=tr("sidebar.update", ver=APP_VERSION),
             font=ui_font(11, "bold"),
             fg_color=THEME["btn_surface"],
             hover_color=THEME["btn_hover"],
@@ -364,7 +424,7 @@ class TarkovScopeApp(ctk.CTk):
             corner_radius=5,
             command=self.check_for_app_updates
         )
-        self.update_btn.grid(row=4, column=0, sticky="ew")
+        self.update_btn.grid(row=5, column=0, sticky="ew")
 
     def _build_content_area(self):
         self.content_frame = ctk.CTkFrame(self, fg_color="transparent")
@@ -372,14 +432,7 @@ class TarkovScopeApp(ctk.CTk):
         self.content_frame.grid_columnconfigure(0, weight=1)
         self.content_frame.grid_rowconfigure(0, weight=1)
 
-    def _on_skin_changed(self, selected_label: str):
-        skin_id = self._skin_label_to_id.get(selected_label, "tarkov_classic")
-        if skin_id == get_active_skin_id():
-            return
-        set_user_preference("ui_skin", skin_id)
-        apply_ui_skin(skin_id)
-        self.configure(fg_color=THEME["bg_dark"])
-
+    def _rebuild_workspace(self):
         current_key = self._current_tab_key or "quests"
         for frame in list(self.tabs.values()):
             try:
@@ -402,6 +455,22 @@ class TarkovScopeApp(ctk.CTk):
         self._build_content_area()
         self.switch_tab(current_key)
 
+    def _on_skin_changed(self, selected_label: str):
+        skin_id = self._skin_label_to_id.get(selected_label, "tarkov_classic")
+        if skin_id == get_active_skin_id():
+            return
+        set_user_preference("ui_skin", skin_id)
+        apply_ui_skin(skin_id)
+        self.configure(fg_color=THEME["bg_dark"])
+        self._rebuild_workspace()
+
+    def _on_lang_changed(self, selected_label: str):
+        lang_id = self._lang_label_to_id.get(selected_label, "es")
+        if lang_id == get_active_lang():
+            return
+        set_active_lang(lang_id)
+        self._rebuild_workspace()
+
     def _get_or_create_tab(self, tab_key: str, background: bool = False) -> ctk.CTkFrame:
         if tab_key not in self.tabs:
             cls = self._tab_classes[tab_key]
@@ -415,10 +484,36 @@ class TarkovScopeApp(ctk.CTk):
             self.tabs[tab_key] = frame
         return self.tabs[tab_key]
 
+    def _load_seen_new_tabs(self) -> Dict[str, str]:
+        raw = get_user_preference("seen_new_tabs", "{}")
+        try:
+            data = json.loads(raw) if raw else {}
+            return data if isinstance(data, dict) else {}
+        except Exception:
+            return {}
+
+    def _dismiss_new_badge(self, tab_key: str) -> None:
+        badge = self._new_badges.pop(tab_key, None)
+        if badge is not None:
+            try:
+                badge.destroy()
+            except Exception:
+                pass
+        target_ver = NEW_TAB_VERSIONS.get(tab_key)
+        if target_ver:
+            seen = self._load_seen_new_tabs()
+            if seen.get(tab_key) != target_ver:
+                seen[tab_key] = target_ver
+                set_user_preference("seen_new_tabs", json.dumps(seen, ensure_ascii=False))
+
+    def open_patch_notes(self):
+        PatchNotesModal(self)
+
     def switch_tab(self, selected_key: str):
         """Muestra la pestaña seleccionada manteniendo solo 1 pestaña mapeada (maximizar/resize 4x más rápido)."""
         if not self.winfo_exists():
             return
+        self._dismiss_new_badge(selected_key)
         if selected_key == self._active_nav_key and selected_key in self.tabs:
             return
 
@@ -454,8 +549,8 @@ class TarkovScopeApp(ctk.CTk):
             self.start_sync_in_background()
 
     def start_sync_in_background(self):
-        self.sync_btn.configure(state="disabled", text="Sincronizando...")
-        self.db_status_lbl.configure(text="● Descargando datos...", text_color=C_AMBER)
+        self.sync_btn.configure(state="disabled", text=tr("sidebar.syncing", "Sincronizando..."))
+        self.db_status_lbl.configure(text=tr("sidebar.db_syncing", "● Descargando datos..."), text_color=C_AMBER)
 
         def worker():
             service = SyncService()
@@ -472,10 +567,10 @@ class TarkovScopeApp(ctk.CTk):
             def on_finish():
                 if not self.winfo_exists():
                     return
-                self.sync_btn.configure(state="normal", text="Sincronizar Datos")
+                self.sync_btn.configure(state="normal", text=tr("sidebar.sync", "Sincronizar Datos"))
                 if success:
                     clear_image_ram_cache()
-                    self.db_status_lbl.configure(text="● Caché RAM Zero-Lag activo", text_color=C_GREEN)
+                    self.db_status_lbl.configure(text=tr("sidebar.db_ready", "● Caché RAM Zero-Lag activo"), text_color=C_GREEN)
                     for tab_key in ("ballistics", "quests", "maps", "quest_tracker", "progression_planner"):
                         if tab_key in self.tabs and hasattr(self.tabs[tab_key], "reload_data"):
                             self.tabs[tab_key].reload_data()
@@ -568,14 +663,14 @@ class TarkovScopeApp(ctk.CTk):
         self.attributes("-topmost", self._always_on_top)
         if self._always_on_top:
             self.btn_topmost.configure(
-                text="📌 Fijar Arriba: ACTIVO",
+                text=tr("sidebar.topmost_on", "📌 Fijar Arriba: ACTIVO"),
                 fg_color="#1E3A8A",
                 border_color="#3B82F6",
                 text_color=C_WHITE
             )
         else:
             self.btn_topmost.configure(
-                text="📌 Fijar Arriba: Desactivado",
+                text=tr("sidebar.topmost_off", "📌 Fijar Arriba: Desactivado"),
                 fg_color="transparent",
                 border_color=C_BORDER,
                 text_color=C_TEXT_DIM

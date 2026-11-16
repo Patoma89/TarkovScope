@@ -13,6 +13,7 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 import customtkinter as ctk
 
 from core.config import THEME
+from core.i18n import t_ui
 from core.progression_plan_store import load_config as load_progression_config
 from core.quest_route_data import get_route_maps, get_tasks_for_map, load_route_dataset, objective_label
 from core.quest_route_planner import RoutePlan, Stop, plan_route, rank_spawns
@@ -23,11 +24,14 @@ from ui.theme import (C_BG_DARKEST, C_BLUE, C_EMERALD, C_GREEN_LIGHT, C_TEXT, C_
 
 PREF_ACTIVE = "quest_tracker_active"
 PREF_MAP = "quest_tracker_map"
-AUTO_SPAWN_LABEL = "★ Elegir el mejor spawn"
+AUTO_SPAWN_LABEL = t_ui("★ Elegir el mejor spawn", "★ Pick best spawn")
 MAP_VIEW_SIZE = (900, 600)
 QUEST_ROWS_PER_BATCH = 15
 logger = logging.getLogger("TarkovScope.QuestTracker")
-TIP_TEXT = "Tip: hacé clic en el mapa sobre tu punto de aparición para elegir ese spawn."
+TIP_TEXT = t_ui(
+    "Tip: hacé clic en el mapa sobre tu punto de aparición para elegir ese spawn.",
+    "Tip: click on the map at your spawn point to select that spawn.",
+)
 
 
 class TabQuestTracker(ctk.CTkFrame):
@@ -76,7 +80,7 @@ class TabQuestTracker(ctk.CTkFrame):
 
         ctk.CTkLabel(side, text="QUEST TRACKER", font=ui_font(17, "bold"),
                      text_color=THEME["accent_orange"]).grid(row=0, column=0, padx=16, pady=(16, 2), sticky="w")
-        ctk.CTkLabel(side, text="Marcá tus quests activas y calculá la ruta.",
+        ctk.CTkLabel(side, text=t_ui("Marcá tus quests activas y calculá la ruta.", "Check your active quests and compute the route."),
                      font=ui_font(12), text_color=C_TEXT_MUTED).grid(row=1, column=0, padx=16, pady=(0, 10), sticky="w")
 
         self.map_menu = ctk.CTkOptionMenu(

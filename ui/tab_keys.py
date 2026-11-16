@@ -7,6 +7,7 @@ import customtkinter as ctk
 from typing import Dict, Any, List, Optional, Set, Tuple
 
 from core.config import THEME
+from core.i18n import t_ui
 from core.keys_data import (
     KEYS_CATALOG,
     get_keys_maps,
@@ -137,7 +138,7 @@ class TabKeys(ctk.CTkFrame):
 
         ctk.CTkLabel(
             left,
-            text="🔑 LLAVES, KEYCARDS & MARKED ROOMS (KEYS & INTEL)",
+            text=t_ui("🔑 LLAVES, KEYCARDS & MARKED ROOMS (KEYS & INTEL)", "🔑 KEYS, KEYCARDS & MARKED ROOMS (KEYS & INTEL)"),
             font=ui_font(16, "bold"),
             text_color=THEME["accent_gold"],
         ).pack(anchor="w")

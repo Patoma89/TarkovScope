@@ -12,8 +12,9 @@ import webbrowser
 import customtkinter as ctk
 from typing import Dict, Any, List, Optional
 from core.config import THEME
-from ui.theme import ui_font
 from core.datastore import get_datastore
+from core.i18n import get_active_lang, t_ui
+from ui.theme import ui_font
 from ui.image_utils import get_story_chapter_icon_ctk, get_story_chapter_banner_ctk
 from ui.theme import C_BG_DARKEST, C_BG_DEEP, C_BG_PANEL_ALT, C_BLUE, C_BORDER, C_BORDER_SOFT, C_GREEN, C_GREEN_LIGHT, C_SLATE_700, C_SLATE_800, C_TEXT, C_TEXT_DIM, C_TEXT_MUTED, C_TEXT_SOFT, C_WHITE
 from ui.tab_story_guide import StoryGuideMixin
@@ -37,7 +38,7 @@ class TabStoryQuests(StoryGuideMixin, ctk.CTkFrame):
         super().__init__(master, fg_color="transparent", **kwargs)
         self.selected_chapter: int = 1
         self.active_subview: str = "GUIDE"  # "GUIDE" (Guía Paso a Paso + Objetivos) o "OBJECTIVES" (Solo Checklist) o "MISSIONS" (Resumen 71 misiones)
-        self.lang_mode: str = "ES"  # "ES" o "EN"
+        self.lang_mode: str = "EN" if get_active_lang() == "en" else "ES"  # "ES" o "EN"
         self.ticket_branch: str = "ALL"
         self.guide_page: int = 0
         self._objectives_summary_expanded: bool = False
@@ -81,21 +82,27 @@ class TabStoryQuests(StoryGuideMixin, ctk.CTkFrame):
 
         ctk.CTkLabel(
             title_box,
-            text="📖 CAPÍTULOS DE LA HISTORIA — GUÍA INTERACTIVA WIKI OFICIAL",
+            text=t_ui(
+                "📖 CAPÍTULOS DE LA HISTORIA — GUÍA INTERACTIVA WIKI OFICIAL",
+                "📖 STORY CHAPTERS — OFFICIAL INTERACTIVE WIKI GUIDE",
+            ),
             font=ui_font(15, "bold"),
             text_color=C_TEXT
         ).pack(anchor="w")
 
         ctk.CTkLabel(
             title_box,
-            text="10 Capítulos Oficiales • Guía Paso a Paso • 498 Mapas y Capturas HD Offline • Tablas y Códigos",
+            text=t_ui(
+                "10 Capítulos Oficiales • Guía Paso a Paso • 498 Mapas y Capturas HD Offline • Tablas y Códigos",
+                "10 Official Chapters • Step-by-Step Guide • 498 Offline HD Maps & Screenshots • Tables & Codes",
+            ),
             font=ui_font(11),
             text_color=C_TEXT_DIM
         ).pack(anchor="w")
 
         self.stats_lbl = ctk.CTkLabel(
             row0,
-            text="Progreso: 0 / 437 (0%)",
+            text=t_ui("Progreso: 0 / 437 (0%)", "Progress: 0 / 437 (0%)"),
             font=ui_font(13, "bold"),
             text_color=THEME["accent_green"]
         )
@@ -106,9 +113,9 @@ class TabStoryQuests(StoryGuideMixin, ctk.CTkFrame):
         subview_box.grid(row=1, column=0, padx=14, pady=(0, 4), sticky="ew")
 
         subviews = [
-            ("GUIDE", "📖 Guía Completa Wiki (Paso a Paso + Fotos)"),
-            ("OBJECTIVES", "☑️ Árbol de Objetivos & Ramas"),
-            ("MISSIONS", "🗂️ Resumen de Misiones (71)"),
+            ("GUIDE", t_ui("📖 Guía Completa Wiki (Paso a Paso + Fotos)", "📖 Full Wiki Guide (Walkthrough + Photos)")),
+            ("OBJECTIVES", t_ui("☑️ Árbol de Objetivos & Ramas", "☑️ Objectives & Branch Tree")),
+            ("MISSIONS", t_ui("🗂️ Resumen de Misiones (71)", "🗂️ Missions Summary (71)")),
         ]
         for sv_key, sv_label in subviews:
             is_act = (sv_key == self.active_subview)
@@ -135,7 +142,10 @@ class TabStoryQuests(StoryGuideMixin, ctk.CTkFrame):
 
         self.search_entry = ctk.CTkEntry(
             bar_row,
-            placeholder_text="🔍 Buscar paso, llave, código, ítem requerido, mapa o instrucción en el capítulo...",
+            placeholder_text=t_ui(
+                "🔍 Buscar paso, llave, código, ítem requerido, mapa o instrucción en el capítulo...",
+                "🔍 Search step, key, code, required item, map or instruction in chapter...",
+            ),
             height=32,
             corner_radius=6,
             fg_color=C_BG_PANEL_ALT,
@@ -148,15 +158,15 @@ class TabStoryQuests(StoryGuideMixin, ctk.CTkFrame):
 
         self.lang_btn = ctk.CTkButton(
             bar_row,
-            text="🌐 Idioma: Español / Wiki Original",
+            text="🌐 Language: Original English Wiki" if self.lang_mode == "EN" else "🌐 Idioma: Español / Wiki Original",
             width=210,
             height=30,
             corner_radius=5,
             border_width=1,
-            border_color=C_BLUE,
-            fg_color="#141C2B",
+            border_color="#EAB308" if self.lang_mode == "EN" else C_BLUE,
+            fg_color=THEME["btn_surface"],
             hover_color=C_SLATE_800,
-            text_color=C_BLUE,
+            text_color="#FDE047" if self.lang_mode == "EN" else C_BLUE,
             font=ui_font(11, "bold"),
             command=self._toggle_language
         )
@@ -164,7 +174,7 @@ class TabStoryQuests(StoryGuideMixin, ctk.CTkFrame):
 
         ctk.CTkCheckBox(
             bar_row,
-            text="Ocultar completados",
+            text=t_ui("Ocultar completados", "Hide completed"),
             variable=self.hide_completed_var,
             font=ui_font(12, "bold"),
             text_color=C_TEXT_MUTED,
@@ -202,10 +212,10 @@ class TabStoryQuests(StoryGuideMixin, ctk.CTkFrame):
                 compound="left",
                 height=30,
                 corner_radius=6,
-                fg_color="#222B3D" if is_sel else C_BG_PANEL_ALT,
-                hover_color="#2C374E",
+                fg_color=THEME["active_tab_bg"] if is_sel else C_BG_PANEL_ALT,
+                hover_color=THEME["btn_hover"],
                 border_width=2 if is_sel else 1,
-                border_color=THEME["accent_gold"] if is_sel else "#262E3D",
+                border_color=THEME["accent_gold"] if is_sel else THEME["border_soft"],
                 text_color=C_WHITE if is_sel else C_TEXT_MUTED,
                 font=ui_font(11, "bold"),
                 command=lambda cid=ch_id: self._select_chapter(cid)
@@ -253,9 +263,9 @@ class TabStoryQuests(StoryGuideMixin, ctk.CTkFrame):
         for cid, btn in self.chapter_buttons.items():
             is_sel = (cid == ch_id)
             btn.configure(
-                fg_color="#222B3D" if is_sel else C_BG_PANEL_ALT,
+                fg_color=THEME["active_tab_bg"] if is_sel else C_BG_PANEL_ALT,
                 border_width=2 if is_sel else 1,
-                border_color=THEME["accent_gold"] if is_sel else "#262E3D",
+                border_color=THEME["accent_gold"] if is_sel else THEME["border_soft"],
                 text_color=C_WHITE if is_sel else C_TEXT_MUTED
             )
         self.reload_data()
@@ -327,10 +337,10 @@ class TabStoryQuests(StoryGuideMixin, ctk.CTkFrame):
     def _render_chapter_hero_card(self, parent, chapter: Dict[str, Any], row_idx: int):
         card = ctk.CTkFrame(
             parent,
-            fg_color="#0D1119",
+            fg_color=THEME["bg_card"],
             corner_radius=10,
             border_width=1,
-            border_color="#2D3648"
+            border_color=THEME["border"]
         )
         card.grid(row=row_idx, column=0, padx=8, pady=(6, 8), sticky="ew")
         card.grid_columnconfigure(0, weight=1)
@@ -373,10 +383,10 @@ class TabStoryQuests(StoryGuideMixin, ctk.CTkFrame):
                 width=110,
                 height=26,
                 corner_radius=5,
-                fg_color="#1A2232",
-                hover_color="#29354D",
+                fg_color=THEME["btn_surface"],
+                hover_color=THEME["btn_hover"],
                 border_width=1,
-                border_color="#3B4963",
+                border_color=THEME["border_alt"],
                 text_color=C_TEXT_SOFT,
                 font=ui_font(11, "bold"),
                 command=lambda u=wiki_url: webbrowser.open(u)
@@ -397,7 +407,7 @@ class TabStoryQuests(StoryGuideMixin, ctk.CTkFrame):
         ).pack(anchor="w", pady=(4, 4))
 
         # Requisitos y Recompensas en 2 columnas
-        req_rew_grid = ctk.CTkFrame(card, fg_color="#111622", corner_radius=8, border_width=1, border_color="#232B3B")
+        req_rew_grid = ctk.CTkFrame(card, fg_color=THEME["bg_panel_alt"], corner_radius=8, border_width=1, border_color=THEME["border_soft"])
         req_rew_grid.grid(row=1, column=0, padx=12, pady=(0, 10), sticky="ew")
         req_rew_grid.grid_columnconfigure(0, weight=3)
         req_rew_grid.grid_columnconfigure(1, weight=2)
@@ -418,7 +428,7 @@ class TabStoryQuests(StoryGuideMixin, ctk.CTkFrame):
             req_box,
             text=req_txt,
             font=ui_font(12),
-            text_color="#F1F5F9",
+            text_color=THEME["text_main"],
             justify="left",
             wraplength=560,
             anchor="w"
@@ -457,15 +467,15 @@ class TabStoryQuests(StoryGuideMixin, ctk.CTkFrame):
     def _render_objectives_summary_box(self, parent, chapter: Dict[str, Any], row_idx: int):
         box = ctk.CTkFrame(
             parent,
-            fg_color="#0D1118",
+            fg_color=THEME["bg_card"],
             corner_radius=8,
             border_width=1,
-            border_color="#252D3D"
+            border_color=THEME["border_soft"]
         )
         box.grid(row=row_idx, column=0, padx=8, pady=(0, 8), sticky="ew")
         box.grid_columnconfigure(0, weight=1)
 
-        hdr = ctk.CTkFrame(box, fg_color="#141A26", corner_radius=6)
+        hdr = ctk.CTkFrame(box, fg_color=THEME["bg_panel_alt2"], corner_radius=6)
         hdr.grid(row=0, column=0, padx=8, pady=6, sticky="ew")
         hdr.grid_columnconfigure(0, weight=1)
 
@@ -500,8 +510,8 @@ class TabStoryQuests(StoryGuideMixin, ctk.CTkFrame):
             text="Ver Árbol en Pantalla Completa ➔",
             height=26,
             corner_radius=5,
-            fg_color="#1F293D",
-            hover_color="#2D3B56",
+            fg_color=THEME["btn_surface"],
+            hover_color=THEME["btn_hover"],
             border_width=1,
             border_color=THEME["accent_gold"],
             text_color=THEME["accent_gold"],
@@ -512,7 +522,7 @@ class TabStoryQuests(StoryGuideMixin, ctk.CTkFrame):
         if self._objectives_summary_expanded:
             obj_scroll = ctk.CTkScrollableFrame(
                 box,
-                fg_color="#0A0D13",
+                fg_color=THEME["bg_darkest"],
                 corner_radius=6,
                 height=175
             )
@@ -527,15 +537,15 @@ class TabStoryQuests(StoryGuideMixin, ctk.CTkFrame):
     def _render_objectives_full_tree(self, parent, chapter: Dict[str, Any], row_idx: int):
         box = ctk.CTkFrame(
             parent,
-            fg_color="#0D1118",
+            fg_color=THEME["bg_card"],
             corner_radius=8,
             border_width=1,
-            border_color="#252D3D"
+            border_color=THEME["border_soft"]
         )
         box.grid(row=row_idx, column=0, padx=8, pady=(0, 8), sticky="ew")
         box.grid_columnconfigure(0, weight=1)
 
-        hdr = ctk.CTkFrame(box, fg_color="#141A26", corner_radius=6)
+        hdr = ctk.CTkFrame(box, fg_color=THEME["bg_panel_alt2"], corner_radius=6)
         hdr.grid(row=0, column=0, padx=10, pady=8, sticky="ew")
         hdr.grid_columnconfigure(0, weight=1)
 
@@ -578,7 +588,7 @@ class TabStoryQuests(StoryGuideMixin, ctk.CTkFrame):
             if otype in ("branch_header", "condition_header"):
                 hdr_frame = ctk.CTkFrame(
                     container,
-                    fg_color="#1C2230" if otype == "branch_header" else "#231D15",
+                    fg_color=THEME["bg_row"] if otype == "branch_header" else "#231D15",
                     corner_radius=5,
                     border_width=1,
                     border_color=C_BLUE if otype == "branch_header" else "#CA8A04"
@@ -603,7 +613,7 @@ class TabStoryQuests(StoryGuideMixin, ctk.CTkFrame):
 
             item_row = ctk.CTkFrame(
                 container,
-                fg_color="#0D1914" if is_done else "transparent",
+                fg_color=THEME["bg_row_done"] if is_done else "transparent",
                 corner_radius=4
             )
             item_row.grid(row=row_i, column=0, padx=(left_pad, 4), pady=1, sticky="ew")
@@ -626,7 +636,7 @@ class TabStoryQuests(StoryGuideMixin, ctk.CTkFrame):
             )
             chk.grid(row=0, column=0, padx=(4, 6), pady=3, sticky="nw")
 
-            lbl_color = C_GREEN_LIGHT if is_done else (C_TEXT_DIM if obj.get("optional") else "#F1F5F9")
+            lbl_color = C_GREEN_LIGHT if is_done else (C_TEXT_DIM if obj.get("optional") else THEME["text_main"])
             lbl = ctk.CTkLabel(
                 item_row,
                 text=txt,
@@ -655,7 +665,7 @@ class TabStoryQuests(StoryGuideMixin, ctk.CTkFrame):
         new_state = ds.toggle_story_quest(obj["id"])
         obj["is_completed"] = 1 if new_state else 0
         if row_frame.winfo_exists():
-            row_frame.configure(fg_color="#0D1914" if new_state else "transparent")
+            row_frame.configure(fg_color=THEME["bg_row_done"] if new_state else "transparent")
         # Actualizar contador global
         chapters = ds.get_wiki_story_chapters()
         total_objs = sum(c.get("total_objectives", 0) for c in chapters)
@@ -697,7 +707,7 @@ class TabStoryQuests(StoryGuideMixin, ctk.CTkFrame):
         is_done = bool(sq.get("is_completed"))
         card = ctk.CTkFrame(
             parent,
-            fg_color="#0D1612" if is_done else C_BG_DEEP,
+            fg_color=THEME["bg_row_done"] if is_done else C_BG_DEEP,
             corner_radius=8,
             border_width=1,
             border_color=C_GREEN if is_done else C_BORDER_SOFT
@@ -760,6 +770,6 @@ class TabStoryQuests(StoryGuideMixin, ctk.CTkFrame):
         sq["is_completed"] = 1 if new_state else 0
         if card_frame.winfo_exists():
             card_frame.configure(
-                fg_color="#0D1612" if new_state else C_BG_DEEP,
+                fg_color=THEME["bg_row_done"] if new_state else C_BG_DEEP,
                 border_color=C_GREEN if new_state else C_BORDER_SOFT
             )

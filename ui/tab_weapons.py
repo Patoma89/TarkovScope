@@ -6,6 +6,7 @@ import tkinter as tk
 import customtkinter as ctk
 from typing import Dict, Any
 from core.config import THEME
+from core.i18n import t_ui
 from ui.theme import ui_font
 from core.datastore import get_datastore
 from core.weapons_data import WEAPONS_ARSENAL_DATA, GUNSMITH_GUIDES_DATA
@@ -46,7 +47,7 @@ class TabWeapons(ctk.CTkFrame, WeaponBuilderMixin):
 
         ctk.CTkLabel(
             bar,
-            text="🔫 ARSENAL TÁCTICO & GUNSMITH",
+            text=t_ui("🔫 ARSENAL TÁCTICO & GUNSMITH", "🔫 TACTICAL ARSENAL & GUNSMITH"),
             font=ui_font(size=16, weight="bold"),
             text_color=THEME["accent_orange"]
         ).grid(row=0, column=0, padx=14, pady=10, sticky="w")
@@ -56,7 +57,7 @@ class TabWeapons(ctk.CTkFrame, WeaponBuilderMixin):
 
         self.btn_arsenal = ctk.CTkButton(
             btn_box,
-            text="🔫 Arsenal & Builds Meta",
+            text=t_ui("🔫 Arsenal & Builds Meta", "🔫 Arsenal & Meta Builds"),
             width=165,
             height=32,
             fg_color=THEME["accent_orange"],
@@ -67,7 +68,7 @@ class TabWeapons(ctk.CTkFrame, WeaponBuilderMixin):
 
         self.btn_gunsmith = ctk.CTkButton(
             btn_box,
-            text="🔧 Guías Gunsmith (Mechanic)",
+            text=t_ui("🔧 Guías Gunsmith (Mechanic)", "🔧 Gunsmith Guides (Mechanic)"),
             width=185,
             height=32,
             fg_color=THEME["bg_dark"],

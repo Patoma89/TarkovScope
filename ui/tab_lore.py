@@ -9,6 +9,7 @@ y documento editorial ilustrado con banners e imágenes a la derecha.
 import customtkinter as ctk
 from typing import Dict, Any, List, Optional
 from core.config import THEME
+from core.i18n import t_ui
 from core.lore_data import LORE_UNIVERSE_SECTIONS
 from ui.theme import ui_font
 from ui.image_utils import (
@@ -322,14 +323,17 @@ class TabLore(ctk.CTkFrame):
 
         ctk.CTkLabel(
             hdr,
-            text="📚 ÍNDICE DE LA HISTORIA",
+            text=t_ui("📚 ÍNDICE DE LA HISTORIA", "📚 STORY & LORE INDEX"),
             font=ui_font(15, "bold"),
             text_color=THEME["accent_gold"]
         ).pack(anchor="w")
 
         ctk.CTkLabel(
             hdr,
-            text="Enciclopedia completa en español • Haz clic en una sección para saltar",
+            text=t_ui(
+                "Enciclopedia completa en español • Haz clic en una sección para saltar",
+                "Complete lore encyclopedia • Click any section to jump",
+            ),
             font=ui_font(11),
             text_color=C_TEXT_DIM,
             wraplength=235,
@@ -338,7 +342,7 @@ class TabLore(ctk.CTkFrame):
 
         self.mode_switch = ctk.CTkSegmentedButton(
             hdr,
-            values=["🌍 Universo", "📖 Campaña (10)"],
+            values=[t_ui("🌍 Universo", "🌍 Universe"), t_ui("📖 Campaña (10)", "📖 Campaign (10)")],
             font=ui_font(11, "bold"),
             fg_color=C_BG_PANEL_ALT2,
             selected_color=THEME["accent_gold"],
@@ -348,7 +352,7 @@ class TabLore(ctk.CTkFrame):
             text_color=C_WHITE,
             command=self._on_lore_mode_changed
         )
-        self.mode_switch.set("🌍 Universo")
+        self.mode_switch.set(t_ui("🌍 Universo", "🌍 Universe"))
         self.mode_switch.pack(fill="x", pady=(0, 2))
 
         sep = ctk.CTkFrame(sidebar, height=1, fg_color=C_BG_ROW_ALT)
@@ -363,13 +367,13 @@ class TabLore(ctk.CTkFrame):
         # Botón para volver arriba del todo
         ctk.CTkButton(
             sidebar,
-            text="⬆ Ir al Inicio del Documento",
+            text=t_ui("⬆ Ir al Inicio del Documento", "⬆ Back to Top"),
             height=32,
             corner_radius=6,
-            fg_color="#141924",
-            hover_color="#1F2738",
+            fg_color=THEME["btn_surface"],
+            hover_color=THEME["btn_hover"],
             border_width=1,
-            border_color="#2D3648",
+            border_color=THEME["border"],
             text_color=C_TEXT_DIM,
             font=ui_font(11, "bold"),
             command=lambda: self._scroll_to_chapter(self._get_active_items()[0]["id"])
@@ -402,8 +406,8 @@ class TabLore(ctk.CTkFrame):
                 anchor="w",
                 height=38,
                 corner_radius=6,
-                fg_color="#1E2638" if is_act else "transparent",
-                hover_color="#182030",
+                fg_color=THEME["active_tab_bg"] if is_act else "transparent",
+                hover_color=THEME["btn_hover"],
                 border_width=1 if is_act else 0,
                 border_color=THEME["accent_gold"] if is_act else C_BG_DEEP,
                 text_color=C_WHITE if is_act else C_TEXT_MUTED,
@@ -414,7 +418,7 @@ class TabLore(ctk.CTkFrame):
             self.index_buttons[cid] = btn
 
     def _on_lore_mode_changed(self, value: str):
-        new_mode = "UNIVERSE" if "Universo" in value else "CAMPAIGN"
+        new_mode = "UNIVERSE" if ("Universo" in value or "Universe" in value) else "CAMPAIGN"
         if new_mode == self._lore_mode:
             return
         self._lore_mode = new_mode
@@ -429,7 +433,7 @@ class TabLore(ctk.CTkFrame):
     def _build_continuous_reader(self):
         self.reader_scroll = ctk.CTkScrollableFrame(
             self,
-            fg_color="#0B0E14",
+            fg_color=THEME["bg_deep"],
             corner_radius=10,
             border_width=1,
             border_color=C_BORDER_SOFT
@@ -455,10 +459,10 @@ class TabLore(ctk.CTkFrame):
         # Portada / Introducción General del Documento
         intro_box = ctk.CTkFrame(
             self.reader_scroll,
-            fg_color="#111621",
+            fg_color=THEME["bg_panel_alt"],
             corner_radius=10,
             border_width=1,
-            border_color="#2E384D"
+            border_color=THEME["border"]
         )
         intro_box.grid(row=0, column=0, padx=20, pady=(18, 12), sticky="ew")
         intro_box.grid_columnconfigure(0, weight=1)
@@ -575,10 +579,10 @@ class TabLore(ctk.CTkFrame):
 
         article = ctk.CTkFrame(
             parent,
-            fg_color="#0F131C",
+            fg_color=THEME["bg_card"],
             corner_radius=10,
             border_width=1,
-            border_color="#232B3C"
+            border_color=THEME["border_soft"]
         )
         article.grid(row=row_idx, column=0, padx=20, pady=12, sticky="ew")
         article.grid_columnconfigure(0, weight=1)
@@ -628,7 +632,7 @@ class TabLore(ctk.CTkFrame):
         # 3. Ficha Táctica de Puntos Clave (si el dossier incluye highlights)
         highlights = ch.get("highlights", [])
         if highlights:
-            hl_box = ctk.CTkFrame(article, fg_color="#131926", corner_radius=8, border_width=1, border_color="#253045")
+            hl_box = ctk.CTkFrame(article, fg_color=THEME["bg_panel_alt2"], corner_radius=8, border_width=1, border_color=THEME["border_soft"])
             hl_box.grid(row=cur_r, column=0, padx=22, pady=(0, 14), sticky="ew")
             hl_box.grid_columnconfigure(0, minsize=165, weight=0)
             hl_box.grid_columnconfigure(1, weight=1)
@@ -670,7 +674,7 @@ class TabLore(ctk.CTkFrame):
         # 4. Imágenes ilustrativas del capítulo (con clic para ampliar en HD)
         imgs = ch.get("images", [])
         if imgs:
-            img_bar = ctk.CTkFrame(article, fg_color="#0A0D13", corner_radius=8, border_width=1, border_color="#1D2534")
+            img_bar = ctk.CTkFrame(article, fg_color=THEME["bg_darkest"], corner_radius=8, border_width=1, border_color=THEME["border_soft"])
             img_bar.grid(row=cur_r, column=0, padx=22, pady=(0, 18), sticky="ew")
             img_bar.grid_columnconfigure(0, weight=1)
             img_bar.grid_columnconfigure(1, weight=1)
@@ -681,7 +685,7 @@ class TabLore(ctk.CTkFrame):
                     fg_color=C_BG_PANEL_ALT2,
                     corner_radius=6,
                     border_width=1,
-                    border_color="#2A3447",
+                    border_color=THEME["border"],
                     cursor="hand2"
                 )
                 pic_card.grid(row=0, column=i_idx, padx=8, pady=8, sticky="nsew")
@@ -717,7 +721,7 @@ class TabLore(ctk.CTkFrame):
         for cid, btn in self.index_buttons.items():
             is_act = (cid == chapter_id)
             btn.configure(
-                fg_color="#1E2638" if is_act else "transparent",
+                fg_color=THEME["active_tab_bg"] if is_act else "transparent",
                 border_width=1 if is_act else 0,
                 border_color=THEME["accent_gold"] if is_act else C_BG_DEEP,
                 text_color=C_WHITE if is_act else C_TEXT_MUTED,
@@ -787,7 +791,7 @@ class TabLore(ctk.CTkFrame):
         top = ctk.CTkToplevel(self)
         top.title(f"TTC — Ilustración de Lore: {ch_title}")
         top.geometry("1260x800")
-        top.configure(fg_color="#090B10")
+        top.configure(fg_color=THEME["bg_darkest"])
         top.transient(self.winfo_toplevel())
         top.grab_set()
 
@@ -815,7 +819,7 @@ class TabLore(ctk.CTkFrame):
 
         top.bind("<Escape>", lambda e: top.destroy())
 
-        box = ctk.CTkFrame(top, fg_color="#090B10")
+        box = ctk.CTkFrame(top, fg_color=THEME["bg_darkest"])
         box.pack(fill="both", expand=True, padx=12, pady=12)
 
         ctk_full = ctk.CTkImage(light_image=pil_img, dark_image=pil_img, size=pil_img.size)

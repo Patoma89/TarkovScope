@@ -9,6 +9,7 @@ import tkinter as tk
 import customtkinter as ctk
 from typing import List, Dict, Any, Optional
 from core.config import THEME
+from core.i18n import t_ui
 from ui.theme import ui_font
 from core.datastore import get_datastore
 from core.ballistics import calculate_armor_effectiveness, simulate_shots_to_kill
@@ -68,7 +69,7 @@ class TabBallistics(ArmorMixin, DuelMixin, ctk.CTkFrame):
 
         ctk.CTkLabel(
             bar,
-            text="Calibre:",
+            text=t_ui("Calibre:", "Caliber:"),
             font=ui_font(size=13, weight="bold"),
             text_color=THEME["accent_gold"]
         ).grid(row=0, column=0, padx=(12, 6), pady=(8, 4), sticky="w")

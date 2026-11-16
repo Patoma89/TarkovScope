@@ -13,6 +13,7 @@ import tkinter as tk
 import customtkinter as ctk
 from typing import Optional, List, Dict, Any
 from core.config import THEME
+from core.i18n import t_ui
 from core.datastore import get_datastore
 from core.weapons_data import KAPPA_COLLECTOR_ITEMS
 from core.hideout_crafts_data import HIDEOUT_CRAFTS_DATA
@@ -60,7 +61,7 @@ class TabFleaAndItems(FleaBartersMixin, FleaHideoutMixin, ctk.CTkFrame):
 
         ctk.CTkLabel(
             header_row,
-            text="HIDEOUT, TRUEQUES (BARTERS), CULTIST CIRCLE & ÍTEMS FiR",
+            text=t_ui("HIDEOUT, TRUEQUES (BARTERS), CULTIST CIRCLE & ÍTEMS FiR", "HIDEOUT, BARTERS, CULTIST CIRCLE & FiR ITEMS"),
             font=ui_font(16, "bold"),
             text_color=C_TEXT
         ).grid(row=0, column=0, sticky="w")
@@ -70,7 +71,7 @@ class TabFleaAndItems(FleaBartersMixin, FleaHideoutMixin, ctk.CTkFrame):
 
         self.btn_mode_hideout = ctk.CTkButton(
             mode_bar,
-            text="Hideout & Estaciones",
+            text=t_ui("Hideout & Estaciones", "Hideout & Stations"),
             width=142,
             height=30,
             corner_radius=5,

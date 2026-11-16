@@ -36,7 +36,7 @@ class StoryGuideMixin:
         if chapter.get("slug") == "the_ticket":
             branch_bar = ctk.CTkFrame(
                 guide_outer,
-                fg_color="#111622",
+                fg_color=THEME["bg_panel_alt"],
                 corner_radius=8,
                 border_width=1,
                 border_color=THEME["accent_gold"]
@@ -142,7 +142,7 @@ class StoryGuideMixin:
             fg_color=C_BG_PANEL_ALT2,
             corner_radius=6,
             border_width=1,
-            border_color="#2A3346"
+            border_color=THEME["border"]
         )
         pbar.grid(row=row_idx, column=0, padx=0, pady=6, sticky="ew")
 
@@ -162,7 +162,7 @@ class StoryGuideMixin:
             width=105,
             height=28,
             corner_radius=5,
-            fg_color=C_SLATE_800 if self.guide_page > 0 else "#11151E",
+            fg_color=C_SLATE_800 if self.guide_page > 0 else THEME["bg_inset"],
             state="normal" if self.guide_page > 0 else "disabled",
             font=ui_font(11, "bold"),
             command=lambda: self._change_guide_page(self.guide_page - 1)
@@ -180,7 +180,7 @@ class StoryGuideMixin:
                 width=32,
                 height=26,
                 corner_radius=4,
-                fg_color=THEME["accent_gold"] if is_cur else "#1A2130",
+                fg_color=THEME["accent_gold"] if is_cur else THEME["btn_surface"],
                 text_color="#000000" if is_cur else C_TEXT_MUTED,
                 font=ui_font(11, "bold"),
                 command=lambda pg=p: self._change_guide_page(pg)
@@ -192,7 +192,7 @@ class StoryGuideMixin:
             width=140,
             height=28,
             corner_radius=5,
-            fg_color=C_SLATE_800 if self.guide_page + 1 < total_pages else "#11151E",
+            fg_color=C_SLATE_800 if self.guide_page + 1 < total_pages else THEME["bg_inset"],
             state="normal" if self.guide_page + 1 < total_pages else "disabled",
             font=ui_font(11, "bold"),
             command=lambda: self._change_guide_page(self.guide_page + 1)
@@ -213,10 +213,10 @@ class StoryGuideMixin:
 
         card = ctk.CTkFrame(
             parent,
-            fg_color="#0E131D" if not is_substep else "#111724",
+            fg_color=THEME["bg_card"] if not is_substep else THEME["bg_panel_alt"],
             corner_radius=8,
             border_width=1,
-            border_color="#2E384D" if not is_substep else "#242D3F"
+            border_color=THEME["border"] if not is_substep else THEME["border_soft"]
         )
         card.grid(row=row_idx, column=0, padx=(20 if is_substep else 0, 0), pady=6, sticky="ew")
         card.grid_columnconfigure(0, weight=1)
@@ -224,7 +224,7 @@ class StoryGuideMixin:
         # 1. Barra de Título del Paso
         hdr_bar = ctk.CTkFrame(
             card,
-            fg_color="#171F2E" if not is_substep else "#1A2334",
+            fg_color=THEME["bg_panel_alt2"] if not is_substep else THEME["btn_surface"],
             corner_radius=6
         )
         hdr_bar.grid(row=0, column=0, padx=8, pady=(8, 6), sticky="ew")
@@ -288,7 +288,7 @@ class StoryGuideMixin:
         # 4. Explicación Paso a Paso Completa (Walkthrough Text)
         walk_txt = step.get("walkthrough_es" if self.lang_mode == "ES" else "walkthrough_en", "") or step.get("walkthrough_en", "")
         if walk_txt:
-            txt_frame = ctk.CTkFrame(card, fg_color="#0A0E15", corner_radius=6, border_width=1, border_color="#1E2636")
+            txt_frame = ctk.CTkFrame(card, fg_color=THEME["bg_inset"], corner_radius=6, border_width=1, border_color=THEME["border_soft"])
             txt_frame.grid(row=cur_row, column=0, padx=12, pady=(2, 8), sticky="ew")
 
             ctk.CTkLabel(
@@ -311,7 +311,7 @@ class StoryGuideMixin:
     def _render_related_items_table(self, parent, items: List[Dict[str, Any]], row_idx: int):
         tbl = ctk.CTkFrame(
             parent,
-            fg_color="#121824",
+            fg_color=THEME["bg_panel_alt"],
             corner_radius=6,
             border_width=1,
             border_color=C_SLATE_700
@@ -421,10 +421,10 @@ class StoryGuideMixin:
     def _render_step_gallery(self, parent, gallery: List[Dict[str, Any]], row_idx: int, step_title: str):
         gal_frame = ctk.CTkFrame(
             parent,
-            fg_color="#090C12",
+            fg_color=THEME["bg_darkest"],
             corner_radius=6,
             border_width=1,
-            border_color="#222B3B"
+            border_color=THEME["border_soft"]
         )
         gal_frame.grid(row=row_idx, column=0, padx=12, pady=(2, 10), sticky="ew")
 
@@ -456,7 +456,7 @@ class StoryGuideMixin:
                 fg_color=C_BG_PANEL_ALT2,
                 corner_radius=6,
                 border_width=1,
-                border_color="#2B3548",
+                border_color=THEME["border"],
                 cursor="hand2"
             )
             item_card.grid(row=r, column=c, padx=5, pady=5, sticky="nsew")
@@ -496,7 +496,7 @@ class StoryGuideMixin:
         top = ctk.CTkToplevel(self)
         top.title(f"TTC — Visor Táctico HD: {step_title}")
         top.geometry("1280x820")
-        top.configure(fg_color="#090B10")
+        top.configure(fg_color=THEME["bg_darkest"])
         top.transient(self.winfo_toplevel())
         top.grab_set()
 
@@ -524,7 +524,7 @@ class StoryGuideMixin:
 
         top.bind("<Escape>", lambda e: top.destroy())
 
-        img_container = ctk.CTkFrame(top, fg_color="#090B10")
+        img_container = ctk.CTkFrame(top, fg_color=THEME["bg_darkest"])
         img_container.pack(fill="both", expand=True, padx=12, pady=12)
 
         ctk_full = ctk.CTkImage(light_image=pil_img, dark_image=pil_img, size=pil_img.size)

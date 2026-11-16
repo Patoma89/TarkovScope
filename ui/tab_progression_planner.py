@@ -14,6 +14,7 @@ from typing import Any, Dict, List, Optional
 import customtkinter as ctk
 
 from core.config import THEME
+from core.i18n import t_ui
 from core.datastore import get_datastore
 from core.progression_goals import GOAL_LABELS, GOAL_TYPES, quest_names, resolve_goals
 from core.progression_plan_store import (
@@ -87,14 +88,14 @@ class TabProgressionPlanner(ctk.CTkFrame):
         side.grid(row=0, column=0, padx=(0, 12), sticky="nsew")
         side.grid_columnconfigure(0, weight=1)
 
-        ctk.CTkLabel(side, text="PLANNER DE PROGRESIÓN", font=ui_font(17, "bold"),
+        ctk.CTkLabel(side, text=t_ui("PLANNER DE PROGRESIÓN", "PROGRESSION PLANNER"), font=ui_font(17, "bold"),
                      text_color=THEME["accent_orange"]).grid(row=0, column=0, padx=12, pady=(12, 2), sticky="w")
-        ctk.CTkLabel(side, text="Elegí tus metas: arma un solo plan de raids para todas.", font=ui_font(12),
+        ctk.CTkLabel(side, text=t_ui("Elegí tus metas: arma un solo plan de raids para todas.", "Pick your goals: builds a single raid plan for all."), font=ui_font(12),
                      text_color=C_TEXT_MUTED).grid(row=1, column=0, padx=12, pady=(0, 10), sticky="w")
 
         row = ctk.CTkFrame(side, fg_color="transparent")
         row.grid(row=2, column=0, padx=10, pady=4, sticky="ew")
-        ctk.CTkLabel(row, text="Facción", font=ui_font(13, "bold"), text_color=C_TEXT).pack(side="left")
+        ctk.CTkLabel(row, text=t_ui("Facción", "Faction"), font=ui_font(13, "bold"), text_color=C_TEXT).pack(side="left")
         self.faction_seg = ctk.CTkSegmentedButton(row, values=["BEAR", "USEC"], font=ui_font(12, "bold"),
                                                   selected_color=THEME["accent_orange"],
                                                   command=lambda _v: self._config_changed())
@@ -103,7 +104,7 @@ class TabProgressionPlanner(ctk.CTkFrame):
 
         row = ctk.CTkFrame(side, fg_color="transparent")
         row.grid(row=3, column=0, padx=10, pady=4, sticky="ew")
-        ctk.CTkLabel(row, text="Tu nivel de jugador", font=ui_font(13, "bold"), text_color=C_TEXT).pack(side="left")
+        ctk.CTkLabel(row, text=t_ui("Tu nivel de jugador", "Player level"), font=ui_font(13, "bold"), text_color=C_TEXT).pack(side="left")
         self.level_entry = ctk.CTkEntry(row, width=60, font=ui_font(13), justify="center",
                                         fg_color=THEME["bg_inset"], border_color=THEME["border"])
         self.level_entry.pack(side="right")
@@ -111,24 +112,26 @@ class TabProgressionPlanner(ctk.CTkFrame):
         self.level_entry.bind("<FocusOut>", lambda _e: self._config_changed())
         self.level_entry.bind("<Return>", lambda _e: self._config_changed())
 
-        ctk.CTkLabel(side, text="METAS", font=ui_font(13, "bold"), text_color=THEME["accent_gold"]
+        ctk.CTkLabel(side, text=t_ui("METAS", "GOALS"), font=ui_font(13, "bold"), text_color=THEME["accent_gold"]
                      ).grid(row=4, column=0, padx=12, pady=(14, 4), sticky="w")
         self.goals_frame = ctk.CTkFrame(side, fg_color="transparent")
         self.goals_frame.grid(row=5, column=0, padx=6, sticky="ew")
         self.goals_frame.grid_columnconfigure(0, weight=1)
-        ctk.CTkButton(side, text="+ Agregar meta", font=ui_font(13, "bold"), height=32,
+        ctk.CTkButton(side, text=t_ui("+ Agregar meta", "+ Add goal"), font=ui_font(13, "bold"), height=32,
                       fg_color=THEME["btn_surface"], hover_color=THEME["btn_hover"],
                       border_width=1, border_color=THEME["border"],
                       command=self._add_goal).grid(row=6, column=0, padx=10, pady=(6, 4), sticky="ew")
-        self.calc_btn = ctk.CTkButton(side, text="Calcular plan", font=ui_font(14, "bold"), height=36,
+        self.calc_btn = ctk.CTkButton(side, text=t_ui("Calcular plan", "Calculate plan"), font=ui_font(14, "bold"), height=36,
                                       fg_color=THEME["accent_orange"], hover_color=THEME["btn_hover"],
                                       text_color=C_WHITE, command=self._config_changed)
         self.calc_btn.grid(row=7, column=0, padx=10, pady=(4, 6), sticky="ew")
 
-        ctk.CTkLabel(side, text="TU REPUTACIÓN ACTUAL (opcional)", font=ui_font(13, "bold"),
+        ctk.CTkLabel(side, text=t_ui("TU REPUTACIÓN ACTUAL (opcional)", "CURRENT REPUTATION (optional)"), font=ui_font(13, "bold"),
                      text_color=THEME["accent_gold"]).grid(row=8, column=0, padx=12, pady=(14, 0), sticky="w")
-        ctk.CTkLabel(side, text="Vacía = se estima con tus quests hechas. Si la copiás del juego,\n"
-                                "a partir de ahí se suma lo que completes.", font=ui_font(11),
+        ctk.CTkLabel(side, text=t_ui("Vacía = se estima con tus quests hechas. Si la copiás del juego,\n"
+                                "a partir de ahí se suma lo que completes.",
+                                "Empty = estimated from completed quests. If entered from game,\n"
+                                "further completions add from there."), font=ui_font(11),
                      text_color=C_TEXT_DIM, justify="left").grid(row=9, column=0, padx=12, pady=(0, 4), sticky="w")
         reps = ctk.CTkFrame(side, fg_color="transparent")
         reps.grid(row=10, column=0, padx=10, sticky="ew")

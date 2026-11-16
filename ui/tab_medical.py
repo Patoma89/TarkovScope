@@ -7,6 +7,7 @@ import customtkinter as ctk
 from typing import Dict, Any, List, Optional, Tuple
 
 from core.config import THEME
+from core.i18n import t_ui
 from core.medical_data import (
     MEDICAL_CATALOG,
     get_medical_categories,
@@ -107,14 +108,17 @@ class TabMedical(ctk.CTkFrame):
 
         ctk.CTkLabel(
             left,
-            text="💊 MEDICINA, BOTIQUINES & ESTIMULANTES (MEDICAL & STIMS)",
+            text=t_ui("💊 MEDICINA, BOTIQUINES & ESTIMULANTES (MEDICAL & STIMS)", "💊 MEDICAL, MEDKITS & STIMS"),
             font=ui_font(16, "bold"),
             text_color=THEME["accent_gold"],
         ).pack(anchor="w")
 
         ctk.CTkLabel(
             left,
-            text="Filtra por tipo o síntoma (hemorragia, fractura, extremidad negra, dolor, stamina) y consulta efectos exactos.",
+            text=t_ui(
+                "Filtra por tipo o síntoma (hemorragia, fractura, extremidad negra, dolor, stamina) y consulta efectos exactos.",
+                "Filter by type or symptom (bleeding, fracture, blacked limb, pain, stamina) and inspect exact effects.",
+            ),
             font=ui_font(12),
             text_color=C_TEXT_MUTED,
         ).pack(anchor="w", pady=(2, 0))
