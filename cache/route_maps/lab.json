@@ -1,0 +1,20 @@
+{
+ "zoom": 3,
+ "origin_px": [
+  55,
+  229
+ ],
+ "source": "tiles",
+ "tiles": "48/48",
+ "map": "lab",
+ "transform": [
+  0.575,
+  281.2,
+  0.575,
+  193.7
+ ],
+ "coordinateRotation": 270,
+ "width": 1307,
+ "height": 953,
+ "image": "lab.jpg"
+}

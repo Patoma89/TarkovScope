@@ -1,0 +1,20 @@
+{
+ "zoom": 3,
+ "origin_px": [
+  62,
+  175
+ ],
+ "source": "tiles",
+ "tiles": "64/64",
+ "map": "reserve",
+ "transform": [
+  0.395,
+  122.0,
+  0.395,
+  137.65
+ ],
+ "coordinateRotation": 180,
+ "width": 1872,
+ "height": 1698,
+ "image": "reserve.jpg"
+}

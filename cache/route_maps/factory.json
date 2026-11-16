@@ -1,0 +1,20 @@
+{
+ "zoom": 3,
+ "origin_px": [
+  80,
+  110
+ ],
+ "source": "tiles",
+ "tiles": "64/64",
+ "map": "factory",
+ "transform": [
+  1.629,
+  119.9,
+  1.629,
+  139.3
+ ],
+ "coordinateRotation": 90,
+ "width": 1720,
+ "height": 1858,
+ "image": "factory.jpg"
+}

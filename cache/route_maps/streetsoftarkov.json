@@ -1,0 +1,19 @@
+{
+ "zoom": 2.9330038476557454,
+ "origin_px": [
+  -937.3639661426843,
+  -856.106408706167
+ ],
+ "source": "svg",
+ "map": "streetsoftarkov",
+ "transform": [
+  0.38,
+  0,
+  0.38,
+  0
+ ],
+ "coordinateRotation": 180,
+ "width": 1750,
+ "height": 2400,
+ "image": "streetsoftarkov.jpg"
+}

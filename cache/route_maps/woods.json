@@ -1,0 +1,20 @@
+{
+ "zoom": 3,
+ "origin_px": [
+  -56,
+  -14
+ ],
+ "source": "tiles",
+ "tiles": "64/81",
+ "map": "woods",
+ "transform": [
+  0.1855,
+  112.95,
+  0.1855,
+  167.85
+ ],
+ "coordinateRotation": 180,
+ "width": 2089,
+ "height": 2013,
+ "image": "woods.jpg"
+}
