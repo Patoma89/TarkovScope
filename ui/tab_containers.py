@@ -143,7 +143,7 @@ class TabContainers(ctk.CTkFrame):
             placeholder_text="Buscar SICC, Docs, Junkbox, Raid, BlackRock, THICC, Kappa...",
             height=32,
             fg_color=C_BG_PANEL,
-            border_color="#2E3646",
+            border_color=THEME["border"],
             text_color=C_TEXT,
             font=ui_font(12),
         )

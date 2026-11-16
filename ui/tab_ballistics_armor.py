@@ -130,7 +130,7 @@ class ArmorMixin:
             placeholder_text="Buscar placa, chaleco, casco o ComTac (GAC, Slick, ULACH)...",
             height=30,
             fg_color=C_BG_PANEL,
-            border_color="#2E3646",
+            border_color=THEME["border"],
             text_color=C_TEXT,
             font=ui_font(12),
         )

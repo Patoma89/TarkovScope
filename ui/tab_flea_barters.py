@@ -241,14 +241,15 @@ class FleaBartersMixin:
         if img is not None:
             icon_lbl.configure(image=img)
 
-        t_badge = tk.Frame(card, bg="#161C28", width=128, bd=0)
+        badge_bg = THEME["btn_surface"]
+        t_badge = tk.Frame(card, bg=badge_bg, width=128, bd=0)
         t_badge.grid(row=0, column=1, rowspan=2, padx=(0, 10), pady=6, sticky="ns")
         t_badge.grid_propagate(False)
         tk.Label(
             t_badge,
             text=f"{b['trader']} LL{b['ll']}",
             font=ui_font(11, "bold"),
-            bg="#161C28",
+            bg=badge_bg,
             fg=THEME["accent_gold"],
             bd=0,
         ).pack(anchor="center", pady=(7, 1))
@@ -256,7 +257,7 @@ class FleaBartersMixin:
             t_badge,
             text="★ CLAVE" if b.get("is_essential") else b.get("category", ""),
             font=ui_font(9, "bold"),
-            bg="#161C28",
+            bg=badge_bg,
             fg=C_GREEN_LIGHT if b.get("is_essential") else C_TEXT_DIM,
             bd=0,
         ).pack(anchor="center", pady=(0, 6))

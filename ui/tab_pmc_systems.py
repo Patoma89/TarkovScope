@@ -166,7 +166,7 @@ class TabPMCSystems(ctk.CTkFrame):
                 fg_color=THEME["accent_gold"] if active else C_SLATE_700,
                 text_color="#0F172A" if active else C_TEXT_SOFT,
                 border_color=THEME["accent_gold"] if active else THEME["border"],
-                hover_color="#E5C992" if active else C_BG_ROW_ALT,
+                hover_color=THEME["accent_gold"] if active else THEME["btn_hover"],
             )
 
         for frame in (self.skills_frame, self.karma_frame, self.btr_frame):
@@ -372,7 +372,7 @@ class TabPMCSystems(ctk.CTkFrame):
                 fg_color=THEME["accent_gold"] if active else C_SLATE_700,
                 text_color="#0F172A" if active else C_TEXT_SOFT,
                 border_color=THEME["accent_gold"] if active else THEME["border"],
-                hover_color="#E5C992" if active else C_BG_ROW_ALT,
+                hover_color=THEME["accent_gold"] if active else THEME["btn_hover"],
             )
 
     def _schedule_skills_render(self):
@@ -910,7 +910,7 @@ class TabPMCSystems(ctk.CTkFrame):
                 fg_color=THEME["accent_gold"] if active else C_SLATE_700,
                 text_color="#0F172A" if active else C_TEXT_SOFT,
                 border_color=THEME["accent_gold"] if active else THEME["border"],
-                hover_color="#E5C992" if active else C_BG_ROW_ALT,
+                hover_color=THEME["accent_gold"] if active else THEME["btn_hover"],
             )
 
     def _schedule_transits_render(self):
