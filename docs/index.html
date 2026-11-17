@@ -960,7 +960,7 @@
           <div class="metric-lbl">Mapas 2D Tácticos</div>
         </div>
         <div class="metric-box">
-          <div class="metric-val">+175</div>
+          <div class="metric-val">203</div>
           <div class="metric-lbl">Proyectiles &amp; STK</div>
         </div>
         <div class="metric-box">
@@ -984,17 +984,18 @@
         <div class="showcase-body">
           <aside class="showcase-sidebar">
             <div class="sidebar-caption">Explorar Módulos</div>
-            <button class="tour-tab-btn active" onclick="selectTour('gunsmith', this)">🛠️ Gunsmith Studio</button>
+            <button class="tour-tab-btn active" onclick="selectTour('command_center', this)">🏠 Centro de Mando &amp; HUD</button>
+            <button class="tour-tab-btn" onclick="selectTour('gunsmith', this)">🛠️ Gunsmith &amp; Averías</button>
             <button class="tour-tab-btn" onclick="selectTour('quests', this)">🗺️ Quests Dossier</button>
             <button class="tour-tab-btn" onclick="selectTour('quest_tracker', this)">🧭 Quest Tracker &amp; Rutas</button>
             <button class="tour-tab-btn" onclick="selectTour('planner', this)">🎯 Planner de Progresión</button>
             <button class="tour-tab-btn" onclick="selectTour('ballistics', this)">💥 Balística &amp; Blindaje</button>
             <button class="tour-tab-btn" onclick="selectTour('containers', this)">🎒 Rigs, Mochilas &amp; Cajas</button>
-            <button class="tour-tab-btn" onclick="selectTour('bosses', this)">📍 Mapas &amp; Bosses</button>
-            <button class="tour-tab-btn" onclick="selectTour('hideout', this)">📦 Hideout, Barters &amp; FiR</button>
+            <button class="tour-tab-btn" onclick="selectTour('bosses', this)">📍 Mapas, Bosses &amp; Facciones</button>
+            <button class="tour-tab-btn" onclick="selectTour('hideout', this)">📦 Hideout, Barters &amp; Kappa</button>
             <button class="tour-tab-btn" onclick="selectTour('keys', this)">🔑 Llaves &amp; Intel</button>
-            <button class="tour-tab-btn" onclick="selectTour('medical', this)">💊 Medicina &amp; Stims</button>
-            <button class="tour-tab-btn" onclick="selectTour('pmc_systems', this)">📈 PMC, Skills &amp; Sistemas</button>
+            <button class="tour-tab-btn" onclick="selectTour('medical', this)">💊 Medicina, Stims &amp; Comida</button>
+            <button class="tour-tab-btn" onclick="selectTour('pmc_systems', this)">📈 PMC, Prestigio &amp; Logros</button>
             <button class="tour-tab-btn" onclick="selectTour('lore', this)">📖 Story &amp; Lore</button>
           </aside>
 
@@ -1020,14 +1021,14 @@
       <div class="modules-grid">
         <article class="module-card">
           <div class="module-icon">🛠️</div>
-          <h3>Gunsmith Studio &amp; Workbench</h3>
+          <h3>Gunsmith Studio &amp; Averías (Malfunctions)</h3>
           <p>
-            Banco de armería militar interactivo con plano esquemático dinámico que evoluciona visualmente en tiempo real a medida que instalas silenciadores, ópticas, cargadores, culatas o láseres.
+            Banco de armería militar interactivo con plano esquemático dinámico en tiempo real y guía técnica completa de fallos mecánicos y regla del 93% de durabilidad.
           </p>
           <ul class="module-list">
             <li><strong>110/110 armas</strong> con su foto real y plano interactivo con 9 ranuras clickeables.</li>
             <li>Comparativa en vivo <code>Δ vs actual</code>, filtro por <strong>Trader LL1–LL4</strong> y Auto-Optimizadores Pro.</li>
-            <li>Exportación multi-formato: Lista de compras en ₽, JSON (EFT/SPT-AKI) y códigos <code>TTCBUILD:...</code>.</li>
+            <li>Guía de los <strong>5 tipos de Averías</strong>, etapas de sobrecalentamiento, kits de reparación y exportación <code>TTCBUILD:...</code>.</li>
           </ul>
         </article>
 
@@ -1066,18 +1067,18 @@
           <ul class="module-list">
             <li>Árbol de dependencias automático que prioriza desbloqueos y cuellos de botella.</li>
             <li>Resumen de ítems FiR, llaves y niveles requeridos para cada meta elegida.</li>
-            <li>Selector global de idioma <strong>ES / EN</strong>, 4 skins (incluyendo <strong>🎃 Halloween</strong>) y Patch Notes integrados.</li>
+            <li>Centro de Mando Bento Grid, Top HUD con Reloj Dual 7x, idioma <strong>ES / EN</strong> y <strong>6 Skins</strong> (<em>Modern Obsidian</em>, <em>TerraGroup Clean</em>, <em>Halloween</em>).</li>
           </ul>
         </article>
 
         <article class="module-card">
           <div class="module-icon">💥</div>
-          <h3>Balística, Blindaje, Cascos &amp; Audio</h3>
+          <h3>Balística (203 Balas), Blindaje &amp; Audio</h3>
           <p>
-            Analiza +175 proyectiles junto a 38 placas balísticas, 48 chalecos, 59 rigs blindados, 88 cascos y 28 auriculares antes de entrar a raid.
+            Paridad exacta con <strong>eft-ammo.com</strong>: analiza 203 proyectiles junto a 38 placas balísticas, 48 chalecos, 59 rigs blindados, 88 cascos y 28 auriculares.
           </p>
           <ul class="module-list">
-            <li>Simulador dual <strong>Placa + Soft Aramid</strong> (Clase 1 a 6) para STK y penetración real.</li>
+            <li>Simulador dual <strong>Placa + Soft Aramid</strong> (Clase 1 a 6) con efectividad 1–6 real (SNB Tier 6, M80A1, Tungsten Carbide AP).</li>
             <li>Modo Duelo balístico, análisis de <em>Leg Meta</em> y simulación directa contra Bosses.</li>
             <li>Compatibilidad de cascos con headsets y perfil de detección acústica de auriculares.</li>
           </ul>
@@ -1085,12 +1086,12 @@
 
         <article class="module-card">
           <div class="module-icon">📍</div>
-          <h3>Mapas 2D &amp; Radar de Bosses</h3>
+          <h3>Mapas 2D, Bosses &amp; 6 Facciones IA</h3>
           <p>
-            Planos topográficos en alta definición para los 12 mapas del juego, con probabilidades de aparición de Bosses calibradas para <strong>PvE</strong> y <strong>PvP</strong>.
+            Planos topográficos en alta definición para los 12 mapas del juego, con probabilidades de Bosses (<strong>PvE</strong> y <strong>PvP</strong>) y dossier completo de las 6 facciones IA activas.
           </p>
           <ul class="module-list">
-            <li>Incluye Customs, Woods, Shoreline, Interchange, Ground Zero, Factory, Reserve, Lighthouse, Streets, Labs, Labyrinth e Icebreaker.</li>
+            <li>Incluye Black Division (790 HP), RUAF ('AF'), Rogues, Raiders, Cultists y Scavs junto a los 13 Bosses.</li>
             <li>Capas tácticas de extracciones PMC/Scav/Co-op, llaves marcadas y cajas fuertes.</li>
             <li>Pines tácticos personalizados creados por el usuario con persistencia local en SQLite.</li>
           </ul>
@@ -1098,14 +1099,14 @@
 
         <article class="module-card">
           <div class="module-icon">📦</div>
-          <h3>Hideout, 441 Trueques &amp; Semáforo FiR</h3>
+          <h3>Hideout, 441 Trueques &amp; 44 Ítems Kappa</h3>
           <p>
-            Control total de tu economía fuera de raid. Incluye el semáforo instantáneo <strong>“¿Vender o Guardar?”</strong> para decidir en segundos qué conservar.
+            Control total de tu economía con miniaturas oficiales PNG en estaciones, crafteos, trueques, <strong>Cultist Circle</strong>, semáforo <strong>“¿Vender o Guardar?”</strong> y tracker Collector.
           </p>
           <ul class="module-list">
-            <li>Catálogo de <strong>441 trueques</strong> en 8 Traders (LL1–LL4) con marcas de intercambios esenciales.</li>
+            <li>Catálogo de <strong>441 trueques</strong> en 8 Traders (LL1–LL4) y los <strong>44 ítems vigentes de Collector (Kappa)</strong> con miniatura.</li>
             <li>Guía completa del <strong>Cultist Circle</strong> (59 recetas únicas + umbrales repetibles).</li>
-            <li>Tracker FiR, inventario completo LL1–LL4 y crafteos rentables del Hideout.</li>
+            <li>Tracker FiR, inventario completo LL1–LL4 y crafteos rentables del Hideout con iconos.</li>
           </ul>
         </article>
 
@@ -1137,14 +1138,14 @@
 
         <article class="module-card">
           <div class="module-icon">💊</div>
-          <h3>Medicina &amp; Estimulantes (43 Ítems)</h3>
+          <h3>Medicina, 45 Provisiones &amp; Salud</h3>
           <p>
-            Guía médica táctica con botiquines, cirugías, vendajes, analgésicos y jeringas (stims) de TerraGroup listos para consulta en segundos.
+            Guía médica táctica con 43 ítems curativos/stims, el catálogo completo de las <strong>45 comidas y bebidas oficiales</strong> de la Wiki con miniatura y matriz de 14 debuffs de salud.
           </p>
           <ul class="module-list">
-            <li>Filtro inteligente por síntoma: hemorragias, fracturas, dolor o veneno.</li>
-            <li>Detalle completo de duración, cargas, efectos positivos y penalizaciones.</li>
-            <li>Imágenes oficiales integradas y renderizado fluido sin tirones.</li>
+            <li>Filtro inteligente por síntoma médico o por uso en Quests / Hideout / Barters en provisiones.</li>
+            <li>Detalle de Energía, Hidratación, tiempos de aplicación, duración, cargas y penalizaciones.</li>
+            <li>Matriz completa de efectos de estado (Veneno de Cultistas, Fracturas, Light/Heavy Bleed, Tremor, etc.).</li>
           </ul>
         </article>
 
@@ -1163,14 +1164,14 @@
 
         <article class="module-card">
           <div class="module-icon">📈</div>
-          <h3>PMC Skills, Scav Karma, BTR &amp; Transits</h3>
+          <h3>PMC, Prestigio 1–6, 32 Logros &amp; Ropa</h3>
           <p>
-            Manual completo de sistemas de progresión: entrenamiento de skills, reputación con Fence, tarifas del BTR Driver y red completa de Transits.
+            Manual completo de progresión avanzada: las 35 skills del PMC, Scav Karma, BTR/Transits, los <strong>6 niveles oficiales de Prestige</strong>, Arena/Ref Sync, 32 Achievements y 24 prendas USEC/BEAR.
           </p>
           <ul class="module-list">
-            <li>Las 35 skills activas del PMC en grilla visual con requisitos, cómo subirlas y bonus Élite (Nv. 51).</li>
-            <li>Rangos de Scav Karma (Fence LL2 en +6.0, tamaño BTR/Transit y acciones +/-).</li>
-            <li>Tarifas diferenciadas USEC / BEAR / Scav y 29 conexiones de Transit con bonus de EXP.</li>
+            <li>Prestige 1–6 (PvE &amp; PvP) con iconos oficiales, grilla de transferencia y retención de skills (5%–50%).</li>
+            <li>Checklist persistente de <strong>32 Achievements</strong> y galería visual de ropa táctica con miniaturas.</li>
+            <li>Rangos de Scav Karma (Fence LL2 +6.0), tarifas BTR Driver y 29 conexiones de Transit.</li>
           </ul>
         </article>
       </div>
@@ -1201,7 +1202,7 @@
           <span class="arch-badge">CLEAN ARCHITECTURE</span>
           <h3>Separación Core / UI</h3>
           <p>
-            Lógica de negocio pura en <code>core/</code> totalmente desacoplada de la interfaz gráfica en <code>ui/</code>, respaldada por 134 pruebas unitarias automáticas.
+            Lógica de negocio pura en <code>core/</code> totalmente desacoplada de la interfaz gráfica en <code>ui/</code>, respaldada por 147 pruebas unitarias automáticas.
           </p>
         </div>
 
@@ -1342,16 +1343,28 @@
 
   <script>
     const TOUR_DATA = {
+      command_center: {
+        tag: "MÓDULO 00 // CENTRO DE MANDO & HUD (v1.5.0)",
+        title: "Bento Grid Dashboard, Top HUD & Reloj Dual In-Raid",
+        desc: "Pantalla operativa de inicio con barras de progreso en vivo, próximas quests listas para tildar en 1 clic, ítems Kappa pendientes con miniatura y el Reloj Oficial de Tarkov (ciclo 7x) con detección nocturna de Cultists.",
+        highlights: [
+          { icon: "📊", title: "4 KPIs & Top HUD Clickable", text: "Quests %, Collector (X/44), Hideout y Prestigio/Logros visibles siempre arriba con salto directo." },
+          { icon: "🕒", title: "Reloj Oficial 7x & Cultists", text: "Horario dual Izquierda/Derecha sincronizado con alerta automática cuando la ventana nocturna (22:00-07:00) está activa." },
+          { icon: "🧭", title: "Sidebar Colapsable & 6 Skins", text: "Menú agrupado en 5 categorías con Active Pill luminoso, modo compacto 68px y skins Modern Obsidian y TerraGroup Clean." }
+        ],
+        footerLeft: "ARCHIVOS: tab_command_center.py + core/tarkov_time.py",
+        footerRight: "NUEVO EN v1.5.0"
+      },
       gunsmith: {
-        tag: "MÓDULO 01 // ARMERÍA INTERACTIVA",
-        title: "Gunsmith Studio & Workbench Dinámico",
-        desc: "Diseña y optimiza cualquiera de las 110 armas y 116 accesorios antes de gastar un solo rublo. El plano esquemático militar actualiza visualmente cada accesorio montado mientras el motor balístico recalcula ergonomía, retroceso, masa y velocidad al instante.",
+        tag: "MÓDULO 01 // ARMERÍA INTERACTIVA & AVERÍAS",
+        title: "Gunsmith Studio, Workbench & Guía de Averías",
+        desc: "Diseña y optimiza cualquiera de las 110 armas y 116 accesorios antes de gastar un solo rublo, más el módulo completo de Weapon Malfunctions, regla del 93% y sobrecalentamiento.",
         highlights: [
           { icon: "📐", title: "Blueprint en Tiempo Real", text: "Visualiza silenciadores, miras, cargadores de tambor, culatas y empuñaduras directamente sobre el plano del arma." },
-          { icon: "⚡", title: "Presets Meta en 1 Clic", text: "Alterna al instante entre configuraciones Meta Laser Recoil, Budget LL2, CQC High Ergo y Gunsmith de Mechanic." },
-          { icon: "📤", title: "Exportación Multi-Formato", text: "Genera listas de compras con comerciantes (LL1–LL4), JSON estándar para SPT-AKI y códigos portables TTCBUILD:..." }
+          { icon: "⚡", title: "Presets Meta en 1 Clic", text: "Alterna entre configuraciones Meta Laser Recoil, Budget LL2, CQC High Ergo y Gunsmith de Mechanic." },
+          { icon: "🔧", title: "Averías & Regla del 93%", text: "Consulta los 5 tipos de fallos mecánicos, etapas de overheat y kits de reparación con export JSON/Base64." }
         ],
-        footerLeft: "MOTOR: weapon_modding_engine.py + weapon_visual_compositor.py",
+        footerLeft: "MOTOR: weapon_modding_engine.py + weapon_malfunctions_data.py",
         footerRight: "TIEMPO DE CÁLCULO: < 1 MS"
       },
       quests: {
@@ -1379,28 +1392,28 @@
         footerRight: "NUEVO EN v1.4.0"
       },
       planner: {
-        tag: "MÓDULO 02C // PLANIFICACIÓN DE WIPE (v1.4.0)",
-        title: "Planner de Progresión, ES/EN & Patch Notes",
-        desc: "Elige tus metas de campaña (Kappa, Lightkeeper, Traders LL4 o quests específicas) y arma un plan unificado de incursiones, con interfaz bilingüe ES/EN en caliente.",
+        tag: "MÓDULO 02C // PLANIFICACIÓN & SKINS (v1.5.0)",
+        title: "Planner de Progresión, ES/EN & 6 Skins Tácticas",
+        desc: "Elige tus metas de campaña (Kappa, Lightkeeper, Traders LL4 o quests específicas) y arma un plan unificado de incursiones, con interfaz bilingüe ES/EN y tipografía híbrida Bender/Segoe UI.",
         highlights: [
           { icon: "🎯", title: "Metas Unificadas", text: "Combina requisitos de Kappa, Lightkeeper y niveles de comerciante en una sola lista priorizada." },
           { icon: "🌐", title: "Selector Global ES / EN", text: "Cambia el idioma de toda la aplicación al instante desde la barra lateral sin reiniciar." },
-          { icon: "📋", title: "Patch Notes & Badges NEW", text: "Visor integrado de novedades con etiquetas inteligentes que se ocultan al visitar cada módulo." }
+          { icon: "🎨", title: "6 Skins + Patch Notes", text: "EFT Hideout, Labs NVG, Tactical Slate, Modern Obsidian, TerraGroup Clean y Halloween con micro-hover." }
         ],
-        footerLeft: "ARCHIVOS: progression_planner.py + i18n.py + patch_notes_data.py",
-        footerRight: "IDIOMA: ES / EN EN VIVO"
+        footerLeft: "ARCHIVOS: progression_planner.py + i18n.py + ui/theme.py",
+        footerRight: "UI MODERNA 60 FPS"
       },
       ballistics: {
         tag: "MÓDULO 03 // COMBATE & PROTECCIÓN",
-        title: "Balística, Blindaje, Cascos & Auriculares",
-        desc: "Elige la munición y protección correctas para cada raid. Analiza +175 proyectiles junto a 261 piezas entre placas, chalecos, rigs blindados, cascos y auriculares con simulación dual Placa + Soft Aramid.",
+        title: "Balística (203 Balas eft-ammo), Blindaje & Audio",
+        desc: "Elige la munición y protección correctas con paridad 100% con eft-ammo.com. Analiza 203 proyectiles (M80A1, Ball 11, Tungsten Carbide AP, SNB Tier 6) junto a 261 piezas de blindaje y audio.",
         highlights: [
           { icon: "🛡️", title: "Simulador Dual Placa + Aramid", text: "Calcula disparos reales (STK) penetrando placa frontal (Clase 1–6) + capa de aramida blanda interna." },
           { icon: "🎧", title: "Cascos & Audio Táctico", text: "Filtra por compatibilidad de auriculares, clase de protección y distancia de detección acústica." },
           { icon: "🎯", title: "Duelo, Leg Meta & Bosses", text: "Enfrenta municiones lado a lado y simula bajas contra cualquier Boss en PvE/PvP." }
         ],
-        footerLeft: "CATÁLOGO: +175 MUNICIONES + 261 PROTECCIONES",
-        footerRight: "SIMULADOR: PLACA + ARAMID"
+        footerLeft: "CATÁLOGO: 203 MUNICIONES + 261 PROTECCIONES",
+        footerRight: "SINCRONIZADO: EFT-AMMO.COM"
       },
       containers: {
         tag: "MÓDULO 04 // ALMACENAMIENTO & LOGÍSTICA",
@@ -1415,36 +1428,36 @@
         footerRight: "CONTENEDORES: 136 INDEXADOS"
       },
       bosses: {
-        tag: "MÓDULO 04 // INTELIGENCIA DE MAPA",
-        title: "Mapas Topográficos 2D & Radar de Bosses",
-        desc: "Domina el terreno en los 12 mapas del juego (incluyendo Streets of Tarkov, Ground Zero, The Labyrinth e Icebreaker) con capas de extracción, llaves marcadas y probabilidades de Bosses calibradas.",
+        tag: "MÓDULO 04 // INTELIGENCIA DE MAPA & FACCIONES IA",
+        title: "Mapas 2D, Radar de Bosses & 6 Facciones IA",
+        desc: "Domina los 12 mapas del juego con capas de extracción, llaves marcadas, probabilidades de Bosses calibradas y dossier completo de las 6 facciones IA activas (sin contenido discontinuado).",
         highlights: [
           { icon: "📡", title: "Selector PvE / PvP en Vivo", text: "Alterna entre modo PvE y PvP con probabilidades sincronizadas con eftboss.com y zonas exactas de patrulla." },
-          { icon: "📌", title: "Alfileres Propios (Pins)", text: "Coloca, edita y guarda tus propios marcadores tácticos sobre cualquier mapa con persistencia en SQLite." },
-          { icon: "🚁", title: "Extracciones & Botín", text: "Identifica salidas PMC, Scav, Co-Op, Red Rebel, vehículos V-Ex, bengalas verdes y cajas fuertes." }
+          { icon: "⚔️", title: "6 Facciones IA Activas", text: "Incluye Black Division (790 HP), RUAF ('AF'), Rogues, Scav Raiders, Cultists y Scavs/Snipers." },
+          { icon: "📌", title: "Alfileres & Extracciones", text: "Coloca y mueve tus propios marcadores en SQLite y visualiza salidas PMC, Scav, Co-Op y V-Ex." }
         ],
-        footerLeft: "COBERTURA: 12 MAPAS HD + 13 BOSSES",
+        footerLeft: "COBERTURA: 12 MAPAS HD + 13 BOSSES + 6 FACCIONES IA",
         footerRight: "SINCRONIZACIÓN: EFTBOSS.COM / ASYNC"
       },
       hideout: {
-        tag: "MÓDULO 06 // ECONOMÍA, BARTERS & FIR",
-        title: "Hideout, 441 Trueques, Cultist Circle & Semáforo FiR",
-        desc: "Control total de tu economía. Además del tracker Junkbox FiR y crafteos, incluye 441 intercambios con Traders, recetas únicas del Cultist Circle y el semáforo “¿Vender o Guardar?”.",
+        tag: "MÓDULO 06 // ECONOMÍA, KAPPA & FIR",
+        title: "Hideout, 441 Trueques, 44 Ítems Kappa & Miniaturas",
+        desc: "Control total de tu economía con miniaturas oficiales PNG en estaciones, crafteos y los 44 objetos vigentes de Collector (Kappa), además del Cultist Circle y semáforo '¿Vender o Guardar?'.",
         highlights: [
-          { icon: "🚦", title: "Semáforo ¿Vender o Guardar?", text: "Escribe cualquier ítem looteado y sabrás en <1 ms si lo exige Kappa, una Quest FiR, Hideout o un Barter." },
-          { icon: "🤝", title: "441 Trueques (8 Traders)", text: "Filtra por comerciante, nivel LL1–LL4 y trueques esenciales como SICC, Red Rebel o cajas clave." },
-          { icon: "🕯️", title: "Cultist Circle Completo", text: "59 sacrificios únicos garantizados y combinaciones repetibles de alto valor." }
+          { icon: "🏆", title: "44 Ítems Collector (Kappa)", text: "Checklist visual actualizada a la Wiki oficial con miniatura PNG por cada objeto streamer." },
+          { icon: "🚦", title: "Hideout & Crafteos con Iconos", text: "Estaciones y recetas del Refugio con imagen oficial junto al semáforo instantáneo FiR." },
+          { icon: "🕯️", title: "441 Trueques & Cultist Circle", text: "8 Traders (LL1–LL4), 59 sacrificios únicos garantizados y combinaciones repetibles." }
         ],
-        footerLeft: "ARCHIVOS: barters_data.py + tab_flea_barters.py",
+        footerLeft: "ARCHIVOS: barters_data.py + hideout_crafts_data.py + weapons_data.py",
         footerRight: "BÚSQUEDA: INSTANTÁNEA (CTRL+K)"
       },
       lore: {
         tag: "MÓDULO 06 // NARRATIVA OFICIAL",
         title: "Capítulos de Historia & Lore de Tarkov",
-        desc: "Recorre la historia completa del conflicto de Norvinsk y TerraGroup a través de los 10 capítulos oficiales, con soporte completo para las 4 skins tácticas (Tarkov Classic, Labs NVG, Tactical Slate y 🎃 Halloween) y selector ES/EN.",
+        desc: "Recorre la historia completa del conflicto de Norvinsk y TerraGroup a través de los 10 capítulos oficiales, con soporte completo para las 6 skins tácticas y selector ES/EN.",
         highlights: [
           { icon: "📜", title: "10 Capítulos Completos", text: "Guías paso a paso de la línea principal con banners panorámicos e imágenes de referencia." },
-          { icon: "🎨", title: "4 Skins & Smooth Scroll", text: "Desplazamiento fluido adaptado al instante a Tarkov Classic, Labs NVG, Tactical Slate y 🎃 Halloween." },
+          { icon: "🎨", title: "6 Skins & Smooth Scroll", text: "Desplazamiento fluido adaptado a EFT Hideout, Labs NVG, Tactical Slate, Modern Obsidian, TerraGroup Clean y Halloween." },
           { icon: "🔗", title: "Contexto Integrado", text: "Conecta personajes, facciones, comerciantes y ubicaciones clave dentro de la misma aplicación." }
         ],
         footerLeft: "ARCHIVO: story_quests_data.py (CAP. 1–10)",
@@ -1463,28 +1476,28 @@
         footerRight: "COBERTURA: 230 LLAVES OFICIALES"
       },
       medical: {
-        tag: "MÓDULO 08 // SOPORTE VITAL & STIMS",
-        title: "Medicina, Cirugía & Estimulantes (43 Ítems)",
-        desc: "Encuentra el tratamiento exacto en medio de una incursión: botiquines, kits quirúrgicos, vendajes, analgésicos y jeringas TerraGroup con efectos y contraindicaciones.",
+        tag: "MÓDULO 08 // SOPORTE VITAL & PROVISIONES",
+        title: "Medicina (43), Provisiones (45) & 14 Debuffs de Salud",
+        desc: "Encuentra el tratamiento exacto y compara todas las comidas y bebidas oficiales de la Wiki con sus miniaturas PNG, tiempos de uso, hidratación, energía y efectos de salud.",
         highlights: [
-          { icon: "🩹", title: "Filtro por Síntoma", text: "Filtra al instante por sangrado ligero/pesado, fractura, dolor, envenenamiento o buff de combate." },
-          { icon: "💉", title: "43 Ítems con Iconos Oficiales", text: "Comparativa de usos, tiempo de aplicación, hidratación, energía y efectos secundarios." },
-          { icon: "🚀", title: "Consulta Instantánea", text: "Dossier limpio en español con carga inmediata desde RAM e imágenes locales." }
+          { icon: "🩹", title: "Filtro Médico por Síntoma", text: "Filtra los 43 meds/stims por sangrado ligero/pesado, fractura, dolor, envenenamiento o buff." },
+          { icon: "🥫", title: "45 Provisiones con Miniaturas", text: "Bebidas, raciones y barters/crafts de la Wiki con Energía, Hidratación y uso en Quests/Hideout." },
+          { icon: "⚕️", title: "Matriz de 14 Efectos de Salud", text: "Síntomas, causas y curación exacta para Venom, Pain, Tunnel Vision, Overweight, Fatigue y más." }
         ],
-        footerLeft: "ARCHIVO: medical_data.py + tab_medical.py",
-        footerRight: "CATÁLOGO: 43 MEDS & STIMS"
+        footerLeft: "ARCHIVO: medical_data.py + provisions_health_data.py",
+        footerRight: "CATÁLOGO: 43 MEDS + 45 PROVISIONES"
       },
       pmc_systems: {
-        tag: "MÓDULO 09 // PROGRESIÓN, KARMA & RUTAS",
-        title: "PMC Skills, Scav Karma, BTR & Red de Transits",
-        desc: "Domina los sistemas de progresión y extracción encadenada de Escape from Tarkov sin depender de guías dispersas en navegador.",
+        tag: "MÓDULO 09 // PROGRESIÓN, PRESTIGIO & LOGROS",
+        title: "PMC Skills, Prestigio 1–6, 32 Logros, Ropa & BTR",
+        desc: "Domina toda la progresión avanzada de Tarkov: 35 skills, Fence Karma, BTR/Transits, los 6 niveles oficiales de Prestige, sincronización Arena/Ref, 32 Achievements y 24 prendas tácticas.",
         highlights: [
-          { icon: "📈", title: "35 Skills & Bonus al Maxear", text: "Grilla de tazos con íconos oficiales, efectos por nivel, método de leveo, perks Élite (Nv. 51) y fatiga 200s." },
-          { icon: "⚖️", title: "Scav Karma (Fence)", text: "Desbloqueo de Fence LL2 (+6.0), tamaño de caja BTR/Transit por rango y valores exactos por acción." },
-          { icon: "🚐", title: "BTR Driver & 29 Transits", text: "Tarifas USEC/BEAR/Scav, conexiones entre los 12 mapas y multiplicador de EXP por tránsito continuo." }
+          { icon: "👑", title: "Prestige 1–6 (PvE & PvP)", text: "Requisitos exactos de Nivel, Quests, Skills y Dinero, grilla 8x3–8x8 y retención 5%–50% con iconos." },
+          { icon: "⭐", title: "32 Achievements & Arena Sync", text: "Checklist persistente en SQLite + guía de sincronización de GP Coins, Lega Medals y Crates con Ref." },
+          { icon: "🧥", title: "24 Prendas USEC/BEAR & BTR", text: "Galería de ropa táctica con miniaturas junto a las 35 skills, Scav Karma y 29 Transits." }
         ],
-        footerLeft: "ARCHIVOS: pmc_systems_data.py + tab_pmc_systems.py",
-        footerRight: "COBERTURA: SKILLS · FENCE · BTR · TRANSITS"
+        footerLeft: "ARCHIVOS: pmc_systems_data.py + pmc_prestige_achievements_data.py",
+        footerRight: "COBERTURA: SKILLS · PRESTIGE · LOGROS · BTR"
       }
     };
 
@@ -1534,7 +1547,7 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      selectTour('gunsmith', document.querySelector('.tour-tab-btn.active'));
+      selectTour('command_center', document.querySelector('.tour-tab-btn.active'));
     });
   </script>
 </body>
