@@ -554,7 +554,8 @@ class TabBallistics(ArmorMixin, DuelMixin, ctk.CTkFrame):
             highlightthickness=0,
         ).grid(row=grid_row, column=5, padx=(0, 1), pady=(0, 1), sticky="nsew")
 
-        # Cols 6..11: CLASS 1 a CLASS 6 — Celdas sólidas compactas mostrando Score (1..6) o STK (Tiros al Tórax)
+        # Cols 6..11: CLASS 1 a CLASS 6 — Celdas sólidas compactas mostrando Score (0..6) o STK (Tiros al Tórax)
+        armor_classes = a.get("armor_classes")
         for ac in range(1, 7):
             if is_utility:
                 bg_cell, fg_cell = "#181D26", C_TEXT_DIM
@@ -562,7 +563,10 @@ class TabBallistics(ArmorMixin, DuelMixin, ctk.CTkFrame):
                 f_size = 12
             else:
                 eff = calculate_armor_effectiveness(pen, ac)
-                score = eff["score"]
+                if isinstance(armor_classes, list) and len(armor_classes) == 6:
+                    score = int(armor_classes[ac - 1])
+                else:
+                    score = eff["score"]
                 bg_cell, fg_cell = CLASS_SCORE_COLORS.get(score, (eff["color"], C_BG_INSET))
 
                 if self.show_stk_in_table:

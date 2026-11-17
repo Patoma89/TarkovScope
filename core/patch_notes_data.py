@@ -6,6 +6,39 @@ from typing import Any, Dict, List
 
 PATCH_NOTES: List[Dict[str, Any]] = [
     {
+        "version": "1.5.0",
+        "tag": "Release",
+        "title_es": "Centro de Mando, HUD Táctico, Prestigio 1-6, 45 Provisiones, Facciones IA & UI Moderna",
+        "title_en": "Command Center, Tactical HUD, Prestige 1-6, 45 Provisions, AI Factions & Modern UI",
+        "items": [
+            {
+                "kind": "NEW",
+                "es": "Centro de Mando (Bento Grid) + Top HUD Bar global con KPIs en vivo y Reloj Dual In-Raid de Tarkov (ciclo 7x) con alerta nocturna de Cultists (22:00-07:00).",
+                "en": "Command Center (Bento Grid) + global Top HUD Bar with live KPIs and official Dual In-Raid Tarkov Clock (7x cycle) with Cultists night window alert (22:00-07:00).",
+            },
+            {
+                "kind": "NEW",
+                "es": "Sidebar agrupado con indicador activo iluminado (Active Pill), modo colapsable, tipografía híbrida Bender/Segoe UI y 2 skins nuevas: Modern Obsidian y TerraGroup Clean.",
+                "en": "Grouped collapsible sidebar with glowing Active Pill, hybrid Bender/Segoe UI typography and 2 new skins: Modern Obsidian and TerraGroup Clean.",
+            },
+            {
+                "kind": "NEW",
+                "es": "Prestige 1 a 6 oficial de Wiki (PvE/PvP) con iconos, guía Arena/Ref, 32 Achievements con checklist persistente y catálogo visual de 24 prendas tácticas USEC/BEAR.",
+                "en": "Official Wiki Prestige 1-6 (PvE/PvP) with icons, Arena/Ref sync guide, 32 trackable Achievements and visual catalog of 24 USEC/BEAR tactical clothing items.",
+            },
+            {
+                "kind": "NEW",
+                "es": "Catálogo completo de 45 Provisiones (comida y bebida) con miniaturas PNG, matriz de 14 efectos de salud/debuffs, 6 Facciones IA activas y guía de Averías de Armas (Malfunctions & regla del 93%).",
+                "en": "Complete catalog of 45 official Provisions (food & drink) with PNG thumbnails, 14 Health effects matrix, 6 active AI Factions and Weapon Malfunctions / 93% durability guide.",
+            },
+            {
+                "kind": "IMPROVED",
+                "es": "Balística sincronizada al 100% con eft-ammo.com (203 proyectiles, SNB Tier 6, M80A1, Ball 11, Tungsten Carbide AP), los 44 ítems vigentes de Collector (Kappa) y miniaturas en Hideout & Barters.",
+                "en": "Ballistics synced 100% with eft-ammo.com (203 rounds, SNB Tier 6, M80A1, Ball 11, Tungsten Carbide AP), all 44 active Collector (Kappa) items and Hideout/Barters thumbnails.",
+            },
+        ],
+    },
+    {
         "version": "1.4.0",
         "tag": "Release",
         "title_es": "Quest Tracker, Planner, Idioma ES/EN, Modding Studio Pro & Skills",

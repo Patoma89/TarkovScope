@@ -231,7 +231,10 @@ class DataStore:
                     has_legacy_hex = cur.fetchone()[0]
                     cur.execute("SELECT COUNT(*) FROM ammunition WHERE caliber = 'Caliber127x33';")
                     has_modern = cur.fetchone()[0]
-                    if has_legacy_hex > 0 or has_modern == 0:
+                    cur.execute("SELECT value FROM metadata WHERE key = 'ammo_dataset_version';")
+                    row_ver = cur.fetchone()
+                    ammo_ver = row_ver[0] if row_ver else ""
+                    if has_legacy_hex > 0 or has_modern == 0 or ammo_ver != "eft-ammo-2026-11":
                         seed_wiki_ammunition(self.db_path)
 
             self._ammo_all = get_all_ammunition("TODOS", self.db_path)
@@ -783,6 +786,106 @@ class DataStore:
                     "subtitle": tr.get("notes", "")[:72],
                     "tab": "pmc_systems",
                     "target": f"TRANSIT:{tr['from_map']}",
+                })
+
+        # 13. Prestige / Arena, Achievements & Ropa Táctica
+        from core.pmc_prestige_achievements_data import (
+            ACHIEVEMENTS_CATALOG,
+            TACTICAL_CLOTHING_CATALOG,
+        )
+        if any(w in q for w in ("prestige", "arena", "lega", "theta", "voron", "grumpy", "shatun", "leon")):
+            results.append({
+                "score": 102,
+                "category": "Prestige & Arena",
+                "badge_color": "#D97706",
+                "title": "Prestige I–VI + Sincronización Arena / Ref",
+                "subtitle": "Requisitos PvE/PvP Nv.15–47, retención hasta 50% y grilla 8x8",
+                "tab": "pmc_systems",
+                "target": "PRESTIGE:",
+            })
+        for ach in ACHIEVEMENTS_CATALOG:
+            ach_name = ach.get("name", "")
+            if q in ach_name.lower() or q in ach.get("condition_es", "").lower() or q in ach.get("condition_en", "").lower():
+                results.append({
+                    "score": 96 if q in ach_name.lower() else 74,
+                    "category": f"Logro ({ach.get('rarity', '')})",
+                    "badge_color": "#9333EA",
+                    "title": ach_name,
+                    "subtitle": ach.get("condition_es", "")[:74],
+                    "tab": "pmc_systems",
+                    "target": f"ACH:{ach_name}",
+                })
+        for cl in TACTICAL_CLOTHING_CATALOG:
+            cl_name = cl.get("name", "")
+            if q in cl_name.lower() or q in cl.get("quest_req", "").lower():
+                results.append({
+                    "score": 88 if q in cl_name.lower() else 66,
+                    "category": f"Ropa ({cl.get('faction', '')})",
+                    "badge_color": "#0284C7",
+                    "title": cl_name,
+                    "subtitle": f"{cl.get('trader_req', '')} · {cl.get('price_text', '')}",
+                    "tab": "pmc_systems",
+                    "target": f"CLOTH:{cl_name}",
+                })
+
+        # 14. Provisiones & Estados de Salud
+        from core.provisions_health_data import HEALTH_EFFECTS_CATALOG, PROVISIONS_CATALOG
+        for prov in PROVISIONS_CATALOG:
+            p_name = prov.get("name", "")
+            p_short = prov.get("short_name", "")
+            if q in p_name.lower() or q in p_short.lower() or q in prov.get("buffs_es", "").lower():
+                results.append({
+                    "score": 95 if (q in p_name.lower() or q in p_short.lower()) else 72,
+                    "category": f"Provisión ({prov.get('category', '')})",
+                    "badge_color": "#059669",
+                    "title": p_name,
+                    "subtitle": f"⚡ {prov.get('energy', 0):+d} | 💧 {prov.get('hydration', 0):+d} · {prov.get('buffs_es', '')[:50]}",
+                    "tab": "medical",
+                    "target": f"PROV:{p_short}",
+                })
+        for eff in HEALTH_EFFECTS_CATALOG:
+            e_es = eff.get("name_es", "")
+            e_en = eff.get("name_en", "")
+            if q in e_es.lower() or q in e_en.lower() or any(q in c.lower() for c in eff.get("best_cures", [])):
+                results.append({
+                    "score": 90 if q in e_es.lower() or q in e_en.lower() else 68,
+                    "category": f"Estado Salud ({eff.get('severity', '')})",
+                    "badge_color": "#DC2626",
+                    "title": e_es,
+                    "subtitle": f"Cura: {', '.join(eff.get('best_cures', [])[:3])}",
+                    "tab": "medical",
+                    "target": f"EFFECT:{e_es}",
+                })
+
+        # 15. Facciones Hostiles IA (Rogues / Raiders / Cultists / Black Division / RUAF)
+        from core.ai_factions_data import AI_FACTIONS_CATALOG
+        for fac in AI_FACTIONS_CATALOG:
+            f_name = fac.get("name", "")
+            if q in f_name.lower() or q in fac.get("subtitle_es", "").lower() or any(q in m.lower() for m in fac.get("maps", [])):
+                results.append({
+                    "score": 97 if q in f_name.lower() else 70,
+                    "category": "Facción IA",
+                    "badge_color": "#DC2626",
+                    "title": f_name,
+                    "subtitle": f"Mapas: {', '.join(fac.get('maps', [])[:4])} · {fac.get('subtitle_es', '')[:45]}",
+                    "tab": "bosses",
+                    "target": f"FACTION:{fac['id']}",
+                })
+
+        # 16. Fallas de Arma (Malfunctions) & Repair Kits
+        from core.weapon_malfunctions_data import WEAPON_MALFUNCTIONS_CATALOG
+        for malf in WEAPON_MALFUNCTIONS_CATALOG:
+            m_es = malf.get("name_es", "")
+            m_en = malf.get("name_en", "")
+            if q in m_es.lower() or q in m_en.lower() or any(w in q for w in ("malfunction", "falla", "traba", "jam", "overheat", "repair kit")):
+                results.append({
+                    "score": 94 if (q in m_es.lower() or q in m_en.lower()) else 75,
+                    "category": "Fallas & Reparación",
+                    "badge_color": "#EA580C",
+                    "title": m_es,
+                    "subtitle": f"{malf.get('min_durability_threshold', '')} · [L] -> [Shift+T]",
+                    "tab": "weapons",
+                    "target": f"MALFUNCTION:{malf['id']}",
                 })
 
         # Ordenar por score decreciente y limitar a los 45 mejores resultados

@@ -13,7 +13,8 @@ CALIBER_CLEAN_MAP: Dict[str, Tuple[str, str]] = {
     "Caliber545x39": ("Calibre 5.45x39", "5.45x39"),
     "Caliber556x45NATO": ("Calibre 5.56x45 NATO", "5.56x45 NATO"),
     "Caliber762x39": ("Calibre 7.62x39", "7.62x39"),
-    "Caliber762x51": ("Calibre 7.62x51 NATO", "7.62x51 NATO"),
+    "Caliber762x51": ("Calibre 7.62x51 mm", "7.62x51 mm"),
+    "Caliber308ME": ("Calibre .308 Marlin Express", ".308 Marlin"),
     "Caliber762x54R": ("Calibre 7.62x54R", "7.62x54R"),
     "Caliber762x35": ("Calibre 7.62x35 (.300 BLK)", "7.62x35 BLK"),
     "Caliber68x51": ("Calibre 6.8x51 (.277 Fury)", "6.8x51 Fury"),
@@ -82,4 +83,5 @@ CLASS_SCORE_COLORS = {
     3: (C_AMBER, C_BG_INSET),  # 3: Naranja/Ámbar (Media)
     2: ("#EA580C", C_WHITE),  # 2: Naranja rojizo (Baja)
     1: (C_RED_DARK, C_WHITE),  # 1: Rojo intenso (Nula / Rebota)
+    0: ("#991B1B", C_WHITE),  # 0: Rojo oscuro (Sin penetración)
 }

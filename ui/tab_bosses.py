@@ -17,10 +17,11 @@ from core.bosses_data import (
 )
 from ui.image_utils import get_boss_ctk_image, get_boss_spawn_map_ctk_image, clear_image_ram_cache
 from ui.map_viewer_modal import open_boss_map_viewer_modal
-from ui.theme import C_WHITE
+from ui.tab_bosses_factions_mixin import BossesFactionsMixin
+from ui.theme import C_SLATE_700, C_TEXT_SOFT, C_WHITE
 
 
-class TabBosses(ctk.CTkFrame):
+class TabBosses(BossesFactionsMixin, ctk.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, fg_color="transparent", **kwargs)
         self.bosses = get_all_bosses()
@@ -29,6 +30,7 @@ class TabBosses(ctk.CTkFrame):
         self.selected_map: str = self.selected_boss["maps"][0]
         self.boss_buttons: Dict[str, ctk.CTkButton] = {}
         self.map_selector_buttons: Dict[str, ctk.CTkButton] = {}
+        self._init_factions_state()
 
         self.grid_columnconfigure(0, weight=0)  # Sidebar lista de bosses
         self.grid_columnconfigure(1, weight=1)  # Panel principal de detalle
@@ -52,8 +54,9 @@ class TabBosses(ctk.CTkFrame):
         )
         sidebar.grid(row=0, column=0, padx=(0, 12), pady=0, sticky="nsew")
         sidebar.grid_propagate(False)
-        sidebar.grid_rowconfigure(3, weight=1)
+        sidebar.grid_rowconfigure(4, weight=1)
         sidebar.grid_columnconfigure(0, weight=1)
+        self.boss_sidebar = sidebar
 
         title_lbl = ctk.CTkLabel(
             sidebar,
@@ -107,11 +110,40 @@ class TabBosses(ctk.CTkFrame):
             border_color=THEME["border"],
             command=self._trigger_live_sync_background
         )
-        self.sync_btn.grid(row=2, column=0, padx=12, pady=(0, 8), sticky="ew")
+        self.sync_btn.grid(row=2, column=0, padx=12, pady=(0, 6), sticky="ew")
+
+        sub_row = ctk.CTkFrame(sidebar, fg_color=THEME["bg_dark"], corner_radius=8)
+        sub_row.grid(row=3, column=0, padx=12, pady=(0, 6), sticky="ew")
+        sub_row.grid_columnconfigure((0, 1), weight=1)
+
+        self.btn_sub_bosses = ctk.CTkButton(
+            sub_row,
+            text="💀 12 Bosses",
+            height=28,
+            corner_radius=6,
+            font=ui_font(size=11, weight="bold"),
+            fg_color=THEME["accent_orange"],
+            text_color=C_WHITE,
+            command=lambda: self._switch_bosses_view_mode("BOSSES"),
+        )
+        self.btn_sub_bosses.grid(row=0, column=0, padx=(4, 2), pady=4, sticky="ew")
+
+        self.btn_sub_factions = ctk.CTkButton(
+            sub_row,
+            text="☠️ Facciones IA",
+            height=28,
+            corner_radius=6,
+            font=ui_font(size=11, weight="bold"),
+            fg_color=C_SLATE_700,
+            text_color=C_TEXT_SOFT,
+            command=lambda: self._switch_bosses_view_mode("FACTIONS"),
+        )
+        self.btn_sub_factions.grid(row=0, column=1, padx=(2, 4), pady=4, sticky="ew")
 
         scroll = ctk.CTkScrollableFrame(sidebar, fg_color="transparent")
-        scroll.grid(row=3, column=0, padx=6, pady=(0, 10), sticky="nsew")
+        scroll.grid(row=4, column=0, padx=6, pady=(0, 10), sticky="nsew")
         scroll.grid_columnconfigure(0, weight=1)
+        self.boss_list_scroll = scroll
 
         for idx, boss in enumerate(self.bosses):
             b_id = boss["id"]
@@ -434,7 +466,25 @@ class TabBosses(ctk.CTkFrame):
         )
         self.tactics_lbl.pack(anchor="w", padx=16, pady=(0, 14))
 
-    def _select_boss(self, boss: Dict[str, Any]):
+    def _select_boss(self, boss: Any):
+        if isinstance(boss, str):
+            raw = boss.strip()
+            if raw.startswith("FACTION:"):
+                fid = raw.split(":", 1)[1].strip()
+                self._switch_bosses_view_mode("FACTIONS")
+                from core.ai_factions_data import AI_FACTIONS_CATALOG
+                matched_f = next((f for f in AI_FACTIONS_CATALOG if f["id"] == fid or fid.lower() in f["name"].lower()), None)
+                if matched_f:
+                    self._select_faction(matched_f)
+                return
+            self._switch_bosses_view_mode("BOSSES")
+            matched_b = next((b for b in self.bosses if b["id"] == raw or raw.lower() in b["name"].lower()), None)
+            if not matched_b:
+                return
+            boss = matched_b
+        else:
+            self._switch_bosses_view_mode("BOSSES")
+
         self.selected_boss = boss
         self.selected_map = boss["maps"][0] if boss.get("maps") else "Customs"
 

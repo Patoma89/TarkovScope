@@ -8,7 +8,15 @@
     "armorDamage": 50,
     "penetrationPower": 40.0,
     "initialSpeed": 440.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      4,
+      3
+    ]
   },
   {
     "id": "50ae_copper_solid",
@@ -19,7 +27,15 @@
     "armorDamage": 56,
     "penetrationPower": 33.0,
     "initialSpeed": 460.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      5,
+      3,
+      2
+    ]
   },
   {
     "id": "50ae_hawk_jsp",
@@ -29,8 +45,16 @@
     "damage": 122,
     "armorDamage": 28,
     "penetrationPower": 26.0,
-    "initialSpeed": 127.0,
-    "tracer": false
+    "initialSpeed": 465.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      4,
+      1,
+      0,
+      0
+    ]
   },
   {
     "id": "50ae_jhp",
@@ -41,7 +65,15 @@
     "armorDamage": 23,
     "penetrationPower": 12.0,
     "initialSpeed": 440.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      1,
+      0,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "58x42_dvc12",
@@ -52,7 +84,15 @@
     "armorDamage": 60,
     "penetrationPower": 52.0,
     "initialSpeed": 872.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      6,
+      5
+    ]
   },
   {
     "id": "58x42_dvx12",
@@ -63,7 +103,15 @@
     "armorDamage": 54,
     "penetrationPower": 47.0,
     "initialSpeed": 850.0,
-    "tracer": true
+    "tracer": true,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      5,
+      5
+    ]
   },
   {
     "id": "58x42_dbp191",
@@ -74,7 +122,15 @@
     "armorDamage": 43,
     "penetrationPower": 39.0,
     "initialSpeed": 840.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      5,
+      3,
+      2
+    ]
   },
   {
     "id": "58x42_dbx95",
@@ -85,7 +141,15 @@
     "armorDamage": 40,
     "penetrationPower": 33.0,
     "initialSpeed": 910.0,
-    "tracer": true
+    "tracer": true,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      4,
+      2,
+      1
+    ]
   },
   {
     "id": "93x64_7n33",
@@ -96,7 +160,15 @@
     "armorDamage": 55,
     "penetrationPower": 56.0,
     "initialSpeed": 790.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      5,
+      5
+    ]
   },
   {
     "id": "93x64_fmj",
@@ -107,7 +179,15 @@
     "armorDamage": 55,
     "penetrationPower": 44.0,
     "initialSpeed": 793.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      5,
+      4
+    ]
   },
   {
     "id": "93x64_sp",
@@ -118,7 +198,15 @@
     "armorDamage": 55,
     "penetrationPower": 37.0,
     "initialSpeed": 697.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      4,
+      3,
+      2
+    ]
   },
   {
     "id": "68x51_sig_hybrid",
@@ -129,7 +217,15 @@
     "armorDamage": 58,
     "penetrationPower": 47.0,
     "initialSpeed": 914.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      5,
+      5
+    ]
   },
   {
     "id": "68x51_sig_fmj",
@@ -140,7 +236,15 @@
     "armorDamage": 49,
     "penetrationPower": 36.0,
     "initialSpeed": 899.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      5,
+      4,
+      2
+    ]
   },
   {
     "id": "300blk_ap",
@@ -151,7 +255,15 @@
     "armorDamage": 65,
     "penetrationPower": 48.0,
     "initialSpeed": 635.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      5,
+      4
+    ]
   },
   {
     "id": "300blk_cbj",
@@ -162,7 +274,15 @@
     "armorDamage": 57,
     "penetrationPower": 43.0,
     "initialSpeed": 725.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      5,
+      3
+    ]
   },
   {
     "id": "300blk_m62",
@@ -173,7 +293,15 @@
     "armorDamage": 48,
     "penetrationPower": 36.0,
     "initialSpeed": 442.0,
-    "tracer": true
+    "tracer": true,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      5,
+      4,
+      2
+    ]
   },
   {
     "id": "300blk_bcp_fmj",
@@ -184,7 +312,15 @@
     "armorDamage": 36,
     "penetrationPower": 30.0,
     "initialSpeed": 605.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      3,
+      2,
+      0
+    ]
   },
   {
     "id": "300blk_vmax",
@@ -195,7 +331,15 @@
     "armorDamage": 32,
     "penetrationPower": 20.0,
     "initialSpeed": 723.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      4,
+      3,
+      1,
+      0
+    ]
   },
   {
     "id": "300blk_whisper",
@@ -206,7 +350,15 @@
     "armorDamage": 20,
     "penetrationPower": 14.0,
     "initialSpeed": 853.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      4,
+      2,
+      1,
+      0,
+      0
+    ]
   },
   {
     "id": "357mag_fmj",
@@ -217,7 +369,15 @@
     "armorDamage": 43,
     "penetrationPower": 35.0,
     "initialSpeed": 385.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      2,
+      1,
+      0
+    ]
   },
   {
     "id": "357mag_jhp",
@@ -228,7 +388,15 @@
     "armorDamage": 28,
     "penetrationPower": 24.0,
     "initialSpeed": 425.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      2,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "357mag_hp",
@@ -239,7 +407,15 @@
     "armorDamage": 20,
     "penetrationPower": 18.0,
     "initialSpeed": 481.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      3,
+      0,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "357mag_sp",
@@ -250,7 +426,15 @@
     "armorDamage": 15,
     "penetrationPower": 12.0,
     "initialSpeed": 455.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      1,
+      0,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "338lm_ap",
@@ -261,7 +445,15 @@
     "armorDamage": 89,
     "penetrationPower": 79.0,
     "initialSpeed": 849.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      6,
+      6
+    ]
   },
   {
     "id": "338lm_fmj",
@@ -272,18 +464,34 @@
     "armorDamage": 83,
     "penetrationPower": 47.0,
     "initialSpeed": 900.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      5,
+      5
+    ]
   },
   {
     "id": "338lm_ucw",
-    "name": ".338 Lapua Magnum UCW",
-    "shortName": "UCW",
+    "name": ".338 Lapua Magnum UPZ",
+    "shortName": ".338 UPZ",
     "caliber": "Caliber86x70",
     "damage": 142,
     "armorDamage": 70,
     "penetrationPower": 32.0,
     "initialSpeed": 849.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      5,
+      4,
+      2
+    ]
   },
   {
     "id": "338lm_tacx",
@@ -294,7 +502,15 @@
     "armorDamage": 55,
     "penetrationPower": 18.0,
     "initialSpeed": 880.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      5,
+      3,
+      1,
+      0,
+      0
+    ]
   },
   {
     "id": "127x55_ps12b",
@@ -304,8 +520,16 @@
     "damage": 102,
     "armorDamage": 57,
     "penetrationPower": 46.0,
-    "initialSpeed": 290.0,
-    "tracer": false
+    "initialSpeed": 570.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      5,
+      4
+    ]
   },
   {
     "id": "127x55_ps12",
@@ -315,8 +539,16 @@
     "damage": 115,
     "armorDamage": 45,
     "penetrationPower": 28.0,
-    "initialSpeed": 285.0,
-    "tracer": false
+    "initialSpeed": 300.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      5,
+      2,
+      1,
+      0
+    ]
   },
   {
     "id": "127x55_ps12a",
@@ -326,19 +558,35 @@
     "damage": 165,
     "armorDamage": 22,
     "penetrationPower": 10.0,
-    "initialSpeed": 290.0,
-    "tracer": false
+    "initialSpeed": 870.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "556x45_ssa_ap",
     "name": "5.56x45mm SSA AP",
     "shortName": "SSA AP",
     "caliber": "Caliber556x45NATO",
-    "damage": 36,
+    "damage": 38,
     "armorDamage": 64,
     "penetrationPower": 57.0,
-    "initialSpeed": 1010.0,
-    "tracer": false
+    "initialSpeed": 1013.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      6,
+      5
+    ]
   },
   {
     "id": "556x45_m995",
@@ -349,7 +597,15 @@
     "armorDamage": 58,
     "penetrationPower": 53.0,
     "initialSpeed": 1013.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      6,
+      5
+    ]
   },
   {
     "id": "556x45_m855a1",
@@ -360,106 +616,167 @@
     "armorDamage": 52,
     "penetrationPower": 44.0,
     "initialSpeed": 945.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      5,
+      4
+    ]
   },
   {
     "id": "556x45_m856a1",
     "name": "5.56x45mm M856A1 Tracer",
     "shortName": "M856A1",
     "caliber": "Caliber556x45NATO",
-    "damage": 51,
+    "damage": 52,
     "armorDamage": 53,
     "penetrationPower": 38.0,
     "initialSpeed": 940.0,
-    "tracer": true
+    "tracer": true,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      5,
+      3,
+      2
+    ]
   },
   {
     "id": "556x45_sost",
-    "name": "5.56x45mm SOST",
-    "shortName": "SOST",
+    "name": "5.56x45mm Mk318 SOST",
+    "shortName": "Mk318 SOST",
     "caliber": "Caliber556x45NATO",
-    "damage": 59,
+    "damage": 53,
     "armorDamage": 40,
     "penetrationPower": 33.0,
-    "initialSpeed": 915.0,
-    "tracer": false
+    "initialSpeed": 902.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      4,
+      2,
+      1
+    ]
   },
   {
     "id": "556x45_m855",
     "name": "5.56x45mm M855",
     "shortName": "M855",
     "caliber": "Caliber556x45NATO",
-    "damage": 50,
+    "damage": 54,
     "armorDamage": 37,
-    "penetrationPower": 30.0,
+    "penetrationPower": 31.0,
     "initialSpeed": 922.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      5,
+      3,
+      2,
+      0
+    ]
   },
   {
     "id": "556x45_fmj",
     "name": "5.56x45mm FMJ",
     "shortName": "5.56 FMJ",
     "caliber": "Caliber556x45NATO",
-    "damage": 54,
+    "damage": 57,
     "armorDamage": 34,
-    "penetrationPower": 25.0,
-    "initialSpeed": 930.0,
-    "tracer": false
+    "penetrationPower": 23.0,
+    "initialSpeed": 957.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      4,
+      1,
+      0,
+      0
+    ]
   },
   {
     "id": "556x45_m856",
     "name": "5.56x45mm M856 Tracer",
     "shortName": "M856",
     "caliber": "Caliber556x45NATO",
-    "damage": 55,
+    "damage": 60,
     "armorDamage": 34,
-    "penetrationPower": 23.0,
+    "penetrationPower": 18.0,
     "initialSpeed": 874.0,
-    "tracer": true
-  },
-  {
-    "id": "556x45_mk318",
-    "name": "5.56x45mm MK 318 Mod 0",
-    "shortName": "MK 318",
-    "caliber": "Caliber556x45NATO",
-    "damage": 63,
-    "armorDamage": 34,
-    "penetrationPower": 21.0,
-    "initialSpeed": 900.0,
-    "tracer": false
+    "tracer": true,
+    "armorClasses": [
+      6,
+      5,
+      1,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "556x45_mk255",
     "name": "5.56x45mm MK 255 Mod 0",
     "shortName": "MK 255",
     "caliber": "Caliber556x45NATO",
-    "damage": 75,
+    "damage": 72,
     "armorDamage": 32,
-    "penetrationPower": 17.0,
-    "initialSpeed": 905.0,
-    "tracer": false
+    "penetrationPower": 11.0,
+    "initialSpeed": 936.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      1,
+      0,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "556x45_hp",
     "name": "5.56x45mm HP",
     "shortName": "5.56 HP",
     "caliber": "Caliber556x45NATO",
-    "damage": 75,
+    "damage": 79,
     "armorDamage": 30,
-    "penetrationPower": 14.0,
-    "initialSpeed": 910.0,
-    "tracer": false
+    "penetrationPower": 7.0,
+    "initialSpeed": 947.0,
+    "tracer": false,
+    "armorClasses": [
+      4,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "556x45_warmageddon",
     "name": "5.56x45mm Warmageddon",
     "shortName": "Warmageddon",
     "caliber": "Caliber556x45NATO",
-    "damage": 85,
+    "damage": 88,
     "armorDamage": 14,
     "penetrationPower": 3.0,
-    "initialSpeed": 940.0,
-    "tracer": false
+    "initialSpeed": 936.0,
+    "tracer": false,
+    "armorClasses": [
+      1,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "545x39_ppbs",
@@ -469,30 +786,35 @@
     "damage": 37,
     "armorDamage": 60,
     "penetrationPower": 62.0,
-    "initialSpeed": 1010.0,
-    "tracer": false
+    "initialSpeed": 905.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      6,
+      6
+    ]
   },
   {
     "id": "545x39_bs",
     "name": "5.45x39mm BS",
     "shortName": "5.45 BS",
     "caliber": "Caliber545x39",
-    "damage": 40,
+    "damage": 45,
     "armorDamage": 57,
     "penetrationPower": 54.0,
     "initialSpeed": 830.0,
-    "tracer": false
-  },
-  {
-    "id": "545x39_7n40",
-    "name": "5.45x39mm 7N40",
-    "shortName": "7N40",
-    "caliber": "Caliber545x39",
-    "damage": 52,
-    "armorDamage": 50,
-    "penetrationPower": 44.0,
-    "initialSpeed": 870.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      6,
+      5
+    ]
   },
   {
     "id": "545x39_bp",
@@ -503,73 +825,129 @@
     "armorDamage": 48,
     "penetrationPower": 45.0,
     "initialSpeed": 890.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      5,
+      4
+    ]
+  },
+  {
+    "id": "545x39_7n40",
+    "name": "5.45x39mm 7N40",
+    "shortName": "7N40",
+    "caliber": "Caliber545x39",
+    "damage": 55,
+    "armorDamage": 50,
+    "penetrationPower": 42.0,
+    "initialSpeed": 915.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      4,
+      3
+    ]
   },
   {
     "id": "545x39_bt",
     "name": "5.45x39mm BT Tracer",
     "shortName": "5.45 BT",
     "caliber": "Caliber545x39",
-    "damage": 44,
+    "damage": 54,
     "armorDamage": 46,
-    "penetrationPower": 42.0,
+    "penetrationPower": 37.0,
     "initialSpeed": 880.0,
-    "tracer": true
+    "tracer": true,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      5,
+      3,
+      2
+    ]
   },
   {
     "id": "545x39_pp",
     "name": "5.45x39mm PP",
     "shortName": "5.45 PP",
     "caliber": "Caliber545x39",
-    "damage": 46,
+    "damage": 51,
     "armorDamage": 41,
-    "penetrationPower": 36.0,
-    "initialSpeed": 890.0,
-    "tracer": false
+    "penetrationPower": 34.0,
+    "initialSpeed": 886.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      4,
+      3,
+      1
+    ]
   },
   {
     "id": "545x39_ps",
     "name": "5.45x39mm PS",
     "shortName": "5.45 PS",
     "caliber": "Caliber545x39",
-    "damage": 53,
+    "damage": 56,
     "armorDamage": 38,
     "penetrationPower": 28.0,
     "initialSpeed": 890.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      5,
+      3,
+      1,
+      0
+    ]
   },
   {
     "id": "545x39_fmj",
     "name": "5.45x39mm FMJ",
     "shortName": "5.45 FMJ",
     "caliber": "Caliber545x39",
-    "damage": 54,
+    "damage": 55,
     "armorDamage": 35,
     "penetrationPower": 24.0,
-    "initialSpeed": 885.0,
-    "tracer": false
-  },
-  {
-    "id": "545x39_prs",
-    "name": "5.45x39mm PRS",
-    "shortName": "PRS",
-    "caliber": "Caliber545x39",
-    "damage": 60,
-    "armorDamage": 28,
-    "penetrationPower": 14.0,
-    "initialSpeed": 890.0,
-    "tracer": false
+    "initialSpeed": 884.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      3,
+      2,
+      0,
+      0
+    ]
   },
   {
     "id": "545x39_t",
     "name": "5.45x39mm T Tracer",
     "shortName": "5.45 T",
     "caliber": "Caliber545x39",
-    "damage": 57,
+    "damage": 59,
     "armorDamage": 32,
     "penetrationPower": 20.0,
     "initialSpeed": 883.0,
-    "tracer": true
+    "tracer": true,
+    "armorClasses": [
+      6,
+      6,
+      1,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "545x39_us",
@@ -578,20 +956,55 @@
     "caliber": "Caliber545x39",
     "damage": 65,
     "armorDamage": 33,
-    "penetrationPower": 15.0,
+    "penetrationPower": 17.0,
     "initialSpeed": 303.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      5,
+      1,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "545x39_sp",
     "name": "5.45x39mm SP",
     "shortName": "5.45 SP",
     "caliber": "Caliber545x39",
-    "damage": 68,
+    "damage": 67,
     "armorDamage": 24,
-    "penetrationPower": 11.0,
+    "penetrationPower": 15.0,
     "initialSpeed": 873.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      2,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  {
+    "id": "545x39_prs",
+    "name": "5.45x39mm PRS",
+    "shortName": "PRS",
+    "caliber": "Caliber545x39",
+    "damage": 70,
+    "armorDamage": 28,
+    "penetrationPower": 13.0,
+    "initialSpeed": 866.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      1,
+      0,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "545x39_hp",
@@ -600,75 +1013,112 @@
     "caliber": "Caliber545x39",
     "damage": 76,
     "armorDamage": 22,
-    "penetrationPower": 11.0,
+    "penetrationPower": 9.0,
     "initialSpeed": 884.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      5,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "762x39_mai_ap",
     "name": "7.62x39mm MAI AP",
     "shortName": "MAI AP",
     "caliber": "Caliber762x39",
-    "damage": 58,
+    "damage": 53,
     "armorDamage": 68,
     "penetrationPower": 58.0,
-    "initialSpeed": 730.0,
-    "tracer": false
+    "initialSpeed": 875.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      6,
+      5
+    ]
   },
   {
     "id": "762x39_bp",
     "name": "7.62x39mm BP",
     "shortName": "7.62 BP",
     "caliber": "Caliber762x39",
-    "damage": 60,
+    "damage": 58,
     "armorDamage": 55,
-    "penetrationPower": 45.0,
+    "penetrationPower": 47.0,
     "initialSpeed": 730.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      5,
+      4
+    ]
   },
   {
     "id": "762x39_pp",
     "name": "7.62x39mm PP",
     "shortName": "7.62 PP",
     "caliber": "Caliber762x39",
-    "damage": 60,
+    "damage": 59,
     "armorDamage": 48,
     "penetrationPower": 41.0,
-    "initialSpeed": 740.0,
-    "tracer": false
+    "initialSpeed": 732.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      4,
+      3
+    ]
   },
   {
     "id": "762x39_ps",
     "name": "7.62x39mm PS",
     "shortName": "7.62 PS",
     "caliber": "Caliber762x39",
-    "damage": 60,
+    "damage": 61,
     "armorDamage": 42,
     "penetrationPower": 35.0,
-    "initialSpeed": 700.0,
-    "tracer": false
+    "initialSpeed": 717.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      5,
+      3,
+      2
+    ]
   },
   {
     "id": "762x39_t45m1",
     "name": "7.62x39mm T-45M1 Tracer",
     "shortName": "T-45M1",
     "caliber": "Caliber762x39",
-    "damage": 64,
+    "damage": 65,
     "armorDamage": 38,
     "penetrationPower": 30.0,
     "initialSpeed": 720.0,
-    "tracer": true
-  },
-  {
-    "id": "762x39_fmj",
-    "name": "7.62x39mm FMJ",
-    "shortName": "7.62 FMJ",
-    "caliber": "Caliber762x39",
-    "damage": 67,
-    "armorDamage": 36,
-    "penetrationPower": 26.0,
-    "initialSpeed": 735.0,
-    "tracer": false
+    "tracer": true,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      3,
+      1,
+      0
+    ]
   },
   {
     "id": "762x39_us",
@@ -678,63 +1128,149 @@
     "damage": 56,
     "armorDamage": 38,
     "penetrationPower": 29.0,
-    "initialSpeed": 300.0,
-    "tracer": false
+    "initialSpeed": 301.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      5,
+      3,
+      1,
+      0
+    ]
+  },
+  {
+    "id": "762x39_fmj",
+    "name": "7.62x39mm FMJ",
+    "shortName": "7.62 FMJ",
+    "caliber": "Caliber762x39",
+    "damage": 63,
+    "armorDamage": 36,
+    "penetrationPower": 26.0,
+    "initialSpeed": 775.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      4,
+      1,
+      0,
+      0
+    ]
   },
   {
     "id": "762x39_sp",
     "name": "7.62x39mm SP",
     "shortName": "7.62 SP",
     "caliber": "Caliber762x39",
-    "damage": 71,
+    "damage": 68,
     "armorDamage": 27,
-    "penetrationPower": 15.0,
-    "initialSpeed": 734.0,
-    "tracer": false
+    "penetrationPower": 20.0,
+    "initialSpeed": 772.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      2,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "762x39_hp",
     "name": "7.62x39mm HP",
     "shortName": "7.62 HP",
     "caliber": "Caliber762x39",
-    "damage": 87,
+    "damage": 80,
     "armorDamage": 24,
     "penetrationPower": 15.0,
     "initialSpeed": 754.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      4,
+      1,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "762x51_m993",
     "name": "7.62x51mm M993",
     "shortName": "M993",
     "caliber": "Caliber762x51",
-    "damage": 67,
+    "damage": 70,
     "armorDamage": 80,
-    "penetrationPower": 70.0,
-    "initialSpeed": 910.0,
-    "tracer": false
+    "penetrationPower": 65.0,
+    "initialSpeed": 930.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      6,
+      6
+    ]
+  },
+  {
+    "id": "762x51_ball_11_long_range",
+    "name": "7.62x51mm Ball 11 Long Range",
+    "shortName": "Ball 11 Long Ran",
+    "caliber": "Caliber762x51",
+    "damage": 95,
+    "armorDamage": 72,
+    "penetrationPower": 63.0,
+    "initialSpeed": 805.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      6,
+      6
+    ]
   },
   {
     "id": "762x51_m61",
     "name": "7.62x51mm M61",
     "shortName": "M61",
     "caliber": "Caliber762x51",
-    "damage": 75,
+    "damage": 73,
     "armorDamage": 75,
-    "penetrationPower": 64.0,
-    "initialSpeed": 849.0,
-    "tracer": false
+    "penetrationPower": 60.0,
+    "initialSpeed": 833.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      6,
+      6
+    ]
   },
   {
-    "id": "762x51_m62",
-    "name": "7.62x51mm M62 Tracer",
-    "shortName": "M62",
+    "id": "762x51_m80a1",
+    "name": "7.62x51mm M80A1",
+    "shortName": "M80A1",
     "caliber": "Caliber762x51",
-    "damage": 79,
-    "armorDamage": 65,
-    "penetrationPower": 54.0,
-    "initialSpeed": 816.0,
-    "tracer": true
+    "damage": 75,
+    "armorDamage": 63,
+    "penetrationPower": 55.0,
+    "initialSpeed": 929.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      6,
+      5
+    ]
   },
   {
     "id": "762x51_m80",
@@ -743,9 +1279,36 @@
     "caliber": "Caliber762x51",
     "damage": 80,
     "armorDamage": 52,
-    "penetrationPower": 41.0,
-    "initialSpeed": 833.0,
-    "tracer": false
+    "penetrationPower": 43.0,
+    "initialSpeed": 820.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      5,
+      5
+    ]
+  },
+  {
+    "id": "762x51_m62",
+    "name": "7.62x51mm M62 Tracer",
+    "shortName": "M62",
+    "caliber": "Caliber762x51",
+    "damage": 82,
+    "armorDamage": 65,
+    "penetrationPower": 42.0,
+    "initialSpeed": 820.0,
+    "tracer": true,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      5,
+      4
+    ]
   },
   {
     "id": "762x51_bcp_fmj",
@@ -754,9 +1317,17 @@
     "caliber": "Caliber762x51",
     "damage": 83,
     "armorDamage": 46,
-    "penetrationPower": 36.0,
+    "penetrationPower": 37.0,
     "initialSpeed": 840.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      4,
+      3,
+      2
+    ]
   },
   {
     "id": "762x51_tcw_sp",
@@ -766,19 +1337,35 @@
     "damage": 85,
     "armorDamage": 40,
     "penetrationPower": 30.0,
-    "initialSpeed": 840.0,
-    "tracer": false
+    "initialSpeed": 800.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      3,
+      2,
+      0
+    ]
   },
   {
     "id": "762x51_ultra_nosler",
     "name": "7.62x51mm Ultra Nosler",
     "shortName": "Nosler",
     "caliber": "Caliber762x51",
-    "damage": 107,
+    "damage": 105,
     "armorDamage": 30,
     "penetrationPower": 15.0,
-    "initialSpeed": 840.0,
-    "tracer": false
+    "initialSpeed": 800.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      4,
+      0,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "762x54r_bs",
@@ -788,8 +1375,35 @@
     "damage": 72,
     "armorDamage": 75,
     "penetrationPower": 70.0,
-    "initialSpeed": 800.0,
-    "tracer": false
+    "initialSpeed": 785.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      6,
+      6
+    ]
+  },
+  {
+    "id": "762x54r_tungsten_carbide_ap",
+    "name": "7.62x54mmR Tungsten Carbide AP",
+    "shortName": "Tungsten Carbide",
+    "caliber": "Caliber762x54R",
+    "damage": 98,
+    "armorDamage": 76,
+    "penetrationPower": 66.0,
+    "initialSpeed": 984.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      6,
+      6
+    ]
   },
   {
     "id": "762x54r_snb",
@@ -799,8 +1413,16 @@
     "damage": 75,
     "armorDamage": 68,
     "penetrationPower": 62.0,
-    "initialSpeed": 870.0,
-    "tracer": false
+    "initialSpeed": 875.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      6,
+      6
+    ]
   },
   {
     "id": "762x54r_bt",
@@ -810,8 +1432,16 @@
     "damage": 78,
     "armorDamage": 65,
     "penetrationPower": 55.0,
-    "initialSpeed": 828.0,
-    "tracer": true
+    "initialSpeed": 875.0,
+    "tracer": true,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      6,
+      5
+    ]
   },
   {
     "id": "762x54r_ps",
@@ -822,18 +1452,15 @@
     "armorDamage": 58,
     "penetrationPower": 45.0,
     "initialSpeed": 875.0,
-    "tracer": false
-  },
-  {
-    "id": "762x54r_t46m",
-    "name": "7.62x54mmR T-46M Tracer",
-    "shortName": "T-46M",
-    "caliber": "Caliber762x54R",
-    "damage": 82,
-    "armorDamage": 50,
-    "penetrationPower": 41.0,
-    "initialSpeed": 800.0,
-    "tracer": true
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      5,
+      5
+    ]
   },
   {
     "id": "762x54r_lps",
@@ -844,7 +1471,34 @@
     "armorDamage": 52,
     "penetrationPower": 42.0,
     "initialSpeed": 865.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      4,
+      3
+    ]
+  },
+  {
+    "id": "762x54r_t46m",
+    "name": "7.62x54mmR T-46M Tracer",
+    "shortName": "T-46M",
+    "caliber": "Caliber762x54R",
+    "damage": 82,
+    "armorDamage": 50,
+    "penetrationPower": 41.0,
+    "initialSpeed": 800.0,
+    "tracer": true,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      4,
+      3
+    ]
   },
   {
     "id": "762x54r_fmj",
@@ -853,9 +1507,36 @@
     "caliber": "Caliber762x54R",
     "damage": 84,
     "armorDamage": 42,
-    "penetrationPower": 25.0,
-    "initialSpeed": 860.0,
-    "tracer": false
+    "penetrationPower": 36.0,
+    "initialSpeed": 760.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      5,
+      3,
+      2
+    ]
+  },
+  {
+    "id": "762x54r_sp_bt",
+    "name": "7.62x54mmR SP BT",
+    "shortName": "54R SP",
+    "caliber": "Caliber762x54R",
+    "damage": 92,
+    "armorDamage": 30,
+    "penetrationPower": 31.0,
+    "initialSpeed": 706.0,
+    "tracer": true,
+    "armorClasses": [
+      6,
+      6,
+      5,
+      4,
+      2,
+      1
+    ]
   },
   {
     "id": "762x54r_hp_bt",
@@ -864,20 +1545,17 @@
     "caliber": "Caliber762x54R",
     "damage": 102,
     "armorDamage": 35,
-    "penetrationPower": 15.0,
-    "initialSpeed": 765.0,
-    "tracer": false
-  },
-  {
-    "id": "762x54r_sp_bt",
-    "name": "7.62x54mmR SP BT",
-    "shortName": "54R SP",
-    "caliber": "Caliber762x54R",
-    "damage": 115,
-    "armorDamage": 30,
-    "penetrationPower": 13.0,
-    "initialSpeed": 735.0,
-    "tracer": false
+    "penetrationPower": 26.0,
+    "initialSpeed": 807.0,
+    "tracer": true,
+    "armorClasses": [
+      6,
+      6,
+      3,
+      1,
+      0,
+      0
+    ]
   },
   {
     "id": "9x39_bp",
@@ -886,9 +1564,17 @@
     "caliber": "Caliber9x39",
     "damage": 58,
     "armorDamage": 68,
-    "penetrationPower": 55.0,
-    "initialSpeed": 310.0,
-    "tracer": false
+    "penetrationPower": 54.0,
+    "initialSpeed": 295.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      6,
+      5
+    ]
   },
   {
     "id": "9x39_sp6",
@@ -897,20 +1583,17 @@
     "caliber": "Caliber9x39",
     "damage": 60,
     "armorDamage": 60,
-    "penetrationPower": 46.0,
+    "penetrationPower": 48.0,
     "initialSpeed": 305.0,
-    "tracer": false
-  },
-  {
-    "id": "9x39_spp",
-    "name": "9x39mm SPP",
-    "shortName": "SPP",
-    "caliber": "Caliber9x39",
-    "damage": 64,
-    "armorDamage": 54,
-    "penetrationPower": 40.0,
-    "initialSpeed": 315.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      5,
+      5
+    ]
   },
   {
     "id": "9x39_pab9",
@@ -919,20 +1602,74 @@
     "caliber": "Caliber9x39",
     "damage": 62,
     "armorDamage": 56,
-    "penetrationPower": 39.0,
+    "penetrationPower": 43.0,
+    "initialSpeed": 320.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      5,
+      4
+    ]
+  },
+  {
+    "id": "9x39_spp",
+    "name": "9x39mm SPP",
+    "shortName": "SPP",
+    "caliber": "Caliber9x39",
+    "damage": 68,
+    "armorDamage": 54,
+    "penetrationPower": 35.0,
     "initialSpeed": 310.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      5,
+      3,
+      2
+    ]
   },
   {
     "id": "9x39_sp5",
     "name": "9x39mm SP-5",
     "shortName": "SP-5",
     "caliber": "Caliber9x39",
-    "damage": 68,
+    "damage": 71,
     "armorDamage": 52,
-    "penetrationPower": 38.0,
+    "penetrationPower": 28.0,
     "initialSpeed": 290.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      5,
+      2,
+      1,
+      0
+    ]
+  },
+  {
+    "id": "9x39_fmj",
+    "name": "9x39mm FMJ",
+    "shortName": "FMJ",
+    "caliber": "Caliber9x39",
+    "damage": 75,
+    "armorDamage": 20,
+    "penetrationPower": 17.0,
+    "initialSpeed": 330.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      5,
+      2,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "366_apm",
@@ -942,8 +1679,16 @@
     "damage": 90,
     "armorDamage": 60,
     "penetrationPower": 42.0,
-    "initialSpeed": 605.0,
-    "tracer": false
+    "initialSpeed": 602.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      5,
+      4
+    ]
   },
   {
     "id": "366_eko",
@@ -954,7 +1699,15 @@
     "armorDamage": 38,
     "penetrationPower": 30.0,
     "initialSpeed": 770.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      3,
+      1,
+      0
+    ]
   },
   {
     "id": "366_fmj",
@@ -964,8 +1717,16 @@
     "damage": 98,
     "armorDamage": 35,
     "penetrationPower": 23.0,
-    "initialSpeed": 592.0,
-    "tracer": false
+    "initialSpeed": 580.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      4,
+      1,
+      0,
+      0
+    ]
   },
   {
     "id": "366_geksa",
@@ -976,18 +1737,34 @@
     "armorDamage": 26,
     "penetrationPower": 14.0,
     "initialSpeed": 550.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      3,
+      0,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "9x19_pbp",
     "name": "9x19mm PBP gzh",
     "shortName": "PBP",
     "caliber": "Caliber9x19PARA",
-    "damage": 52,
+    "damage": 44,
     "armorDamage": 48,
     "penetrationPower": 39.0,
-    "initialSpeed": 470.0,
-    "tracer": false
+    "initialSpeed": 560.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      5,
+      4,
+      3
+    ]
   },
   {
     "id": "9x19_ap63",
@@ -998,7 +1775,15 @@
     "armorDamage": 40,
     "penetrationPower": 30.0,
     "initialSpeed": 392.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      4,
+      2,
+      1
+    ]
   },
   {
     "id": "9x19_gt",
@@ -1020,18 +1805,53 @@
     "armorDamage": 30,
     "penetrationPower": 20.0,
     "initialSpeed": 457.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      2,
+      0,
+      0,
+      0
+    ]
   },
   {
-    "id": "9x19_pso",
-    "name": "9x19mm PSO gzh",
-    "shortName": "PSO",
+    "id": "9x19para_m882",
+    "name": "9x19mm M882",
+    "shortName": "M882",
     "caliber": "Caliber9x19PARA",
     "damage": 56,
-    "armorDamage": 22,
-    "penetrationPower": 10.0,
-    "initialSpeed": 340.0,
-    "tracer": false
+    "armorDamage": 21,
+    "penetrationPower": 18.0,
+    "initialSpeed": 385.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      5,
+      2,
+      0,
+      0,
+      0
+    ]
+  },
+  {
+    "id": "9x19para_t_gzh_tracer",
+    "name": "9x19mm T Gzh (Tracer)",
+    "shortName": "T Gzh",
+    "caliber": "Caliber9x19PARA",
+    "damage": 58,
+    "armorDamage": 18,
+    "penetrationPower": 14.0,
+    "initialSpeed": 365.0,
+    "tracer": true,
+    "armorClasses": [
+      6,
+      3,
+      1,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "9x19_luger",
@@ -1041,8 +1861,35 @@
     "damage": 70,
     "armorDamage": 20,
     "penetrationPower": 10.0,
-    "initialSpeed": 395.0,
-    "tracer": false
+    "initialSpeed": 420.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      2,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  {
+    "id": "9x19_pso",
+    "name": "9x19mm PSO gzh",
+    "shortName": "PSO",
+    "caliber": "Caliber9x19PARA",
+    "damage": 59,
+    "armorDamage": 22,
+    "penetrationPower": 10.0,
+    "initialSpeed": 340.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      2,
+      0,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "9x19_quakemaker",
@@ -1052,8 +1899,16 @@
     "damage": 85,
     "armorDamage": 18,
     "penetrationPower": 8.0,
-    "initialSpeed": 350.0,
-    "tracer": false
+    "initialSpeed": 290.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      1,
+      0,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "9x19_rip",
@@ -1063,41 +1918,54 @@
     "damage": 102,
     "armorDamage": 11,
     "penetrationPower": 2.0,
-    "initialSpeed": 385.0,
-    "tracer": false
+    "initialSpeed": 381.0,
+    "tracer": false,
+    "armorClasses": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "45acp_ap",
     "name": ".45 ACP AP",
     "shortName": ".45 AP",
     "caliber": "Caliber1143x23ACP",
-    "damage": 70,
+    "damage": 66,
     "armorDamage": 48,
     "penetrationPower": 38.0,
-    "initialSpeed": 280.0,
-    "tracer": false
-  },
-  {
-    "id": "45acp_lasermatch",
-    "name": ".45 ACP Lasermatch Tracer",
-    "shortName": "Lasermatch",
-    "caliber": "Caliber1143x23ACP",
-    "damage": 74,
-    "armorDamage": 38,
-    "penetrationPower": 29.0,
-    "initialSpeed": 260.0,
-    "tracer": true
+    "initialSpeed": 299.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      5,
+      4,
+      2
+    ]
   },
   {
     "id": "45acp_match_fmj",
     "name": ".45 ACP Match FMJ",
     "shortName": "Match FMJ",
     "caliber": "Caliber1143x23ACP",
-    "damage": 76,
+    "damage": 72,
     "armorDamage": 36,
     "penetrationPower": 25.0,
-    "initialSpeed": 260.0,
-    "tracer": false
+    "initialSpeed": 340.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      3,
+      1,
+      0,
+      0
+    ]
   },
   {
     "id": "45acp_fmj",
@@ -1111,26 +1979,61 @@
     "tracer": false
   },
   {
+    "id": "45acp_lasermatch",
+    "name": ".45 ACP Lasermatch Tracer",
+    "shortName": "Lasermatch",
+    "caliber": "Caliber1143x23ACP",
+    "damage": 76,
+    "armorDamage": 38,
+    "penetrationPower": 19.0,
+    "initialSpeed": 290.0,
+    "tracer": true,
+    "armorClasses": [
+      6,
+      5,
+      1,
+      0,
+      0,
+      0
+    ]
+  },
+  {
     "id": "45acp_hydrashok",
     "name": ".45 ACP Hydra-Shok",
     "shortName": "Hydra-Shok",
     "caliber": "Caliber1143x23ACP",
-    "damage": 105,
+    "damage": 100,
     "armorDamage": 25,
     "penetrationPower": 13.0,
     "initialSpeed": 274.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      3,
+      0,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "45acp_rip",
     "name": ".45 ACP RIP",
     "shortName": ".45 RIP",
     "caliber": "Caliber1143x23ACP",
-    "damage": 137,
+    "damage": 130,
     "armorDamage": 12,
     "penetrationPower": 3.0,
-    "initialSpeed": 290.0,
-    "tracer": false
+    "initialSpeed": 293.0,
+    "tracer": false,
+    "armorClasses": [
+      1,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "46x30_apsx",
@@ -1140,8 +2043,16 @@
     "damage": 35,
     "armorDamage": 47,
     "penetrationPower": 53.0,
-    "initialSpeed": 720.0,
-    "tracer": false
+    "initialSpeed": 680.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      6,
+      5
+    ]
   },
   {
     "id": "46x30_fmjsx",
@@ -1152,18 +2063,53 @@
     "armorDamage": 41,
     "penetrationPower": 40.0,
     "initialSpeed": 620.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      4,
+      3
+    ]
+  },
+  {
+    "id": "46x30_jsp_sx",
+    "name": "4.6x30mm JSP SX",
+    "shortName": "JSP SX",
+    "caliber": "Caliber46x30",
+    "damage": 46,
+    "armorDamage": 37,
+    "penetrationPower": 32.0,
+    "initialSpeed": 579.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      4,
+      2,
+      1
+    ]
   },
   {
     "id": "46x30_subsonicsx",
     "name": "4.6x30mm Subsonic SX",
     "shortName": "Subsonic SX",
     "caliber": "Caliber46x30",
-    "damage": 45,
+    "damage": 52,
     "armorDamage": 38,
-    "penetrationPower": 36.0,
+    "penetrationPower": 23.0,
     "initialSpeed": 290.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      3,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "46x30_actionsx",
@@ -1173,8 +2119,16 @@
     "damage": 65,
     "armorDamage": 25,
     "penetrationPower": 18.0,
-    "initialSpeed": 700.0,
-    "tracer": false
+    "initialSpeed": 690.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      5,
+      1,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "57x28_ss190",
@@ -1185,40 +2139,53 @@
     "armorDamage": 43,
     "penetrationPower": 37.0,
     "initialSpeed": 715.0,
-    "tracer": false
-  },
-  {
-    "id": "57x28_sb193",
-    "name": "5.7x28mm SB193 Subsonic",
-    "shortName": "SB193",
-    "caliber": "Caliber57x28",
-    "damage": 54,
-    "armorDamage": 39,
-    "penetrationPower": 35.0,
-    "initialSpeed": 305.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      5,
+      4,
+      3
+    ]
   },
   {
     "id": "57x28_l191",
     "name": "5.7x28mm L191 Tracer",
     "shortName": "L191",
     "caliber": "Caliber57x28",
-    "damage": 58,
+    "damage": 53,
     "armorDamage": 36,
     "penetrationPower": 33.0,
-    "initialSpeed": 640.0,
-    "tracer": true
+    "initialSpeed": 715.0,
+    "tracer": true,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      3,
+      2,
+      2
+    ]
   },
   {
-    "id": "57x28_ss198lf",
-    "name": "5.7x28mm SS198LF",
-    "shortName": "SS198LF",
+    "id": "57x28_sb193",
+    "name": "5.7x28mm SB193 Subsonic",
+    "shortName": "SB193",
     "caliber": "Caliber57x28",
-    "damage": 56,
-    "armorDamage": 30,
-    "penetrationPower": 22.0,
-    "initialSpeed": 700.0,
-    "tracer": false
+    "damage": 59,
+    "armorDamage": 39,
+    "penetrationPower": 27.0,
+    "initialSpeed": 299.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      5,
+      2,
+      1,
+      0
+    ]
   },
   {
     "id": "57x28_ss197sr",
@@ -1227,9 +2194,36 @@
     "caliber": "Caliber57x28",
     "damage": 62,
     "armorDamage": 28,
-    "penetrationPower": 20.0,
-    "initialSpeed": 595.0,
-    "tracer": false
+    "penetrationPower": 25.0,
+    "initialSpeed": 594.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      4,
+      1,
+      0,
+      0
+    ]
+  },
+  {
+    "id": "57x28_ss198lf",
+    "name": "5.7x28mm SS198LF",
+    "shortName": "SS198LF",
+    "caliber": "Caliber57x28",
+    "damage": 70,
+    "armorDamage": 30,
+    "penetrationPower": 17.0,
+    "initialSpeed": 792.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      4,
+      1,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "57x28_r37x",
@@ -1239,8 +2233,16 @@
     "damage": 81,
     "armorDamage": 18,
     "penetrationPower": 11.0,
-    "initialSpeed": 600.0,
-    "tracer": false
+    "initialSpeed": 724.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      1,
+      0,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "57x28_r37f",
@@ -1250,63 +2252,130 @@
     "damage": 98,
     "armorDamage": 15,
     "penetrationPower": 8.0,
-    "initialSpeed": 630.0,
-    "tracer": false
+    "initialSpeed": 729.0,
+    "tracer": false,
+    "armorClasses": [
+      4,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "9x21_7n42",
     "name": "9x21mm 7N42 \"Zubilo\"",
     "shortName": "7N42",
     "caliber": "Caliber9x21",
-    "damage": 60,
+    "damage": 49,
     "armorDamage": 46,
-    "penetrationPower": 39.0,
-    "initialSpeed": 430.0,
-    "tracer": false
+    "penetrationPower": 38.0,
+    "initialSpeed": 400.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      5,
+      4,
+      2
+    ]
   },
   {
     "id": "9x21_7bt3",
     "name": "9x21mm 7BT3 Tracer",
     "shortName": "7BT3",
     "caliber": "Caliber9x21",
-    "damage": 63,
+    "damage": 52,
     "armorDamage": 45,
-    "penetrationPower": 39.0,
+    "penetrationPower": 32.0,
     "initialSpeed": 410.0,
-    "tracer": true
-  },
-  {
-    "id": "9x21_ps",
-    "name": "9x21mm PS gzh",
-    "shortName": "9x21 PS",
-    "caliber": "Caliber9x21",
-    "damage": 65,
-    "armorDamage": 42,
-    "penetrationPower": 35.0,
-    "initialSpeed": 410.0,
-    "tracer": false
-  },
-  {
-    "id": "9x21_p",
-    "name": "9x21mm P gzh",
-    "shortName": "9x21 P",
-    "caliber": "Caliber9x21",
-    "damage": 70,
-    "armorDamage": 36,
-    "penetrationPower": 26.0,
-    "initialSpeed": 420.0,
-    "tracer": false
+    "tracer": true,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      4,
+      3,
+      1
+    ]
   },
   {
     "id": "9x21_7u4",
     "name": "9x21mm 7U4 Subsonic",
     "shortName": "7U4",
     "caliber": "Caliber9x21",
-    "damage": 73,
+    "damage": 53,
     "armorDamage": 33,
-    "penetrationPower": 23.0,
+    "penetrationPower": 27.0,
     "initialSpeed": 300.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      5,
+      3,
+      1,
+      0
+    ]
+  },
+  {
+    "id": "9x21_ps",
+    "name": "9x21mm PS gzh",
+    "shortName": "9x21 PS",
+    "caliber": "Caliber9x21",
+    "damage": 59,
+    "armorDamage": 42,
+    "penetrationPower": 22.0,
+    "initialSpeed": 410.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      3,
+      1,
+      0,
+      0
+    ]
+  },
+  {
+    "id": "9x21_p",
+    "name": "9x21mm P gzh",
+    "shortName": "9x21 P",
+    "caliber": "Caliber9x21",
+    "damage": 65,
+    "armorDamage": 36,
+    "penetrationPower": 18.0,
+    "initialSpeed": 413.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      3,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  {
+    "id": "9x21_pe_gzh",
+    "name": "9x21mm PE Gzh",
+    "shortName": "PE Gzh",
+    "caliber": "Caliber9x21",
+    "damage": 80,
+    "armorDamage": 18,
+    "penetrationPower": 15.0,
+    "initialSpeed": 415.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      2,
+      0,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "9x18_pbm",
@@ -1317,7 +2386,15 @@
     "armorDamage": 32,
     "penetrationPower": 28.0,
     "initialSpeed": 519.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      5,
+      1,
+      0,
+      0
+    ]
   },
   {
     "id": "9x18_pmm",
@@ -1328,7 +2405,15 @@
     "armorDamage": 33,
     "penetrationPower": 24.0,
     "initialSpeed": 420.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      4,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "9x18_bzht",
@@ -1339,7 +2424,34 @@
     "armorDamage": 28,
     "penetrationPower": 18.0,
     "initialSpeed": 325.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      5,
+      1,
+      0,
+      0,
+      0
+    ]
+  },
+  {
+    "id": "9x18pm_rg028_gzh",
+    "name": "9x18mm RG028 gzh",
+    "shortName": "RG028 gzh",
+    "caliber": "Caliber9x18PM",
+    "damage": 65,
+    "armorDamage": 18,
+    "penetrationPower": 13.0,
+    "initialSpeed": 330.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      2,
+      0,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "9x18_pst",
@@ -1350,7 +2462,15 @@
     "armorDamage": 26,
     "penetrationPower": 12.0,
     "initialSpeed": 298.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      1,
+      0,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "9x18_ppt",
@@ -1359,42 +2479,150 @@
     "caliber": "Caliber9x18PM",
     "damage": 59,
     "armorDamage": 23,
-    "penetrationPower": 12.0,
-    "initialSpeed": 315.0,
-    "tracer": true
+    "penetrationPower": 8.0,
+    "initialSpeed": 301.0,
+    "tracer": true,
+    "armorClasses": [
+      5,
+      1,
+      0,
+      0,
+      0,
+      0
+    ]
   },
   {
-    "id": "9x18_psv",
-    "name": "9x18mm PSV",
-    "shortName": "PSV",
+    "id": "9x18pm_ppe_gzh",
+    "name": "9x18mm PPE gzh",
+    "shortName": "PPE gzh",
     "caliber": "Caliber9x18PM",
-    "damage": 77,
+    "damage": 61,
     "armorDamage": 18,
-    "penetrationPower": 10.0,
-    "initialSpeed": 280.0,
-    "tracer": false
+    "penetrationPower": 7.0,
+    "initialSpeed": 297.0,
+    "tracer": false,
+    "armorClasses": [
+      4,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  {
+    "id": "9x18pm_prs_gs",
+    "name": "9x18mm PRS gs",
+    "shortName": "PRS gs",
+    "caliber": "Caliber9x18PM",
+    "damage": 58,
+    "armorDamage": 18,
+    "penetrationPower": 6.0,
+    "initialSpeed": 302.0,
+    "tracer": false,
+    "armorClasses": [
+      3,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  {
+    "id": "9x18pm_ps_gs_ppo",
+    "name": "9x18mm PS gs PPO",
+    "shortName": "PS gs PPO",
+    "caliber": "Caliber9x18PM",
+    "damage": 55,
+    "armorDamage": 18,
+    "penetrationPower": 6.0,
+    "initialSpeed": 330.0,
+    "tracer": false,
+    "armorClasses": [
+      3,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  {
+    "id": "9x18pm_pso_gzh",
+    "name": "9x18mm PSO gzh",
+    "shortName": "PSO gzh",
+    "caliber": "Caliber9x18PM",
+    "damage": 54,
+    "armorDamage": 18,
+    "penetrationPower": 5.0,
+    "initialSpeed": 315.0,
+    "tracer": false,
+    "armorClasses": [
+      2,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "9x18_p",
     "name": "9x18mm P gzh",
     "shortName": "9x18 P",
     "caliber": "Caliber9x18PM",
-    "damage": 58,
+    "damage": 50,
     "armorDamage": 19,
-    "penetrationPower": 8.0,
-    "initialSpeed": 315.0,
-    "tracer": false
+    "penetrationPower": 5.0,
+    "initialSpeed": 302.0,
+    "tracer": false,
+    "armorClasses": [
+      2,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  {
+    "id": "9x18_psv",
+    "name": "9x18mm PSV",
+    "shortName": "PSV",
+    "caliber": "Caliber9x18PM",
+    "damage": 69,
+    "armorDamage": 18,
+    "penetrationPower": 3.0,
+    "initialSpeed": 280.0,
+    "tracer": false,
+    "armorClasses": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "9x18_sp7",
     "name": "9x18mm SP7 gzh",
     "shortName": "SP7",
     "caliber": "Caliber9x18PM",
-    "damage": 70,
+    "damage": 77,
     "armorDamage": 14,
-    "penetrationPower": 5.0,
+    "penetrationPower": 2.0,
     "initialSpeed": 420.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "9x18_sp8",
@@ -1403,9 +2631,74 @@
     "caliber": "Caliber9x18PM",
     "damage": 67,
     "armorDamage": 13,
-    "penetrationPower": 5.0,
+    "penetrationPower": 1.0,
     "initialSpeed": 250.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  {
+    "id": "762x25tt_m995",
+    "name": "7.62x25mm TT M995",
+    "shortName": "M995",
+    "caliber": "Caliber762x25TT",
+    "damage": 32,
+    "armorDamage": 43,
+    "penetrationPower": 37.0,
+    "initialSpeed": 940.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      5,
+      4,
+      3
+    ]
+  },
+  {
+    "id": "762x25tt_m855a1",
+    "name": "7.62x25mm TT M855A1",
+    "shortName": "M855A1",
+    "caliber": "Caliber762x25TT",
+    "damage": 34,
+    "armorDamage": 36,
+    "penetrationPower": 31.0,
+    "initialSpeed": 900.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      5,
+      3,
+      2,
+      0
+    ]
+  },
+  {
+    "id": "762x25tt_m856a1_tracer",
+    "name": "7.62x25mm TT M856A1 (Tracer)",
+    "shortName": "M856A1",
+    "caliber": "Caliber762x25TT",
+    "damage": 36,
+    "armorDamage": 31,
+    "penetrationPower": 27.0,
+    "initialSpeed": 900.0,
+    "tracer": true,
+    "armorClasses": [
+      6,
+      6,
+      5,
+      3,
+      1,
+      0
+    ]
   },
   {
     "id": "762x25_pst",
@@ -1416,18 +2709,34 @@
     "armorDamage": 34,
     "penetrationPower": 25.0,
     "initialSpeed": 430.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      4,
+      1,
+      0
+    ]
   },
   {
     "id": "762x25_pt",
     "name": "7.62x25mm TT PT gzh Tracer",
     "shortName": "TT PT",
     "caliber": "Caliber762x25TT",
-    "damage": 60,
+    "damage": 55,
     "armorDamage": 28,
     "penetrationPower": 18.0,
     "initialSpeed": 415.0,
-    "tracer": true
+    "tracer": true,
+    "armorClasses": [
+      6,
+      4,
+      0,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "762x25_p",
@@ -1437,8 +2746,35 @@
     "damage": 58,
     "armorDamage": 25,
     "penetrationPower": 14.0,
-    "initialSpeed": 420.0,
-    "tracer": false
+    "initialSpeed": 430.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      3,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  {
+    "id": "762x25tt_akbs",
+    "name": "7.62x25mm TT akbs",
+    "shortName": "akbs",
+    "caliber": "Caliber762x25TT",
+    "damage": 58,
+    "armorDamage": 18,
+    "penetrationPower": 12.0,
+    "initialSpeed": 425.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      2,
+      0,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "762x25_fmj43",
@@ -1447,9 +2783,17 @@
     "caliber": "Caliber762x25TT",
     "damage": 60,
     "armorDamage": 24,
-    "penetrationPower": 12.0,
-    "initialSpeed": 425.0,
-    "tracer": false
+    "penetrationPower": 11.0,
+    "initialSpeed": 427.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      1,
+      0,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "762x25_lrn",
@@ -1458,9 +2802,17 @@
     "caliber": "Caliber762x25TT",
     "damage": 64,
     "armorDamage": 19,
-    "penetrationPower": 9.0,
-    "initialSpeed": 410.0,
-    "tracer": false
+    "penetrationPower": 8.0,
+    "initialSpeed": 375.0,
+    "tracer": false,
+    "armorClasses": [
+      5,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "762x25_lrnpc",
@@ -1469,9 +2821,17 @@
     "caliber": "Caliber762x25TT",
     "damage": 66,
     "armorDamage": 18,
-    "penetrationPower": 8.0,
-    "initialSpeed": 415.0,
-    "tracer": false
+    "penetrationPower": 7.0,
+    "initialSpeed": 385.0,
+    "tracer": false,
+    "armorClasses": [
+      5,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "12g_ap20",
@@ -1482,7 +2842,15 @@
     "armorDamage": 65,
     "penetrationPower": 37.0,
     "initialSpeed": 510.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      5,
+      4,
+      3
+    ]
   },
   {
     "id": "12g_flechette",
@@ -1493,7 +2861,34 @@
     "armorDamage": 26,
     "penetrationPower": 31.0,
     "initialSpeed": 320.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      5,
+      5,
+      5
+    ]
+  },
+  {
+    "id": "12g_shell_with_50_bmg_tracer",
+    "name": "12/70 Shell With .50 BMG (Tracer)",
+    "shortName": "Shell With .50 B",
+    "caliber": "Caliber12g",
+    "damage": 197,
+    "armorDamage": 30,
+    "penetrationPower": 26.0,
+    "initialSpeed": 410.0,
+    "tracer": true,
+    "armorClasses": [
+      6,
+      6,
+      5,
+      3,
+      1,
+      0
+    ]
   },
   {
     "id": "12g_piranha",
@@ -1502,9 +2897,17 @@
     "caliber": "Caliber12g",
     "damage": 250,
     "armorDamage": 24,
-    "penetrationPower": 25.0,
-    "initialSpeed": 340.0,
-    "tracer": false
+    "penetrationPower": 24.0,
+    "initialSpeed": 310.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      5,
+      4,
+      4,
+      4
+    ]
   },
   {
     "id": "12g_ftx_custom",
@@ -1514,19 +2917,35 @@
     "damage": 183,
     "armorDamage": 50,
     "penetrationPower": 20.0,
-    "initialSpeed": 485.0,
-    "tracer": false
+    "initialSpeed": 480.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      2,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "12g_poleva6u",
     "name": "12/70 Poleva-6u Slug",
     "shortName": "Poleva-6u",
     "caliber": "Caliber12g",
-    "damage": 187,
+    "damage": 150,
     "armorDamage": 50,
-    "penetrationPower": 17.0,
+    "penetrationPower": 20.0,
     "initialSpeed": 430.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      2,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "12g_dualsabot",
@@ -1536,8 +2955,35 @@
     "damage": 170,
     "armorDamage": 42,
     "penetrationPower": 17.0,
-    "initialSpeed": 385.0,
-    "tracer": false
+    "initialSpeed": 415.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      5,
+      2,
+      0,
+      0,
+      0
+    ]
+  },
+  {
+    "id": "12g_poleva3",
+    "name": "12/70 Poleva-3 Slug",
+    "shortName": "Poleva-3",
+    "caliber": "Caliber12g",
+    "damage": 140,
+    "armorDamage": 40,
+    "penetrationPower": 17.0,
+    "initialSpeed": 410.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      5,
+      1,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "12g_leadslug",
@@ -1547,8 +2993,16 @@
     "damage": 167,
     "armorDamage": 48,
     "penetrationPower": 15.0,
-    "initialSpeed": 410.0,
-    "tracer": false
+    "initialSpeed": 370.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      4,
+      1,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "12g_coppersabot",
@@ -1558,19 +3012,16 @@
     "damage": 206,
     "armorDamage": 46,
     "penetrationPower": 14.0,
-    "initialSpeed": 440.0,
-    "tracer": false
-  },
-  {
-    "id": "12g_poleva3",
-    "name": "12/70 Poleva-3 Slug",
-    "shortName": "Poleva-3",
-    "caliber": "Caliber12g",
-    "damage": 140,
-    "armorDamage": 40,
-    "penetrationPower": 14.0,
-    "initialSpeed": 420.0,
-    "tracer": false
+    "initialSpeed": 442.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      3,
+      1,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "12g_grizzly40",
@@ -1581,7 +3032,15 @@
     "armorDamage": 42,
     "penetrationPower": 12.0,
     "initialSpeed": 390.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      2,
+      0,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "12g_superformance",
@@ -1591,41 +3050,16 @@
     "damage": 220,
     "armorDamage": 12,
     "penetrationPower": 5.0,
-    "initialSpeed": 450.0,
-    "tracer": false
-  },
-  {
-    "id": "12g_rip",
-    "name": "12/70 RIP Slug",
-    "shortName": "12g RIP",
-    "caliber": "Caliber12g",
-    "damage": 265,
-    "armorDamage": 11,
-    "penetrationPower": 2.0,
-    "initialSpeed": 410.0,
-    "tracer": false
-  },
-  {
-    "id": "12g_magnum85",
-    "name": "12/70 8.5mm Magnum Buckshot (8 Pellets)",
-    "shortName": "8.5mm Mag",
-    "caliber": "Caliber12g",
-    "damage": 400,
-    "armorDamage": 26,
-    "penetrationPower": 3.0,
-    "initialSpeed": 385.0,
-    "tracer": false
-  },
-  {
-    "id": "12g_buck7mm",
-    "name": "12/70 7mm Buckshot (8 Pellets)",
-    "shortName": "7mm Buck",
-    "caliber": "Caliber12g",
-    "damage": 312,
-    "armorDamage": 26,
-    "penetrationPower": 3.0,
-    "initialSpeed": 415.0,
-    "tracer": false
+    "initialSpeed": 594.0,
+    "tracer": false,
+    "armorClasses": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "12g_express65",
@@ -1636,18 +3070,167 @@
     "armorDamage": 26,
     "penetrationPower": 3.0,
     "initialSpeed": 430.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      3,
+      3,
+      3,
+      3,
+      3,
+      3
+    ]
+  },
+  {
+    "id": "12g_buck7mm",
+    "name": "12/70 7mm Buckshot (8 Pellets)",
+    "shortName": "7mm Buck",
+    "caliber": "Caliber12g",
+    "damage": 312,
+    "armorDamage": 26,
+    "penetrationPower": 3.0,
+    "initialSpeed": 415.0,
+    "tracer": false,
+    "armorClasses": [
+      3,
+      3,
+      3,
+      3,
+      3,
+      3
+    ]
+  },
+  {
+    "id": "12g_magnum85",
+    "name": "12/70 8.5mm Magnum Buckshot (8 Pellets)",
+    "shortName": "8.5mm Mag",
+    "caliber": "Caliber12g",
+    "damage": 400,
+    "armorDamage": 26,
+    "penetrationPower": 2.0,
+    "initialSpeed": 385.0,
+    "tracer": false,
+    "armorClasses": [
+      3,
+      3,
+      3,
+      3,
+      3,
+      3
+    ]
+  },
+  {
+    "id": "12g_rip",
+    "name": "12/70 RIP Slug",
+    "shortName": "12g RIP",
+    "caliber": "Caliber12g",
+    "damage": 265,
+    "armorDamage": 11,
+    "penetrationPower": 2.0,
+    "initialSpeed": 410.0,
+    "tracer": false,
+    "armorClasses": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "12g_buck525",
     "name": "12/70 5.25mm Buckshot (15 Pellets)",
     "shortName": "5.25mm Buck",
     "caliber": "Caliber12g",
-    "damage": 450,
+    "damage": 296,
     "armorDamage": 15,
     "penetrationPower": 1.0,
     "initialSpeed": 330.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      3,
+      3,
+      3,
+      3,
+      3,
+      3
+    ]
+  },
+  {
+    "id": "20g_tss_armor_piercing_slug",
+    "name": "20/70 TSS Armor Piercing Slug",
+    "shortName": "TSS Armor Pierci",
+    "caliber": "Caliber20g",
+    "damage": 155,
+    "armorDamage": 34,
+    "penetrationPower": 30.0,
+    "initialSpeed": 482.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      3,
+      1,
+      0
+    ]
+  },
+  {
+    "id": "20g_dangerous_game_slug",
+    "name": "20/70 Dangerous Game Slug",
+    "shortName": "Dangerous Game S",
+    "caliber": "Caliber20g",
+    "damage": 143,
+    "armorDamage": 29,
+    "penetrationPower": 25.0,
+    "initialSpeed": 476.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      5,
+      3,
+      1,
+      0
+    ]
+  },
+  {
+    "id": "20g_flechette",
+    "name": "20/70 flechette",
+    "shortName": "flechette",
+    "caliber": "Caliber20g",
+    "damage": 160,
+    "armorDamage": 28,
+    "penetrationPower": 24.0,
+    "initialSpeed": 400.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      5,
+      4,
+      4,
+      4
+    ]
+  },
+  {
+    "id": "20g_slug_poleva_6u",
+    "name": "20/70 Slug \"Poleva-6u\"",
+    "shortName": "Slug \"Poleva-6u\"",
+    "caliber": "Caliber20g",
+    "damage": 135,
+    "armorDamage": 20,
+    "penetrationPower": 17.0,
+    "initialSpeed": 445.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      5,
+      1,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "20g_star",
@@ -1657,8 +3240,16 @@
     "damage": 154,
     "armorDamage": 44,
     "penetrationPower": 16.0,
-    "initialSpeed": 420.0,
-    "tracer": false
+    "initialSpeed": 415.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      5,
+      1,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "20g_poleva6m",
@@ -1678,9 +3269,17 @@
     "caliber": "Caliber20g",
     "damage": 120,
     "armorDamage": 38,
-    "penetrationPower": 12.0,
-    "initialSpeed": 420.0,
-    "tracer": false
+    "penetrationPower": 14.0,
+    "initialSpeed": 425.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      2,
+      0,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "20g_devastator",
@@ -1690,19 +3289,54 @@
     "damage": 198,
     "armorDamage": 12,
     "penetrationPower": 5.0,
-    "initialSpeed": 435.0,
-    "tracer": false
+    "initialSpeed": 405.0,
+    "tracer": false,
+    "armorClasses": [
+      1,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  {
+    "id": "20g_7_3mm_buckshot",
+    "name": "20/70 7.3mm Buckshot",
+    "shortName": "7.3mm Buckshot",
+    "caliber": "Caliber20g",
+    "damage": 207,
+    "armorDamage": 18,
+    "penetrationPower": 3.0,
+    "initialSpeed": 475.0,
+    "tracer": false,
+    "armorClasses": [
+      3,
+      3,
+      3,
+      3,
+      3,
+      3
+    ]
   },
   {
     "id": "20g_buck75",
     "name": "20/70 7.5mm Buckshot (8 Pellets)",
     "shortName": "7.5mm Buck",
     "caliber": "Caliber20g",
-    "damage": 280,
+    "damage": 200,
     "armorDamage": 22,
     "penetrationPower": 3.0,
-    "initialSpeed": 410.0,
-    "tracer": false
+    "initialSpeed": 430.0,
+    "tracer": false,
+    "armorClasses": [
+      3,
+      3,
+      3,
+      3,
+      3,
+      3
+    ]
   },
   {
     "id": "20g_buck62",
@@ -1712,8 +3346,16 @@
     "damage": 176,
     "armorDamage": 18,
     "penetrationPower": 2.0,
-    "initialSpeed": 390.0,
-    "tracer": false
+    "initialSpeed": 410.0,
+    "tracer": false,
+    "armorClasses": [
+      3,
+      3,
+      3,
+      3,
+      3,
+      3
+    ]
   },
   {
     "id": "20g_buck56",
@@ -1723,8 +3365,16 @@
     "damage": 208,
     "armorDamage": 15,
     "penetrationPower": 1.0,
-    "initialSpeed": 380.0,
-    "tracer": false
+    "initialSpeed": 340.0,
+    "tracer": false,
+    "armorClasses": [
+      3,
+      3,
+      3,
+      3,
+      3,
+      3
+    ]
   },
   {
     "id": "23x75_barrikada",
@@ -1735,7 +3385,15 @@
     "armorDamage": 80,
     "penetrationPower": 39.0,
     "initialSpeed": 420.0,
-    "tracer": false
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      4,
+      4
+    ]
   },
   {
     "id": "23x75_shrapnel10",
@@ -1745,19 +3403,35 @@
     "damage": 696,
     "armorDamage": 30,
     "penetrationPower": 11.0,
-    "initialSpeed": 400.0,
-    "tracer": false
+    "initialSpeed": 270.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      4,
+      3,
+      3,
+      3,
+      3
+    ]
   },
   {
     "id": "23x75_shrapnel25",
     "name": "23x75mm Shrapnel-25 Buckshot",
     "shortName": "Shrapnel-25",
     "caliber": "Caliber23x75",
-    "damage": 696,
+    "damage": 624,
     "armorDamage": 30,
     "penetrationPower": 10.0,
-    "initialSpeed": 380.0,
-    "tracer": false
+    "initialSpeed": 375.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      4,
+      3,
+      3,
+      3,
+      3
+    ]
   },
   {
     "id": "23x75_zvezda",
@@ -1767,8 +3441,16 @@
     "damage": 0,
     "armorDamage": 0,
     "penetrationPower": 0.0,
-    "initialSpeed": 400.0,
-    "tracer": true
+    "initialSpeed": 80.0,
+    "tracer": true,
+    "armorClasses": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
   },
   {
     "id": "40x46_m433",
@@ -1779,6 +3461,17 @@
     "armorDamage": 60,
     "penetrationPower": 45.0,
     "initialSpeed": 76.0,
+    "tracer": false
+  },
+  {
+    "id": "40x46_m576",
+    "name": "40x46mm M576 Buckshot Round",
+    "shortName": "M576 Buck",
+    "caliber": "Caliber40x46",
+    "damage": 300,
+    "armorDamage": 25,
+    "penetrationPower": 12.0,
+    "initialSpeed": 269.0,
     "tracer": false
   },
   {
@@ -1823,17 +3516,6 @@
     "armorDamage": 20,
     "penetrationPower": 5.0,
     "initialSpeed": 76.0,
-    "tracer": false
-  },
-  {
-    "id": "40x46_m576",
-    "name": "40x46mm M576 Buckshot Round",
-    "shortName": "M576 Buck",
-    "caliber": "Caliber40x46",
-    "damage": 300,
-    "armorDamage": 25,
-    "penetrationPower": 12.0,
-    "initialSpeed": 269.0,
     "tracer": false
   },
   {
@@ -1923,5 +3605,119 @@
     "penetrationPower": 83.0,
     "initialSpeed": 850.0,
     "tracer": true
+  },
+  {
+    "id": "127x99_m903_slap",
+    "name": ".50 BMG M903 SLAP",
+    "shortName": "M903 SLAP",
+    "caliber": "Caliber127x99",
+    "damage": 160,
+    "armorDamage": 88,
+    "penetrationPower": 115.0,
+    "initialSpeed": 1220.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      6,
+      6
+    ]
+  },
+  {
+    "id": "127x99_m33",
+    "name": ".50 BMG M33",
+    "shortName": "M33",
+    "caliber": "Caliber127x99",
+    "damage": 190,
+    "armorDamage": 64,
+    "penetrationPower": 56.0,
+    "initialSpeed": 887.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      6,
+      5
+    ]
+  },
+  {
+    "id": "127x99_m21",
+    "name": ".50 BMG M21",
+    "shortName": "M21",
+    "caliber": "Caliber127x99",
+    "damage": 220,
+    "armorDamage": 52,
+    "penetrationPower": 45.0,
+    "initialSpeed": 867.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      5,
+      4
+    ]
+  },
+  {
+    "id": "127x99_hp",
+    "name": ".50 BMG HP",
+    "shortName": "HP",
+    "caliber": "Caliber127x99",
+    "damage": 260,
+    "armorDamage": 39,
+    "penetrationPower": 34.0,
+    "initialSpeed": 880.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      4,
+      3,
+      1
+    ]
+  },
+  {
+    "id": "308me_me",
+    "name": ".308 Marlin Express ME",
+    "shortName": "ME",
+    "caliber": "Caliber308ME",
+    "damage": 80,
+    "armorDamage": 48,
+    "penetrationPower": 42.0,
+    "initialSpeed": 838.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      6,
+      6,
+      4,
+      3
+    ]
+  },
+  {
+    "id": "308me_me_lokt",
+    "name": ".308 Marlin Express ME LOKT",
+    "shortName": "ME LOKT",
+    "caliber": "Caliber308ME",
+    "damage": 96,
+    "armorDamage": 28,
+    "penetrationPower": 24.0,
+    "initialSpeed": 838.0,
+    "tracer": false,
+    "armorClasses": [
+      6,
+      6,
+      3,
+      2,
+      0,
+      0
+    ]
   }
 ]

@@ -1,15 +1,16 @@
-; Script de instalador Inno Setup para TTC (Tactical Tarkov Companion) v1.4.0
+; Script de instalador Inno Setup para TTC (Tactical Tarkov Companion) v1.5.0
 [Setup]
 AppId={{8E9A3F21-6C4D-4F18-9A1E-7C52B8D3E110}
 AppName=TTC (Tactical Tarkov Companion)
-AppVersion=1.4.0
-AppVerName=TTC (Tactical Tarkov Companion) v1.4.0
+AppVersion=1.5.0
+AppVerName=TTC (Tactical Tarkov Companion) v1.5.0
 AppPublisher=Patoma89
 AppPublisherURL=https://github.com/Patoma89/TarkovScope
 AppSupportURL=https://github.com/Patoma89/TarkovScope/issues
 AppUpdatesURL=https://github.com/Patoma89/TarkovScope/releases
 DefaultDirName={localappdata}\TTC
 DefaultGroupName=TTC (Tactical Tarkov Companion)
+UsePreviousAppDir=yes
 DisableDirPage=no
 DisableProgramGroupPage=yes
 DirExistsWarning=no
@@ -17,7 +18,7 @@ CloseApplications=yes
 CloseApplicationsFilter=TTC.exe
 PrivilegesRequired=lowest
 OutputDir=dist_installer
-OutputBaseFilename=TTC_Setup_v1.4.0
+OutputBaseFilename=TTC_Setup_v1.5.0
 SetupIconFile=ttc.ico
 UninstallDisplayIcon={app}\TTC.exe
 Compression=lzma2/normal
@@ -36,6 +37,8 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Source: "dist\TTC.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "ttc.ico"; DestDir: "{app}"; Flags: ignoreversion
 Source: "cache\avatars\*"; DestDir: "{app}\cache\avatars"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "cache\boss_maps\*"; DestDir: "{app}\cache\boss_maps"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "cache\boss_stickers\*"; DestDir: "{app}\cache\boss_stickers"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "cache\gear\*"; DestDir: "{app}\cache\gear"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "cache\keys\*"; DestDir: "{app}\cache\keys"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "cache\maps\*"; DestDir: "{app}\cache\maps"; Flags: ignoreversion recursesubdirs createallsubdirs
@@ -55,6 +58,9 @@ Name: "{autodesktop}\TTC (Tactical Tarkov Companion)"; Filename: "{app}\TTC.exe"
 Filename: "{app}\TTC.exe"; Description: "{cm:LaunchProgram,TTC (Tactical Tarkov Companion)}"; Flags: nowait postinstall skipifsilent
 
 [Code]
+var
+  ExistingInstallDir: string;
+
 function SetEnvironmentVariableNull(lpName: string; lpValue: LongWord): BOOL;
   external 'SetEnvironmentVariableW@kernel32.dll stdcall';
 
@@ -96,30 +102,6 @@ begin
             (Pos('\WINDOWS\TEMP\', UpperDir) > 0) or
             ((TempEnv <> '\') and (Pos(TempEnv, UpperDir) = 1)) or
             ((TmpEnv <> '\') and (Pos(TmpEnv, UpperDir) = 1));
-end;
-
-procedure InitializeWizard();
-begin
-  { Nunca reutilizar una ruta previa ubicada dentro de Temp; si ocurre, volver a LocalAppData\TTC }
-  if IsInsideTempPath(WizardForm.DirEdit.Text) then
-    WizardForm.DirEdit.Text := ExpandConstant('{localappdata}\TTC');
-end;
-
-function NextButtonClick(CurPageID: Integer): Boolean;
-begin
-  Result := True;
-  if CurPageID = wpSelectDir then
-  begin
-    if IsInsideTempPath(WizardDirValue) then
-    begin
-      MsgBox(
-        'No se recomienda instalar TTC dentro de una carpeta temporal (Temp), porque Windows o un limpiador puede borrar la aplicación.' + #13#10#13#10 +
-        'Por favor elegí otra carpeta (por ejemplo: ' + ExpandConstant('{localappdata}\TTC') + ').',
-        mbError, MB_OK
-      );
-      Result := False;
-    end;
-  end;
 end;
 
 function ExtractExePath(const RawCmd: string): string;
@@ -174,6 +156,88 @@ begin
   if (InstallLoc = '') and (UninstExe <> '') then
     InstallLoc := ExtractFileDir(UninstExe);
   Result := (UninstExe <> '') and FileExists(UninstExe);
+end;
+
+function FindExistingInstallDir(): string;
+var
+  UninstExe: string;
+  InstallLoc: string;
+  DefaultLocal: string;
+begin
+  Result := '';
+
+  { 1. Instalación per-user existente en HKCU }
+  if ReadUninstallEntry(HKCU, UninstExe, InstallLoc) then
+  begin
+    if (InstallLoc <> '') and (not IsInsideTempPath(InstallLoc)) and DirExists(InstallLoc) then
+    begin
+      Result := InstallLoc;
+      exit;
+    end;
+  end;
+
+  { 2. Instalación portable / previa en %LOCALAPPDATA%\TTC con TTC.exe presente }
+  DefaultLocal := ExpandConstant('{localappdata}\TTC');
+  if FileExists(AddBackslash(DefaultLocal) + 'TTC.exe') and (not IsInsideTempPath(DefaultLocal)) then
+  begin
+    Result := DefaultLocal;
+    exit;
+  end;
+
+  { 3. Instalación HKLM fuera de Program Files (ej. ruta personalizada elegida antes por el usuario) }
+  if IsWin64 and ReadUninstallEntry(HKLM64, UninstExe, InstallLoc) then
+  begin
+    if (InstallLoc <> '') and (not IsInsideTempPath(InstallLoc)) and DirExists(InstallLoc) and
+       (Pos('\PROGRAM FILES', Uppercase(InstallLoc)) = 0) then
+    begin
+      Result := InstallLoc;
+      exit;
+    end;
+  end;
+
+  if ReadUninstallEntry(HKLM32, UninstExe, InstallLoc) then
+  begin
+    if (InstallLoc <> '') and (not IsInsideTempPath(InstallLoc)) and DirExists(InstallLoc) and
+       (Pos('\PROGRAM FILES', Uppercase(InstallLoc)) = 0) then
+    begin
+      Result := InstallLoc;
+      exit;
+    end;
+  end;
+end;
+
+procedure InitializeWizard();
+begin
+  ExistingInstallDir := FindExistingInstallDir();
+  if ExistingInstallDir <> '' then
+    WizardForm.DirEdit.Text := ExistingInstallDir
+  else if IsInsideTempPath(WizardForm.DirEdit.Text) then
+    WizardForm.DirEdit.Text := ExpandConstant('{localappdata}\TTC');
+end;
+
+function ShouldSkipPage(PageID: Integer): Boolean;
+begin
+  Result := False;
+  { Si TTC ya está instalado, reemplazar in-place sin volver a preguntar la carpeta; si no existe, preguntar dónde instalar }
+  if (PageID = wpSelectDir) and (ExistingInstallDir <> '') and DirExists(ExistingInstallDir) then
+    Result := True;
+end;
+
+function NextButtonClick(CurPageID: Integer): Boolean;
+begin
+  Result := True;
+  if CurPageID = wpSelectDir then
+  begin
+    if IsInsideTempPath(WizardDirValue) then
+    begin
+      MsgBox(
+        'No se recomienda instalar TTC dentro de una carpeta temporal (Temp), porque Windows o un limpiador puede borrar la aplicación.' + #13#10#13#10 +
+        'Por favor elegí otra carpeta (por ejemplo: ' + ExpandConstant('{localappdata}\TTC') + ').',
+        mbError, MB_OK
+      );
+      Result := False;
+    end;
+  end;
 end;
 
 procedure PreserveUserDatabaseIfNeeded(const OldDir: string; const NewDir: string);

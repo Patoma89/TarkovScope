@@ -24,6 +24,7 @@ from core.pmc_systems_data import (
     filter_transits,
 )
 from ui.image_utils import get_gear_ctk_icon
+from ui.tab_pmc_prestige_mixin import PMCPrestigeAchievementsMixin
 from ui.theme import (
     C_AMBER,
     C_BG_DEEP,
@@ -67,8 +68,8 @@ TRANSIT_MAP_FILTERS: List[str] = [
 ]
 
 
-class TabPMCSystems(ctk.CTkFrame):
-    """Pestaña unificada de Sistemas PMC: Skills & Fatiga, Scav Karma (Fence) y BTR/Transits."""
+class TabPMCSystems(PMCPrestigeAchievementsMixin, ctk.CTkFrame):
+    """Pestaña unificada de Sistemas PMC: Skills, Karma, BTR/Transits, Prestige/Arena, Logros & Ropa."""
 
     def __init__(self, master, datastore=None, **kwargs):
         super().__init__(master, fg_color="transparent", **kwargs)
@@ -88,6 +89,7 @@ class TabPMCSystems(ctk.CTkFrame):
         self._skill_cat_btns: Dict[str, ctk.CTkButton] = {}
         self._skill_row_refs: Dict[str, ctk.CTkFrame] = {}
         self._transit_map_btns: Dict[str, ctk.CTkButton] = {}
+        self._init_prestige_ach_state()
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=1)
@@ -131,9 +133,12 @@ class TabPMCSystems(ctk.CTkFrame):
         seg_bar.grid(row=0, column=1, rowspan=2, padx=12, pady=8, sticky="e")
 
         views = [
-            ("skills", t_ui("📈 Skills & Leveo", "📈 Skills & Leveling")),
+            ("skills", t_ui("📈 Skills", "📈 Skills")),
             ("karma", "⚖️ Scav Karma"),
             ("btr_transits", "🚐 BTR & Transits"),
+            ("prestige", "🏆 Prestige & Arena"),
+            ("achievements", t_ui("🎖️ Logros", "🎖️ Achievements")),
+            ("clothing", t_ui("👕 Ropa", "👕 Clothing")),
         ]
         for key, label in views:
             btn = ctk.CTkButton(
@@ -158,6 +163,9 @@ class TabPMCSystems(ctk.CTkFrame):
         self.skills_frame = ctk.CTkFrame(self.view_container, fg_color="transparent")
         self.karma_frame = ctk.CTkFrame(self.view_container, fg_color="transparent")
         self.btr_frame = ctk.CTkFrame(self.view_container, fg_color="transparent")
+        self.prestige_frame = ctk.CTkFrame(self.view_container, fg_color="transparent")
+        self.achievements_frame = ctk.CTkFrame(self.view_container, fg_color="transparent")
+        self.clothing_frame = ctk.CTkFrame(self.view_container, fg_color="transparent")
 
         self._karma_built = False
         self._btr_built = False
@@ -174,7 +182,14 @@ class TabPMCSystems(ctk.CTkFrame):
                 hover_color=THEME["accent_gold"] if active else THEME["btn_hover"],
             )
 
-        for frame in (self.skills_frame, self.karma_frame, self.btr_frame):
+        for frame in (
+            self.skills_frame,
+            self.karma_frame,
+            self.btr_frame,
+            self.prestige_frame,
+            self.achievements_frame,
+            self.clothing_frame,
+        ):
             frame.grid_forget()
 
         if view_key == "skills":
@@ -191,6 +206,21 @@ class TabPMCSystems(ctk.CTkFrame):
                 self._build_btr_transits_view()
             self.btr_frame.grid(row=0, column=0, sticky="nsew")
             self._schedule_transits_render()
+        elif view_key == "prestige":
+            if not self._prestige_built:
+                self._prestige_built = True
+                self._build_prestige_view()
+            self.prestige_frame.grid(row=0, column=0, sticky="nsew")
+        elif view_key == "achievements":
+            if not self._achievements_built:
+                self._achievements_built = True
+                self._build_achievements_view()
+            self.achievements_frame.grid(row=0, column=0, sticky="nsew")
+        elif view_key == "clothing":
+            if not self._clothing_built:
+                self._clothing_built = True
+                self._build_clothing_view()
+            self.clothing_frame.grid(row=0, column=0, sticky="nsew")
 
     # ------------------------------------------------------------------
     # VISTA 1: SKILLS & LEVEO
@@ -1121,5 +1151,21 @@ class TabPMCSystems(ctk.CTkFrame):
                 self.transit_search_entry.insert(0, map_name)
             self._update_transit_map_styles()
             self._schedule_transits_render()
+        elif raw.startswith("PRESTIGE:"):
+            self._switch_view("prestige")
+        elif raw.startswith("ACH:"):
+            ach_name = raw.split(":", 1)[1].strip()
+            self._switch_view("achievements")
+            if hasattr(self, "ach_search_entry"):
+                self.ach_search_entry.delete(0, "end")
+                self.ach_search_entry.insert(0, ach_name)
+                self._schedule_ach_render()
+        elif raw.startswith("CLOTH:"):
+            cloth_name = raw.split(":", 1)[1].strip()
+            self._switch_view("clothing")
+            if hasattr(self, "cloth_search_entry"):
+                self.cloth_search_entry.delete(0, "end")
+                self.cloth_search_entry.insert(0, cloth_name)
+                self._schedule_cloth_render()
         else:
             self._switch_view("skills")

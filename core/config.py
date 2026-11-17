@@ -8,7 +8,7 @@ from typing import Callable, Dict, List, Optional
 
 APP_NAME = "TTC (Tactical Tarkov Companion)"
 APP_FULL_NAME = "TTC (Tactical Tarkov Companion)"
-APP_VERSION = "1.4.0"
+APP_VERSION = "1.5.0"
 APP_AUTHOR = "Patoma89"
 GITHUB_REPO = "Patoma89/TarkovScope"
 
@@ -138,7 +138,7 @@ def _seed_frozen_data_file(filename: str, overwrite: bool = False) -> None:
 if getattr(sys, "frozen", False):
     for _fname, _overwrite in (
         ("tarkov_data.db", False),
-        ("wiki_ammunition.json", False),
+        ("wiki_ammunition.json", True),
         ("wiki_quests_459.json", False),
         ("wiki_hideout_modules.json", False),
         ("wiki_story_chapters_full.json", True),
@@ -162,10 +162,12 @@ THEME_SKIN_META = {
     "tarkov_classic": {"label": "EFT Hideout", "use_tarkov_font": True},
     "labs_nvg": {"label": "Labs NVG", "use_tarkov_font": True},
     "tactical_slate": {"label": "Tactical Slate", "use_tarkov_font": False},
+    "modern_obsidian": {"label": "🌌 Modern Obsidian", "use_tarkov_font": True},
+    "terragroup_clean": {"label": "🧬 TerraGroup Clean", "use_tarkov_font": True},
     "halloween_cultist": {"label": "🎃 Halloween", "use_tarkov_font": True},
 }
 
-# Paletas tácticas (4 Skins seleccionables, solo valores hex #RRGGBB)
+# Paletas tácticas (6 Skins seleccionables, solo valores hex #RRGGBB)
 THEME_SKINS = {
     "tarkov_classic": {
         "bg_dark": "#0B0B09",          # Negro carbón menú EFT
@@ -305,6 +307,76 @@ THEME_SKINS = {
         "accent_yellow": "#FACC15",    # Amarillo vela ritual
         "accent_green": "#22C55E",     # Verde tóxico Cultista
         "green_light": "#4ADE80",
+        "emerald": "#10B981",
+    },
+    "modern_obsidian": {
+        "bg_dark": "#060911",          # Azul noche OLED ultra-profundo
+        "bg_darkest": "#04060C",
+        "bg_inset": "#080C16",
+        "bg_deep": "#0A0F1C",
+        "bg_card": "#101726",          # Tarjeta elevada estilo Linear/Vercel
+        "bg_panel_alt": "#121A2B",
+        "bg_panel_alt2": "#151E31",
+        "bg_card_hover": "#1B263D",
+        "bg_row": "#141D2F",
+        "bg_row_alt": "#19243A",
+        "bg_row_done": "#0D241B",
+        "active_tab_bg": "#1E2B45",
+        "btn_surface": "#131C2E",
+        "btn_hover": "#212F4B",
+        "slate_800": "#1E293B",
+        "slate_700": "#334155",
+        "border": "#26354D",
+        "border_soft": "#1C283B",
+        "border_alt": "#344868",
+        "text_main": "#F8FAFC",
+        "text_soft": "#E2E8F0",
+        "text_muted": "#CBD5E1",
+        "text_dim": "#94A3B8",
+        "accent_gold": "#F5B041",      # Ámbar dorado moderno de alto contraste
+        "accent_orange": "#FB923C",
+        "accent_olive": "#3B7A57",
+        "accent_blue": "#38BDF8",
+        "accent_red": "#F43F5E",
+        "red_dark": "#E11D48",
+        "accent_yellow": "#FACC15",
+        "accent_green": "#22C55E",
+        "green_light": "#4ADE80",
+        "emerald": "#10B981",
+    },
+    "terragroup_clean": {
+        "bg_dark": "#070C12",          # Pizarra cristalina TerraGroup Labs
+        "bg_darkest": "#05080D",
+        "bg_inset": "#080E15",
+        "bg_deep": "#0A121B",
+        "bg_card": "#0F1A27",          # Panel clínico limpio
+        "bg_panel_alt": "#111E2D",
+        "bg_panel_alt2": "#142334",
+        "bg_card_hover": "#1A2D42",
+        "bg_row": "#132030",
+        "bg_row_alt": "#18283B",
+        "bg_row_done": "#0C2520",
+        "active_tab_bg": "#173047",
+        "btn_surface": "#122132",
+        "btn_hover": "#1E354F",
+        "slate_800": "#1B2E44",
+        "slate_700": "#2B4666",
+        "border": "#233D58",
+        "border_soft": "#192D42",
+        "border_alt": "#2F5174",
+        "text_main": "#F1F8FF",
+        "text_soft": "#DCEBFA",
+        "text_muted": "#B8CFE6",
+        "text_dim": "#7FA0C2",
+        "accent_gold": "#22D3EE",      # Cian laboratorio TerraGroup
+        "accent_orange": "#38BDF8",
+        "accent_olive": "#0D9488",
+        "accent_blue": "#60A5FA",
+        "accent_red": "#FB7185",
+        "red_dark": "#E11D48",
+        "accent_yellow": "#FBBF24",
+        "accent_green": "#34D399",
+        "green_light": "#6EE7B7",
         "emerald": "#10B981",
     },
 }

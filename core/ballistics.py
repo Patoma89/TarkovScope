@@ -23,7 +23,7 @@ def calculate_armor_effectiveness(penetration_power: float, armor_class: int) ->
     threshold = armor_class * 10.0
     diff = penetration_power - threshold
 
-    if diff >= 5.0:
+    if diff >= 5.0 or (armor_class == 6 and diff >= 0.0):
         score = 6
         label = "Destruye"
         color = "#10B981"  # Verde esmeralda brillante
@@ -81,6 +81,7 @@ def get_armor_rating_color(score: int) -> str:
         3: "#FBBF24",
         2: "#F97316",
         1: "#EF4444",
+        0: "#991B1B",
     }
     return colors.get(score, "#EF4444")
 

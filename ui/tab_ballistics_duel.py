@@ -519,12 +519,15 @@ class DuelMixin:
         dmg_a, dmg_b = int(ammo_a.get("damage", 0)), int(ammo_b.get("damage", 0))
         admg_a, admg_b = int(ammo_a.get("armor_damage", 0)), int(ammo_b.get("armor_damage", 0))
 
+        ac_list_a = ammo_a.get("armor_classes")
+        ac_list_b = ammo_b.get("armor_classes")
         for ac in range(1, 7):
             eff_a = calculate_armor_effectiveness(pen_a, ac)
             eff_b = calculate_armor_effectiveness(pen_b, ac)
             sim_a = simulate_shots_to_kill(dmg_a, pen_a, admg_a, ac)
             sim_b = simulate_shots_to_kill(dmg_b, pen_b, admg_b, ac)
-            sc_a, sc_b = eff_a["score"], eff_b["score"]
+            sc_a = int(ac_list_a[ac - 1]) if isinstance(ac_list_a, list) and len(ac_list_a) == 6 else eff_a["score"]
+            sc_b = int(ac_list_b[ac - 1]) if isinstance(ac_list_b, list) and len(ac_list_b) == 6 else eff_b["score"]
             stk_a, stk_b = sim_a["stk"], sim_b["stk"]
 
             bg_a, fg_a = CLASS_SCORE_COLORS.get(sc_a, (eff_a["color"], C_BG_INSET))

@@ -74,6 +74,46 @@ def toggle_owned_key(key_id: str, db_path: str = DB_PATH) -> bool:
     return new_state
 
 
+def get_unlocked_achievement_ids(db_path: str = DB_PATH) -> Set[str]:
+    """Devuelve el conjunto de IDs de Achievements desbloqueados por el usuario."""
+    raw = get_user_preference("unlocked_achievements", "[]", db_path=db_path)
+    try:
+        data = json.loads(raw) if raw else []
+        return {str(a) for a in data} if isinstance(data, list) else set()
+    except (TypeError, ValueError):
+        return set()
+
+
+def toggle_achievement_unlocked(ach_id: str, db_path: str = DB_PATH) -> bool:
+    """Alterna el estado desbloqueado de un Achievement y retorna el nuevo booleano."""
+    unlocked = get_unlocked_achievement_ids(db_path=db_path)
+    aid = str(ach_id)
+    if aid in unlocked:
+        unlocked.remove(aid)
+        new_state = False
+    else:
+        unlocked.add(aid)
+        new_state = True
+    set_user_preference("unlocked_achievements", json.dumps(sorted(unlocked)), db_path=db_path)
+    return new_state
+
+
+def get_prestige_level(db_path: str = DB_PATH) -> int:
+    """Lee el nivel actual de Prestige del PMC (0 a 6)."""
+    raw = get_user_preference("pmc_prestige_level", "0", db_path=db_path)
+    try:
+        return max(0, min(6, int(raw)))
+    except (TypeError, ValueError):
+        return 0
+
+
+def set_prestige_level(level: int, db_path: str = DB_PATH) -> int:
+    """Guarda el nivel de Prestige del PMC acotado entre 0 y 6."""
+    clamped = max(0, min(6, int(level)))
+    set_user_preference("pmc_prestige_level", str(clamped), db_path=db_path)
+    return clamped
+
+
 def get_completed_story_quest_ids(db_path: str = DB_PATH) -> Set[str]:
     with get_db_connection(db_path) as conn:
         cursor = conn.cursor()
@@ -254,7 +294,9 @@ def export_user_profile(db_path: str = DB_PATH) -> Dict[str, Any]:
         "completed_story_quests": completed_story_quests,
         "completed_hideout": completed_hideout,
         "map_markers": markers,
-        "stash_items": stash_items
+        "stash_items": stash_items,
+        "unlocked_achievements": sorted(get_unlocked_achievement_ids(db_path)),
+        "prestige_level": get_prestige_level(db_path),
     }
 
 
@@ -315,4 +357,15 @@ def import_user_profile(profile_data: Dict[str, Any], db_path: str = DB_PATH) ->
                     """, (item_name.strip(), int(count)))
 
         conn.commit()
+
+    if "unlocked_achievements" in profile_data and isinstance(profile_data["unlocked_achievements"], list):
+        clean_achs = sorted({str(a) for a in profile_data["unlocked_achievements"] if a})
+        set_user_preference("unlocked_achievements", json.dumps(clean_achs), db_path=db_path)
+
+    if "prestige_level" in profile_data:
+        try:
+            set_prestige_level(int(profile_data["prestige_level"]), db_path=db_path)
+        except (TypeError, ValueError):
+            pass
+
     return True

@@ -165,13 +165,18 @@ def init_db(db_path: str = DB_PATH) -> None:
 
         conn.commit()
 
-        # Auto-sembrado de Munición y purga de duplicados si la base oficial está vacía o tiene residuos antiguos
+        # Auto-sembrado de Munición y purga de duplicados si la base oficial está vacía o desactualizada
         if os.path.abspath(db_path) == os.path.abspath(DB_PATH):
             cursor.execute("SELECT COUNT(*) FROM ammunition WHERE length(id) = 24;")
             has_legacy_hex = cursor.fetchone()[0]
             cursor.execute("SELECT COUNT(*) FROM ammunition WHERE caliber = 'Caliber127x33';")
             has_modern = cursor.fetchone()[0]
-            if has_legacy_hex > 0 or has_modern == 0:
+            cursor.execute("SELECT COUNT(*) FROM ammunition WHERE id = '762x51_m80a1';")
+            has_m80a1 = cursor.fetchone()[0]
+            cursor.execute("SELECT value FROM metadata WHERE key = 'ammo_dataset_version';")
+            ver_row = cursor.fetchone()
+            ammo_ver = ver_row[0] if ver_row else ""
+            if has_legacy_hex > 0 or has_modern == 0 or has_m80a1 == 0 or ammo_ver != "eft-ammo-2026-11":
                 seed_wiki_ammunition(db_path)
 
     _INITIALIZED_DB_PATHS.add(abs_path)
@@ -246,22 +251,24 @@ def seed_wiki_ammunition(db_path: str = DB_PATH) -> int:
     Carga el catálogo maestro completo de proyectiles y calibres oficiales (eft-ammo.com / Wiki)
     asegurando cobertura del 100% incluso en modo offline sin conexión a internet.
     """
-    ammo_items = []
-    if os.path.exists(WIKI_AMMO_JSON_PATH):
+    ammo_items = list(COMPLETE_AMMO_DATA)
+    if not ammo_items and os.path.exists(WIKI_AMMO_JSON_PATH):
         try:
             with open(WIKI_AMMO_JSON_PATH, "r", encoding="utf-8") as f:
                 ammo_items = json.load(f)
         except Exception as e:
-            logger.warning("Fallo al leer %s, recurriendo a COMPLETE_AMMO_DATA: %s", WIKI_AMMO_JSON_PATH, e)
-
-    if not ammo_items:
-        ammo_items = COMPLETE_AMMO_DATA
+            logger.warning("Fallo al leer %s: %s", WIKI_AMMO_JSON_PATH, e)
 
     with get_db_connection(db_path) as conn:
         conn.execute("DELETE FROM ammunition;")
         conn.commit()
 
     insert_ammunition_batch(ammo_items, db_path)
+    with get_db_connection(db_path) as conn:
+        conn.execute(
+            "INSERT OR REPLACE INTO metadata (key, value, updated_at) VALUES ('ammo_dataset_version', 'eft-ammo-2026-11', CURRENT_TIMESTAMP);"
+        )
+        conn.commit()
     logger.info("Cargados %d proyectiles oficiales de balística en %s", len(ammo_items), db_path)
     try:
         from core.datastore import get_datastore
@@ -526,18 +533,31 @@ def get_all_ammunition(caliber: Optional[str] = None, db_path: str = DB_PATH) ->
         cursor = conn.cursor()
         if caliber and caliber != "TODOS":
             cursor.execute("""
-                SELECT id, name, short_name, caliber, damage, armor_damage, penetration_power, initial_speed, tracer
+                SELECT id, name, short_name, caliber, damage, armor_damage, penetration_power, initial_speed, tracer, raw_json
                 FROM ammunition
                 WHERE caliber = ?
                 ORDER BY penetration_power DESC
             """, (caliber,))
         else:
             cursor.execute("""
-                SELECT id, name, short_name, caliber, damage, armor_damage, penetration_power, initial_speed, tracer
+                SELECT id, name, short_name, caliber, damage, armor_damage, penetration_power, initial_speed, tracer, raw_json
                 FROM ammunition
                 ORDER BY caliber ASC, penetration_power DESC
             """)
-        return [dict(row) for row in cursor.fetchall()]
+        rows: List[Dict[str, Any]] = []
+        for row in cursor.fetchall():
+            d = dict(row)
+            raw_str = d.pop("raw_json", None)
+            if raw_str:
+                try:
+                    raw_obj = json.loads(raw_str)
+                    ac = raw_obj.get("armorClasses")
+                    if isinstance(ac, list) and len(ac) == 6:
+                        d["armor_classes"] = [int(x) for x in ac]
+                except Exception:
+                    pass
+            rows.append(d)
+        return rows
 
 
 def get_distinct_calibers(db_path: str = DB_PATH) -> List[str]:

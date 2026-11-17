@@ -8,7 +8,8 @@ from typing import List, Dict, Any, Optional
 from core.config import THEME
 from core.datastore import get_datastore
 from core.weapons_data import KAPPA_COLLECTOR_ITEMS
-from core.hideout_crafts_data import HIDEOUT_CRAFTS_DATA
+from core.hideout_crafts_data import HIDEOUT_CRAFTS_DATA, HIDEOUT_STATION_ICONS
+from ui.image_utils import get_gear_ctk_icon
 from ui.theme import (
     ui_font,
     C_WHITE, C_TEXT, C_TEXT_SOFT, C_TEXT_MUTED, C_TEXT_DIM,
@@ -19,6 +20,14 @@ from ui.theme import (
 
 class FleaHideoutMixin:
     """Mixin que contiene la lógica de renderizado de módulos del Refugio (Hideout), recetas de crafteo y objetos de Kappa."""
+
+    def _safe_set_flea_icon(self, lbl: ctk.CTkLabel, img: ctk.CTkImage):
+        if not self.winfo_exists():
+            return
+        try:
+            self.after(0, lambda: lbl.winfo_exists() and lbl.configure(image=img))
+        except Exception:
+            pass
 
     def _render_hideout_modules(self, modules: List[Dict[str, Any]], token: int):
         if not modules:
@@ -105,18 +114,34 @@ class FleaHideoutMixin:
         )
         chk.grid(row=0, column=0, padx=(16, 6), pady=10)
 
-        # Col 1: Nombre de Estación + Nivel + Qué Desbloquea
+        # Col 1: Ícono oficial de Estación + Nombre + Nivel + Qué Desbloquea
         st_cell = ctk.CTkFrame(row_frame, fg_color="transparent")
         st_cell.grid(row=0, column=1, padx=8, pady=10, sticky="nsew")
 
+        title_row = ctk.CTkFrame(st_cell, fg_color="transparent")
+        title_row.pack(fill="x", anchor="w")
+
+        st_info = HIDEOUT_STATION_ICONS.get(mod.get("station", ""), {})
+        if st_info:
+            st_icon_lbl = ctk.CTkLabel(title_row, text="", width=42, height=42, fg_color="transparent")
+            st_icon_lbl.pack(side="left", padx=(0, 8))
+            st_img = get_gear_ctk_icon(
+                st_info.get("icon_key", ""),
+                st_info.get("icon_url", ""),
+                max_size=(40, 40),
+                on_ready=lambda im, lbl=st_icon_lbl: self._safe_set_flea_icon(lbl, im),
+            )
+            if st_img is not None:
+                st_icon_lbl.configure(image=st_img)
+
         ctk.CTkLabel(
-            st_cell,
-            text=f"{mod['station']} — Nivel {mod['level']} / {mod['max_level']}",
-            font=ui_font(14, "bold"),
+            title_row,
+            text=f"{mod['station']}\nNivel {mod['level']} / {mod['max_level']}",
+            font=ui_font(13, "bold"),
             text_color=C_GREEN_LIGHT if is_done else THEME["accent_gold"],
             anchor="w",
             justify="left"
-        ).pack(fill="x", anchor="w")
+        ).pack(side="left", fill="x", expand=True)
 
         ctk.CTkLabel(
             st_cell,
@@ -273,7 +298,18 @@ class FleaHideoutMixin:
                     bd=0,
                 )
                 card.grid(row=i + 1, column=0, padx=8, pady=3, sticky="ew")
-                card.grid_columnconfigure(1, weight=1)
+                card.grid_columnconfigure(2, weight=1)
+
+                icon_lbl = ctk.CTkLabel(card, text="", width=48, height=48, fg_color=row_bg)
+                icon_lbl.grid(row=0, column=0, padx=(10, 6), pady=4)
+                k_img = get_gear_ctk_icon(
+                    it.get("icon_key", ""),
+                    it.get("icon_url", ""),
+                    max_size=(46, 46),
+                    on_ready=lambda im, lbl=icon_lbl: self._safe_set_flea_icon(lbl, im),
+                )
+                if k_img is not None:
+                    icon_lbl.configure(image=k_img)
 
                 n_lbl = tk.Label(
                     card,
@@ -284,7 +320,7 @@ class FleaHideoutMixin:
                     anchor="w",
                     bd=0,
                 )
-                n_lbl.grid(row=0, column=0, padx=14, pady=8, sticky="w")
+                n_lbl.grid(row=0, column=1, padx=10, pady=8, sticky="w")
 
                 s_lbl = tk.Label(
                     card,
@@ -295,7 +331,7 @@ class FleaHideoutMixin:
                     anchor="w",
                     bd=0,
                 )
-                s_lbl.grid(row=0, column=1, padx=10, pady=8, sticky="w")
+                s_lbl.grid(row=0, column=2, padx=10, pady=8, sticky="w")
 
                 btn_toggle = ctk.CTkButton(
                     card,
@@ -309,7 +345,7 @@ class FleaHideoutMixin:
                     font=ui_font(12, "bold"),
                 )
 
-                def make_kappa_toggler(item_key=k_key, c_card=card, c_nlbl=n_lbl, c_slbl=s_lbl, c_btn=btn_toggle):
+                def make_kappa_toggler(item_key=k_key, c_card=card, c_ilbl=icon_lbl, c_nlbl=n_lbl, c_slbl=s_lbl, c_btn=btn_toggle):
                     def _toggle():
                         cur = ds.get_stash_count(item_key)
                         new_done = cur < 1
@@ -321,6 +357,7 @@ class FleaHideoutMixin:
                             return
                         new_bg = "#0D1612" if new_done else C_BG_DEEP
                         c_card.configure(bg=new_bg, highlightbackground=C_EMERALD if new_done else C_BORDER_SOFT)
+                        c_ilbl.configure(fg_color=new_bg)
                         c_nlbl.configure(bg=new_bg, fg=C_GREEN_LIGHT if new_done else THEME["accent_gold"])
                         c_slbl.configure(bg=new_bg)
                         c_btn.configure(
@@ -332,7 +369,7 @@ class FleaHideoutMixin:
                     return _toggle
 
                 btn_toggle.configure(command=make_kappa_toggler())
-                btn_toggle.grid(row=0, column=2, padx=14, pady=7, sticky="e")
+                btn_toggle.grid(row=0, column=3, padx=14, pady=7, sticky="e")
 
             if end < len(items):
                 self.after(4, lambda: draw_batch(end, batch_size))
@@ -408,10 +445,21 @@ class FleaHideoutMixin:
                     bd=0,
                 )
                 card.grid(row=idx, column=0, padx=8, pady=4, sticky="ew")
-                card.grid_columnconfigure(1, weight=1)
+                card.grid_columnconfigure(2, weight=1)
 
-                left_box = tk.Frame(card, bg="#161C28", width=210, bd=0)
-                left_box.grid(row=0, column=0, padx=10, pady=8, sticky="nsew")
+                c_icon_lbl = ctk.CTkLabel(card, text="", width=52, height=52, fg_color=row_bg)
+                c_icon_lbl.grid(row=0, column=0, padx=(10, 4), pady=6)
+                c_img = get_gear_ctk_icon(
+                    c.get("icon_key", ""),
+                    c.get("icon_url", ""),
+                    max_size=(48, 48),
+                    on_ready=lambda im, lbl=c_icon_lbl: self._safe_set_flea_icon(lbl, im),
+                )
+                if c_img is not None:
+                    c_icon_lbl.configure(image=c_img)
+
+                left_box = tk.Frame(card, bg="#161C28", width=205, bd=0)
+                left_box.grid(row=0, column=1, padx=8, pady=8, sticky="nsew")
                 left_box.grid_propagate(False)
 
                 tk.Label(
@@ -435,7 +483,7 @@ class FleaHideoutMixin:
                 ).pack(anchor="w", padx=10, pady=(0, 6))
 
                 mid_box = tk.Frame(card, bg=row_bg, bd=0)
-                mid_box.grid(row=0, column=1, padx=8, pady=8, sticky="nsew")
+                mid_box.grid(row=0, column=2, padx=8, pady=8, sticky="nsew")
 
                 tk.Label(
                     mid_box,
@@ -455,7 +503,7 @@ class FleaHideoutMixin:
                     fg=C_TEXT,
                     anchor="w",
                     justify="left",
-                    wraplength=640,
+                    wraplength=600,
                     bd=0,
                 ).pack(anchor="w", pady=(3, 2))
 
@@ -467,7 +515,7 @@ class FleaHideoutMixin:
                     fg=C_TEXT_DIM,
                     anchor="w",
                     justify="left",
-                    wraplength=640,
+                    wraplength=600,
                     bd=0,
                 ).pack(anchor="w")
 
@@ -481,7 +529,7 @@ class FleaHideoutMixin:
                     padx=6,
                     pady=4,
                     bd=0,
-                ).grid(row=0, column=2, padx=12, pady=10, sticky="ne")
+                ).grid(row=0, column=3, padx=12, pady=10, sticky="ne")
 
             if end < len(crafts):
                 self.after(4, lambda: draw_craft_batch(end, batch_size))

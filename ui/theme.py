@@ -6,6 +6,7 @@ con jerarquía tipográfica clara, alto contraste y soporte dinámico para 3 ski
 import os
 import sys
 import functools
+from typing import Optional
 import customtkinter as ctk
 from core.config import THEME, THEME_SKINS, THEME_SKIN_META, BASE_DIR, BUNDLE_DIR, CACHE_DIR, apply_skin_to_theme
 from core.user_data import get_user_preference
@@ -96,11 +97,70 @@ def apply_global_smooth_scroll(pixels_per_notch: int = 80) -> None:
 apply_global_smooth_scroll()
 
 
+_USE_TARKOV_FONT = True
+
+
 @functools.lru_cache(maxsize=256)
-def ui_font(size: int = 13, weight: str = "normal", mono: bool = False) -> ctk.CTkFont:
-    """Retorna una fuente CTkFont con familia activa (Bender/Bahnschrift o Segoe UI / Consolas) en caché O(1)."""
-    fam = FONT_MONO_FAMILY if mono else FONT_FAMILY
+def ui_font(
+    size: int = 13,
+    weight: str = "normal",
+    mono: bool = False,
+    display: bool = False,
+) -> ctk.CTkFont:
+    """Retorna una fuente CTkFont con jerarquía dual (Bender/Bahnschrift para display y Segoe UI para lectura)."""
+    if mono:
+        fam = FONT_MONO_FAMILY
+    elif display or (_USE_TARKOV_FONT and size >= 15 and weight == "bold"):
+        fam = TARKOV_FONT_FAMILY
+    else:
+        fam = "Segoe UI"
     return ctk.CTkFont(family=fam, size=size, weight=weight)
+
+
+def bind_card_hover(
+    widget,
+    normal_border: Optional[str] = None,
+    hover_border: Optional[str] = None,
+    normal_fg: Optional[str] = None,
+    hover_fg: Optional[str] = None,
+) -> None:
+    """Aplica micro-interacción Hover Glow sin parpadeo al pasar sobre tarjetas o botones."""
+    nb = normal_border or THEME.get("border_soft", C_BORDER_SOFT)
+    hb = hover_border or THEME.get("accent_gold", "#D4B886")
+
+    def _apply_style(is_hover: bool) -> None:
+        try:
+            if not widget.winfo_exists():
+                return
+            kwargs = {"border_color": hb if is_hover else nb}
+            if is_hover and hover_fg is not None:
+                kwargs["fg_color"] = hover_fg
+            elif not is_hover and normal_fg is not None:
+                kwargs["fg_color"] = normal_fg
+            widget.configure(**kwargs)
+        except Exception:
+            pass
+
+    def _on_enter(_e=None) -> None:
+        _apply_style(True)
+
+    def _on_leave(_e=None) -> None:
+        try:
+            if not widget.winfo_exists():
+                return
+            px, py = widget.winfo_pointerxy()
+            rx, ry = widget.winfo_rootx(), widget.winfo_rooty()
+            if rx <= px < rx + widget.winfo_width() and ry <= py < ry + widget.winfo_height():
+                return
+        except Exception:
+            pass
+        _apply_style(False)
+
+    try:
+        widget.bind("<Enter>", _on_enter, add="+")
+        widget.bind("<Leave>", _on_leave, add="+")
+    except Exception:
+        pass
 
 
 _ACTIVE_SKIN_ID = "tarkov_classic"
@@ -138,8 +198,8 @@ def _sync_imported_color_constants() -> None:
 
 
 def apply_ui_skin(skin_id: str) -> str:
-    """Aplica una de las 3 skins tácticas a THEME, constantes C_* (en todos los módulos) y tipografía activa."""
-    global _ACTIVE_SKIN_ID, FONT_FAMILY
+    """Aplica una de las skins tácticas a THEME, constantes C_* (en todos los módulos) y tipografía activa."""
+    global _ACTIVE_SKIN_ID, FONT_FAMILY, _USE_TARKOV_FONT
     global C_TEXT, C_TEXT_SOFT, C_TEXT_MUTED, C_TEXT_DIM, C_BLUE
     global C_BORDER, C_BORDER_SOFT, C_BORDER_ALT
     global C_BG_DEEP, C_BG_DARKEST, C_BG_INSET, C_BG_PANEL, C_BG_PANEL_ALT, C_BG_PANEL_ALT2
@@ -150,6 +210,7 @@ def apply_ui_skin(skin_id: str) -> str:
     _ACTIVE_SKIN_ID = valid_id
 
     use_tarkov_font = bool(THEME_SKIN_META.get(valid_id, {}).get("use_tarkov_font", False))
+    _USE_TARKOV_FONT = use_tarkov_font
     FONT_FAMILY = TARKOV_FONT_FAMILY if use_tarkov_font else "Segoe UI"
     ui_font.cache_clear()
 

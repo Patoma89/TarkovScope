@@ -12,10 +12,11 @@ from core.datastore import get_datastore
 from core.weapons_data import WEAPONS_ARSENAL_DATA, GUNSMITH_GUIDES_DATA
 from ui.image_utils import get_weapon_or_part_ctk_image
 from ui.tab_weapons_builder import WeaponBuilderMixin
+from ui.tab_weapons_malfunctions_mixin import WeaponMalfunctionsMixin
 from ui.theme import C_BG_DARKEST, C_BG_PANEL, C_BG_PANEL_ALT2, C_BORDER, C_EMERALD, C_GREEN_LIGHT, C_SLATE_800, C_TEXT, C_TEXT_MUTED, C_TEXT_SOFT, C_WHITE
 
 
-class TabWeapons(ctk.CTkFrame, WeaponBuilderMixin):
+class TabWeapons(ctk.CTkFrame, WeaponBuilderMixin, WeaponMalfunctionsMixin):
     def __init__(self, master, **kwargs):
         super().__init__(master, fg_color="transparent", **kwargs)
         self.mode = "ARSENAL"  # "ARSENAL", "GUNSMITH" o "BUILDER"
@@ -81,7 +82,7 @@ class TabWeapons(ctk.CTkFrame, WeaponBuilderMixin):
         self.btn_builder = ctk.CTkButton(
             btn_box,
             text="🛠️ Modding Studio Pro",
-            width=175,
+            width=165,
             height=32,
             fg_color=THEME["bg_dark"],
             hover_color=THEME["border"],
@@ -89,6 +90,18 @@ class TabWeapons(ctk.CTkFrame, WeaponBuilderMixin):
             command=lambda: self._switch_mode("BUILDER")
         )
         self.btn_builder.pack(side="left", padx=3)
+
+        self.btn_malfunctions = ctk.CTkButton(
+            btn_box,
+            text=t_ui("⚠️ Fallas & Reparación", "⚠️ Malfunctions & Repair"),
+            width=170,
+            height=32,
+            fg_color=THEME["bg_dark"],
+            hover_color=THEME["border"],
+            font=ui_font(size=12, weight="bold"),
+            command=lambda: self._switch_mode("MALFUNCTIONS")
+        )
+        self.btn_malfunctions.pack(side="left", padx=3)
 
     def _build_body_container(self):
         self.body_frame = ctk.CTkFrame(self, fg_color="transparent")
@@ -104,6 +117,7 @@ class TabWeapons(ctk.CTkFrame, WeaponBuilderMixin):
         self.btn_arsenal.configure(fg_color=THEME["accent_orange"] if new_mode == "ARSENAL" else THEME["bg_dark"])
         self.btn_gunsmith.configure(fg_color=THEME["accent_orange"] if new_mode == "GUNSMITH" else THEME["bg_dark"])
         self.btn_builder.configure(fg_color=THEME["accent_orange"] if new_mode == "BUILDER" else THEME["bg_dark"])
+        self.btn_malfunctions.configure(fg_color=THEME["accent_orange"] if new_mode == "MALFUNCTIONS" else THEME["bg_dark"])
 
         if prev_mode in self._mode_views:
             self._mode_views[prev_mode].grid_remove()
@@ -117,6 +131,8 @@ class TabWeapons(ctk.CTkFrame, WeaponBuilderMixin):
                 self._mode_views["GUNSMITH"] = self._render_gunsmith_view()
             elif new_mode == "BUILDER":
                 self._mode_views["BUILDER"] = self._render_builder_view()
+            elif new_mode == "MALFUNCTIONS":
+                self._mode_views["MALFUNCTIONS"] = self._render_malfunctions_view()
 
     # --- VISTA 1: ARSENAL & BUILDS META ---
 

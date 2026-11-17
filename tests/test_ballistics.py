@@ -185,6 +185,27 @@ class TestBallistics(unittest.TestCase):
             sorted_items = sorted(items, key=lambda x: float(x.get("penetrationPower", 0)), reverse=True)
             self.assertGreaterEqual(float(sorted_items[0].get("penetrationPower", 0)), float(sorted_items[-1].get("penetrationPower", 0)))
 
+    def test_eft_ammo_parity_762x51_and_snb(self):
+        """Valida paridad con eft-ammo.com: SNB Tier 6, 7.62x51 sin NATO y presencia de M80A1."""
+        # 1. SNB (pen 62) es Tier 6 contra clase 6
+        self.assertEqual(calculate_armor_effectiveness(62.0, 6)["score"], 6)
+        snb = next((a for a in COMPLETE_AMMO_DATA if a["id"] == "762x54r_snb"), None)
+        self.assertIsNotNone(snb)
+        self.assertEqual(snb["penetrationPower"], 62.0)
+        self.assertEqual(snb.get("armorClasses"), [6, 6, 6, 6, 6, 6])
+
+        # 2. 7.62x51 no debe decir NATO
+        self.assertNotIn("NATO", format_caliber_dropdown("Caliber762x51"))
+        self.assertEqual(format_caliber_short("Caliber762x51"), "7.62x51 mm")
+
+        # 3. M80A1 presente y con stats reales de eft-ammo.com
+        m80a1 = next((a for a in COMPLETE_AMMO_DATA if a["id"] == "762x51_m80a1"), None)
+        self.assertIsNotNone(m80a1)
+        self.assertEqual(m80a1["damage"], 75)
+        self.assertEqual(m80a1["penetrationPower"], 55.0)
+        self.assertEqual(m80a1["initialSpeed"], 929.0)
+        self.assertEqual(m80a1.get("armorClasses"), [6, 6, 6, 6, 6, 5])
+
 
 if __name__ == "__main__":
     unittest.main()

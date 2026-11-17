@@ -16,6 +16,7 @@ from core.medical_data import (
     get_medical_icon_path,
 )
 from ui.image_utils import get_resized_ctk_image, get_resized_tk_image
+from ui.tab_medical_provisions_mixin import MedicalProvisionsMixin
 from ui.theme import (
     C_BG_DARKEST,
     C_BG_DEEP,
@@ -40,8 +41,8 @@ MED_CATEGORY_COLORS = {
 }
 
 
-class TabMedical(ctk.CTkFrame):
-    """Pestaña ultra fluida de Medicina, Curación de Lesiones y Estimulantes."""
+class TabMedical(MedicalProvisionsMixin, ctk.CTkFrame):
+    """Pestaña ultra fluida de Medicina, Provisiones & Buffs y Sistema de Salud."""
 
     def __init__(self, master, datastore=None, **kwargs):
         super().__init__(master, fg_color="transparent", **kwargs)
@@ -56,13 +57,18 @@ class TabMedical(ctk.CTkFrame):
         self._thumb_cache: Dict[Tuple[str, int, int], ctk.CTkImage] = {}
         self._tk_thumb_cache: Dict[Tuple[str, int, int], Any] = {}
         self._row_widgets: Dict[str, Dict[str, Any]] = {}
+        self._init_provisions_state()
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(2, weight=1)
 
+        self.provisions_frame = ctk.CTkFrame(self, fg_color="transparent")
+        self.health_effects_frame = ctk.CTkFrame(self, fg_color="transparent")
+
         self._build_header()
         self._build_filters_bar()
         self._build_main_split()
+        self._switch_medical_mode("medical")
 
         self._schedule_render_items()
         if self.selected_item_id:
@@ -123,31 +129,27 @@ class TabMedical(ctk.CTkFrame):
             text_color=C_TEXT_MUTED,
         ).pack(anchor="w", pady=(2, 0))
 
-        stims_cnt = sum(1 for m in MEDICAL_CATALOG if m["category"] == "Estimulantes (Stims)")
         kpi_box = ctk.CTkFrame(hdr, fg_color="transparent")
         kpi_box.grid(row=0, column=1, sticky="e", padx=14, pady=10)
 
-        ctk.CTkLabel(
-            kpi_box,
-            text=f"🩺 {len(MEDICAL_CATALOG)} Ítems Médicos",
-            font=ui_font(12, "bold"),
-            fg_color=C_BG_DEEP,
-            text_color=C_EMERALD,
-            corner_radius=6,
-            padx=10,
-            pady=6,
-        ).pack(side="left", padx=4)
-
-        ctk.CTkLabel(
-            kpi_box,
-            text=f"💉 {stims_cnt} Inyectores / Stims",
-            font=ui_font(12, "bold"),
-            fg_color=C_BG_DEEP,
-            text_color=THEME["accent_gold"],
-            corner_radius=6,
-            padx=10,
-            pady=6,
-        ).pack(side="left", padx=4)
+        modes = [
+            ("medical", t_ui("🩺 Botiquines & Stims", "🩺 Medkits & Stims")),
+            ("provisions", t_ui("🥫 Provisiones & Buffs", "🥫 Provisions & Buffs")),
+            ("health_effects", t_ui("⚠️ Estados de Salud", "⚠️ Health Effects")),
+        ]
+        for m_key, m_lbl in modes:
+            m_btn = ctk.CTkButton(
+                kpi_box,
+                text=m_lbl,
+                height=32,
+                width=0,
+                corner_radius=8,
+                font=ui_font(12, "bold"),
+                border_width=1,
+                command=lambda k=m_key: self._switch_medical_mode(k),
+            )
+            m_btn.pack(side="left", padx=3)
+            self._med_mode_btns[m_key] = m_btn
 
     def _build_filters_bar(self):
         bar = ctk.CTkFrame(
@@ -159,6 +161,7 @@ class TabMedical(ctk.CTkFrame):
         )
         bar.grid(row=1, column=0, sticky="ew", padx=2, pady=(0, 8))
         bar.grid_columnconfigure(0, weight=1)
+        self.med_filters_bar = bar
 
         # Fila 0: Categorías (izq) y fila 1: Buscador + Síntomas
         top_row = ctk.CTkFrame(bar, fg_color="transparent")
@@ -251,6 +254,7 @@ class TabMedical(ctk.CTkFrame):
     def _build_main_split(self):
         split = ctk.CTkFrame(self, fg_color="transparent")
         split.grid(row=2, column=0, sticky="nsew", padx=2, pady=0)
+        self.med_split_frame = split
         split.grid_columnconfigure(0, weight=3)
         split.grid_columnconfigure(1, weight=2)
         split.grid_rowconfigure(0, weight=1)
