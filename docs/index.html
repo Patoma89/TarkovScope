@@ -372,24 +372,116 @@
 
     /* ================= INTERACTIVE TOUR WINDOW ================= */
     .showcase-window {
-      background: var(--bg-elevated);
-      border: 1px solid var(--border);
+      --win-bg: #111620;
+      --win-sidebar: #0a0d13;
+      --win-card: #0b0f17;
+      --win-border: #232936;
+      --win-accent: #d4b886;
+      --win-accent-soft: rgba(212, 184, 134, 0.14);
+      --win-cyan: #38bdf8;
+      --win-text: #f8fafc;
+      --win-dim: #cbd5e1;
+
+      background: var(--win-bg);
+      border: 1px solid var(--win-border);
       border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-card), 0 0 40px rgba(212, 184, 134, 0.06);
+      box-shadow: var(--shadow-card), 0 0 48px rgba(212, 184, 134, 0.08);
       overflow: hidden;
       text-align: left;
-      max-width: 1080px;
+      max-width: 1100px;
       margin: 0 auto;
+      transition: background 0.25s ease, border-color 0.25s ease;
     }
 
     .window-topbar {
       background: #080b10;
-      border-bottom: 1px solid var(--border);
-      padding: 12px 18px;
+      border-bottom: 1px solid var(--win-border);
+      padding: 11px 18px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .hud-sim-bar {
+      background: rgba(8, 11, 17, 0.92);
+      border-bottom: 1px solid var(--win-border);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .hud-clock-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .hud-clock-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--win-text);
+      background: var(--win-card);
+      border: 1px solid var(--win-border);
+      padding: 5px 12px;
+      border-radius: 7px;
+    }
+
+    .hud-cultist-pill {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--win-border);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--win-dim);
+    }
+
+    .hud-cultist-pill.active {
+      color: #f59e0b;
+      border-color: rgba(245, 158, 11, 0.45);
+      background: rgba(245, 158, 11, 0.12);
+    }
+
+    .skin-pills {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .skin-pill-btn {
+      font-family: var(--font-sans);
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--win-border);
+      background: var(--win-card);
+      color: var(--win-dim);
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .skin-pill-btn:hover {
+      border-color: var(--win-accent);
+      color: var(--win-accent);
+    }
+
+    .skin-pill-btn.active {
+      background: var(--win-accent-soft);
+      border-color: var(--win-accent);
+      color: var(--win-accent);
     }
 
     .window-dots {
@@ -410,7 +502,7 @@
       font-family: var(--font-mono);
       font-size: 0.78rem;
       font-weight: 700;
-      color: var(--text-dim);
+      color: var(--win-dim);
       letter-spacing: 1px;
     }
 
@@ -426,9 +518,9 @@
 
     .showcase-body {
       display: grid;
-      grid-template-columns: 260px 1fr;
-      min-height: 410px;
-      background: linear-gradient(180deg, #0f141e 0%, #0a0d14 100%);
+      grid-template-columns: 270px 1fr;
+      min-height: 440px;
+      background: linear-gradient(180deg, var(--win-bg) 0%, #090c12 100%);
     }
 
     @media (max-width: 840px) {
@@ -436,12 +528,12 @@
     }
 
     .showcase-sidebar {
-      background: #0a0d13;
-      border-right: 1px solid var(--border);
-      padding: 18px 14px;
+      background: var(--win-sidebar);
+      border-right: 1px solid var(--win-border);
+      padding: 16px 12px;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 4px;
     }
 
     .sidebar-caption {
@@ -450,19 +542,19 @@
       color: var(--text-muted);
       letter-spacing: 1.4px;
       text-transform: uppercase;
-      padding: 0 10px 8px;
+      padding: 0 10px 6px;
     }
 
     .tour-tab-btn {
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 11px 12px;
+      padding: 9px 12px;
       border-radius: var(--radius-sm);
       background: transparent;
       border: 1px solid transparent;
-      color: var(--text-dim);
-      font-size: 0.88rem;
+      color: var(--win-dim);
+      font-size: 0.85rem;
       font-weight: 600;
       cursor: pointer;
       text-align: left;
@@ -470,15 +562,15 @@
     }
 
     .tour-tab-btn:hover {
-      background: rgba(255, 255, 255, 0.03);
-      color: var(--gold);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--win-accent);
     }
 
     .tour-tab-btn.active {
-      background: #141a26;
-      border-color: var(--border-gold);
-      color: var(--gold);
-      box-shadow: inset 3px 0 0 var(--gold);
+      background: var(--win-accent-soft);
+      border-color: var(--win-accent);
+      color: var(--win-accent);
+      box-shadow: inset 3px 0 0 var(--win-accent);
     }
 
     .showcase-stage {
@@ -495,14 +587,14 @@
       align-items: flex-start;
       gap: 16px;
       flex-wrap: wrap;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--win-border);
       padding-bottom: 18px;
     }
 
     .stage-tag {
       font-family: var(--font-mono);
       font-size: 0.72rem;
-      color: var(--cyan);
+      color: var(--win-cyan);
       letter-spacing: 1.3px;
       text-transform: uppercase;
       margin-bottom: 6px;
@@ -512,12 +604,12 @@
     .stage-title {
       font-size: 1.6rem;
       font-weight: 800;
-      color: var(--text-main);
+      color: var(--win-text);
       line-height: 1.2;
     }
 
     .stage-desc {
-      color: var(--text-dim);
+      color: var(--win-dim);
       font-size: 0.98rem;
       line-height: 1.65;
     }
@@ -529,16 +621,21 @@
     }
 
     .highlight-card {
-      background: #0b0f17;
-      border: 1px solid var(--border);
+      background: var(--win-card);
+      border: 1px solid var(--win-border);
       border-radius: var(--radius-sm);
       padding: 16px;
+      transition: border-color 0.2s ease;
+    }
+
+    .highlight-card:hover {
+      border-color: var(--win-accent);
     }
 
     .highlight-card h4 {
       font-size: 0.9rem;
       font-weight: 700;
-      color: var(--gold);
+      color: var(--win-accent);
       margin-bottom: 6px;
       display: flex;
       align-items: center;
@@ -547,7 +644,7 @@
 
     .highlight-card p {
       font-size: 0.84rem;
-      color: var(--text-dim);
+      color: var(--win-dim);
       line-height: 1.5;
     }
 
@@ -558,7 +655,7 @@
       flex-wrap: wrap;
       gap: 10px;
       padding-top: 14px;
-      border-top: 1px solid var(--border);
+      border-top: 1px solid var(--win-border);
       font-family: var(--font-mono);
       font-size: 0.75rem;
       color: var(--text-muted);
@@ -598,24 +695,32 @@
       font-size: 1.05rem;
     }
 
-    /* ================= MODULES GRID ================= */
+    /* ================= MODULES BENTO GRID ================= */
     .modules-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-      gap: 24px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+
+    @media (max-width: 1040px) {
+      .modules-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 680px) {
+      .modules-grid { grid-template-columns: 1fr; }
     }
 
     .module-card {
-      background: var(--bg-elevated);
+      background: linear-gradient(180deg, rgba(20, 26, 38, 0.92) 0%, rgba(13, 17, 25, 0.96) 100%);
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
-      padding: 28px;
-      transition: all 0.28s ease;
+      padding: 26px;
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
       position: relative;
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 12px;
     }
 
     .module-card::before {
@@ -629,7 +734,7 @@
     }
 
     .module-card:hover {
-      background: var(--bg-elevated-hover);
+      background: linear-gradient(180deg, rgba(25, 33, 48, 0.96) 0%, rgba(15, 20, 30, 0.98) 100%);
       border-color: var(--border-gold);
       transform: translateY(-4px);
       box-shadow: var(--shadow-card);
@@ -639,26 +744,100 @@
       opacity: 1;
     }
 
+    .module-card.featured-bento {
+      grid-column: 1 / -1;
+      border-color: var(--border-gold);
+      background: radial-gradient(circle at 90% 10%, rgba(212, 184, 134, 0.11), transparent 45%),
+                  linear-gradient(180deg, rgba(20, 27, 40, 0.98) 0%, rgba(12, 16, 24, 0.98) 100%);
+      box-shadow: 0 20px 44px -18px rgba(0, 0, 0, 0.8), 0 0 28px rgba(212, 184, 134, 0.08);
+    }
+
+    .module-card.featured-bento::before {
+      opacity: 1;
+    }
+
+    .featured-bento-cols {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 8px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(212, 184, 134, 0.16);
+    }
+
+    @media (max-width: 820px) {
+      .featured-bento-cols { grid-template-columns: 1fr; }
+    }
+
+    .bento-mini-box {
+      background: rgba(8, 11, 17, 0.72);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+    }
+
+    .bento-mini-box h4 {
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: var(--gold);
+      margin-bottom: 5px;
+    }
+
+    .bento-mini-box p {
+      font-size: 0.84rem;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+
+    .module-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
     .module-icon {
-      width: 48px;
-      height: 48px;
+      width: 46px;
+      height: 46px;
       border-radius: 10px;
       background: rgba(212, 184, 134, 0.09);
       border: 1px solid var(--border-gold);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.5rem;
+      font-size: 1.45rem;
+      flex-shrink: 0;
+    }
+
+    .module-tag {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.9px;
+      text-transform: uppercase;
+      color: var(--cyan);
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      padding: 3px 9px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .module-tag.gold {
+      color: var(--gold);
+      background: rgba(212, 184, 134, 0.12);
+      border-color: var(--border-gold);
     }
 
     .module-card h3 {
-      font-size: 1.22rem;
+      font-size: 1.16rem;
       font-weight: 800;
       color: var(--text-main);
+      line-height: 1.3;
     }
 
-    .module-card p {
-      font-size: 0.94rem;
+    .module-card > p {
+      font-size: 0.92rem;
       color: var(--text-dim);
       line-height: 1.6;
     }
@@ -667,24 +846,50 @@
       list-style: none;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 9px;
       margin-top: auto;
-      padding-top: 10px;
-      border-top: 1px solid rgba(35, 41, 54, 0.7);
+      padding-top: 12px;
+      border-top: 1px solid rgba(35, 41, 54, 0.85);
     }
 
     .module-list li {
       font-size: 0.86rem;
       color: var(--text-dim);
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
+      display: block;
+      position: relative;
+      padding-left: 18px;
+      line-height: 1.56;
+      text-align: left;
     }
 
     .module-list li::before {
       content: "▹";
+      position: absolute;
+      left: 0;
+      top: 0;
       color: var(--gold);
       font-weight: 800;
+    }
+
+    .module-list li strong {
+      color: var(--text-main);
+      font-weight: 700;
+    }
+
+    .module-list li em {
+      color: var(--gold-bright);
+      font-style: normal;
+      font-weight: 600;
+    }
+
+    .module-list li code {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--gold-bright);
+      background: rgba(212, 184, 134, 0.1);
+      border: 1px solid rgba(212, 184, 134, 0.22);
+      padding: 1px 6px;
+      border-radius: 4px;
     }
 
     /* ================= ARCHITECTURE & PERFORMANCE ================= */
@@ -977,8 +1182,23 @@
             <span class="w-dot y"></span>
             <span class="w-dot g"></span>
           </div>
-          <div class="window-title">TTC — TACTICAL TARKOV COMPANION // RECORRIDO POR MÓDULOS</div>
+          <div class="window-title">TTC v1.5.0 — TACTICAL TARKOV COMPANION // PREVIEW EN VIVO</div>
           <div class="window-badge">ZERO-LAG ENGINE</div>
+        </div>
+
+        <div class="hud-sim-bar">
+          <div class="hud-clock-group">
+            <span class="hud-clock-pill" id="hud-clock-pill">🕒 RAID  <span id="clock-left">--:--:--</span>  |  <span id="clock-right">--:--:--</span></span>
+            <span class="hud-cultist-pill" id="cultist-pill">Calculando horario Tarkov 7x…</span>
+          </div>
+          <div class="skin-pills" title="Prueba las 6 Skins oficiales de TTC v1.5.0 en vivo">
+            <button class="skin-pill-btn active" onclick="applyPreviewSkin('tarkov_classic', this)">EFT Hideout</button>
+            <button class="skin-pill-btn" onclick="applyPreviewSkin('modern_obsidian', this)">🌌 Modern Obsidian</button>
+            <button class="skin-pill-btn" onclick="applyPreviewSkin('terragroup_clean', this)">🧬 TerraGroup Clean</button>
+            <button class="skin-pill-btn" onclick="applyPreviewSkin('labs_nvg', this)">Labs NVG</button>
+            <button class="skin-pill-btn" onclick="applyPreviewSkin('tactical_slate', this)">Tactical Slate</button>
+            <button class="skin-pill-btn" onclick="applyPreviewSkin('halloween_cultist', this)">🎃 Halloween</button>
+          </div>
         </div>
 
         <div class="showcase-body">
@@ -1019,8 +1239,40 @@
       </div>
 
       <div class="modules-grid">
+        <article class="module-card featured-bento">
+          <div class="module-card-head">
+            <div style="display:flex;align-items:center;gap:14px;">
+              <div class="module-icon">🏠</div>
+              <div>
+                <h3>Centro de Mando Bento Grid, Top HUD &amp; UI Moderna</h3>
+              </div>
+            </div>
+            <span class="module-tag gold">NUEVO EN v1.5.0</span>
+          </div>
+          <p>
+            Nueva pantalla operativa de inicio acompañada por un HUD superior fijo con KPIs en vivo, reloj oficial In-Raid de Tarkov y barra lateral agrupada y colapsable con <strong>6 skins</strong> y tipografía híbrida <em>Bender / Segoe UI</em>.
+          </p>
+          <div class="featured-bento-cols">
+            <div class="bento-mini-box">
+              <h4>📊 4 KPIs + Acciones en 1 Clic</h4>
+              <p>Completa próximas misiones desbloqueadas o registra tus <strong>44 ítems Collector (Kappa)</strong> pendientes directo desde la pantalla principal.</p>
+            </div>
+            <div class="bento-mini-box">
+              <h4>🕒 Reloj In-Raid 7x &amp; Cultists</h4>
+              <p>Horarios oficiales Izquierda/Derecha sincronizados al segundo con alerta automática en ventana nocturna <code>22:00–07:00</code>.</p>
+            </div>
+            <div class="bento-mini-box">
+              <h4>🎨 6 Skins &amp; Sidebar Colapsable</h4>
+              <p>Active Pill luminoso, micro-interacciones hover y nuevos temas <em>Modern Obsidian</em> (OLED) y <em>TerraGroup Clean</em>.</p>
+            </div>
+          </div>
+        </article>
+
         <article class="module-card">
-          <div class="module-icon">🛠️</div>
+          <div class="module-card-head">
+            <div class="module-icon">🛠️</div>
+            <span class="module-tag gold">110 ARMAS · AVERÍAS</span>
+          </div>
           <h3>Gunsmith Studio &amp; Averías (Malfunctions)</h3>
           <p>
             Banco de armería militar interactivo con plano esquemático dinámico en tiempo real y guía técnica completa de fallos mecánicos y regla del 93% de durabilidad.
@@ -1033,7 +1285,10 @@
         </article>
 
         <article class="module-card">
-          <div class="module-icon">🗺️</div>
+          <div class="module-card-head">
+            <div class="module-icon">📜</div>
+            <span class="module-tag">459 QUESTS</span>
+          </div>
           <h3>Ficha Táctica Offline para Quests</h3>
           <p>
             Experiencia estilo Wiki 100% offline. Consulta qué hacer en cada misión sin minimizar el juego para abrir navegadores pesados que consumen tu memoria RAM.
@@ -1046,7 +1301,10 @@
         </article>
 
         <article class="module-card">
-          <div class="module-icon">🧭</div>
+          <div class="module-card-head">
+            <div class="module-icon">🧭</div>
+            <span class="module-tag">RUTAS TSP</span>
+          </div>
           <h3>Quest Tracker &amp; Rutas Óptimas</h3>
           <p>
             Marca tus misiones activas por mapa y deja que TTC calcule automáticamente el orden de recorrido más corto desde tu spawn hasta la extracción.
@@ -1059,7 +1317,10 @@
         </article>
 
         <article class="module-card">
-          <div class="module-icon">🎯</div>
+          <div class="module-card-head">
+            <div class="module-icon">🎯</div>
+            <span class="module-tag">ES / EN · 6 SKINS</span>
+          </div>
           <h3>Planner de Progresión</h3>
           <p>
             Define tus objetivos de wipe —<strong>Kappa</strong>, <strong>Lightkeeper</strong>, niveles de Traders o misiones puntuales— y genera un plan unificado de raids.
@@ -1072,7 +1333,10 @@
         </article>
 
         <article class="module-card">
-          <div class="module-icon">💥</div>
+          <div class="module-card-head">
+            <div class="module-icon">💥</div>
+            <span class="module-tag gold">EFT-AMMO · 203</span>
+          </div>
           <h3>Balística (203 Balas), Blindaje &amp; Audio</h3>
           <p>
             Paridad exacta con <strong>eft-ammo.com</strong>: analiza 203 proyectiles junto a 38 placas balísticas, 48 chalecos, 59 rigs blindados, 88 cascos y 28 auriculares.
@@ -1085,20 +1349,26 @@
         </article>
 
         <article class="module-card">
-          <div class="module-icon">📍</div>
+          <div class="module-card-head">
+            <div class="module-icon">📍</div>
+            <span class="module-tag">12 MAPAS · 6 IA</span>
+          </div>
           <h3>Mapas 2D, Bosses &amp; 6 Facciones IA</h3>
           <p>
             Planos topográficos en alta definición para los 12 mapas del juego, con probabilidades de Bosses (<strong>PvE</strong> y <strong>PvP</strong>) y dossier completo de las 6 facciones IA activas.
           </p>
           <ul class="module-list">
-            <li>Incluye Black Division (790 HP), RUAF ('AF'), Rogues, Raiders, Cultists y Scavs junto a los 13 Bosses.</li>
+            <li>Incluye <strong>Black Division (790 HP)</strong>, RUAF ('AF'), Rogues, Raiders, Cultists y Scavs junto a los 13 Bosses.</li>
             <li>Capas tácticas de extracciones PMC/Scav/Co-op, llaves marcadas y cajas fuertes.</li>
             <li>Pines tácticos personalizados creados por el usuario con persistencia local en SQLite.</li>
           </ul>
         </article>
 
         <article class="module-card">
-          <div class="module-icon">📦</div>
+          <div class="module-card-head">
+            <div class="module-icon">📦</div>
+            <span class="module-tag gold">44 KAPPA · 441 BARTERS</span>
+          </div>
           <h3>Hideout, 441 Trueques &amp; 44 Ítems Kappa</h3>
           <p>
             Control total de tu economía con miniaturas oficiales PNG en estaciones, crafteos, trueques, <strong>Cultist Circle</strong>, semáforo <strong>“¿Vender o Guardar?”</strong> y tracker Collector.
@@ -1111,7 +1381,10 @@
         </article>
 
         <article class="module-card">
-          <div class="module-icon">📖</div>
+          <div class="module-card-head">
+            <div class="module-icon">📖</div>
+            <span class="module-tag">10 CAPÍTULOS</span>
+          </div>
           <h3>Capítulos de Historia &amp; Lore</h3>
           <p>
             Sumérgete en la narrativa oficial de Escape from Tarkov con los 10 capítulos de historia estructurados para una lectura cómoda sin fatiga visual.
@@ -1124,7 +1397,10 @@
         </article>
 
         <article class="module-card">
-          <div class="module-icon">🔑</div>
+          <div class="module-card-head">
+            <div class="module-icon">🔑</div>
+            <span class="module-tag">230 LLAVES</span>
+          </div>
           <h3>Llaves &amp; Keyring (230 Llaves)</h3>
           <p>
             Catálogo completo con las 230 llaves, tarjetas Labs y accesos de extracción organizados por mapa, usos e importancia táctica.
@@ -1137,7 +1413,10 @@
         </article>
 
         <article class="module-card">
-          <div class="module-icon">💊</div>
+          <div class="module-card-head">
+            <div class="module-icon">💊</div>
+            <span class="module-tag gold">45 PROVISIONES</span>
+          </div>
           <h3>Medicina, 45 Provisiones &amp; Salud</h3>
           <p>
             Guía médica táctica con 43 ítems curativos/stims, el catálogo completo de las <strong>45 comidas y bebidas oficiales</strong> de la Wiki con miniatura y matriz de 14 debuffs de salud.
@@ -1150,7 +1429,10 @@
         </article>
 
         <article class="module-card">
-          <div class="module-icon">🎒</div>
+          <div class="module-card-head">
+            <div class="module-icon">🎒</div>
+            <span class="module-tag">136 CONTENEDORES</span>
+          </div>
           <h3>Rigs, Mochilas &amp; Contenedores</h3>
           <p>
             Explora 10 pouches seguros (Kappa, Gamma, Theta), 35 cajas de alijo, 47 mochilas y 44 rigs tácticos sin blindaje con diagramas reales de grilla.
@@ -1163,7 +1445,10 @@
         </article>
 
         <article class="module-card">
-          <div class="module-icon">📈</div>
+          <div class="module-card-head">
+            <div class="module-icon">📈</div>
+            <span class="module-tag gold">PRESTIGIO 1–6 · 32 LOGROS</span>
+          </div>
           <h3>PMC, Prestigio 1–6, 32 Logros &amp; Ropa</h3>
           <p>
             Manual completo de progresión avanzada: las 35 skills del PMC, Scav Karma, BTR/Transits, los <strong>6 niveles oficiales de Prestige</strong>, Arena/Ref Sync, 32 Achievements y 24 prendas USEC/BEAR.
@@ -1546,8 +1831,99 @@
       });
     }
 
+    const PREVIEW_SKINS = {
+      tarkov_classic: {
+        bg: '#161714', sidebar: '#0e0e0b', card: '#1a1b17',
+        border: '#33352d', accent: '#c8b07e', soft: 'rgba(200, 176, 126, 0.14)',
+        cyan: '#5aa9d6', text: '#f5f3ec', dim: '#c7c3b6'
+      },
+      modern_obsidian: {
+        bg: '#101726', sidebar: '#0a0f1c', card: '#141d2f',
+        border: '#26354d', accent: '#f5b041', soft: 'rgba(245, 176, 65, 0.14)',
+        cyan: '#38bdf8', text: '#f8fafc', dim: '#cbd5e1'
+      },
+      terragroup_clean: {
+        bg: '#0f1a27', sidebar: '#0a121b', card: '#132030',
+        border: '#233d58', accent: '#22d3ee', soft: 'rgba(34, 211, 238, 0.14)',
+        cyan: '#60a5fa', text: '#f1f8ff', dim: '#b8cfe6'
+      },
+      labs_nvg: {
+        bg: '#0e171f', sidebar: '#090f14', card: '#111c26',
+        border: '#1e3a4c', accent: '#4ade80', soft: 'rgba(74, 222, 128, 0.14)',
+        cyan: '#22d3ee', text: '#f0fdf4', dim: '#b8d8e8'
+      },
+      tactical_slate: {
+        bg: '#12161e', sidebar: '#0d1016', card: '#1a202c',
+        border: '#2d3545', accent: '#d4b886', soft: 'rgba(212, 184, 134, 0.14)',
+        cyan: '#38bdf8', text: '#f8fafc', dim: '#cbd5e1'
+      },
+      halloween_cultist: {
+        bg: '#171122', sidebar: '#100b17', card: '#1d152b',
+        border: '#44325b', accent: '#ff8a2b', soft: 'rgba(255, 138, 43, 0.15)',
+        cyan: '#a78bfa', text: '#fff7ed', dim: '#d8c3b8'
+      }
+    };
+
+    function applyPreviewSkin(skinId, btn) {
+      const s = PREVIEW_SKINS[skinId];
+      const win = document.getElementById('tour');
+      if (!s || !win) return;
+      win.style.setProperty('--win-bg', s.bg);
+      win.style.setProperty('--win-sidebar', s.sidebar);
+      win.style.setProperty('--win-card', s.card);
+      win.style.setProperty('--win-border', s.border);
+      win.style.setProperty('--win-accent', s.accent);
+      win.style.setProperty('--win-accent-soft', s.soft);
+      win.style.setProperty('--win-cyan', s.cyan);
+      win.style.setProperty('--win-text', s.text);
+      win.style.setProperty('--win-dim', s.dim);
+
+      document.querySelectorAll('.skin-pill-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+    }
+
+    function fmtTarkovMs(ms) {
+      const totalSec = Math.floor((ms / 1000) % 86400);
+      const h = Math.floor(totalSec / 3600);
+      const m = Math.floor((totalSec % 3600) / 60);
+      const s = totalSec % 60;
+      const isNight = h >= 22 || h < 7;
+      const pad = n => String(n).padStart(2, '0');
+      return { str: `${pad(h)}:${pad(m)}:${pad(s)}`, short: `${pad(h)}:${pad(m)}`, isNight };
+    }
+
+    function updateRaidClocks() {
+      const DAY_MS = 24 * 3600 * 1000;
+      const tarkovMs = Date.now() * 7;
+      const leftMs = (tarkovMs + 3 * 3600 * 1000) % DAY_MS;
+      const rightMs = (leftMs + 12 * 3600 * 1000) % DAY_MS;
+      const L = fmtTarkovMs(leftMs);
+      const R = fmtTarkovMs(rightMs);
+
+      const elL = document.getElementById('clock-left');
+      const elR = document.getElementById('clock-right');
+      const elC = document.getElementById('cultist-pill');
+      if (elL) elL.textContent = `${L.isNight ? '🌙' : '🔆'} ${L.str}`;
+      if (elR) elR.textContent = `${R.isNight ? '🌙' : '🔆'} ${R.str}`;
+      if (elC) {
+        const active = L.isNight || R.isNight;
+        elC.classList.toggle('active', active);
+        if (active) {
+          const sides = [];
+          if (L.isNight) sides.push(`IZQ ${L.short}`);
+          if (R.isNight) sides.push(`DER ${R.short}`);
+          elC.textContent = `🌙 CULTISTS ACTIVOS: ${sides.join(' / ')}`;
+        } else {
+          elC.textContent = '🔆 Horario Diurno';
+        }
+      }
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
       selectTour('command_center', document.querySelector('.tour-tab-btn.active'));
+      applyPreviewSkin('tarkov_classic', document.querySelector('.skin-pill-btn.active'));
+      updateRaidClocks();
+      setInterval(updateRaidClocks, 1000);
     });
   </script>
 </body>
