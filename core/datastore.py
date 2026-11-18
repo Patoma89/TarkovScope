@@ -409,6 +409,13 @@ class DataStore:
             res.append(quest)
         return res
 
+    def get_quest_completion_counts(self) -> Tuple[int, int]:
+        """Retorna (completadas, total) en O(1) sobre la caché RAM de misiones."""
+        self.ensure_loaded()
+        total = len(self._quests)
+        done = sum(1 for q in self._quests if q.get("is_completed"))
+        return done, total
+
     def toggle_quest(self, quest_id: int) -> bool:
         self.ensure_loaded()
         new_state = toggle_quest_progress(quest_id, self.db_path)

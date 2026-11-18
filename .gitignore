@@ -9,7 +9,6 @@ dist_installer/
 *.zip
 .vscode/
 .idea/
-cache/thumbs/
 cache/boss_maps/
 *.db-wal
 *.db-shm

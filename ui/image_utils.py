@@ -29,6 +29,7 @@ from core.image_cache import (
 # Caché en memoria RAM de instancias CTkImage (acceso en O(1) = 0 ms)
 _CTK_IMAGE_RAM_CACHE: Dict[str, ctk.CTkImage] = {}
 _TK_PHOTO_RAM_CACHE: Dict[str, Any] = {}
+_PIL_THUMB_RAM_CACHE: Dict[str, Image.Image] = {}
 _RAM_CACHE_LOCK = threading.Lock()
 _STORY_FULL_PIL_CACHE: Dict[Tuple[str, Tuple[int, int]], Image.Image] = {}
 _STORY_FULL_PIL_CACHE_MAX = 6
@@ -36,9 +37,11 @@ _STORY_FULL_PIL_CACHE_MAX = 6
 
 def clear_image_ram_cache() -> None:
     """Limpia el caché en memoria RAM de imágenes CTkImage."""
-    _CTK_IMAGE_RAM_CACHE.clear()
-    _TK_PHOTO_RAM_CACHE.clear()
-    _STORY_FULL_PIL_CACHE.clear()
+    with _RAM_CACHE_LOCK:
+        _CTK_IMAGE_RAM_CACHE.clear()
+        _TK_PHOTO_RAM_CACHE.clear()
+        _PIL_THUMB_RAM_CACHE.clear()
+        _STORY_FULL_PIL_CACHE.clear()
 
 
 def get_trader_ctk_image(
@@ -392,13 +395,14 @@ def get_gear_ctk_icon(
 
     def _build_ctk_from_path(path: str) -> Optional[ctk.CTkImage]:
         try:
+            resample = Image.Resampling.BILINEAR if max(mw, mh) <= 96 else Image.Resampling.LANCZOS
             with Image.open(path) as img:
                 rgba = img.convert("RGBA")
                 iw, ih = rgba.size
                 scale = min(mw / max(1, iw), mh / max(1, ih))
                 tw = max(1, int(round(iw * scale)))
                 th = max(1, int(round(ih * scale)))
-                resized = rgba.resize((tw, th), Image.Resampling.LANCZOS)
+                resized = rgba.resize((tw, th), resample)
                 ctk_img = ctk.CTkImage(light_image=resized, dark_image=resized, size=(tw, th))
                 with _RAM_CACHE_LOCK:
                     _CTK_IMAGE_RAM_CACHE[ram_key] = ctk_img
@@ -423,13 +427,40 @@ def get_gear_ctk_icon(
     return None
 
 
+def _get_or_load_pil_thumb(
+    cache_key: str,
+    path: str,
+    max_size: Tuple[int, int],
+) -> Optional[Image.Image]:
+    """Carga y pre-escala en PIL una miniatura cacheándola en _PIL_THUMB_RAM_CACHE (thread-safe)."""
+    if not path or not os.path.exists(path):
+        return None
+    mw, mh = max_size
+    pil_key = f"pil:{cache_key}:{mw}x{mh}"
+    with _RAM_CACHE_LOCK:
+        cached = _PIL_THUMB_RAM_CACHE.get(pil_key)
+    if cached is not None:
+        return cached
+    try:
+        resample = Image.Resampling.BILINEAR if max(mw, mh) <= 96 else Image.Resampling.LANCZOS
+        with Image.open(path) as img:
+            rgba = img.convert("RGBA")
+            rgba.thumbnail((mw, mh), resample)
+            thumb = rgba.copy()
+        with _RAM_CACHE_LOCK:
+            _PIL_THUMB_RAM_CACHE[pil_key] = thumb
+        return thumb
+    except Exception:
+        return None
+
+
 def get_resized_ctk_image(
     cache_key: str,
     path: str,
     max_size: Tuple[int, int],
 ) -> Optional[ctk.CTkImage]:
     """Carga, pre-escala en PIL y cachea en RAM un CTkImage para miniaturas locales."""
-    if not path or not os.path.exists(path):
+    if not path:
         return None
     mw, mh = max_size
     ram_key = f"thumb:{cache_key}:{mw}x{mh}"
@@ -437,17 +468,14 @@ def get_resized_ctk_image(
         cached = _CTK_IMAGE_RAM_CACHE.get(ram_key)
     if cached is not None:
         return cached
-    try:
-        with Image.open(path) as img:
-            rgba = img.convert("RGBA")
-            rgba.thumbnail((mw, mh), Image.Resampling.LANCZOS)
-            tw, th = max(1, rgba.size[0]), max(1, rgba.size[1])
-            ctk_img = ctk.CTkImage(light_image=rgba.copy(), dark_image=rgba.copy(), size=(tw, th))
-            with _RAM_CACHE_LOCK:
-                _CTK_IMAGE_RAM_CACHE[ram_key] = ctk_img
-            return ctk_img
-    except Exception:
+    thumb = _get_or_load_pil_thumb(cache_key, path, max_size)
+    if thumb is None:
         return None
+    tw, th = max(1, thumb.size[0]), max(1, thumb.size[1])
+    ctk_img = ctk.CTkImage(light_image=thumb, dark_image=thumb, size=(tw, th))
+    with _RAM_CACHE_LOCK:
+        _CTK_IMAGE_RAM_CACHE[ram_key] = ctk_img
+    return ctk_img
 
 
 def get_resized_tk_image(
@@ -456,7 +484,7 @@ def get_resized_tk_image(
     max_size: Tuple[int, int],
 ) -> Optional[ImageTk.PhotoImage]:
     """Carga, pre-escala en PIL y cachea en RAM un PhotoImage nativo para widgets tk.Label sin CTkCanvas."""
-    if not path or not os.path.exists(path):
+    if not path:
         return None
     mw, mh = max_size
     ram_key = f"tk:{cache_key}:{mw}x{mh}"
@@ -464,16 +492,155 @@ def get_resized_tk_image(
         cached = _TK_PHOTO_RAM_CACHE.get(ram_key)
     if cached is not None:
         return cached
+    thumb = _get_or_load_pil_thumb(cache_key, path, max_size)
+    if thumb is None:
+        return None
     try:
-        with Image.open(path) as img:
-            rgba = img.convert("RGBA")
-            rgba.thumbnail((mw, mh), Image.Resampling.LANCZOS)
-            tk_img = ImageTk.PhotoImage(rgba)
-            with _RAM_CACHE_LOCK:
-                _TK_PHOTO_RAM_CACHE[ram_key] = tk_img
-            return tk_img
+        tk_img = ImageTk.PhotoImage(thumb)
+        with _RAM_CACHE_LOCK:
+            _TK_PHOTO_RAM_CACHE[ram_key] = tk_img
+        return tk_img
     except Exception:
         return None
+
+
+def prewarm_ui_thumbnails() -> None:
+    """Pre-carga miniaturas locales en RAM en segundo plano para apertura instantánea de pestañas."""
+    try:
+        for t_name in TRADER_IMAGE_URLS:
+            if is_image_cached(t_name):
+                for sz in ((56, 56), (60, 60), (68, 68)):
+                    get_trader_ctk_image(t_name, size=sz)
+    except Exception:
+        pass
+
+    try:
+        for b_id in BOSS_IMAGE_URLS:
+            if is_image_cached(b_id):
+                for sz in ((42, 42), (108, 108)):
+                    get_boss_ctk_image(b_id, size=sz)
+    except Exception:
+        pass
+
+    try:
+        for map_key in MAP_IMAGE_URLS:
+            thumb_path = get_cached_map_thumb_path(map_key, (780, 480))
+            if os.path.exists(thumb_path) or is_map_cached(map_key):
+                get_map_ctk_image(map_key, target_size=(780, 480))
+    except Exception:
+        pass
+
+    try:
+        from core.weapons_data import KAPPA_COLLECTOR_ITEMS, WEAPONS_ARSENAL_DATA
+
+        for wp in WEAPONS_ARSENAL_DATA:
+            get_weapon_or_part_ctk_image(wp["id"], size=(66, 36), label_fallback=wp["name"])
+            get_weapon_or_part_ctk_image(wp["id"], size=(240, 108), label_fallback=wp["name"])
+
+        for it in KAPPA_COLLECTOR_ITEMS:
+            ik = it.get("icon_key", "")
+            if ik:
+                get_gear_ctk_icon(ik, max_size=(34, 34))
+                get_gear_ctk_icon(ik, max_size=(46, 46))
+    except Exception:
+        pass
+
+    try:
+        from core.hideout_crafts_data import HIDEOUT_CRAFTS_DATA, HIDEOUT_STATION_ICONS
+
+        for st_info in HIDEOUT_STATION_ICONS.values():
+            ik = st_info.get("icon_key", "")
+            if ik:
+                get_gear_ctk_icon(ik, max_size=(40, 40))
+
+        for cr in HIDEOUT_CRAFTS_DATA:
+            ik = cr.get("icon_key", "")
+            if ik:
+                get_gear_ctk_icon(ik, max_size=(48, 48))
+    except Exception:
+        pass
+
+    try:
+        from core.barters_data import BARTERS_CATALOG
+
+        for b in BARTERS_CATALOG:
+            ck = b.get("cache_key", "")
+            if ck:
+                get_gear_ctk_icon(ck, max_size=(42, 38))
+    except Exception:
+        pass
+
+    try:
+        from core.containers_data import get_all_storage_items
+
+        for st in get_all_storage_items():
+            ck = st.get("cache_key", "")
+            if ck:
+                get_gear_ctk_icon(ck, max_size=(46, 38))
+    except Exception:
+        pass
+
+    try:
+        from core.armor_data import get_all_protection_items
+
+        for prot in get_all_protection_items():
+            ck = prot.get("cache_key", "")
+            if ck:
+                get_gear_ctk_icon(ck, max_size=(46, 38))
+    except Exception:
+        pass
+
+    try:
+        from core.pmc_systems_data import PMC_SKILLS_CATALOG
+        from core.pmc_prestige_achievements_data import PRESTIGE_LEVELS_DATA, TACTICAL_CLOTHING_CATALOG
+
+        for sk in PMC_SKILLS_CATALOG:
+            ck = sk.get("cache_key", "")
+            if ck:
+                get_gear_ctk_icon(ck, max_size=(60, 60))
+
+        for p_data in PRESTIGE_LEVELS_DATA:
+            ik = p_data.get("icon_key", "")
+            if ik:
+                get_gear_ctk_icon(ik, max_size=(52, 52))
+
+        for cl in TACTICAL_CLOTHING_CATALOG:
+            ik = cl.get("icon_key", cl.get("id", ""))
+            if ik:
+                get_gear_ctk_icon(ik, max_size=(64, 64))
+    except Exception:
+        pass
+
+    try:
+        from core.provisions_health_data import PROVISIONS_CATALOG
+
+        for prov in PROVISIONS_CATALOG:
+            ik = prov.get("icon_key", prov.get("id", ""))
+            if ik:
+                get_gear_ctk_icon(ik, max_size=(56, 56))
+    except Exception:
+        pass
+
+    try:
+        from core.keys_data import KEYS_CATALOG, get_key_icon_path
+
+        for k in KEYS_CATALOG:
+            path = get_key_icon_path(k["id"])
+            if path:
+                _get_or_load_pil_thumb(f"key:{k['id']}", path, (42, 42))
+                _get_or_load_pil_thumb(f"key:{k['id']}", path, (44, 44))
+    except Exception:
+        pass
+
+    try:
+        from core.medical_data import MEDICAL_CATALOG, get_medical_icon_path
+
+        for m in MEDICAL_CATALOG:
+            path = get_medical_icon_path(m["id"])
+            if path:
+                _get_or_load_pil_thumb(f"med:{m['id']}", path, (58, 44))
+    except Exception:
+        pass
 
 
 

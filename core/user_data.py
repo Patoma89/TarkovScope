@@ -2,27 +2,49 @@
 Extraido de database.py (responsabilidad unica). database.py re-exporta estas funciones.
 """
 import json
+import os
+import threading
 from datetime import datetime
-from typing import Any, Dict, List, Set
+from typing import Any, Dict, List, Set, Tuple
 from core.config import DB_PATH
 from core.maps_data import normalize_map_key
 from core.db_connection import get_db_connection
 
+_PREF_CACHE: Dict[Tuple[str, str], str] = {}
+_PREF_LOCK = threading.Lock()
+
+
+def _invalidate_pref_cache(db_path: str) -> None:
+    norm = os.path.abspath(db_path)
+    with _PREF_LOCK:
+        for k in [key for key in _PREF_CACHE if key[0] == norm]:
+            _PREF_CACHE.pop(k, None)
+
 
 def get_user_preference(key: str, default: str = "", db_path: str = DB_PATH) -> str:
-    """Lee una preferencia de usuario desde la tabla metadata."""
+    """Lee una preferencia de usuario desde la tabla metadata (con caché O(1) en RAM)."""
+    cache_key = (os.path.abspath(db_path), key)
+    with _PREF_LOCK:
+        if cache_key in _PREF_CACHE:
+            return _PREF_CACHE[cache_key]
     try:
         with get_db_connection(db_path) as conn:
             cursor = conn.cursor()
             cursor.execute("SELECT value FROM metadata WHERE key = ?;", (key,))
             row = cursor.fetchone()
-            return str(row[0]) if row and row[0] is not None else default
+            if row and row[0] is not None:
+                val = str(row[0])
+                with _PREF_LOCK:
+                    _PREF_CACHE[cache_key] = val
+                return val
+            return default
     except Exception:
         return default
 
 
 def set_user_preference(key: str, value: str, db_path: str = DB_PATH) -> None:
-    """Guarda una preferencia de usuario en la tabla metadata."""
+    """Guarda una preferencia de usuario en la tabla metadata y actualiza la caché RAM."""
+    str_val = str(value)
     with get_db_connection(db_path) as conn:
         cursor = conn.cursor()
         cursor.execute(
@@ -31,8 +53,12 @@ def set_user_preference(key: str, value: str, db_path: str = DB_PATH) -> None:
             VALUES (?, ?, CURRENT_TIMESTAMP)
             ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP;
             """,
-            (key, str(value)),
+            (key, str_val),
         )
+        conn.commit()
+    cache_key = (os.path.abspath(db_path), key)
+    with _PREF_LOCK:
+        _PREF_CACHE[cache_key] = str_val
 
 
 def toggle_quest_progress(quest_id: int, db_path: str = DB_PATH) -> bool:
@@ -357,6 +383,8 @@ def import_user_profile(profile_data: Dict[str, Any], db_path: str = DB_PATH) ->
                     """, (item_name.strip(), int(count)))
 
         conn.commit()
+
+    _invalidate_pref_cache(db_path)
 
     if "unlocked_achievements" in profile_data and isinstance(profile_data["unlocked_achievements"], list):
         clean_achs = sorted({str(a) for a in profile_data["unlocked_achievements"] if a})

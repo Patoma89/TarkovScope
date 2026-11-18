@@ -991,11 +991,6 @@ def fetch_key_icons_async(on_done: Optional[Callable[[], None]] = None) -> None:
     if _KEY_ICONS_FETCHING or _KEY_ICONS_FETCHED:
         return
 
-    missing = [k for k in KEYS_CATALOG if not get_key_icon_path(k["id"])]
-    if not missing:
-        _KEY_ICONS_FETCHED = True
-        return
-
     _KEY_ICONS_FETCHING = True
 
     def _worker():
@@ -1008,6 +1003,11 @@ def fetch_key_icons_async(on_done: Optional[Callable[[], None]] = None) -> None:
         }
         wiki_api = "https://escapefromtarkov.fandom.com/api.php"
         try:
+            missing = [k for k in KEYS_CATALOG if not get_key_icon_path(k["id"])]
+            if not missing:
+                _KEY_ICONS_FETCHED = True
+                return
+
             url_by_name: Dict[str, str] = {}
             needs_wiki = any(k["id"] not in DIRECT_KEY_ICON_URLS for k in missing)
             if needs_wiki:

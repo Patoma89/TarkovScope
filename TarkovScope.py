@@ -32,7 +32,7 @@ from core.user_data import (
     set_user_preference,
 )
 from core.weapons_data import KAPPA_COLLECTOR_ITEMS
-from ui.image_utils import clear_image_ram_cache
+from ui.image_utils import clear_image_ram_cache, prewarm_ui_thumbnails
 import ui.theme as theme_mod
 from ui.theme import THEME_SETTINGS, ui_font, apply_ui_skin, get_active_skin_id, bind_card_hover
 from ui.patch_notes_modal import PatchNotesModal
@@ -101,6 +101,7 @@ class TarkovScopeApp(ctk.CTk):
         self._always_on_top: bool = False
         self._sidebar_collapsed: bool = (get_user_preference("sidebar_collapsed", "0") == "1")
         self._clock_after_id: Optional[str] = None
+        self._last_hud_kpi_state: Optional[tuple] = None
         self._nav_pills: Dict[str, ctk.CTkFrame] = {}
         self._nav_meta: Dict[str, tuple] = {}
 
@@ -661,10 +662,7 @@ class TarkovScopeApp(ctk.CTk):
             return
         try:
             ds = get_datastore()
-            ds.ensure_loaded()
-            all_q = ds.get_quests(progression_mode="ALL")
-            q_total = len(all_q)
-            q_done = sum(1 for q in all_q if q.get("is_completed"))
+            q_done, q_total = ds.get_quest_completion_counts()
             q_pct = int(round((q_done / q_total) * 100)) if q_total else 0
 
             k_total = len(KAPPA_COLLECTOR_ITEMS)
@@ -673,6 +671,11 @@ class TarkovScopeApp(ctk.CTk):
             a_total = len(ACHIEVEMENTS_CATALOG)
             a_done = len(get_unlocked_achievement_ids())
             prestige_lvl = get_prestige_level()
+
+            state = (q_done, q_total, k_done, k_total, a_done, a_total, prestige_lvl, get_active_lang())
+            if state == self._last_hud_kpi_state:
+                return
+            self._last_hud_kpi_state = state
 
             self.hud_kpi_quests.configure(text=f"📜 {tr('hud.quests')} {q_done}/{q_total} ({q_pct}%)")
             self.hud_kpi_kappa.configure(text=f"🏆 {tr('hud.kappa')} {k_done}/{k_total}")
@@ -735,6 +738,7 @@ class TarkovScopeApp(ctk.CTk):
                 pass
         self.tabs.clear()
         self._active_nav_key = ""
+        self._last_hud_kpi_state = None
 
         try:
             self.sidebar.destroy()
@@ -845,7 +849,7 @@ class TarkovScopeApp(ctk.CTk):
             self.start_sync_in_background()
 
     def _prewarm_background_caches(self):
-        """Pre-carga en segundo plano datasets pesados para que Quest Tracker, Planner e Historia abran en 0 ms."""
+        """Pre-carga en segundo plano datasets pesados y miniaturas en RAM para apertura en 0 ms."""
         def worker():
             try:
                 from core.quest_route_data import load_route_dataset
@@ -854,6 +858,10 @@ class TarkovScopeApp(ctk.CTk):
                 pass
             try:
                 get_datastore().get_wiki_story_chapters()
+            except Exception:
+                pass
+            try:
+                prewarm_ui_thumbnails()
             except Exception:
                 pass
 

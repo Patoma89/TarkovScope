@@ -17,9 +17,12 @@ from core.user_data import (
     get_completed_hideout_keys,
     get_completed_story_quest_ids,
     get_map_markers,
+    get_prestige_level,
+    get_user_preference,
     import_user_profile,
     reset_all_hideout_progress,
     set_stash_item_count,
+    set_user_preference,
     toggle_hideout_progress,
     toggle_quest_progress,
     toggle_story_quest_progress,
@@ -112,6 +115,18 @@ class TestUserData(unittest.TestCase):
     def test_import_rejects_invalid_payload(self):
         self.assertFalse(import_user_profile([], self.db))
         self.assertFalse(import_user_profile("nope", self.db))  # type: ignore[arg-type]
+
+    def test_preference_ram_cache_consistency_and_import_invalidation(self):
+        self.assertEqual(get_user_preference("ui_skin", "tarkov_classic", db_path=self.db), "tarkov_classic")
+        set_user_preference("ui_skin", "labs_nvg", db_path=self.db)
+        self.assertEqual(get_user_preference("ui_skin", "tarkov_classic", db_path=self.db), "labs_nvg")
+
+        # Verificar que un cambio externo en SQLite se refleja al invalidar vía import_user_profile
+        set_user_preference("pmc_prestige_level", "2", db_path=self.db)
+        self.assertEqual(get_prestige_level(self.db), 2)
+        self.assertTrue(import_user_profile({"prestige_level": 5}, self.db))
+        self.assertEqual(get_prestige_level(self.db), 5)
+        self.assertEqual(get_user_preference("pmc_prestige_level", "0", db_path=self.db), "5")
 
 
 if __name__ == "__main__":
