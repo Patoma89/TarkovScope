@@ -8,7 +8,7 @@ from typing import Callable, Dict, List, Optional
 
 APP_NAME = "TTC (Tactical Tarkov Companion)"
 APP_FULL_NAME = "TTC (Tactical Tarkov Companion)"
-APP_VERSION = "1.5.0"
+APP_VERSION = "1.5.1"
 APP_AUTHOR = "Patoma89"
 GITHUB_REPO = "Patoma89/TarkovScope"
 

@@ -6,6 +6,29 @@ from typing import Any, Dict, List
 
 PATCH_NOTES: List[Dict[str, Any]] = [
     {
+        "version": "1.5.1",
+        "tag": "Release",
+        "title_es": "Pre-calentamiento RAM de Miniaturas, Cambio de Pestañas 0 ms & Thumbs Empaquetados",
+        "title_en": "RAM Thumbnail Pre-Warm, 0 ms Tab Switching & Bundled Pre-Scaled Thumbs",
+        "items": [
+            {
+                "kind": "IMPROVED",
+                "es": "450 miniaturas pre-escaladas incluidas en cache/thumbs/ dentro del repositorio e instalador para carga en 0 ms tras instalar o actualizar.",
+                "en": "450 pre-scaled thumbnails bundled in cache/thumbs/ across the repository and installer for 0 ms loading right after installing or updating.",
+            },
+            {
+                "kind": "IMPROVED",
+                "es": "Pre-calentamiento asíncrono en RAM (prewarm_ui_thumbnails) al iniciar la app para más de 1.600 íconos (Armas, Llaves, Medicina, Provisiones, Contenedores, Blindajes, Barters, Hideout, Skills y Traders).",
+                "en": "Asynchronous background RAM pre-warming (prewarm_ui_thumbnails) at startup for 1,600+ icons (Weapons, Keys, Medical, Provisions, Containers, Armor, Barters, Hideout, Skills & Traders).",
+            },
+            {
+                "kind": "IMPROVED",
+                "es": "Caché en memoria RAM para preferencias de usuario y estado de KPIs del Top HUD, eliminando lecturas SQLite al cambiar entre pestañas.",
+                "en": "In-memory RAM caching for user preferences and Top HUD KPI state, eliminating SQLite reads on every tab switch.",
+            },
+        ],
+    },
+    {
         "version": "1.5.0",
         "tag": "Release",
         "title_es": "Centro de Mando, HUD Táctico, Prestigio 1-6, 45 Provisiones, Facciones IA & UI Moderna",
