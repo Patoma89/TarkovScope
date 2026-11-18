@@ -8,9 +8,9 @@ AppPublisher=Patoma89
 AppPublisherURL=https://github.com/Patoma89/TarkovScope
 AppSupportURL=https://github.com/Patoma89/TarkovScope/issues
 AppUpdatesURL=https://github.com/Patoma89/TarkovScope/releases
-DefaultDirName={localappdata}\TTC
+DefaultDirName={sd}\TTC
 DefaultGroupName=TTC (Tactical Tarkov Companion)
-UsePreviousAppDir=yes
+UsePreviousAppDir=no
 DisableDirPage=no
 DisableProgramGroupPage=yes
 DirExistsWarning=no
@@ -207,20 +207,16 @@ begin
 end;
 
 procedure InitializeWizard();
+var
+  CleanDefault: string;
 begin
+  CleanDefault := ExpandConstant('{sd}\TTC');
   ExistingInstallDir := FindExistingInstallDir();
-  if ExistingInstallDir <> '' then
+  if (ExistingInstallDir <> '') and (not IsInsideTempPath(ExistingInstallDir)) and
+     (Pos('\APPDATA\', Uppercase(AddBackslash(Trim(ExistingInstallDir)))) = 0) then
     WizardForm.DirEdit.Text := ExistingInstallDir
-  else if IsInsideTempPath(WizardForm.DirEdit.Text) then
-    WizardForm.DirEdit.Text := ExpandConstant('{localappdata}\TTC');
-end;
-
-function ShouldSkipPage(PageID: Integer): Boolean;
-begin
-  Result := False;
-  { Si TTC ya está instalado, reemplazar in-place sin volver a preguntar la carpeta; si no existe, preguntar dónde instalar }
-  if (PageID = wpSelectDir) and (ExistingInstallDir <> '') and DirExists(ExistingInstallDir) then
-    Result := True;
+  else
+    WizardForm.DirEdit.Text := CleanDefault;
 end;
 
 function NextButtonClick(CurPageID: Integer): Boolean;
@@ -232,7 +228,7 @@ begin
     begin
       MsgBox(
         'No se recomienda instalar TTC dentro de una carpeta temporal (Temp), porque Windows o un limpiador puede borrar la aplicación.' + #13#10#13#10 +
-        'Por favor elegí otra carpeta (por ejemplo: ' + ExpandConstant('{localappdata}\TTC') + ').',
+        'Por favor elegí otra carpeta (por ejemplo: ' + ExpandConstant('{sd}\TTC') + ').',
         mbError, MB_OK
       );
       Result := False;
@@ -252,7 +248,7 @@ begin
   if FileExists(OldDb) and (not FileExists(NewDb)) then
   begin
     ForceDirectories(AddBackslash(NewDir) + 'data');
-    FileCopy(OldDb, NewDb, False);
+    CopyFile(OldDb, NewDb, False);
   end;
 end;
 
@@ -287,6 +283,10 @@ begin
   { Cerrar cualquier instancia previa en ejecución para poder reemplazar TTC.exe sin bloqueos }
   Exec(ExpandConstant('{sys}\taskkill.exe'), '/F /IM TTC.exe', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
   Sleep(250);
+
+  { Preservar base de datos previa desde AppData\Local\TTC o instalación anterior hacia la nueva carpeta elegida }
+  PreserveUserDatabaseIfNeeded(ExistingInstallDir, TargetDir);
+  PreserveUserDatabaseIfNeeded(ExpandConstant('{localappdata}\TTC'), TargetDir);
 
   { Eliminar versiones previas registradas en HKLM (32/64 bits) o en otra carpeta de HKCU para evitar duplicados }
   if IsWin64 then
