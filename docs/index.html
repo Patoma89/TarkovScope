@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TTC — Tactical Tarkov Companion | Asistente Táctico de Escritorio</title>
-  <meta name="description" content="TTC (Tactical Tarkov Companion) es la suite táctica de escritorio definitiva para Escape from Tarkov (PvE & PvP). Cero latencia (<1 ms), 100% offline, Gunsmith Studio interactivo, Wiki Dossier de Quests, mapas 2D y simulador balístico.">
-  <meta name="keywords" content="TTC, Tactical Tarkov Companion, Escape from Tarkov, Tarkov Desktop App, Gunsmith Studio, Quests Offline, Balística EFT, Mapas Tarkov, CustomTkinter">
-  <meta name="theme-color" content="#0b0e14">
+  <title>TTC v2.0.0 Next-Gen GPU — Tactical Tarkov Companion | Asistente Táctico de Escritorio</title>
+  <meta name="description" content="TTC v2.0.0 Next-Gen GPU (Tactical Tarkov Companion) es la suite táctica de escritorio acelerada por GPU (Edge WebView2) para Escape from Tarkov (PvE & PvP). Kord Breach, Modding Studio con 1.602 attachments, Mapas 2D calibrados tarkov.dev, Balística eft-ammo 0-6 y 235 logros.">
+  <meta name="keywords" content="TTC, Tactical Tarkov Companion, Escape from Tarkov, Kord Breach, Tarkov Desktop App, Gunsmith Studio, Quests Offline, Balística EFT, Mapas Tarkov, WebView2">
+  <meta name="theme-color" content="#090c12">
 
   <!-- Open Graph / Redes Sociales -->
   <meta property="og:type" content="website">
-  <meta property="og:title" content="TTC — Tactical Tarkov Companion">
-  <meta property="og:description" content="Suite táctica de escritorio nativa para Escape from Tarkov (PvE & PvP). Cero lag (<1 ms), 100% offline, Gunsmith Studio, Quests Dossier y radar de Bosses.">
+  <meta property="og:title" content="TTC v2.0.0 Next-Gen GPU — Tactical Tarkov Companion">
+  <meta property="og:description" content="Suite táctica de escritorio acelerada por GPU para Escape from Tarkov (PvE & PvP). Kord Breach, 1.602 attachments, 235 logros, Mapas 2D calibrados y 6 Skins en 1 ms.">
   <meta property="og:url" content="https://patoma89.github.io/TarkovScope/">
 
   <link rel="icon" type="image/x-icon" href="ttc.ico">
@@ -1087,6 +1087,88 @@
       z-index: 10000;
       display: none;
     }
+
+    /* ================= NEXT-GEN v2.0.0 GLASS & SVG RINGS ================= */
+    .showcase-window {
+      border: 1px solid rgba(212, 184, 134, 0.38) !important;
+      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.85), 0 0 45px rgba(212, 184, 134, 0.12) !important;
+      backdrop-filter: blur(20px);
+    }
+
+    .cc-rings-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      padding: 14px 18px;
+      background: rgba(6, 9, 14, 0.72);
+      border-bottom: 1px solid var(--win-border);
+    }
+
+    @media (max-width: 840px) {
+      .cc-rings-strip { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .cc-ring-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: var(--win-card);
+      border: 1px solid var(--win-border);
+      transition: all 0.2s ease;
+    }
+
+    .cc-ring-card:hover {
+      border-color: var(--win-accent);
+      transform: translateY(-2px);
+    }
+
+    .cc-ring-svg {
+      width: 44px;
+      height: 44px;
+      transform: rotate(-90deg);
+      flex-shrink: 0;
+    }
+
+    .cc-ring-meta {
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+    }
+
+    .cc-ring-lbl {
+      font-size: 0.68rem;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      color: var(--win-dim);
+      letter-spacing: 0.7px;
+    }
+
+    .cc-ring-val {
+      font-size: 1.05rem;
+      font-family: var(--font-mono);
+      font-weight: 900;
+      color: var(--win-text);
+    }
+
+    .social-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.03);
+      transition: all 0.2s ease;
+    }
+
+    .social-pill.twitch { color: #c084fc; border-color: rgba(168, 85, 247, 0.35); }
+    .social-pill.twitch:hover { background: rgba(168, 85, 247, 0.15); border-color: #a855f7; color: #fff; }
+    .social-pill.youtube { color: #fca5a5; border-color: rgba(239, 68, 68, 0.35); }
+    .social-pill.youtube:hover { background: rgba(239, 68, 68, 0.15); border-color: #ef4444; color: #fff; }
   </style>
 </head>
 <body>
@@ -1119,6 +1201,14 @@
       </ul>
 
       <div class="nav-actions">
+        <a href="https://www.twitch.tv/patoma89" target="_blank" class="social-pill twitch" title="Twitch — patoma89">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/></svg>
+          Twitch
+        </a>
+        <a href="https://www.youtube.com/@Patoma89" target="_blank" class="social-pill youtube" title="YouTube — @Patoma89">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          YouTube
+        </a>
         <a href="https://github.com/Patoma89/TarkovScope" target="_blank" class="btn btn-ghost">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
@@ -1139,38 +1229,38 @@
       </div>
 
       <h1 class="hero-title">
-        Domina Escape from Tarkov <span class="highlight">sin abrir el navegador</span>
+        Interfaz Táctica <span class="highlight">Next-Gen Acelerada por GPU</span>
       </h1>
 
       <p class="hero-subtitle">
-        <strong>TTC (Tactical Tarkov Companion)</strong> es un asistente táctico nativo de escritorio en Python diseñado para operadores exigentes. Reemplaza 15 pestañas pesadas de Chrome con una interfaz oscura de alto contraste, respuesta instantánea y funcionamiento 100% offline.
+        <strong>TTC v2.0.0 (Tactical Tarkov Companion)</strong> da el salto a una arquitectura híbrida <strong>Python + Edge WebView2 GPU</strong> con estética Glassmorphism, 60 FPS fluidos, 6 skins en 1 ms, mapas interactivos de <strong>Kord Breach</strong>, <strong>1.602 attachments</strong> de la Wiki, mapas 2D calibrados con <strong>tarkov.dev</strong> y <strong>235 logros oficiales</strong>.
       </p>
 
       <div class="hero-cta-row">
-        <a href="#descargar" class="btn btn-gold" style="padding: 13px 28px; font-size: 1rem;">
-          ⬇ Descargar TTC para Windows
+        <a href="https://github.com/Patoma89/TarkovScope/releases/tag/v2.0.0" target="_blank" class="btn btn-gold" style="padding: 13px 28px; font-size: 1rem;">
+          ⬇ Descargar TTC v2.0.0 (Windows)
         </a>
-        <a href="#modulos" class="btn btn-ghost" style="padding: 13px 24px; font-size: 1rem;">
-          Ver todo lo que hace ↓
+        <a href="#tour" class="btn btn-ghost" style="padding: 13px 24px; font-size: 1rem;">
+          Probar Simulador v2.0 ↓
         </a>
       </div>
 
       <div class="hero-metrics">
         <div class="metric-box">
-          <div class="metric-val">&lt; 1 ms</div>
-          <div class="metric-lbl">Consultas en RAM</div>
+          <div class="metric-val">1.602</div>
+          <div class="metric-lbl">Attachments Wiki</div>
         </div>
         <div class="metric-box">
-          <div class="metric-val">12</div>
-          <div class="metric-lbl">Mapas 2D Tácticos</div>
+          <div class="metric-val">235</div>
+          <div class="metric-lbl">Logros Oficiales</div>
         </div>
         <div class="metric-box">
-          <div class="metric-val">203</div>
-          <div class="metric-lbl">Proyectiles &amp; STK</div>
+          <div class="metric-val">459</div>
+          <div class="metric-lbl">Quests &amp; Rutas TSP</div>
         </div>
         <div class="metric-box">
-          <div class="metric-val">100%</div>
-          <div class="metric-lbl">Wiki Dossier Offline</div>
+          <div class="metric-val">60 FPS</div>
+          <div class="metric-lbl">Motor GPU WebView2</div>
         </div>
       </div>
 
@@ -1183,40 +1273,85 @@
             <span class="w-dot g"></span>
           </div>
           <div class="window-title">TTC v2.0.0 NEXT-GEN GPU — TACTICAL TARKOV COMPANION // PREVIEW EN VIVO</div>
-          <div class="window-badge">ZERO-LAG ENGINE</div>
+          <div class="window-badge">WEBVIEW2 GPU · 1 MS RAM</div>
         </div>
 
         <div class="hud-sim-bar">
           <div class="hud-clock-group">
             <span class="hud-clock-pill" id="hud-clock-pill">🕒 RAID  <span id="clock-left">--:--:--</span>  |  <span id="clock-right">--:--:--</span></span>
             <span class="hud-cultist-pill" id="cultist-pill">Calculando horario Tarkov 7x…</span>
+            <span class="hud-clock-pill" style="color:var(--win-accent);border-color:var(--win-accent)">PMC Nv. 42 · P2 · ES/EN</span>
           </div>
-          <div class="skin-pills" title="Prueba las 6 Skins oficiales de TTC v1.5.0 en vivo">
-            <button class="skin-pill-btn active" onclick="applyPreviewSkin('tarkov_classic', this)">EFT Hideout</button>
+          <div class="skin-pills" title="Prueba las 6 Skins oficiales de TTC v2.0.0 en 1 ms">
+            <button class="skin-pill-btn active" onclick="applyPreviewSkin('tarkov_classic', this)">🎨 EFT Hideout</button>
             <button class="skin-pill-btn" onclick="applyPreviewSkin('modern_obsidian', this)">🌌 Modern Obsidian</button>
             <button class="skin-pill-btn" onclick="applyPreviewSkin('terragroup_clean', this)">🧬 TerraGroup Clean</button>
-            <button class="skin-pill-btn" onclick="applyPreviewSkin('labs_nvg', this)">Labs NVG</button>
-            <button class="skin-pill-btn" onclick="applyPreviewSkin('tactical_slate', this)">Tactical Slate</button>
+            <button class="skin-pill-btn" onclick="applyPreviewSkin('labs_nvg', this)">🟢 Labs NVG</button>
+            <button class="skin-pill-btn" onclick="applyPreviewSkin('tactical_slate', this)">🛡️ Tactical Slate</button>
             <button class="skin-pill-btn" onclick="applyPreviewSkin('halloween_cultist', this)">🎃 Halloween</button>
+          </div>
+        </div>
+
+        <!-- 4 ANILLOS SVG DEL CENTRO DE MANDO v2.0 -->
+        <div class="cc-rings-strip">
+          <div class="cc-ring-card" onclick="selectTour('command_center', document.querySelectorAll('.tour-tab-btn')[0])" style="cursor:pointer">
+            <svg class="cc-ring-svg" viewBox="0 0 44 44">
+              <circle cx="22" cy="22" r="17" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="4"/>
+              <circle cx="22" cy="22" r="17" fill="none" stroke="var(--win-accent)" stroke-width="4" stroke-dasharray="106.8" stroke-dashoffset="32"/>
+            </svg>
+            <div class="cc-ring-meta">
+              <span class="cc-ring-lbl">Quests Wipe</span>
+              <span class="cc-ring-val">321/459 <span style="font-size:0.75rem;color:var(--win-accent)">70%</span></span>
+            </div>
+          </div>
+          <div class="cc-ring-card" onclick="selectTour('hideout', document.querySelectorAll('.tour-tab-btn')[9])" style="cursor:pointer">
+            <svg class="cc-ring-svg" viewBox="0 0 44 44">
+              <circle cx="22" cy="22" r="17" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="4"/>
+              <circle cx="22" cy="22" r="17" fill="none" stroke="#10b981" stroke-width="4" stroke-dasharray="106.8" stroke-dashoffset="19"/>
+            </svg>
+            <div class="cc-ring-meta">
+              <span class="cc-ring-lbl">Kappa Collector</span>
+              <span class="cc-ring-val">36/44 <span style="font-size:0.75rem;color:#10b981">82%</span></span>
+            </div>
+          </div>
+          <div class="cc-ring-card" onclick="selectTour('hideout', document.querySelectorAll('.tour-tab-btn')[9])" style="cursor:pointer">
+            <svg class="cc-ring-svg" viewBox="0 0 44 44">
+              <circle cx="22" cy="22" r="17" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="4"/>
+              <circle cx="22" cy="22" r="17" fill="none" stroke="#38bdf8" stroke-width="4" stroke-dasharray="106.8" stroke-dashoffset="12"/>
+            </svg>
+            <div class="cc-ring-meta">
+              <span class="cc-ring-lbl">Refugio Hideout</span>
+              <span class="cc-ring-val">60/68 <span style="font-size:0.75rem;color:#38bdf8">88%</span></span>
+            </div>
+          </div>
+          <div class="cc-ring-card" onclick="selectTour('pmc_systems', document.querySelectorAll('.tour-tab-btn')[12])" style="cursor:pointer">
+            <svg class="cc-ring-svg" viewBox="0 0 44 44">
+              <circle cx="22" cy="22" r="17" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="4"/>
+              <circle cx="22" cy="22" r="17" fill="none" stroke="#f59e0b" stroke-width="4" stroke-dasharray="106.8" stroke-dashoffset="42"/>
+            </svg>
+            <div class="cc-ring-meta">
+              <span class="cc-ring-lbl">Logros &amp; Prestigio</span>
+              <span class="cc-ring-val">142/235 <span style="font-size:0.75rem;color:#f59e0b">P2</span></span>
+            </div>
           </div>
         </div>
 
         <div class="showcase-body">
           <aside class="showcase-sidebar">
-            <div class="sidebar-caption">Explorar Módulos</div>
-            <button class="tour-tab-btn active" onclick="selectTour('command_center', this)">🏠 Centro de Mando &amp; HUD</button>
-            <button class="tour-tab-btn" onclick="selectTour('gunsmith', this)">🛠️ Gunsmith &amp; Averías</button>
-            <button class="tour-tab-btn" onclick="selectTour('quests', this)">🗺️ Quests Dossier</button>
-            <button class="tour-tab-btn" onclick="selectTour('quest_tracker', this)">🧭 Quest Tracker &amp; Rutas</button>
-            <button class="tour-tab-btn" onclick="selectTour('planner', this)">🎯 Planner de Progresión</button>
-            <button class="tour-tab-btn" onclick="selectTour('ballistics', this)">💥 Balística &amp; Blindaje</button>
-            <button class="tour-tab-btn" onclick="selectTour('containers', this)">🎒 Rigs, Mochilas &amp; Cajas</button>
-            <button class="tour-tab-btn" onclick="selectTour('bosses', this)">📍 Mapas, Bosses &amp; Facciones</button>
-            <button class="tour-tab-btn" onclick="selectTour('hideout', this)">📦 Hideout, Barters &amp; Kappa</button>
-            <button class="tour-tab-btn" onclick="selectTour('keys', this)">🔑 Llaves &amp; Intel</button>
-            <button class="tour-tab-btn" onclick="selectTour('medical', this)">💊 Medicina, Stims &amp; Comida</button>
-            <button class="tour-tab-btn" onclick="selectTour('pmc_systems', this)">📈 PMC, Prestigio &amp; Logros</button>
-            <button class="tour-tab-btn" onclick="selectTour('lore', this)">📖 Story &amp; Lore</button>
+            <div class="sidebar-caption">Módulos TTC v2.0 GPU</div>
+            <button class="tour-tab-btn active" onclick="selectTour('command_center', this)">🏠 Centro de Mando (8 Paneles)</button>
+            <button class="tour-tab-btn" onclick="selectTour('kord_breach', this)">📄 Kord Breach (Season 1)</button>
+            <button class="tour-tab-btn" onclick="selectTour('bosses', this)">🗺️ Mapas 2D &amp; Bosses Radar</button>
+            <button class="tour-tab-btn" onclick="selectTour('gunsmith', this)">🛠️ Modding Studio (1.602 Mods)</button>
+            <button class="tour-tab-btn" onclick="selectTour('ballistics', this)">💥 Balística eft-ammo (0–6)</button>
+            <button class="tour-tab-btn" onclick="selectTour('quests', this)">📜 Quests &amp; Traders Zoom</button>
+            <button class="tour-tab-btn" onclick="selectTour('quest_tracker', this)">🧭 Rutas Óptimas Calibradas</button>
+            <button class="tour-tab-btn" onclick="selectTour('keys', this)">🔑 Llaves &amp; Keycards (230+)</button>
+            <button class="tour-tab-btn" onclick="selectTour('hideout', this)">📦 Hideout, FiR &amp; 44 Kappa</button>
+            <button class="tour-tab-btn" onclick="selectTour('containers', this)">🎒 Contenedores &amp; Rigs (136)</button>
+            <button class="tour-tab-btn" onclick="selectTour('medical', this)">💊 Medicina &amp; 45 Provisiones</button>
+            <button class="tour-tab-btn" onclick="selectTour('pmc_systems', this)">📈 PMC, Prestigio &amp; 235 Logros</button>
+            <button class="tour-tab-btn" onclick="selectTour('lore', this)">📖 Lore &amp; 10 Cap. Historia</button>
           </aside>
 
           <div class="showcase-stage" id="tour-stage">
@@ -1244,26 +1379,26 @@
             <div style="display:flex;align-items:center;gap:14px;">
               <div class="module-icon">🏠</div>
               <div>
-                <h3>Centro de Mando Bento Grid, Top HUD &amp; UI Moderna</h3>
+                <h3>Centro de Mando Next-Gen GPU (8 Paneles Clickeables &amp; Top HUD)</h3>
               </div>
             </div>
-            <span class="module-tag gold">NUEVO EN v1.5.0</span>
+            <span class="module-tag gold">NUEVO EN v2.0.0 GPU</span>
           </div>
           <p>
-            Nueva pantalla operativa de inicio acompañada por un HUD superior fijo con KPIs en vivo, reloj oficial In-Raid de Tarkov y barra lateral agrupada y colapsable con <strong>6 skins</strong> y tipografía híbrida <em>Bender / Segoe UI</em>.
+            Nueva arquitectura gráfica <strong>Edge WebView2 GPU + Glassmorphism</strong> a 60 FPS reales, acompañada por un HUD superior con buscador Spotlight (<code>Ctrl+K</code>), nivel de PMC editable (<code>1–79</code>), cambio de idioma <strong>ES/EN en vivo</strong>, selector único de <strong>6 skins en 1 ms</strong> y 8 paneles operativos 100% clickeables.
           </p>
           <div class="featured-bento-cols">
             <div class="bento-mini-box">
-              <h4>📊 4 KPIs + Acciones en 1 Clic</h4>
-              <p>Completa próximas misiones desbloqueadas o registra tus <strong>44 ítems Collector (Kappa)</strong> pendientes directo desde la pantalla principal.</p>
+              <h4>📊 8 Paneles Operativos en Vivo</h4>
+              <p>Anillos SVG de Quests, Kappa Collector (44), Hideout (68) y <strong>235 Logros</strong> + Radar de Bosses, Refugio Disponible, Llaves de Quest e Historia/Gunsmith.</p>
             </div>
             <div class="bento-mini-box">
-              <h4>🕒 Reloj In-Raid 7x &amp; Cultists</h4>
-              <p>Horarios oficiales Izquierda/Derecha sincronizados al segundo con alerta automática en ventana nocturna <code>22:00–07:00</code>.</p>
+              <h4>📄 Kord Breach (Season 1)</h4>
+              <p>Nueva pestaña con los mapas interactivos de <code>kordmap.wiki</code> embebidos, caché persistente en disco y cambio de pestaña en <strong>0 ms</strong> sin recargar.</p>
             </div>
             <div class="bento-mini-box">
-              <h4>🎨 6 Skins &amp; Sidebar Colapsable</h4>
-              <p>Active Pill luminoso, micro-interacciones hover y nuevos temas <em>Modern Obsidian</em> (OLED) y <em>TerraGroup Clean</em>.</p>
+              <h4>🎨 6 Skins en 1 ms &amp; Lightbox Zoom</h4>
+              <p>Cambio instantáneo por variables CSS GPU y nuevo visor Lightbox con Zoom/Pan (450%) para inventarios LL1–LL4 de Traders, mapas de Bosses y Rutas.</p>
             </div>
           </div>
         </article>
@@ -1271,16 +1406,32 @@
         <article class="module-card">
           <div class="module-card-head">
             <div class="module-icon">🛠️</div>
-            <span class="module-tag gold">110 ARMAS · AVERÍAS</span>
+            <span class="module-tag gold">110 ARMAS · 1.602 MODS</span>
           </div>
-          <h3>Gunsmith Studio &amp; Averías (Malfunctions)</h3>
+          <h3>Modding Studio Pro (1.602 Attachments) &amp; Averías</h3>
           <p>
-            Banco de armería militar interactivo con plano esquemático dinámico en tiempo real y guía técnica completa de fallos mecánicos y regla del 93% de durabilidad.
+            Workbench interactivo expandido con el catálogo completo de la Wiki oficial, las 110 miniaturas reales de armas, presets en 1 clic y guía técnica de fallos mecánicos (regla del 93%).
           </p>
           <ul class="module-list">
-            <li><strong>110/110 armas</strong> con su foto real y plano interactivo con 9 ranuras clickeables.</li>
-            <li>Comparativa en vivo <code>Δ vs actual</code>, filtro por <strong>Trader LL1–LL4</strong> y Auto-Optimizadores Pro.</li>
-            <li>Guía de los <strong>5 tipos de Averías</strong>, etapas de sobrecalentamiento, kits de reparación y exportación <code>TTCBUILD:...</code>.</li>
+            <li><strong>1.602 attachments oficiales</strong> de la Wiki (cañones, silenciadores, guardamanos, miras/térmicas, culatas, cargadores y láseres) con buscador instantáneo.</li>
+            <li><strong>110/110 armas</strong> con miniatura real, cálculo de Recoil/Ergo/Peso/Costo en vivo y auto-optimizadores (Meta Recoil, CQC Ergo, Budget LL2).</li>
+            <li>Exportación e importación de códigos <code>TTCBUILD:...</code>, lista de compras y guía de las <strong>5 Averías</strong> y sobrecalentamiento.</li>
+          </ul>
+        </article>
+
+        <article class="module-card">
+          <div class="module-card-head">
+            <div class="module-icon">📄</div>
+            <span class="module-tag gold">SEASON 1 · CACHÉ 0 MS</span>
+          </div>
+          <h3>Kord Breach (Mapas de Documentos)</h3>
+          <p>
+            Encuentra las ubicaciones exactas de los documentos de TerraGroup del Pase de Temporada 1 (<em>Kord Breach</em>) directamente dentro de TTC sin abrir el navegador.
+          </p>
+          <ul class="module-list">
+            <li>Mapa interactivo de <strong>kordmap.wiki</strong> integrado a pantalla completa con zoom, filtros y capturas de cada spawn.</li>
+            <li>Doble capa de caché: contenedor persistente en RAM (<strong>0 ms</strong> al volver a la pestaña) y caché en disco de WebView2.</li>
+            <li>Modo secundario de <strong>Guía Offline por Mapa</strong> con los 8 tipos de documentos, comodines y rutas de farmeo recomendadas.</li>
           </ul>
         </article>
 
@@ -1447,15 +1598,15 @@
         <article class="module-card">
           <div class="module-card-head">
             <div class="module-icon">📈</div>
-            <span class="module-tag gold">PRESTIGIO 1–6 · 32 LOGROS</span>
+            <span class="module-tag gold">PRESTIGIO 1–6 · 235 LOGROS</span>
           </div>
-          <h3>PMC, Prestigio 1–6, 32 Logros &amp; Ropa</h3>
+          <h3>PMC, Prestigio 1–6, 235 Logros &amp; Ropa</h3>
           <p>
-            Manual completo de progresión avanzada: las 35 skills del PMC, Scav Karma, BTR/Transits, los <strong>6 niveles oficiales de Prestige</strong>, Arena/Ref Sync, 32 Achievements y 24 prendas USEC/BEAR.
+            Manual completo de progresión avanzada: las 35 skills del PMC, Scav Karma, BTR/Transits, los <strong>6 niveles oficiales de Prestige</strong>, Arena/Ref Sync, <strong>235 Achievements oficiales</strong> y 24 prendas USEC/BEAR.
           </p>
           <ul class="module-list">
             <li>Prestige 1–6 (PvE &amp; PvP) con iconos oficiales, grilla de transferencia y retención de skills (5%–50%).</li>
-            <li>Checklist persistente de <strong>32 Achievements</strong> y galería visual de ropa táctica con miniaturas.</li>
+            <li>Catálogo completo de <strong>235 Achievements (Wiki / Steam)</strong> con buscador, filtro por categoría y checklist persistente.</li>
             <li>Rangos de Scav Karma (Fence LL2 +6.0), tarifas BTR Driver y 29 conexiones de Transit.</li>
           </ul>
         </article>
@@ -1467,43 +1618,43 @@
   <section class="section arch-section" id="arquitectura">
     <div class="container">
       <div class="section-header">
-        <span class="section-eyebrow">INGENIERÍA DE SOFTWARE</span>
-        <h2 class="section-title">Construido con arquitectura limpia y cero lag</h2>
+        <span class="section-eyebrow">INGENIERÍA DE SOFTWARE NEXT-GEN</span>
+        <h2 class="section-title">Motor GPU Edge WebView2 + Backend Python Zero-Lag</h2>
         <p class="section-desc">
-          Detrás de su estética militar, TTC está diseñado bajo estándares profesionales para no robar ni un solo FPS a tu juego.
+          TTC v2.0 combina la potencia visual de un motor acelerado por GPU con la velocidad instantánea de un DataStore en memoria RAM y SQLite WAL local.
         </p>
       </div>
 
       <div class="arch-grid">
         <div class="arch-card">
+          <span class="arch-badge">EDGE WEBVIEW2 GPU</span>
+          <h3>Glassmorphism a 60 FPS</h3>
+          <p>
+            Interfaz renderizada por GPU con variables CSS reactivas (cambio de skin en 1 ms), anillos vectoriales SVG y visor Lightbox con Zoom/Pan fluido.
+          </p>
+        </div>
+
+        <div class="arch-card">
           <span class="arch-badge">MEMORIA RAM</span>
           <h3>DataStore &lt; 1 ms</h3>
           <p>
-            Todos los datos de misiones, mapas, ítems y balística se sirven desde una caché en memoria RAM para búsquedas y filtros instantáneos.
+            Todos los datos de misiones, mapas, 1.602 attachments, 235 logros y 203 proyectiles se sirven desde caché en RAM para filtros instantáneos.
           </p>
         </div>
 
         <div class="arch-card">
           <span class="arch-badge">CLEAN ARCHITECTURE</span>
-          <h3>Separación Core / UI</h3>
+          <h3>Separación Core / WebAPI</h3>
           <p>
-            Lógica de negocio pura en <code>core/</code> totalmente desacoplada de la interfaz gráfica en <code>ui/</code>, respaldada por 147 pruebas unitarias automáticas.
+            Lógica de negocio pura en <code>core/</code> totalmente desacoplada de la capa visual en <code>web_ui/</code>, respaldada por <strong>154 pruebas unitarias</strong> automáticas.
           </p>
         </div>
 
         <div class="arch-card">
-          <span class="arch-badge">INTERFAZ FLUIDA</span>
-          <h3>Batch Rendering 60 FPS</h3>
+          <span class="arch-badge">PORTABILIDAD &amp; AUTO-UPDATE</span>
+          <h3>SQLite WAL &amp; GitHub Updater</h3>
           <p>
-            Renderizado en lotes no bloqueante, sincronización en hilos secundarios y modo <strong>Always on Top</strong> para fijar la ventana mientras juegas.
-          </p>
-        </div>
-
-        <div class="arch-card">
-          <span class="arch-badge">PORTABILIDAD</span>
-          <h3>SQLite WAL &amp; Backups</h3>
-          <p>
-            Tus pines, progreso de misiones y alijo se guardan localmente en SQLite modo WAL, con exportación e importación en un clic (<code>perfil_ttc.json</code>).
+            Tu progreso se guarda en SQLite modo WAL con backup en 1 clic (<code>perfil_ttc.json</code>) y actualizador integrado vía GitHub Releases con fallback anti-rate-limit.
           </p>
         </div>
       </div>
@@ -1551,16 +1702,16 @@
 
             <div class="terminal-box">
               <button class="copy-btn" onclick="copyInstallCmds()">Copiar</button>
-              <span class="comment"># Clonar e iniciar TTC en Python 3.10+</span><br>
+              <span class="comment"># Clonar e iniciar TTC v2.0 Next-Gen GPU en Python 3.10+</span><br>
               <span class="cmd">git clone https://github.com/Patoma89/TarkovScope.git</span><br>
               <span class="cmd">cd TarkovScope</span><br>
               <span class="cmd">pip install -r requirements.txt</span><br>
-              <span class="cmd">python TarkovScope.py</span>
+              <span class="cmd">python TTC_v2.py</span>
             </div>
 
             <ul class="module-list">
-              <li>También puedes iniciar con doble clic en <code>Ejecutar_TTC.bat</code>.</li>
-              <li>Ejecuta la suite de QA con <code>python -m unittest discover -s tests -v</code>.</li>
+              <li>También puedes iniciar con doble clic en <code>Ejecutar_TTC_v2.bat</code>.</li>
+              <li>Ejecuta las <strong>154 pruebas unitarias</strong> con <code>python -m unittest discover -s tests -v</code>.</li>
             </ul>
           </div>
 
@@ -1591,9 +1742,13 @@
               <span class="logo-sub" style="font-size: 0.58rem;">Tactical Tarkov Companion</span>
             </div>
           </div>
-          <p style="color: var(--text-dim); max-width: 430px; line-height: 1.6;">
-            Asistente táctico de escritorio de código abierto construido en Python &amp; CustomTkinter. Diseñado para ofrecer velocidad extrema, alto contraste y autonomía offline en Escape from Tarkov.
+          <p style="color: var(--text-dim); max-width: 430px; line-height: 1.6; margin-bottom: 14px;">
+            Asistente táctico de escritorio de código abierto construido en Python &amp; Edge WebView2 GPU. Diseñado por <strong>Patoma89</strong> para ofrecer velocidad extrema, alto contraste y autonomía en Escape from Tarkov.
           </p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <a href="https://www.twitch.tv/patoma89" target="_blank" class="social-pill twitch">🟣 Twitch / patoma89</a>
+            <a href="https://www.youtube.com/@Patoma89" target="_blank" class="social-pill youtube">🔴 YouTube / @Patoma89</a>
+          </div>
         </div>
 
         <div class="footer-col">
@@ -1629,28 +1784,40 @@
   <script>
     const TOUR_DATA = {
       command_center: {
-        tag: "MÓDULO 00 // CENTRO DE MANDO & HUD (v1.5.0)",
-        title: "Bento Grid Dashboard, Top HUD & Reloj Dual In-Raid",
-        desc: "Pantalla operativa de inicio con barras de progreso en vivo, próximas quests listas para tildar en 1 clic, ítems Kappa pendientes con miniatura y el Reloj Oficial de Tarkov (ciclo 7x) con detección nocturna de Cultists.",
+        tag: "MÓDULO 00 // CENTRO DE MANDO NEXT-GEN GPU (v2.0.0)",
+        title: "8 Paneles Operativos Clickeables, Anillos SVG & Top HUD",
+        desc: "Pantalla operativa de inicio renderizada por GPU con 4 anillos circulares SVG, próximas quests listas para tildar en 1 clic, los 44 ítems Collector (Kappa), Radar de Bosses, Refugio Disponible, Llaves de Quest e Historia/Gunsmith — todos 100% clickeables hacia su módulo.",
         highlights: [
-          { icon: "📊", title: "4 KPIs & Top HUD Clickable", text: "Quests %, Collector (X/44), Hideout y Prestigio/Logros visibles siempre arriba con salto directo." },
-          { icon: "🕒", title: "Reloj Oficial 7x & Cultists", text: "Horario dual Izquierda/Derecha sincronizado con alerta automática cuando la ventana nocturna (22:00-07:00) está activa." },
-          { icon: "🧭", title: "Sidebar Colapsable & 6 Skins", text: "Menú agrupado en 5 categorías con Active Pill luminoso, modo compacto 68px y skins Modern Obsidian y TerraGroup Clean." }
+          { icon: "📊", title: "8 Paneles Clickeables en Vivo", text: "Haz clic en cualquiera de los 4 KPIs superiores o en los 4 paneles tácticos inferiores para saltar directo a esa sección." },
+          { icon: "🎖️", title: "Nivel PMC (1–79) & Idioma ES/EN", text: "Edita el nivel de tu PMC arriba a la derecha con guardado automático en SQLite y alterna ES/EN en vivo." },
+          { icon: "🎨", title: "Selector Único de 6 Skins (1 ms)", text: "Cambia toda la paleta Glassmorphism en 1 milisegundo desde el selector superior + botón de Redes y Actualizador GitHub." }
         ],
-        footerLeft: "ARCHIVOS: tab_command_center.py + core/tarkov_time.py",
-        footerRight: "NUEVO EN v1.5.0"
+        footerLeft: "ARCHIVOS: core/web_api.py + web_ui/index.html + web_ui/app.js",
+        footerRight: "NUEVO EN v2.0.0 GPU"
+      },
+      kord_breach: {
+        tag: "MÓDULO 01 // PASE DE TEMPORADA 1 (v2.0.0)",
+        title: "Kord Breach — Mapas Interactivos de Documentos con Caché 0 ms",
+        desc: "Visualiza todos los mapas y ubicaciones exactas de los documentos de TerraGroup del Pase de Temporada 1 (Kord Breach) directamente dentro de TTC mediante el mapa interactivo de kordmap.wiki con doble capa de caché.",
+        highlights: [
+          { icon: "🗺️", title: "Mapa Interactivo kordmap.wiki", text: "Integrado a pantalla completa con zoom, filtros por mapa y capturas exactas de cada punto de aparición." },
+          { icon: "⚡", title: "Caché Persistente en Disco & RAM", text: "No se recarga al cambiar de pestaña (0 ms) y guarda los mapas en cache/webview2_cache entre sesiones." },
+          { icon: "📋", title: "Guía Offline por Mapa", text: "Incluye modo offline con los 8 tipos oficiales de documentos, comodines y rutas de farmeo recomendadas." }
+        ],
+        footerLeft: "ARCHIVOS: core/season_pass_docs_data.py + web_ui/views_economy.js",
+        footerRight: "NUEVO EN v2.0.0"
       },
       gunsmith: {
-        tag: "MÓDULO 01 // ARMERÍA INTERACTIVA & AVERÍAS",
-        title: "Gunsmith Studio, Workbench & Guía de Averías",
-        desc: "Diseña y optimiza cualquiera de las 110 armas y 116 accesorios antes de gastar un solo rublo, más el módulo completo de Weapon Malfunctions, regla del 93% y sobrecalentamiento.",
+        tag: "MÓDULO 02 // ARMERÍA INTERACTIVA & 1.602 ATTACHMENTS",
+        title: "Modding Studio Pro (1.602 Piezas Wiki), 110 Armas & Averías",
+        desc: "Diseña y optimiza cualquiera de las 110 armas reales (todas con su miniatura oficial) combinando 1.602 attachments importados de la Wiki oficial de Escape from Tarkov, más las 25 guías de Gunsmith y Averías.",
         highlights: [
-          { icon: "📐", title: "Blueprint en Tiempo Real", text: "Visualiza silenciadores, miras, cargadores de tambor, culatas y empuñaduras directamente sobre el plano del arma." },
-          { icon: "⚡", title: "Presets Meta en 1 Clic", text: "Alterna entre configuraciones Meta Laser Recoil, Budget LL2, CQC High Ergo y Gunsmith de Mechanic." },
-          { icon: "🔧", title: "Averías & Regla del 93%", text: "Consulta los 5 tipos de fallos mecánicos, etapas de overheat y kits de reparación con export JSON/Base64." }
+          { icon: "🔩", title: "1.602 Attachments de la Wiki", text: "197 cañones, 303 bocachas/silenciadores, 241 guardamanos, 97 miras/LPVOs/térmicas, 258 culatas, 212 cargadores y más." },
+          { icon: "🔍", title: "Buscador Rápido & Auto-Builds", text: "Filtra piezas al instante (Razor, Zenit, SureFire, Magpul) o aplica Meta Recoil, CQC Ergo, Budget LL2 y Presets." },
+          { icon: "🔧", title: "110 Miniaturas & Regla del 93%", text: "Las 110 armas con su imagen real, código TTCBUILD:..., lista de compras y guía de las 5 Averías." }
         ],
-        footerLeft: "MOTOR: weapon_modding_engine.py + weapon_malfunctions_data.py",
-        footerRight: "TIEMPO DE CÁLCULO: < 1 MS"
+        footerLeft: "MOTOR: data/weapon_mods_wiki.json + core/weapon_modding_engine.py",
+        footerRight: "1.602 PIEZAS · < 1 MS"
       },
       quests: {
         tag: "MÓDULO 02 // ZERO-BROWSER WIKI",
@@ -1773,16 +1940,16 @@
         footerRight: "CATÁLOGO: 43 MEDS + 45 PROVISIONES"
       },
       pmc_systems: {
-        tag: "MÓDULO 09 // PROGRESIÓN, PRESTIGIO & LOGROS",
-        title: "PMC Skills, Prestigio 1–6, 32 Logros, Ropa & BTR",
-        desc: "Domina toda la progresión avanzada de Tarkov: 35 skills, Fence Karma, BTR/Transits, los 6 niveles oficiales de Prestige, sincronización Arena/Ref, 32 Achievements y 24 prendas tácticas.",
+        tag: "MÓDULO 09 // PROGRESIÓN, PRESTIGIO & 235 LOGROS",
+        title: "PMC Skills, Prestigio 1–6, 235 Logros Oficiales, Ropa & BTR",
+        desc: "Domina toda la progresión avanzada de Tarkov: 35 skills, Fence Karma, BTR/Transits, los 6 niveles oficiales de Prestige, sincronización Arena/Ref, los 235 Achievements oficiales (Wiki/Steam) y 24 prendas tácticas.",
         highlights: [
           { icon: "👑", title: "Prestige 1–6 (PvE & PvP)", text: "Requisitos exactos de Nivel, Quests, Skills y Dinero, grilla 8x3–8x8 y retención 5%–50% con iconos." },
-          { icon: "⭐", title: "32 Achievements & Arena Sync", text: "Checklist persistente en SQLite + guía de sincronización de GP Coins, Lega Medals y Crates con Ref." },
+          { icon: "⭐", title: "235 Achievements (Wiki / Steam)", text: "Catálogo completo con buscador, filtro por categoría (Bosses, Combate, Eventos, Endgame) y checklist persistente." },
           { icon: "🧥", title: "24 Prendas USEC/BEAR & BTR", text: "Galería de ropa táctica con miniaturas junto a las 35 skills, Scav Karma y 29 Transits." }
         ],
-        footerLeft: "ARCHIVOS: pmc_systems_data.py + pmc_prestige_achievements_data.py",
-        footerRight: "COBERTURA: SKILLS · PRESTIGE · LOGROS · BTR"
+        footerLeft: "ARCHIVOS: data/achievements_wiki.json + core/pmc_prestige_achievements_data.py",
+        footerRight: "235 LOGROS · PRESTIGE 1–6"
       }
     };
 
@@ -1822,7 +1989,7 @@
     }
 
     function copyInstallCmds() {
-      const cmds = "git clone https://github.com/Patoma89/TarkovScope.git\ncd TarkovScope\npip install -r requirements.txt\npython TarkovScope.py";
+      const cmds = "git clone https://github.com/Patoma89/TarkovScope.git\ncd TarkovScope\npip install -r requirements.txt\npython TTC_v2.py";
       navigator.clipboard.writeText(cmds).then(() => {
         const toast = document.getElementById('toast');
         toast.textContent = '✓ Comandos de instalación copiados';
