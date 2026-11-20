@@ -4,7 +4,11 @@ Contiene especificaciones base de armas, catálogo completo de accesorios por ra
 valores delta de ergonomía, porcentaje de retroceso, peso y requisitos de comerciantes.
 Lógica pura de negocio (Clean Architecture, sin dependencias de UI).
 """
+import json
+import os
 from typing import Dict, Any, List
+
+from core.config import BASE_DIR, BUNDLE_DIR
 
 # Ranuras de accesorios reconocidas en Escape from Tarkov
 MOD_SLOTS = [
@@ -2297,9 +2301,158 @@ ATTACHMENT_IMAGE_KEYS: Dict[str, str] = {
 }
 
 
+def _load_wiki_weapon_mods() -> None:
+    """Fusiona el catálogo oficial extendido de la Wiki (data/weapon_mods_wiki.json) en ATTACHMENTS_CATALOG."""
+    candidates = [
+        os.path.join(BASE_DIR, "data", "weapon_mods_wiki.json"),
+        os.path.join(BUNDLE_DIR, "data", "weapon_mods_wiki.json"),
+    ]
+    existing_names = {v.get("name", "").strip().lower() for v in ATTACHMENTS_CATALOG.values()}
+    for path in candidates:
+        if not os.path.isfile(path):
+            continue
+        try:
+            with open(path, "r", encoding="utf-8") as fh:
+                items = json.load(fh)
+            for item in items:
+                pid = item.get("id")
+                pname = str(item.get("name") or "").strip()
+                if not pid or not pname or pid in ATTACHMENTS_CATALOG:
+                    continue
+                if pname.lower() in existing_names:
+                    continue
+                ATTACHMENTS_CATALOG[pid] = item
+                existing_names.add(pname.lower())
+            break
+        except Exception:
+            continue
+
+
+_load_wiki_weapon_mods()
+
+
 def get_attachment_image_key(part_id: str) -> str:
     """Retorna la clave de imagen del archivo PNG correspondiente en cache/weapons/."""
     return ATTACHMENT_IMAGE_KEYS.get(part_id, part_id)
+
+
+def _is_wiki_part_compatible(slot_name: str, part: Dict[str, Any], weapon: Dict[str, Any]) -> bool:
+    """Matching inteligente por plataforma, familia y calibre para el catálogo completo de la Wiki."""
+    name = (part.get("name") or "").lower()
+    wid = (weapon.get("id") or "").lower()
+    wname = (weapon.get("name") or "").lower()
+    cal = (weapon.get("caliber") or "").lower()
+    cat = weapon.get("category") or ""
+
+    # Empuñaduras frontales, ópticas y dispositivos tácticos son universales (excepto pistolas)
+    if slot_name == "foregrip":
+        return cat != "Pistolas"
+    if slot_name == "optic":
+        if cat == "Pistolas":
+            return any(k in name for k in ("rmr", "deltapoint", "fastfire", "romeo0", "pk-06", "micro", "acro", "reflex"))
+        return True
+    if slot_name == "tactical":
+        if cat == "Pistolas":
+            return any(k in name for k in ("x400", "xc1", "baldr", "gtl", "tbl", "klesch", "laser", "flashlight"))
+        return True
+
+    is_shotgun = cat == "Escopetas"
+    is_pistol = cat == "Pistolas"
+    is_bolt = cat == "Francotirador (Bolt)"
+    is_smg = cat == "Subfusiles (SMG)"
+    is_ak = wid.startswith(("ak", "rpk", "sag", "vpo136", "vpo209", "sks")) and wid != "ak50"
+    is_ar15 = wid in {"m4a1", "hk416", "tx15", "adar", "mcx300", "scar_l", "mdr_556", "aug_a1", "aug_a3", "g36", "velociraptor"}
+    is_762_nato = any(c in cal for c in ("7.62x51", "6.8x51", "7.62x54", ".338", ".50", "12.7"))
+    is_556 = "5.56" in cal or ".300" in cal
+
+    # Coincidencia directa por nombre clave del arma (ej. "mp7", "p90", "mpx", "scar", "sa-58", "m700", "svds", "mk47")
+    weapon_tokens = [tok for tok in (wid.replace("_", " "), wid.replace("_", "-")) if len(tok) >= 3]
+    for tok in ("mp7", "p90", "mpx", "mp5", "mp9", "vector", "ump", "uzi", "sr-2", "sr-3", "vss", "as val", "scar", "g36", "aug", "mcx", "spear", "mdr", "sa-58", "sr-25", "rsass", "m1a", "svd", "sv-98", "m700", "dvl", "t-5000", "axmc", "mosin", "sks", "mk47", "rd-704", "hk 416", "hk416", "m4a1", "mp-133", "mp-153", "mp-155", "m870", "m590", "benelli", "saiga-12", "saiga-9", "pp-19", "glock", "p226", "usp", "m9a3", "five-seven", "deagle", "pkm", "rpd", "m60"):
+        if tok.replace("-", "").replace(" ", "") in wid.replace("_", "") or tok in wname:
+            weapon_tokens.append(tok)
+
+    if any(tok in name for tok in weapon_tokens):
+        return True
+
+    if slot_name == "pistol_grip":
+        if is_shotgun:
+            return any(k in name for k in ("mp-133", "mp-153", "m870", "shotgun", "saiga"))
+        if is_ak or wid in {"pp19", "saiga9", "saiga12", "pkm", "pkp"}:
+            return any(k in name for k in ("ak ", "ak-", "zenit rk-3", "izhmash", "tapco saw", "magpul moe ak", "us palm", "hogue", "klesch", "pkm"))
+        if is_ar15 or is_762_nato or wid in {"mk47", "rd704", "mpx", "stm9"}:
+            return any(k in name for k in ("ar-15", "m4", "hk ", "scar", "sa-58", "sig", "magpul", "stark", "hogue", "daniel defense", "b5", "ergo", "tactical dynamics", "aeroknox", "gral"))
+        return False
+
+    if slot_name == "stock":
+        if is_shotgun:
+            return any(k in name for k in ("mp-133", "mp-153", "mp-155", "m870", "m590", "benelli", "saiga-12"))
+        if is_bolt:
+            return any(k in name for k in ("m700", "sv-98", "mosin", "dvl", "t-5000", "axmc", "prs", "chassis", "archangel", "aics", "pro 700"))
+        if is_ak or wid in {"pp19", "saiga9", "saiga12"}:
+            return any(k in name for k in ("ak", "zenit pt", "zhukov", "izhmash", "rpk", "buffer tube"))
+        if is_ar15 or is_762_nato or wid in {"mk47", "rd704", "mpx", "stm9"}:
+            return any(k in name for k in ("ar-15", "m4", "magpul", "vltor", "b5", "daniel defense", "hk ", "fab defense", "mft", "buffer", "colt", "prs", "ubr", "moe", "ctr", "sopmod"))
+        if is_smg:
+            return any(k in name for k in ("mp5", "mp7", "mp9", "mpx", "vector", "ump", "uzi", "p90", "pp-19", "saiga-9", "folding", "telescoping"))
+        return False
+
+    if slot_name == "muzzle":
+        if is_shotgun:
+            return any(k in name for k in ("12g", "12/70", "salvo", "choke", "gk-02", "hexagon 12k", "monster claw"))
+        if is_556:
+            return any(k in name for k in ("5.56", ".300", "ar-15", "m4", "saker", "rc2", "nt-4", "wave", "kac qdss", "surefire", "mini monster", "warcomp", "thunder beast"))
+        if is_762_nato:
+            return any(k in name for k in ("7.62x51", "6.8x51", "7.62x54", ".338", "prs", "qdc", "slx", "hx-qd", "wave", "thunder beast", "ultra 5", "lantac", "aac", "srd762", "gemtech one"))
+        if "5.45" in cal:
+            return any(k in name for k in ("5.45", "ak-74", "dtk", "pbs", "tgp-a", "rotor", "waff", "hexagon ak-74", "jmac"))
+        if "7.62x39" in cal or ".366" in cal:
+            return any(k in name for k in ("7.62x39", ".366", "akm", "dtk", "pbs-1", "rotor", "hexagon", "jmac", "lantac", "dynacomp"))
+        if "9x19" in cal or ".45" in cal or "4.6" in cal or "5.7" in cal or "9x21" in cal:
+            return any(k in name for k in ("9x19", ".45", "osprey", "omega 45", "srd9", "illusion", "alpha 9", "mp5", "mp7", "mp9", "p90", "vector", "sr-2"))
+        if "9x39" in cal:
+            return any(k in name for k in ("9x39", "val", "vss", "sr-3"))
+        return False
+
+    if slot_name == "barrel":
+        if is_shotgun:
+            return any(k in name for k in ("12ga", "mp-133", "mp-153", "mp-155", "m870", "m590", "benelli"))
+        if is_ar15:
+            return any(k in name for k in ("ar-15", "m4a1", "hk 416", "5.56x45", "hanson", "noveske", "daniel defense"))
+        if is_762_nato:
+            return any(k in name for k in ("7.62x51", "6.8x51", "sa-58", "sr-25", "rsass", "m1a", "scar-h", "mdr", "spear"))
+        if is_ak:
+            return any(k in name for k in ("ak", "5.45x39", "7.62x39", "rpk"))
+        if is_smg:
+            return any(k in name for k in ("9x19", ".45", "mpx", "mp5", "vector", "p90", "uzi"))
+        return False
+
+    if slot_name == "handguard":
+        if is_shotgun:
+            return any(k in name for k in ("mp-133", "mp-153", "m870", "m590", "saiga-12"))
+        if is_ar15:
+            return any(k in name for k in ("ar-15", "m4", "hk 416", "mk16", "ris ii", "lvoa", "sai", "kac", "magpul moe sl", "daniel defense", "noveske", "stngr", "geissele"))
+        if is_ak or wid in {"pp19", "saiga9"}:
+            return any(k in name for k in ("ak", "zenit b-", "vltor cmrd", "troy", "magpul zhukov", "hex", "traX", "b-10", "b-30"))
+        if is_762_nato:
+            return any(k in name for k in ("sa-58", "sr-25", "rsass", "scar", "spear", "ar-10", "7.62"))
+        return False
+
+    if slot_name == "magazine":
+        if is_shotgun:
+            return any(k in name for k in ("12ga", "12/70", "mp-133", "mp-153", "m870", "saiga-12"))
+        if is_556:
+            return any(k in name for k in ("5.56x45", "stanag", "pmag", "lancer", "surefire mag5", "hk steel", "battleaxe"))
+        if is_762_nato:
+            return any(k in name for k in ("7.62x51", "6.8x51", "sr-25", "m1a", "sa-58", "scar-h", "kac", "pmag 20 lr", "x-14"))
+        if "5.45" in cal:
+            return any(k in name for k in ("5.45x39", "6l20", "6l23", "6l26", "6l31", "rpk-16"))
+        if "7.62x39" in cal or ".366" in cal:
+            return any(k in name for k in ("7.62x39", "akm", "pmag 30 ak", "promag", "us palm", "drum"))
+        if "9x19" in cal or ".45" in cal or "4.6" in cal or "5.7" in cal:
+            return any(k in name for k in ("9x19", ".45", "mp5", "mpx", "vector", "glock", "mp7", "p90", "ump", "uzi", "pp-19"))
+        return False
+
+    return False
 
 
 def _is_part_compatible(slot_name: str, part_id: str, weapon: Dict[str, Any]) -> bool:
@@ -2314,6 +2467,12 @@ def _is_part_compatible(slot_name: str, part_id: str, weapon: Dict[str, Any]) ->
         own_parts.update(preset.values())
     if part_id in own_parts:
         return True
+
+    if part_id.startswith("wiki_"):
+        part_obj = ATTACHMENTS_CATALOG.get(part_id)
+        if not part_obj:
+            return False
+        return _is_wiki_part_compatible(slot_name, part_obj, weapon)
 
     # Rieles universales (empuñaduras, ópticas y láseres/linternas)
     if slot_name == "foregrip":

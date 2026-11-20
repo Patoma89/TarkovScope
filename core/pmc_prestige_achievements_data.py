@@ -2,7 +2,11 @@
 TarkovScope - Datos Puros de Prestige, Arena/Ref Sync, Achievements y Ropa Táctica (EFT Wiki)
 Cero dependencias de UI / Tkinter.
 """
+import json
+import os
 from typing import Any, Dict, List, Optional, Set
+
+from core.config import BASE_DIR, BUNDLE_DIR
 
 
 PRESTIGE_LEVELS_DATA: List[Dict[str, Any]] = [
@@ -1091,6 +1095,36 @@ TACTICAL_CLOTHING_CATALOG: List[Dict[str, Any]] = [
         "camo_notes_en": "Permanent winter white camo unlocked via Khorovod event.",
     },
 ]
+
+
+def _load_wiki_achievements() -> None:
+    """Fusiona el catálogo oficial completo de logros de la Wiki/Steam (data/achievements_wiki.json)."""
+    candidates = [
+        os.path.join(BASE_DIR, "data", "achievements_wiki.json"),
+        os.path.join(BUNDLE_DIR, "data", "achievements_wiki.json"),
+    ]
+    existing_names = {a.get("name", "").strip().lower() for a in ACHIEVEMENTS_CATALOG}
+    existing_ids = {a.get("id", "") for a in ACHIEVEMENTS_CATALOG}
+    for path in candidates:
+        if not os.path.isfile(path):
+            continue
+        try:
+            with open(path, "r", encoding="utf-8") as fh:
+                items = json.load(fh)
+            for item in items:
+                aid = item.get("id")
+                aname = str(item.get("name") or "").strip()
+                if not aid or not aname or aid in existing_ids or aname.lower() in existing_names:
+                    continue
+                ACHIEVEMENTS_CATALOG.append(item)
+                existing_ids.add(aid)
+                existing_names.add(aname.lower())
+            break
+        except Exception:
+            continue
+
+
+_load_wiki_achievements()
 
 
 def filter_achievements(

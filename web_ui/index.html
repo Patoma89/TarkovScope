@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TTC v2.0 — Tactical Tarkov Companion</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="app-shell" id="app-shell">
+    <!-- ==================== SIDEBAR ==================== -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-mark">
+          <div class="brand-emblem" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1">
+              <circle cx="12" cy="12" r="8"/>
+              <circle cx="12" cy="12" r="2.2" fill="currentColor"/>
+              <path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>
+            </svg>
+          </div>
+          <div class="brand-titles">
+            <span class="brand-name">TTC</span>
+            <span class="brand-sub">TACTICAL COMPANION</span>
+          </div>
+        </div>
+        <button class="icon-btn" id="btn-collapse" title="Colapsar barra lateral">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 18l-6-6 6-6"/>
+          </svg>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav" id="sidebar-nav">
+        <div class="nav-section-label" data-i18n="nav_overview">Vista General</div>
+        <button class="nav-item active" data-tab="command_center">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+          <span class="nav-label" data-i18n="tab_cc">Centro de Mando</span>
+          <span class="nav-badge live">LIVE</span>
+        </button>
+
+        <div class="nav-section-label" data-i18n="nav_raid">Incursión &amp; Mapas</div>
+        <button class="nav-item" data-tab="maps">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>
+          <span class="nav-label" data-i18n="tab_maps">Mapas 2D</span>
+        </button>
+        <button class="nav-item" data-tab="bosses">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="10" r="6"/><path d="M9 15v4M15 15v4M9 10h.01M15 10h.01M10 19h4"/></svg>
+          <span class="nav-label" data-i18n="tab_bosses">Bosses &amp; IA</span>
+        </button>
+        <button class="nav-item" data-tab="keys">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7.5" cy="15.5" r="4.5"/><path d="M21 2l-9.6 9.6M15.5 7.5l3 3"/></svg>
+          <span class="nav-label" data-i18n="tab_keys">Llaves &amp; Intel</span>
+        </button>
+
+        <div class="nav-section-label" data-i18n="nav_prog">Progresión</div>
+        <button class="nav-item" data-tab="quests">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          <span class="nav-label" data-i18n="tab_quests">Quests &amp; Rutas</span>
+        </button>
+        <button class="nav-item" data-tab="season_docs">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <span class="nav-label" data-i18n="tab_season_docs">Kord Breach</span>
+          <span class="nav-badge" style="background:rgba(16,185,129,.18);color:var(--accent-emerald);border:1px solid rgba(16,185,129,.4)">S1</span>
+        </button>
+
+        <div class="nav-section-label" data-i18n="nav_combat">Combate</div>
+        <button class="nav-item" data-tab="weapons">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10h14l4-2v4l-4 2H9l-2 5H4l1.5-5H3z"/></svg>
+          <span class="nav-label" data-i18n="tab_weapons">Armería &amp; Gunsmith</span>
+        </button>
+        <button class="nav-item" data-tab="ballistics">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="3" x2="12" y2="7"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          <span class="nav-label" data-i18n="tab_ballistics">Balística &amp; Blindaje</span>
+        </button>
+
+        <div class="nav-section-label" data-i18n="nav_econ">Economía &amp; PMC</div>
+        <button class="nav-item" data-tab="flea">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+          <span class="nav-label" data-i18n="tab_flea">Hideout &amp; Flea</span>
+        </button>
+        <button class="nav-item" data-tab="containers">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V5a4 4 0 0 1 8 0v2"/></svg>
+          <span class="nav-label" data-i18n="tab_containers">Contenedores &amp; Rigs</span>
+        </button>
+        <button class="nav-item" data-tab="medical">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M12 8v8M8 12h8"/></svg>
+          <span class="nav-label" data-i18n="tab_medical">Médico &amp; Comida</span>
+        </button>
+        <button class="nav-item" data-tab="pmc_systems">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <span class="nav-label" data-i18n="tab_pmc">PMC, Skills &amp; Logros</span>
+        </button>
+
+        <div class="nav-section-label" data-i18n="nav_extras">Extras</div>
+        <button class="nav-item" data-tab="lore">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          <span class="nav-label" data-i18n="tab_lore">Lore &amp; Universo</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="footer-controls" style="justify-content:space-between">
+          <button class="skin-select-btn" id="btn-socials" title="Mis Redes — Twitch & YouTube (@Patoma89)" style="flex:1;justify-content:center;gap:6px">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2.2"><path d="M21 2H3v16h5v4l4-4h5l4-4V2zm-10 9V7m5 4V7"/></svg>
+            <span class="footer-text" data-i18n="btn_socials">Redes</span>
+          </button>
+          <button class="icon-btn" id="btn-github-update" title="Buscar actualización en GitHub">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
+          </button>
+          <button class="icon-btn" id="btn-export-profile" title="Exportar Perfil (perfil_ttc.json)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </button>
+          <button class="icon-btn" id="btn-patch-notes" title="Notas de Versión">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </button>
+        </div>
+        <div class="footer-status">
+          <span class="status-pill"><span class="pulse-dot"></span><span class="footer-text">RAM Zero-Lag</span></span>
+          <span class="footer-text" id="app-ver-lbl">v2.0-preview</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ==================== MAIN AREA ==================== -->
+    <div class="main-area">
+      <header class="top-hud">
+        <button class="hud-search-trigger" id="btn-open-search">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <span data-i18n="hud_search">Buscar quests, munición, llaves, bosses...</span>
+          <span class="kbd-badge">Ctrl+K</span>
+        </button>
+
+        <div class="hud-right">
+          <div class="hud-clock-pill" id="hud-clock-pill">
+            <span id="hud-clock-left">--:--:--</span>
+            <span style="opacity:0.4">|</span>
+            <span id="hud-clock-right">--:--:--</span>
+            <span class="cultist-tag" id="hud-cultist-tag">CULTISTS</span>
+          </div>
+          <select class="t-select" id="hud-skin-select" title="Cambiar Skin (6 temas oficiales)" style="height:32px;border-radius:999px;font-size:11.5px;font-weight:700;padding:0 10px;border-color:rgba(var(--accent-gold-rgb),0.4)"></select>
+          <button class="hud-chip sync-ok" id="btn-sync" title="Sincronizar datos">
+            <span class="pulse-dot"></span>
+            <span id="sync-lbl">SYNC OK</span>
+          </button>
+          <button class="hud-chip" id="btn-lang-toggle" title="Cambiar Idioma (ES / EN)">ES</button>
+          <div class="hud-pmc-pill" title="Nivel actual de tu PMC (1-79)">
+            <span data-i18n="hud_pmc_lvl">PMC Nv.</span>
+            <input type="number" id="hud-pmc-level" min="1" max="79" value="1" />
+            <span style="opacity:0.35">·</span>
+            <span id="hud-prestige-chip" style="color:var(--accent-amber);font-weight:800">P0</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="content-scroll" id="content-scroll">
+        <!-- VISTA: CENTRO DE MANDO -->
+        <section id="view-command_center">
+          <div class="hero-strip">
+            <div>
+              <h1 class="hero-title" id="cc-hero-title">CENTRO DE MANDO <span>TÁCTICO</span></h1>
+              <p class="hero-sub" data-i18n="cc_hero_sub">Estado operativo de incursión, progreso Kappa y logística de refugio en tiempo real.</p>
+            </div>
+            <button class="btn-primary-gold" id="btn-plan-raid">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+              <span data-i18n="btn_plan_raid">Planear Raid Óptima</span>
+            </button>
+          </div>
+
+          <!-- 4 KPI CARDS (CLICKEABLES HACIA SU SECCIÓN) -->
+          <div class="kpi-grid">
+            <div class="glass-card kpi-card clickable-card" data-goto="quests" title="Ir a Quests & Rutas">
+              <div class="kpi-card-title"><span>Quests</span><span id="kpi-q-unlocked" style="color:var(--text-muted);font-size:11px">0 listas</span></div>
+              <div class="kpi-card-body">
+                <div class="ring-wrap">
+                  <svg class="ring-svg" viewBox="0 0 72 72">
+                    <circle class="ring-track" cx="36" cy="36" r="29"/>
+                    <circle class="ring-fill" id="ring-quests" cx="36" cy="36" r="29" stroke-dasharray="182.2" stroke-dashoffset="182.2"/>
+                  </svg>
+                  <div class="ring-center" id="ring-quests-pct">0%</div>
+                </div>
+                <div class="kpi-metrics">
+                  <div class="kpi-big-num" id="kpi-quests-num">0/459</div>
+                  <svg class="kpi-spark" viewBox="0 0 120 20" preserveAspectRatio="none"><polyline fill="none" stroke="var(--accent-gold)" stroke-width="1.8" points="0,16 18,14 36,15 54,10 72,11 90,7 108,5 120,3"/></svg>
+                  <span class="kpi-pill" id="kpi-q-pill">Abrir Quests →</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="glass-card kpi-card clickable-card" data-goto="flea" title="Ir a Hideout, FiR & Collector">
+              <div class="kpi-card-title"><span>Kappa Collector</span><span id="kpi-k-missing" style="color:var(--text-muted);font-size:11px">44 FiR</span></div>
+              <div class="kpi-card-body">
+                <div class="ring-wrap">
+                  <svg class="ring-svg" viewBox="0 0 72 72">
+                    <circle class="ring-track" cx="36" cy="36" r="29"/>
+                    <circle class="ring-fill emerald" id="ring-kappa" cx="36" cy="36" r="29" stroke-dasharray="182.2" stroke-dashoffset="182.2"/>
+                  </svg>
+                  <div class="ring-center" id="ring-kappa-pct">0%</div>
+                </div>
+                <div class="kpi-metrics">
+                  <div class="kpi-big-num" id="kpi-kappa-num">0/44</div>
+                  <svg class="kpi-spark" viewBox="0 0 120 20" preserveAspectRatio="none"><polyline fill="none" stroke="var(--accent-emerald)" stroke-width="1.8" points="0,17 20,15 40,13 60,14 80,9 100,6 120,4"/></svg>
+                  <span class="kpi-pill" style="color:var(--accent-emerald);border-color:rgba(16,185,129,.35);background:rgba(16,185,129,.12)">Collector →</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="glass-card kpi-card clickable-card" data-goto="flea" title="Ir a Refugio & Hideout">
+              <div class="kpi-card-title"><span>Refugio</span><span id="kpi-h-ready" style="color:var(--text-muted);font-size:11px">0 mejoras</span></div>
+              <div class="kpi-card-body">
+                <div class="ring-wrap">
+                  <svg class="ring-svg" viewBox="0 0 72 72">
+                    <circle class="ring-track" cx="36" cy="36" r="29"/>
+                    <circle class="ring-fill blue" id="ring-hideout" cx="36" cy="36" r="29" stroke-dasharray="182.2" stroke-dashoffset="182.2"/>
+                  </svg>
+                  <div class="ring-center" id="ring-hideout-pct">0%</div>
+                </div>
+                <div class="kpi-metrics">
+                  <div class="kpi-big-num" id="kpi-hideout-num">0/68</div>
+                  <svg class="kpi-spark" viewBox="0 0 120 20" preserveAspectRatio="none"><polyline fill="none" stroke="var(--accent-blue)" stroke-width="1.8" points="0,15 24,14 48,12 72,10 96,8 120,4"/></svg>
+                  <span class="kpi-pill" style="color:var(--accent-blue);border-color:rgba(56,189,248,.35);background:rgba(56,189,248,.12)">Hideout →</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="glass-card kpi-card clickable-card" data-goto="pmc_systems" title="Ir a PMC, Logros & Prestigio">
+              <div class="kpi-card-title"><span>Logros &amp; Prestigio</span><span id="kpi-p-lvl" style="color:var(--accent-amber);font-size:11px;font-weight:800">P0</span></div>
+              <div class="kpi-card-body">
+                <div class="ring-wrap">
+                  <svg class="ring-svg" viewBox="0 0 72 72">
+                    <circle class="ring-track" cx="36" cy="36" r="29"/>
+                    <circle class="ring-fill amber" id="ring-ach" cx="36" cy="36" r="29" stroke-dasharray="182.2" stroke-dashoffset="182.2"/>
+                  </svg>
+                  <div class="ring-center" id="ring-ach-pct">0%</div>
+                </div>
+                <div class="kpi-metrics">
+                  <div class="kpi-big-num" id="kpi-ach-num">0/32</div>
+                  <svg class="kpi-spark" viewBox="0 0 120 20" preserveAspectRatio="none"><polyline fill="none" stroke="var(--accent-amber)" stroke-width="1.8" points="0,16 25,13 50,15 75,11 100,7 120,5"/></svg>
+                  <span class="kpi-pill" style="color:var(--accent-amber);border-color:rgba(245,158,11,.35);background:rgba(245,158,11,.12)">PMC &amp; Lore →</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- BENTO GRID 3 COLUMNAS -->
+          <div class="bento-main">
+            <!-- Col 1: Próximas Misiones -->
+            <div class="glass-card panel-card">
+              <div class="panel-header">
+                <span class="panel-title clickable-link" data-goto="quests">Próximas Misiones Disponibles →</span>
+                <span style="font-size:11px;color:var(--text-muted)">1-clic para completar</span>
+              </div>
+              <div class="quests-list" id="next-quests-list"></div>
+            </div>
+
+            <!-- Col 2: Ítems Kappa -->
+            <div class="glass-card panel-card">
+              <div class="panel-header">
+                <span class="panel-title clickable-link" data-goto="flea">Ítems Kappa Pendientes →</span>
+                <div class="filter-pills">
+                  <button class="filter-pill-btn active" id="kappa-filter-pending">Pendientes</button>
+                  <button class="filter-pill-btn" id="kappa-filter-all">Todos (44)</button>
+                </div>
+              </div>
+              <div class="kappa-grid" id="kappa-items-grid"></div>
+            </div>
+
+            <!-- Col 3: Raid Clock + Accesos Rápidos -->
+            <div class="right-col">
+              <div class="glass-card panel-card clickable-card" data-goto="bosses" title="Ir a Bosses & Cultists">
+                <div class="panel-header">
+                  <span class="panel-title">Raid Clock (7x)</span>
+                  <span style="font-size:10.5px;color:var(--text-dim);font-family:var(--font-mono)">+12h DUAL</span>
+                </div>
+                <div class="clock-display">
+                  <span class="clock-left" id="card-clock-left">--:--:--</span>
+                  <span class="clock-sep">|</span>
+                  <span class="clock-right" id="card-clock-right">--:--:--</span>
+                </div>
+                <div class="daynight-track-wrap">
+                  <span style="font-size:13px">🌙</span>
+                  <div class="daynight-track">
+                    <div class="daynight-thumb" id="daynight-thumb" style="left:50%"></div>
+                  </div>
+                  <span style="font-size:13px">☀️</span>
+                </div>
+                <div class="cultist-banner" id="card-cultist-banner">Calculando ventana Cultists…</div>
+              </div>
+
+              <div class="glass-card panel-card">
+                <div class="panel-header">
+                  <span class="panel-title">Accesos Rápidos de Incursión</span>
+                </div>
+                <div class="quick-grid">
+                  <button class="quick-tile gold" data-goto="maps">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/></svg>
+                    Mapas 2D
+                  </button>
+                  <button class="quick-tile blue" data-goto="ballistics">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>
+                    Balística
+                  </button>
+                  <button class="quick-tile emerald" data-goto="keys">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="7.5" cy="15.5" r="4.5"/><path d="M21 2l-9.6 9.6M15.5 7.5l3 3"/></svg>
+                    Llaves
+                  </button>
+                  <button class="quick-tile amber" data-goto="weapons">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10h14l4-2v4l-4 2H9l-2 5H4l1.5-5H3z"/></svg>
+                    Armería
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SEGUNDA FILA BENTO: 4 PANELES OPERATIVOS CLICKEABLES -->
+          <div class="bento-secondary">
+            <!-- Panel 1: Radar de Bosses -->
+            <div class="glass-card panel-card clickable-card" data-goto="bosses" title="Ir a Bosses & Facciones IA">
+              <div class="panel-header">
+                <span class="panel-title">💀 Radar de Bosses</span>
+                <span class="cc-panel-cta">Ver mapas →</span>
+              </div>
+              <div class="cc-mini-list" id="cc-bosses-list"></div>
+            </div>
+
+            <!-- Panel 2: Hideout Listo para Mejorar -->
+            <div class="glass-card panel-card clickable-card" data-goto="flea" title="Ir a Hideout & Flea">
+              <div class="panel-header">
+                <span class="panel-title">🏗️ Refugio Disponible</span>
+                <span class="cc-panel-cta">Mejorar →</span>
+              </div>
+              <div class="cc-mini-list" id="cc-hideout-list"></div>
+            </div>
+
+            <!-- Panel 3: Llaves de Quest Faltantes -->
+            <div class="glass-card panel-card clickable-card" data-goto="keys" title="Ir a Llaves & Keycards">
+              <div class="panel-header">
+                <span class="panel-title">🔑 Llaves de Quest</span>
+                <span class="cc-panel-cta" id="cc-keys-badge">Abrir →</span>
+              </div>
+              <div class="cc-mini-list" id="cc-keys-list"></div>
+            </div>
+
+            <!-- Panel 4: Campaña Historia & Gunsmith -->
+            <div class="glass-card panel-card">
+              <div class="panel-header">
+                <span class="panel-title">📖 Campaña &amp; Gunsmith</span>
+                <span class="cc-panel-cta clickable-link" data-goto="quests">Progreso →</span>
+              </div>
+              <div class="cc-mini-list" id="cc-campaign-box"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- CONTENEDOR PERSISTENTE PARA KORD BREACH (0 ms AL VOLVER, NO RECARGA EL IFRAME) -->
+        <section id="view-kord_breach" style="display:none"></section>
+
+        <!-- CONTENEDOR DINÁMICO PARA TODOS LOS MÓDULOS GPU (FASES 2-5) -->
+        <section id="view-dynamic" style="display:none"></section>
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL: SPOTLIGHT CTRL+K -->
+  <div class="modal-backdrop" id="modal-spotlight">
+    <div class="modal-box">
+      <div class="spotlight-input-wrap">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-gold)" stroke-width="2.2">
+          <circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input type="text" class="spotlight-input" id="spotlight-input" placeholder="Buscar quests, balas (M80A1, BP), llaves, bosses, barters..." autocomplete="off" />
+        <span class="kbd-badge">ESC</span>
+      </div>
+      <div class="spotlight-results" id="spotlight-results">
+        <div style="padding:20px;text-align:center;color:var(--text-muted);font-size:12.5px">Escribe al menos 2 caracteres para buscar en todo el catálogo offline…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: LIGHTBOX ZOOM DE IMAGEN (STOCK TRADERS, MAPAS, GALERÍA) -->
+  <div class="modal-backdrop" id="modal-lightbox">
+    <div class="lightbox-modal">
+      <div class="lightbox-header">
+        <div>
+          <strong id="lightbox-title" style="font-family:var(--font-display);letter-spacing:0.8px;font-size:15px;color:var(--accent-gold)">VISOR TÁCTICO</strong>
+          <div id="lightbox-sub" style="font-size:11.5px;color:var(--text-muted)">Rueda del mouse para hacer zoom · Arrastra para mover</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <button class="btn-ghost-sm" id="lb-zoom-out">−</button>
+          <span id="lb-zoom-lbl" style="font-family:var(--font-mono);font-size:12px;min-width:46px;text-align:center;color:var(--text-soft)">100%</span>
+          <button class="btn-ghost-sm" id="lb-zoom-in">+</button>
+          <button class="btn-ghost-sm" id="lb-zoom-reset">Ajustar</button>
+          <button class="icon-btn" id="btn-close-lightbox" title="Cerrar (ESC)">✕</button>
+        </div>
+      </div>
+      <div class="lightbox-stage" id="lightbox-stage">
+        <img id="lightbox-img" src="" alt="" draggable="false" />
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: REDES SOCIALES (TWITCH & YOUTUBE) -->
+  <div class="modal-backdrop" id="modal-socials">
+    <div class="modal-box" style="width:460px">
+      <div class="spotlight-input-wrap" style="justify-content:space-between">
+        <strong style="font-family:var(--font-display);letter-spacing:1px;font-size:15px;color:var(--accent-gold)">REDES OFICIALES — PATOMA89</strong>
+        <button class="icon-btn" id="btn-close-socials">✕</button>
+      </div>
+      <div style="padding:16px;display:flex;flex-direction:column;gap:12px">
+        <button class="social-card twitch" data-ext-url="https://www.twitch.tv/patoma89">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="#a855f7"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/></svg>
+          <div style="flex:1;text-align:left">
+            <div style="font-weight:800;font-size:14.5px;color:#fff">Twitch — patoma89</div>
+            <div style="font-size:12px;color:var(--text-muted)">https://www.twitch.tv/patoma89</div>
+          </div>
+          <span style="color:#c084fc;font-weight:800;font-size:12px">Abrir ↗</span>
+        </button>
+        <button class="social-card youtube" data-ext-url="https://www.youtube.com/@Patoma89">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="#ef4444"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          <div style="flex:1;text-align:left">
+            <div style="font-weight:800;font-size:14.5px;color:#fff">YouTube — @Patoma89</div>
+            <div style="font-size:12px;color:var(--text-muted)">https://www.youtube.com/@Patoma89</div>
+          </div>
+          <span style="color:#fca5a5;font-weight:800;font-size:12px">Abrir ↗</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ACTUALIZADOR GITHUB -->
+  <div class="modal-backdrop" id="modal-update">
+    <div class="modal-box" style="width:520px">
+      <div class="spotlight-input-wrap" style="justify-content:space-between">
+        <strong style="font-family:var(--font-display);letter-spacing:1px;font-size:15px;color:var(--accent-gold)">ACTUALIZACIÓN VÍA GITHUB</strong>
+        <button class="icon-btn" id="btn-close-update">✕</button>
+      </div>
+      <div id="update-body" style="padding:18px;display:flex;flex-direction:column;gap:12px;color:var(--text-soft);font-size:13px"></div>
+    </div>
+  </div>
+
+  <!-- MODAL: PATCH NOTES -->
+  <div class="modal-backdrop" id="modal-notes">
+    <div class="modal-box">
+      <div class="spotlight-input-wrap" style="justify-content:space-between">
+        <strong style="font-family:var(--font-display);letter-spacing:1px;font-size:15px;color:var(--accent-gold)">NOTAS DE VERSIÓN — TTC</strong>
+        <button class="icon-btn" id="btn-close-notes">✕</button>
+      </div>
+      <div class="spotlight-results" id="notes-body" style="padding:14px 16px;gap:10px"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="/views_incursion.js"></script>
+  <script src="/views_progression.js"></script>
+  <script src="/views_combat.js"></script>
+  <script src="/views_economy.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>

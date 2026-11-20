@@ -13,3 +13,6 @@ cache/boss_maps/
 *.db-wal
 *.db-shm
 *.log
+
+# Caché persistente local del navegador Edge WebView2 (mapas kordmap.wiki, tiles, etc.)
+cache/webview2_cache/

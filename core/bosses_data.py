@@ -24,7 +24,7 @@ BOSSES_DATA: List[Dict[str, Any]] = [
         "map_spawns": {
             "Customs": [
                 {"zone": "Dormitorios de 2 y 3 pisos (Dorms) [33%]", "details": "Probabilidad de zona: 33% — Habitaciones del 1er y 2do piso; se atrinchera con sus guardias.", "x": 0.47, "y": 0.72, "chance": "33%"},
-                {"zone": "Nueva Estación de Gasolina (New Gas) [33%]", "details": "Probabilidad de zona: 33% — Interior de la tienda o detrás de los tanques de combustible.", "x": 0.58, "y": 0.52, "chance": "33%"},
+                {"zone": "Nueva Estación de Gasolina (New Gas) [33%]", "details": "Probabilidad de zona: 33% — Interior de la tienda o detrás de los tanques de combustible.", "x": 0.275, "y": 0.54, "chance": "33%"},
                 {"zone": "Fortaleza / Stronghold (ZB-013) [33%]", "details": "Probabilidad de zona: 33% — Piso intermedio con vistas a la zona de construcción militar.", "x": 0.48, "y": 0.38, "chance": "33%"}
             ]
         },
@@ -612,8 +612,7 @@ BOSSES_DATA: List[Dict[str, Any]] = [
         },
         "map_spawns": {
             "Icebreaker": [
-                {"zone": "Deck -2: Engine Room", "details": "Zona principal de The Wedge y su escuadrón Black Division, en las entrañas del buque (requiere Engine Room Keycard).", "x": 0.89, "y": 0.30},
-                {"zone": "Deck 9: Bridge", "details": "Zona alternativa: puente de mando y sistemas de navegación en la parte alta del buque.", "x": 0.105, "y": 0.43}
+                {"zone": "Deck 3: Gym / Canteen (Nivel 3) [100%]", "details": "Spawn único garantizado de The Wedge y su escuadrón Black Division en los pasillos interiores del Nivel 3.", "x": 0.535, "y": 0.45, "chance": "100%"}
             ]
         },
         "total_hp": 880,

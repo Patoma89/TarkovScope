@@ -1,0 +1,3109 @@
+{
+ "factory": {
+  "image_url": "/cache/route_maps/factory.jpg",
+  "extracts": [
+   {
+    "name": "Gate M",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.9754,
+    "y": 0.6635
+   },
+   {
+    "name": "Cellars",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.7315,
+    "y": 0.0223
+   },
+   {
+    "name": "Gate 3",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.05,
+    "y": 0.1288
+   },
+   {
+    "name": "Gate 3",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.0316,
+    "y": 0.1308
+   },
+   {
+    "name": "Factory Secret Ark",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.7298,
+    "y": 0.2037
+   },
+   {
+    "name": "Gate O",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.01,
+    "y": 0.3739
+   },
+   {
+    "name": "Camera Bunker Door",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.2073,
+    "y": 0.6508
+   },
+   {
+    "name": "Gate 2",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.9164,
+    "y": 0.2257
+   },
+   {
+    "name": "Office Window",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.2089,
+    "y": 0.4155
+   },
+   {
+    "name": "Gate 0",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.0878,
+    "y": 0.9872
+   }
+  ],
+  "boss_pins": [
+   {
+    "boss": "Tagilla",
+    "zone": "Planta Principal / Silos / Túneles",
+    "chance": "50%",
+    "x": 0.505,
+    "y": 0.455
+   },
+   {
+    "boss": "Cultists",
+    "zone": "Planta Nocturna (Noche)",
+    "chance": "15%",
+    "x": 0.605,
+    "y": 0.345
+   }
+  ],
+  "locks": [
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.8792,
+    "y": 0.6744
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.7333,
+    "y": 0.0718
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.2345,
+    "y": 0.3363
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.1773,
+    "y": 0.6839
+   }
+  ]
+ },
+ "customs": {
+  "image_url": "/cache/route_maps/customs.jpg",
+  "extracts": [
+   {
+    "name": "Gasstation",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.3621,
+    "y": 0.2433
+   },
+   {
+    "name": "Rail Milbase",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.1955,
+    "y": 0.9713
+   },
+   {
+    "name": "Crossroads",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.9664,
+    "y": 0.406
+   },
+   {
+    "name": "Admin",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.0314,
+    "y": 0.463
+   },
+   {
+    "name": "Old Road Gate",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.4825,
+    "y": 0.9577
+   },
+   {
+    "name": "RUAF Roadblock",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.6618,
+    "y": 0.3104
+   },
+   {
+    "name": "RUAF Roadblock",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.6611,
+    "y": 0.3098
+   },
+   {
+    "name": "Sniper Roadblock",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.6382,
+    "y": 0.7966
+   },
+   {
+    "name": "Factory Shacks",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.4602,
+    "y": 0.5707
+   },
+   {
+    "name": "Crossroads",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.9663,
+    "y": 0.4062
+   },
+   {
+    "name": "Warehouse 4",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.3332,
+    "y": 0.5172
+   },
+   {
+    "name": "Smuggler's Boat",
+    "faction": "PMC / Scav",
+    "is_pmc": true,
+    "is_scav": true,
+    "req": "Co-op / Compartido (tarkov.dev)",
+    "x": 0.5524,
+    "y": 0.4845
+   },
+   {
+    "name": "Extracción con bengala",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.5209,
+    "y": 0.01
+   },
+   {
+    "name": "Rail Milbase",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.1955,
+    "y": 0.9713
+   },
+   {
+    "name": "Rail Port",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.7915,
+    "y": 0.6504
+   },
+   {
+    "name": "Medgate",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.5941,
+    "y": 0.2442
+   },
+   {
+    "name": "ZB-1013",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.4645,
+    "y": 0.2835
+   },
+   {
+    "name": "ZB-1011",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.0718,
+    "y": 0.3323
+   },
+   {
+    "name": "Rail Tarkov",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.7955,
+    "y": 0.1648
+   },
+   {
+    "name": "Milbase Cp",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.0499,
+    "y": 0.7977
+   },
+   {
+    "name": "Trailer Park",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.9475,
+    "y": 0.1365
+   },
+   {
+    "name": "Dorms V-Ex",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.4831,
+    "y": 0.9563
+   },
+   {
+    "name": "Old Gas Station",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.3624,
+    "y": 0.2448
+   },
+   {
+    "name": "Beyond Fuel Tank",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.1485,
+    "y": 0.9326
+   },
+   {
+    "name": "ZB-1011",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.068,
+    "y": 0.3301
+   },
+   {
+    "name": "Secret Voron Boat",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.691,
+    "y": 0.79
+   },
+   {
+    "name": "Trailerpark",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.9472,
+    "y": 0.139
+   },
+   {
+    "name": "Secret Voron Bunker",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.2203,
+    "y": 0.3585
+   }
+  ],
+  "boss_pins": [
+   {
+    "boss": "Reshala",
+    "zone": "Dorms (2F & 3F)",
+    "chance": "60%",
+    "x": 0.46,
+    "y": 0.855
+   },
+   {
+    "boss": "Reshala",
+    "zone": "New Gas Station",
+    "chance": "60%",
+    "x": 0.27,
+    "y": 0.615
+   },
+   {
+    "boss": "Reshala",
+    "zone": "Stronghold (ZB-013)",
+    "chance": "60%",
+    "x": 0.47,
+    "y": 0.34
+   },
+   {
+    "boss": "The Goons",
+    "zone": "Stronghold (Fortress)",
+    "chance": "20%",
+    "x": 0.49,
+    "y": 0.365
+   },
+   {
+    "boss": "Cultists",
+    "zone": "Stronghold (Noche)",
+    "chance": "30%",
+    "x": 0.45,
+    "y": 0.365
+   }
+  ],
+  "locks": [
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.1126,
+    "y": 0.5722
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.2643,
+    "y": 0.6301
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.2639,
+    "y": 0.6355
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4368,
+    "y": 0.8193
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4394,
+    "y": 0.8137
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4364,
+    "y": 0.8575
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4341,
+    "y": 0.858
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4848,
+    "y": 0.8857
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4865,
+    "y": 0.8925
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4835,
+    "y": 0.9021
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4703,
+    "y": 0.8852
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4878,
+    "y": 0.8406
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4892,
+    "y": 0.8539
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.486,
+    "y": 0.8684
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4859,
+    "y": 0.9021
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.5572,
+    "y": 0.5545
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4593,
+    "y": 0.8865
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.904,
+    "y": 0.3188
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.8442,
+    "y": 0.3626
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.834,
+    "y": 0.1837
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.887,
+    "y": 0.157
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.3197,
+    "y": 0.5379
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.3067,
+    "y": 0.4726
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.121,
+    "y": 0.4712
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.1266,
+    "y": 0.4564
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.5626,
+    "y": 0.4573
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4665,
+    "y": 0.2962
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.463,
+    "y": 0.5862
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.5714,
+    "y": 0.3679
+   }
+  ]
+ },
+ "woods": {
+  "image_url": "/cache/route_maps/woods.jpg",
+  "extracts": [
+   {
+    "name": "ZB-016",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.7358,
+    "y": 0.6822
+   },
+   {
+    "name": "UN Roadblock",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.8396,
+    "y": 0.8856
+   },
+   {
+    "name": "Old Station",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.8273,
+    "y": 0.784
+   },
+   {
+    "name": "Scav House",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.1655,
+    "y": 0.8525
+   },
+   {
+    "name": "West Border",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.8212,
+    "y": 0.648
+   },
+   {
+    "name": "Mountain Stash",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.6088,
+    "y": 0.5166
+   },
+   {
+    "name": "Wood Sniper Exit",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.0516,
+    "y": 0.6112
+   },
+   {
+    "name": "Outskirts",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.2114,
+    "y": 0.9384
+   },
+   {
+    "name": "UN Roadblock",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.8402,
+    "y": 0.8854
+   },
+   {
+    "name": "East Gate",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.3028,
+    "y": 0.1537
+   },
+   {
+    "name": "RUAF Roadblock",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.5604,
+    "y": 0.9854
+   },
+   {
+    "name": "Outskirts",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.2127,
+    "y": 0.9395
+   },
+   {
+    "name": "RUAF Gate",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.5606,
+    "y": 0.99
+   },
+   {
+    "name": "ZB-014",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.1416,
+    "y": 0.7164
+   },
+   {
+    "name": "Dead Man's Place",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.3204,
+    "y": 0.8651
+   },
+   {
+    "name": "Factory Gate",
+    "faction": "PMC / Scav",
+    "is_pmc": true,
+    "is_scav": true,
+    "req": "Co-op / Compartido (tarkov.dev)",
+    "x": 0.3932,
+    "y": 0.0518
+   },
+   {
+    "name": "The Boat",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.3339,
+    "y": 0.8332
+   },
+   {
+    "name": "Woods Secret Minefield",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.9782,
+    "y": 0.7694
+   },
+   {
+    "name": "Northern UN Roadblock",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.8553,
+    "y": 0.6246
+   },
+   {
+    "name": "South V-Ex",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.8041,
+    "y": 0.3024
+   }
+  ],
+  "boss_pins": [
+   {
+    "boss": "Shturman",
+    "zone": "Sawmill (Aserradero)",
+    "chance": "60%",
+    "x": 0.445,
+    "y": 0.655
+   },
+   {
+    "boss": "The Goons",
+    "zone": "Scav Bunker / Radio Tower",
+    "chance": "20%",
+    "x": 0.345,
+    "y": 0.135
+   },
+   {
+    "boss": "Cultists",
+    "zone": "Marked Circle (Noche)",
+    "chance": "30%",
+    "x": 0.31,
+    "y": 0.55
+   },
+   {
+    "boss": "Cultists",
+    "zone": "Sunken Village (Noche)",
+    "chance": "30%",
+    "x": 0.455,
+    "y": 0.185
+   }
+  ],
+  "locks": [
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.8239,
+    "y": 0.3876
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.1407,
+    "y": 0.7224
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.927,
+    "y": 0.8112
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.9248,
+    "y": 0.809
+   }
+  ]
+ },
+ "lighthouse": {
+  "image_url": "/cache/route_maps/lighthouse.jpg",
+  "extracts": [
+   {
+    "name": "Armored Train",
+    "faction": "PMC / Scav",
+    "is_pmc": true,
+    "is_scav": true,
+    "req": "Co-op / Compartido (tarkov.dev)",
+    "x": 0.4801,
+    "y": 0.0746
+   },
+   {
+    "name": "Southern Road",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.7652,
+    "y": 0.8233
+   },
+   {
+    "name": "Scav Coastal South",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.7515,
+    "y": 0.8234
+   },
+   {
+    "name": "Shorl Free",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.8299,
+    "y": 0.5088
+   },
+   {
+    "name": "Alpinist Light",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.6639,
+    "y": 0.5418
+   },
+   {
+    "name": "Lighthouse Secret Minefield",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.8421,
+    "y": 0.2059
+   },
+   {
+    "name": "Northern Checkpoint",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.3778,
+    "y": 0.01
+   },
+   {
+    "name": "Scav Underboat Hideout",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.3604,
+    "y": 0.7457
+   },
+   {
+    "name": "Scav Hideout At The Grotto",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.3155,
+    "y": 0.2972
+   },
+   {
+    "name": "Scav Industrial Zone",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.63,
+    "y": 0.1183
+   },
+   {
+    "name": "Side Tunnel (Co-op)",
+    "faction": "PMC / Scav",
+    "is_pmc": true,
+    "is_scav": true,
+    "req": "Co-op / Compartido (tarkov.dev)",
+    "x": 0.5505,
+    "y": 0.7638
+   },
+   {
+    "name": "Path to Shoreline",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.8299,
+    "y": 0.5088
+   }
+  ],
+  "boss_pins": [
+   {
+    "boss": "Zryachiy",
+    "zone": "Lighthouse Island (Faro)",
+    "chance": "100%",
+    "x": 0.13,
+    "y": 0.855
+   },
+   {
+    "boss": "The Goons",
+    "zone": "Water Treatment Plant",
+    "chance": "20%",
+    "x": 0.55,
+    "y": 0.22
+   },
+   {
+    "boss": "The Goons",
+    "zone": "Upper Chalet",
+    "chance": "20%",
+    "x": 0.565,
+    "y": 0.535
+   }
+  ],
+  "locks": [
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.5413,
+    "y": 0.4092
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.171,
+    "y": 0.8805
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.1759,
+    "y": 0.862
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4069,
+    "y": 0.2581
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4,
+    "y": 0.5032
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4845,
+    "y": 0.4818
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.6646,
+    "y": 0.3262
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.5676,
+    "y": 0.3226
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.5703,
+    "y": 0.4155
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.2915,
+    "y": 0.8821
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4653,
+    "y": 0.5277
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4798,
+    "y": 0.4272
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4507,
+    "y": 0.0644
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.1508,
+    "y": 0.8981
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.5628,
+    "y": 0.5266
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.5628,
+    "y": 0.5459
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.59,
+    "y": 0.5709
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.6038,
+    "y": 0.5035
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.5572,
+    "y": 0.4105
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.6247,
+    "y": 0.438
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.455,
+    "y": 0.21
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.6001,
+    "y": 0.1518
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.6526,
+    "y": 0.1996
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4413,
+    "y": 0.258
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.6452,
+    "y": 0.2906
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.5338,
+    "y": 0.2039
+   }
+  ]
+ },
+ "shoreline": {
+  "image_url": "/cache/route_maps/shoreline.jpg",
+  "extracts": [
+   {
+    "name": "RedRebel Alp",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.4604,
+    "y": 0.0519
+   },
+   {
+    "name": "Adm Basement",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.4877,
+    "y": 0.2571
+   },
+   {
+    "name": "Tunnel",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.082,
+    "y": 0.7108
+   },
+   {
+    "name": "Rock Passage",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.4518,
+    "y": 0.0553
+   },
+   {
+    "name": "Lighthouse",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.6166,
+    "y": 0.9508
+   },
+   {
+    "name": "Smuggler's Path (Co-op)",
+    "faction": "PMC / Scav",
+    "is_pmc": true,
+    "is_scav": true,
+    "req": "Co-op / Compartido (tarkov.dev)",
+    "x": 0.7904,
+    "y": 0.1552
+   },
+   {
+    "name": "Svetliy Dead End",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.0276,
+    "y": 0.5186
+   },
+   {
+    "name": "Path to Lighthouse",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.0355,
+    "y": 0.1556
+   },
+   {
+    "name": "Wrecked Road",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.0883,
+    "y": 0.7237
+   },
+   {
+    "name": "CCP Temporary",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.8714,
+    "y": 0.8633
+   },
+   {
+    "name": "Scav Road To Customs",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.8735,
+    "y": 0.4024
+   },
+   {
+    "name": "RWing Gym Entrance",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.5134,
+    "y": 0.3044
+   },
+   {
+    "name": "Road To Customs",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.8735,
+    "y": 0.4024
+   },
+   {
+    "name": "Railway Bridge",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.9798,
+    "y": 0.6899
+   },
+   {
+    "name": "Ruined House Fence",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.017,
+    "y": 0.3373
+   },
+   {
+    "name": "Pier Boat",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.5383,
+    "y": 0.9478
+   },
+   {
+    "name": "Shoreline Secret Heartbeat",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.5736,
+    "y": 0.0288
+   },
+   {
+    "name": "Shorl V-Ex",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.6711,
+    "y": 0.0357
+   },
+   {
+    "name": "Cliff Descent",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.4487,
+    "y": 0.0536
+   }
+  ],
+  "boss_pins": [
+   {
+    "boss": "Sanitar",
+    "zone": "Health Resort (West Wing)",
+    "chance": "60%",
+    "x": 0.445,
+    "y": 0.315
+   },
+   {
+    "boss": "Sanitar",
+    "zone": "Health Resort (East Wing)",
+    "chance": "60%",
+    "x": 0.53,
+    "y": 0.315
+   },
+   {
+    "boss": "Sanitar",
+    "zone": "Cottages (Villas)",
+    "chance": "60%",
+    "x": 0.24,
+    "y": 0.485
+   },
+   {
+    "boss": "Sanitar",
+    "zone": "Pier",
+    "chance": "60%",
+    "x": 0.535,
+    "y": 0.895
+   },
+   {
+    "boss": "The Goons",
+    "zone": "Weather Station",
+    "chance": "20%",
+    "x": 0.64,
+    "y": 0.645
+   },
+   {
+    "boss": "Cultists",
+    "zone": "Health Resort (Noche)",
+    "chance": "25%",
+    "x": 0.485,
+    "y": 0.285
+   },
+   {
+    "boss": "Cultists",
+    "zone": "Spine / Swamp (Noche)",
+    "chance": "25%",
+    "x": 0.22,
+    "y": 0.37
+   }
+  ],
+  "locks": [
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.2223,
+    "y": 0.5315
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4643,
+    "y": 0.5818
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4768,
+    "y": 0.5926
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.2574,
+    "y": 0.5014
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4645,
+    "y": 0.5894
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.7132,
+    "y": 0.8654
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.5304,
+    "y": 0.3246
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4443,
+    "y": 0.3193
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.5369,
+    "y": 0.3246
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.424,
+    "y": 0.3193
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.5062,
+    "y": 0.3121
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4702,
+    "y": 0.3121
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4145,
+    "y": 0.3246
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4291,
+    "y": 0.3202
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.5175,
+    "y": 0.3232
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.5486,
+    "y": 0.3202
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4621,
+    "y": 0.3121
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.5036,
+    "y": 0.3121
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4494,
+    "y": 0.3246
+   }
+  ]
+ },
+ "reserve": {
+  "image_url": "/cache/route_maps/reserve.jpg",
+  "extracts": [
+   {
+    "name": "Armored Train",
+    "faction": "PMC / Scav",
+    "is_pmc": true,
+    "is_scav": true,
+    "req": "Co-op / Compartido (tarkov.dev)",
+    "x": 0.2505,
+    "y": 0.2733
+   },
+   {
+    "name": "Exit2",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.5478,
+    "y": 0.2103
+   },
+   {
+    "name": "Reserve Secret Minefield",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.4266,
+    "y": 0.1331
+   },
+   {
+    "name": "Exit1",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.9296,
+    "y": 0.6358
+   },
+   {
+    "name": "Cliff Descent",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.5038,
+    "y": 0.9334
+   },
+   {
+    "name": "Sewer Manhole",
+    "faction": "PMC / Scav",
+    "is_pmc": true,
+    "is_scav": true,
+    "req": "Co-op / Compartido (tarkov.dev)",
+    "x": 0.4204,
+    "y": 0.6877
+   },
+   {
+    "name": "D-2",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.6933,
+    "y": 0.866
+   },
+   {
+    "name": "Exit4",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.3836,
+    "y": 0.7954
+   },
+   {
+    "name": "Bunker Hermetic Door",
+    "faction": "PMC / Scav",
+    "is_pmc": true,
+    "is_scav": true,
+    "req": "Co-op / Compartido (tarkov.dev)",
+    "x": 0.3837,
+    "y": 0.1909
+   },
+   {
+    "name": "Scav Lands (Co-op)",
+    "faction": "PMC / Scav",
+    "is_pmc": true,
+    "is_scav": true,
+    "req": "Co-op / Compartido (tarkov.dev)",
+    "x": 0.7041,
+    "y": 0.2801
+   },
+   {
+    "name": "Exit3",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.2844,
+    "y": 0.3215
+   }
+  ],
+  "boss_pins": [
+   {
+    "boss": "Glukhar",
+    "zone": "Train Station",
+    "chance": "60%",
+    "x": 0.21,
+    "y": 0.265
+   },
+   {
+    "boss": "Glukhar",
+    "zone": "K-Buildings",
+    "chance": "60%",
+    "x": 0.425,
+    "y": 0.345
+   },
+   {
+    "boss": "Glukhar",
+    "zone": "White Knight",
+    "chance": "60%",
+    "x": 0.35,
+    "y": 0.51
+   },
+   {
+    "boss": "Glukhar",
+    "zone": "Black Knight",
+    "chance": "60%",
+    "x": 0.46,
+    "y": 0.53
+   },
+   {
+    "boss": "Glukhar",
+    "zone": "White Pawn (Barracks)",
+    "chance": "60%",
+    "x": 0.725,
+    "y": 0.52
+   },
+   {
+    "boss": "Glukhar",
+    "zone": "Black Pawn (Barracks)",
+    "chance": "60%",
+    "x": 0.765,
+    "y": 0.64
+   },
+   {
+    "boss": "Glukhar",
+    "zone": "Black Bishop (School)",
+    "chance": "60%",
+    "x": 0.68,
+    "y": 0.72
+   },
+   {
+    "boss": "Glukhar",
+    "zone": "Bunker Subterráneo",
+    "chance": "60%",
+    "x": 0.56,
+    "y": 0.565
+   }
+  ],
+  "locks": [
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.7132,
+    "y": 0.5155
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.7155,
+    "y": 0.5216
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4157,
+    "y": 0.3331
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4025,
+    "y": 0.3745
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.3517,
+    "y": 0.3142
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4234,
+    "y": 0.2883
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.3682,
+    "y": 0.272
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.3472,
+    "y": 0.3582
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.7548,
+    "y": 0.6811
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.6956,
+    "y": 0.727
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.763,
+    "y": 0.6678
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.7756,
+    "y": 0.6087
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.7715,
+    "y": 0.6096
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.5895,
+    "y": 0.4812
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.6211,
+    "y": 0.4906
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.3181,
+    "y": 0.6267
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.5565,
+    "y": 0.8691
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.563,
+    "y": 0.8649
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.1595,
+    "y": 0.1667
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.1681,
+    "y": 0.1271
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4925,
+    "y": 0.871
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.5068,
+    "y": 0.8816
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4894,
+    "y": 0.8846
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.5944,
+    "y": 0.604
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.6038,
+    "y": 0.5872
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.5751,
+    "y": 0.5821
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4743,
+    "y": 0.5129
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4697,
+    "y": 0.5317
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.3404,
+    "y": 0.4766
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.6912,
+    "y": 0.597
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.6564,
+    "y": 0.5763
+   }
+  ]
+ },
+ "interchange": {
+  "image_url": "/cache/route_maps/interchange.jpg",
+  "extracts": [
+   {
+    "name": "Railway",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.1197,
+    "y": 0.01
+   },
+   {
+    "name": "Saferoom Exfil",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.6263,
+    "y": 0.5601
+   },
+   {
+    "name": "Railway Exfil",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.1195,
+    "y": 0.01
+   },
+   {
+    "name": "Emercom Checkpoint",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.8918,
+    "y": 0.8166
+   },
+   {
+    "name": "Scav Camp (Co-op)",
+    "faction": "PMC / Scav",
+    "is_pmc": true,
+    "is_scav": true,
+    "req": "Co-op / Compartido (tarkov.dev)",
+    "x": 0.6745,
+    "y": 0.4252
+   },
+   {
+    "name": "Sniper",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.01,
+    "y": 0.5915
+   },
+   {
+    "name": "Emercom",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.8918,
+    "y": 0.8166
+   },
+   {
+    "name": "Power Station V-Ex",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.8737,
+    "y": 0.0859
+   },
+   {
+    "name": "Hole in the Fence",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.7932,
+    "y": 0.4668
+   }
+  ],
+  "boss_pins": [
+   {
+    "boss": "Killa",
+    "zone": "IDEA (Interior Norte)",
+    "chance": "60%",
+    "x": 0.56,
+    "y": 0.22
+   },
+   {
+    "boss": "Killa",
+    "zone": "Centro Mall / KIBA / Brutal",
+    "chance": "60%",
+    "x": 0.555,
+    "y": 0.45
+   },
+   {
+    "boss": "Killa",
+    "zone": "Goshan (Interior Este)",
+    "chance": "60%",
+    "x": 0.735,
+    "y": 0.44
+   },
+   {
+    "boss": "Killa",
+    "zone": "OLI (Interior Sur)",
+    "chance": "60%",
+    "x": 0.565,
+    "y": 0.645
+   },
+   {
+    "boss": "Tagilla",
+    "zone": "Parking Subterráneo (Centro)",
+    "chance": "75%",
+    "x": 0.525,
+    "y": 0.485
+   },
+   {
+    "boss": "Tagilla",
+    "zone": "Parking Subterráneo (Norte)",
+    "chance": "75%",
+    "x": 0.525,
+    "y": 0.34
+   }
+  ],
+  "locks": [
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.7777,
+    "y": 0.1002
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.7963,
+    "y": 0.1969
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.7737,
+    "y": 0.1084
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.5135,
+    "y": 0.2152
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4993,
+    "y": 0.6426
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.6797,
+    "y": 0.6021
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4974,
+    "y": 0.6299
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.5469,
+    "y": 0.3847
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.5566,
+    "y": 0.3794
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.5734,
+    "y": 0.3858
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.5891,
+    "y": 0.4706
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.6303,
+    "y": 0.5622
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.444,
+    "y": 0.8126
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.5145,
+    "y": 0.5565
+   }
+  ]
+ },
+ "streetsoftarkov": {
+  "image_url": "/cache/route_maps/streetsoftarkov.jpg",
+  "extracts": [
+   {
+    "name": "E5",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.1772,
+    "y": 0.6865
+   },
+   {
+    "name": "E4",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.017,
+    "y": 0.8476
+   },
+   {
+    "name": "E3",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.9426,
+    "y": 0.7737
+   },
+   {
+    "name": "Scav E7",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.3618,
+    "y": 0.1618
+   },
+   {
+    "name": "Scav E2",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.9486,
+    "y": 0.6515
+   },
+   {
+    "name": "Exit E10 Coop",
+    "faction": "PMC / Scav",
+    "is_pmc": true,
+    "is_scav": true,
+    "req": "Co-op / Compartido (tarkov.dev)",
+    "x": 0.7251,
+    "y": 0.4352
+   },
+   {
+    "name": "Scav E8",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.8073,
+    "y": 0.3499
+   },
+   {
+    "name": "E1",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.6098,
+    "y": 0.2695
+   },
+   {
+    "name": "E9 Sniper",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.9725,
+    "y": 0.4089
+   },
+   {
+    "name": "Scav E5",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.1052,
+    "y": 0.4156
+   },
+   {
+    "name": "E8 Yard",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.7852,
+    "y": 0.9615
+   },
+   {
+    "name": "Scav E3",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.7415,
+    "y": 0.8693
+   },
+   {
+    "name": "E7",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.1822,
+    "y": 0.2298
+   },
+   {
+    "name": "Streets Secret Onyx",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.4096,
+    "y": 0.4172
+   },
+   {
+    "name": "E2",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.9785,
+    "y": 0.6221
+   },
+   {
+    "name": "E6",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.1852,
+    "y": 0.4562
+   },
+   {
+    "name": "E7 Car",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.5393,
+    "y": 0.9144
+   },
+   {
+    "name": "Scav E4",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.0778,
+    "y": 0.7744
+   },
+   {
+    "name": "Scav E6",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.9486,
+    "y": 0.6515
+   }
+  ],
+  "boss_pins": [
+   {
+    "boss": "Kaban",
+    "zone": "LexOs Car Dealership",
+    "chance": "60%",
+    "x": 0.445,
+    "y": 0.715
+   },
+   {
+    "boss": "Kollontay",
+    "zone": "Klimov Shopping Mall",
+    "chance": "60%",
+    "x": 0.21,
+    "y": 0.815
+   },
+   {
+    "boss": "Kollontay",
+    "zone": "MVD Academy",
+    "chance": "60%",
+    "x": 0.725,
+    "y": 0.68
+   }
+  ],
+  "locks": [
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.6468,
+    "y": 0.4284
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.8808,
+    "y": 0.7141
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.757,
+    "y": 0.6867
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.8447,
+    "y": 0.6339
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.8144,
+    "y": 0.6349
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.7524,
+    "y": 0.8303
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.7842,
+    "y": 0.8587
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.3181,
+    "y": 0.632
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.3261,
+    "y": 0.632
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.3559,
+    "y": 0.6283
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4535,
+    "y": 0.5354
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4604,
+    "y": 0.5393
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4246,
+    "y": 0.6367
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.3627,
+    "y": 0.513
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.3678,
+    "y": 0.5132
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4028,
+    "y": 0.5242
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.3296,
+    "y": 0.5301
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.2286,
+    "y": 0.7279
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4248,
+    "y": 0.7324
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4304,
+    "y": 0.7207
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.3977,
+    "y": 0.7153
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.3718,
+    "y": 0.7593
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4444,
+    "y": 0.7589
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.0834,
+    "y": 0.8149
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.1742,
+    "y": 0.8411
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.1636,
+    "y": 0.8411
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.0803,
+    "y": 0.8207
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.0904,
+    "y": 0.8253
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.1576,
+    "y": 0.8477
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.1857,
+    "y": 0.8485
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.3367,
+    "y": 0.7084
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.2145,
+    "y": 0.9114
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.2167,
+    "y": 0.9169
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4968,
+    "y": 0.4847
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4975,
+    "y": 0.4887
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.6483,
+    "y": 0.4214
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.6642,
+    "y": 0.421
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.6176,
+    "y": 0.4341
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.631,
+    "y": 0.1806
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.5818,
+    "y": 0.2833
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.5682,
+    "y": 0.2791
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.2949,
+    "y": 0.313
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.3585,
+    "y": 0.3275
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.3167,
+    "y": 0.3269
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.3342,
+    "y": 0.3144
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.435,
+    "y": 0.26
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4582,
+    "y": 0.2849
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.2269,
+    "y": 0.6317
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.1596,
+    "y": 0.4389
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.2409,
+    "y": 0.4521
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.1908,
+    "y": 0.5269
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.2288,
+    "y": 0.4785
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.951,
+    "y": 0.5158
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.6391,
+    "y": 0.9133
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.2471,
+    "y": 0.5544
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.2617,
+    "y": 0.5563
+   }
+  ]
+ },
+ "lab": {
+  "image_url": "/cache/route_maps/lab.jpg",
+  "extracts": [
+   {
+    "name": "Hangar Gate",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.9088,
+    "y": 0.5628
+   },
+   {
+    "name": "Medical Block Elevator",
+    "faction": "PMC / Scav",
+    "is_pmc": true,
+    "is_scav": true,
+    "req": "Co-op / Compartido (tarkov.dev)",
+    "x": 0.4683,
+    "y": 0.8437
+   },
+   {
+    "name": "Ventilation Shaft",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.2825,
+    "y": 0.6855
+   },
+   {
+    "name": "Cargo Elevator",
+    "faction": "PMC / Scav",
+    "is_pmc": true,
+    "is_scav": true,
+    "req": "Co-op / Compartido (tarkov.dev)",
+    "x": 0.2412,
+    "y": 0.8461
+   },
+   {
+    "name": "Main Elevator",
+    "faction": "PMC / Scav",
+    "is_pmc": true,
+    "is_scav": true,
+    "req": "Co-op / Compartido (tarkov.dev)",
+    "x": 0.501,
+    "y": 0.0212
+   },
+   {
+    "name": "Parking Gate",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.068,
+    "y": 0.2685
+   },
+   {
+    "name": "Sewage Conduit",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.77,
+    "y": 0.7926
+   }
+  ],
+  "boss_pins": [],
+  "locks": [
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.45,
+    "y": 0.5881
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4892,
+    "y": 0.5881
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.5869,
+    "y": 0.5176
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.5592,
+    "y": 0.5074
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4934,
+    "y": 0.7301
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.5291,
+    "y": 0.175
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.3681,
+    "y": 0.088
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4827,
+    "y": 0.7569
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.3669,
+    "y": 0.124
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.5426,
+    "y": 0.1442
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4579,
+    "y": 0.7298
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.3539,
+    "y": 0.3591
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4476,
+    "y": 0.7641
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.2484,
+    "y": 0.7909
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.5626,
+    "y": 0.1211
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.1321,
+    "y": 0.8194
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4518,
+    "y": 0.7443
+   }
+  ]
+ },
+ "groundzero": {
+  "image_url": "/cache/route_maps/groundzero.jpg",
+  "extracts": [
+   {
+    "name": "Nakatani Basement Stairs",
+    "faction": "PMC / Scav",
+    "is_pmc": true,
+    "is_scav": true,
+    "req": "Co-op / Compartido (tarkov.dev)",
+    "x": 0.7616,
+    "y": 0.9406
+   },
+   {
+    "name": "Scav Checkpoint (Co-op)",
+    "faction": "PMC / Scav",
+    "is_pmc": true,
+    "is_scav": true,
+    "req": "Co-op / Compartido (tarkov.dev)",
+    "x": 0.6429,
+    "y": 0.0915
+   },
+   {
+    "name": "Groundzero Secret Adaptation",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.1675,
+    "y": 0.5276
+   },
+   {
+    "name": "Exit E10 Coop",
+    "faction": "PMC / Scav",
+    "is_pmc": true,
+    "is_scav": true,
+    "req": "Co-op / Compartido (tarkov.dev)",
+    "x": 0.99,
+    "y": 0.3888
+   },
+   {
+    "name": "Sniper Exit",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.0888,
+    "y": 0.1756
+   },
+   {
+    "name": "UN Roadblock",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.99,
+    "y": 0.8447
+   },
+   {
+    "name": "Unity Free Exit",
+    "faction": "PMC / Scav",
+    "is_pmc": true,
+    "is_scav": true,
+    "req": "Co-op / Compartido (tarkov.dev)",
+    "x": 0.28,
+    "y": 0.0548
+   },
+   {
+    "name": "East Gate",
+    "faction": "Scav",
+    "is_pmc": false,
+    "is_scav": true,
+    "req": "Extracción Scav (tarkov.dev)",
+    "x": 0.0824,
+    "y": 0.01
+   },
+   {
+    "name": "Police Cordon V-Ex",
+    "faction": "PMC",
+    "is_pmc": true,
+    "is_scav": false,
+    "req": "Extracción PMC (tarkov.dev)",
+    "x": 0.7714,
+    "y": 0.4898
+   }
+  ],
+  "boss_pins": [
+   {
+    "boss": "Kollontay",
+    "zone": "TerraGroup / Empire (21+)",
+    "chance": "30%",
+    "x": 0.5,
+    "y": 0.48
+   },
+   {
+    "boss": "Cultists",
+    "zone": "Centro Nocturno (21+)",
+    "chance": "15%",
+    "x": 0.53,
+    "y": 0.54
+   }
+  ],
+  "locks": [
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.408,
+    "y": 0.3581
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.4856,
+    "y": 0.5571
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.01,
+    "y": 0.3694
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.5481,
+    "y": 0.6076
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.3706,
+    "y": 0.5603
+   },
+   {
+    "name": "Puerta con Llave",
+    "type": "key",
+    "desc": "Puerta con llave (tarkov.dev)",
+    "x": 0.767,
+    "y": 0.3743
+   }
+  ]
+ }
+}

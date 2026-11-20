@@ -72,6 +72,82 @@ def build_armor_matrix(penetration_power: float) -> Dict[int, int]:
     }
 
 
+def build_eft_ammo_matrix(penetration_power: float) -> Dict[int, int]:
+    """
+    Escala 0..6 calibrada a eft-ammo.com (NoFoodAfterMidnight):
+      6 = Ignora / >80% 1er tiro (pen >= AC*10 + 3, o C6 >= 58)
+      5 = Muy efectiva (pen >= AC*10 - 1)
+      4 = Efectiva (pen >= AC*10 - 5)
+      3 = Algo efectiva (pen >= AC*10 - 9)
+      2 = Magdump (pen >= AC*10 - 13)
+      1 = Muy baja (pen >= AC*10 - 18)
+      0 = Inútil / Sin penetración (pen < AC*10 - 18)
+    """
+    out: Dict[int, int] = {}
+    pen = float(penetration_power or 0.0)
+    for ac in range(1, 7):
+        diff = pen - (ac * 10.0)
+        if diff >= 3.0 or (ac == 6 and diff >= -2.0):
+            score = 6
+        elif diff >= -1.0 or (ac == 6 and diff >= -4.0):
+            score = 5
+        elif diff >= -5.0 or (ac == 6 and diff >= -8.0):
+            score = 4
+        elif diff >= -9.0:
+            score = 3
+        elif diff >= -13.0:
+            score = 2
+        elif diff >= -18.0:
+            score = 1
+        else:
+            score = 0
+        out[ac] = score
+    return out
+
+
+_CALIBER_DISPLAY_MAP: Dict[str, str] = {
+    "Caliber556x45NATO": "5.56x45mm NATO",
+    "Caliber545x39": "5.45x39mm",
+    "Caliber762x39": "7.62x39mm",
+    "Caliber762x51": "7.62x51mm NATO",
+    "Caliber762x54R": "7.62x54mmR",
+    "Caliber68x51": "6.8x51mm SIG",
+    "Caliber762x35": ".300 Blackout",
+    "Caliber9x39": "9x39mm",
+    "Caliber366TKM": ".366 TKM",
+    "Caliber9x19PARA": "9x19mm Parabellum",
+    "Caliber1143x23ACP": ".45 ACP",
+    "Caliber46x30": "4.6x30mm HK",
+    "Caliber57x28": "5.7x28mm FN",
+    "Caliber9x21": "9x21mm Gyurza",
+    "Caliber9x18PM": "9x18mm PM",
+    "Caliber762x25TT": "7.62x25mm TT",
+    "Caliber9x33R": ".357 Magnum",
+    "Caliber127x33": ".50 Action Express",
+    "Caliber127x55": "12.7x55mm STs-130",
+    "Caliber127x99": ".50 BMG",
+    "Caliber86x70": ".338 Lapua Magnum",
+    "Caliber93x64": "9.3x64mm Brenneke",
+    "Caliber58x42": "5.8x42mm",
+    "Caliber12g": "12/70 Gauge",
+    "Caliber20g": "20/70 Gauge",
+    "Caliber23x75": "23x75mm KS-23",
+    "Caliber40x46": "40x46mm Grenade",
+    "Caliber40mmRU": "40mm VOG-25",
+    "Caliber26x75": "26x75mm Flare",
+}
+
+
+def format_caliber_name(caliber: str) -> str:
+    """Formatea un identificador interno de calibre (ej. Caliber556x45NATO) a texto legible."""
+    raw = str(caliber or "").strip()
+    if raw in _CALIBER_DISPLAY_MAP:
+        return _CALIBER_DISPLAY_MAP[raw]
+    if raw.startswith("Caliber"):
+        return raw[7:]
+    return raw
+
+
 def get_armor_rating_color(score: int) -> str:
     """Retorna el color hexadecimal asociado a un score de penetración (1 a 6)."""
     colors = {

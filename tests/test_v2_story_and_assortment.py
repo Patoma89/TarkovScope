@@ -140,8 +140,8 @@ class TestStoryAndAssortment(unittest.TestCase):
 
         self.assertIsNotNone(gas)
         self.assertIsNotNone(dorms)
-        # New Gas Station está en el centro-este
-        self.assertGreater(gas["x"], 0.50)
+        # New Gas Station está en el sector centro-izquierdo del mapa RE3MR de Customs
+        self.assertLess(gas["x"], 0.35)
 
     def test_hideout_crafts_and_cultist_circle(self):
         """Valida la base de datos de Crafteos FiR del Hideout y recetas del Círculo Cultista."""

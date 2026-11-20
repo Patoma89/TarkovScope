@@ -6,6 +6,39 @@ from typing import Any, Dict, List
 
 PATCH_NOTES: List[Dict[str, Any]] = [
     {
+        "version": "2.0.0",
+        "tag": "Major Release",
+        "title_es": "Interfaz Next-Gen GPU (Edge WebView2), Kord Breach, 1.602 Attachments, 235 Logros & Mapas Calibrados",
+        "title_en": "Next-Gen GPU UI (Edge WebView2), Kord Breach, 1,602 Attachments, 235 Achievements & Calibrated Maps",
+        "items": [
+            {
+                "kind": "NEW",
+                "es": "Nueva interfaz gráfica Next-Gen acelerada por GPU (Edge WebView2 + Glassmorphism) con 60 FPS fluidos, selector único de 6 skins instantáneas en 1 ms, nivel de PMC editable (1–79), cambio de idioma ES/EN en vivo y Visor Lightbox con Zoom/Pan.",
+                "en": "Brand-new GPU-accelerated Next-Gen UI (Edge WebView2 + Glassmorphism) at smooth 60 FPS, single-click 6 skins in 1 ms, editable PMC level (1–79), live ES/EN language switch and Zoom/Pan Image Lightbox.",
+            },
+            {
+                "kind": "NEW",
+                "es": "Nueva pestaña Kord Breach (Season 1) con mapa interactivo embebido de kordmap.wiki, caché persistente en disco y cambio instantáneo en 0 ms sin recargar.",
+                "en": "New Kord Breach (Season 1) tab with embedded interactive kordmap.wiki maps, persistent disk cache and 0 ms tab switching without reloads.",
+            },
+            {
+                "kind": "NEW",
+                "es": "Centro de Mando ampliado con 8 paneles interactivos 100% clickeables (Quests, Collector Kappa, Hideout, Logros, Radar de Bosses, Refugio Disponible, Llaves de Quest, Historia & Gunsmith).",
+                "en": "Expanded Command Center with 8 fully clickable live panels (Quests, Kappa Collector, Hideout, Achievements, Boss Radar, Ready Hideout Upgrades, Quest Keys, Story & Gunsmith).",
+            },
+            {
+                "kind": "IMPROVED",
+                "es": "Modding Studio Pro expandido con 1.602 attachments oficiales de la Wiki, buscador rápido de piezas y las 110 miniaturas reales de armas.",
+                "en": "Modding Studio Pro expanded to 1,602 official Wiki attachments, quick part search and all 110 real weapon thumbnails.",
+            },
+            {
+                "kind": "IMPROVED",
+                "es": "Mapas 2D calibrados con capas oficiales de tarkov.dev (Extracciones PMC/Scav, Puertas con Llave, Spawns de Bosses auditados visualmente contra la Wiki y Pines personales), Balística 0–6 alineada a eft-ammo.com, 235 Logros oficiales, Ítems FiR modernizados y Lore independiente.",
+                "en": "Calibrated 2D Maps with official tarkov.dev layers (PMC/Scav extracts, Locked Doors, Wiki-verified Boss spawns & personal pins), eft-ammo.com 0–6 Ballistics matrix, 235 official Achievements, redesigned FiR checklist and standalone Lore section.",
+            },
+        ],
+    },
+    {
         "version": "1.5.1",
         "tag": "Release",
         "title_es": "Pre-calentamiento RAM de Miniaturas, Cambio de Pestañas 0 ms & Thumbs Empaquetados",
