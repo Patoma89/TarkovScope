@@ -61,6 +61,39 @@ def is_newer_version(remote_tag: str, current_version: str = APP_VERSION) -> boo
     return parse_version(remote_tag) > parse_version(current_version)
 
 
+def _check_github_release_web_fallback(
+    repo: str,
+    current_version: str,
+    timeout: float,
+) -> Optional[Dict[str, Any]]:
+    """Fallback sin rate-limit vía redirección web de github.com/<repo>/releases/latest."""
+    latest_web_url = f"https://github.com/{repo}/releases/latest"
+    headers = {"User-Agent": "TTC-TacticalTarkovCompanion-Updater"}
+    try:
+        resp = requests.get(latest_web_url, headers=headers, timeout=timeout, allow_redirects=True)
+        resp.raise_for_status()
+        final_url = str(resp.url or "")
+        match = re.search(r"/releases/tag/([^/?#]+)", final_url)
+        if not match:
+            return None
+        tag_name = match.group(1).strip()
+        clean_tag = tag_name if tag_name.lower().startswith("v") else f"v{tag_name}"
+        installer_name = f"TTC_Setup_{clean_tag}.exe"
+        installer_url = f"https://github.com/{repo}/releases/download/{tag_name}/{installer_name}"
+        return {
+            "ok": True,
+            "has_update": is_newer_version(tag_name, current_version),
+            "current_version": current_version,
+            "latest_version": tag_name,
+            "release_url": final_url,
+            "installer_url": installer_url,
+            "installer_name": installer_name,
+            "notes": f"Verificado vía web directa de GitHub (Release {tag_name}).",
+        }
+    except Exception:
+        return None
+
+
 def check_github_release(
     repo: str = GITHUB_REPO,
     current_version: str = APP_VERSION,
@@ -87,9 +120,16 @@ def check_github_release(
                 "installer_name": None,
                 "notes": "No hay releases publicadas todavía en GitHub.",
             }
+        if resp.status_code in (403, 429):
+            fb = _check_github_release_web_fallback(repo, current_version, timeout)
+            if fb is not None:
+                return fb
         resp.raise_for_status()
         payload = resp.json()
     except Exception as exc:
+        fb = _check_github_release_web_fallback(repo, current_version, timeout)
+        if fb is not None:
+            return fb
         return {
             "ok": False,
             "error": str(exc),
