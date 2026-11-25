@@ -54,9 +54,10 @@
 
 El proyecto sigue una separación estricta de responsabilidades (Clean Architecture & SOLID):
 
-- **`core/`**: Lógica de negocio pura, cálculo de stats balísticos, exportadores, esquemas SQLite y sincronización GraphQL. Cero dependencias de interfaz gráfica (100% testeable).
-- **`ui/`**: Capa de presentación visual construida con CustomTkinter, modales tácticos, renderizado en lotes (*batch rendering*) y paleta táctica unificada (`THEME`).
-- **`tests/`**: Suite exhaustiva de pruebas unitarias y de integración (58 tests automáticos).
+- **`core/`**: Lógica de negocio pura, cálculo de stats balísticos, exportadores, esquemas SQLite, puente `web_api` y sincronización GraphQL. Cero dependencias de interfaz gráfica (100% testeable).
+- **`web_ui/` + `TTC_v2.py`**: Interfaz principal **Next-Gen v2.1** acelerada por GPU sobre WebView2 (`pywebview`), con renderizado nativo de alta fluidez, Checklist Pre-Raid y atajo global `Ctrl+Alt+T`.
+- **`ui/` + `TarkovScope.py`**: Interfaz clásica de escritorio construida con CustomTkinter, modales tácticos, renderizado en lotes (*batch rendering*) y paleta táctica unificada (`THEME`).
+- **`tests/`**: Suite exhaustiva de pruebas unitarias y de integración (156 tests automáticos).
 
 ---
 
@@ -83,10 +84,15 @@ pip install -r requirements.txt
 ```
 
 #### Iniciar la Aplicación
-Haz doble clic en `Ejecutar_TTC.bat` o ejecuta:
-```bash
-python TarkovScope.py
-```
+
+- **v2.1 Next-Gen (GPU WebView2 — Recomendado):** Haz doble clic en `Ejecutar_TTC_v2.bat` o ejecuta:
+  ```bash
+  python TTC_v2.py
+  ```
+- **Interfaz Clásica (CustomTkinter):** Haz doble clic en `Ejecutar_TTC.bat` o ejecuta:
+  ```bash
+  python TarkovScope.py
+  ```
 
 ---
 

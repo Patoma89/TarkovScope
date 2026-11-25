@@ -6,6 +6,29 @@ from typing import Any, Dict, List
 
 PATCH_NOTES: List[Dict[str, Any]] = [
     {
+        "version": "2.1.0",
+        "tag": "Quality of Life Release",
+        "title_es": "Checklist Pre-Raid Persistente, Atajo Global Ctrl+Alt+T & Aislamiento de Tests",
+        "title_en": "Persistent Pre-Raid Checklist, Global Hotkey Ctrl+Alt+T & Isolated Test Suite",
+        "items": [
+            {
+                "kind": "NEW",
+                "es": "Checklist rápido Pre-Raid en el Centro de Mando (Llaves, Médicos, Comida/Agua, Munición, Granadas, Seguro) con ítems personalizados y reinicio en 1 clic.",
+                "en": "Quick Pre-Raid Checklist in the Command Center (Keys, Meds, Food/Water, Ammo, Grenades, Insurance) with custom items and 1-click reset.",
+            },
+            {
+                "kind": "NEW",
+                "es": "Atajo global nativo de Windows (Ctrl+Alt+T) para mostrar u ocultar la ventana al instante desde el juego o segundo monitor + botón Siempre Encima (Pin) en el Top HUD.",
+                "en": "Native Windows global hotkey (Ctrl+Alt+T) to toggle window visibility instantly from the game or second monitor + Always-on-Top Pin button in the Top HUD.",
+            },
+            {
+                "kind": "IMPROVED",
+                "es": "Aislamiento total de pruebas unitarias sobre bases temporales SQLite y limpieza del repositorio.",
+                "en": "Full SQLite unit test isolation using temporary databases and repository cleanup.",
+            },
+        ],
+    },
+    {
         "version": "2.0.0",
         "tag": "Major Release",
         "title_es": "Interfaz Next-Gen GPU (Edge WebView2), Kord Breach, 1.602 Attachments, 235 Logros & Mapas Calibrados",

@@ -117,7 +117,7 @@
         </div>
         <div class="footer-status">
           <span class="status-pill"><span class="pulse-dot"></span><span class="footer-text">RAM Zero-Lag</span></span>
-          <span class="footer-text" id="app-ver-lbl">v2.0-preview</span>
+          <span class="footer-text" id="app-ver-lbl">v2.1.0</span>
         </div>
       </div>
     </aside>
@@ -141,6 +141,11 @@
             <span class="cultist-tag" id="hud-cultist-tag">CULTISTS</span>
           </div>
           <select class="t-select" id="hud-skin-select" title="Cambiar Skin (6 temas oficiales)" style="height:32px;border-radius:999px;font-size:11.5px;font-weight:700;padding:0 10px;border-color:rgba(var(--accent-gold-rgb),0.4)"></select>
+          <button class="icon-btn" id="btn-pin-top" title="Siempre encima · Atajo global: Ctrl+Alt+T">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1">
+              <path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/>
+            </svg>
+          </button>
           <button class="hud-chip sync-ok" id="btn-sync" title="Sincronizar datos">
             <span class="pulse-dot"></span>
             <span id="sync-lbl">SYNC OK</span>
@@ -312,6 +317,21 @@
                   </button>
                 </div>
               </div>
+
+              <div class="glass-card panel-card preraid-card" id="cc-preraid-card">
+                <div class="panel-header">
+                  <span class="panel-title" data-i18n="cc_preraid_title">✅ Checklist Pre-Raid</span>
+                  <div style="display:flex;align-items:center;gap:6px">
+                    <span class="preraid-badge" id="cc-preraid-count">0/6</span>
+                    <button class="btn-ghost-sm preraid-reset-btn" id="btn-preraid-reset" title="Desmarcar todo">↺</button>
+                  </div>
+                </div>
+                <div class="preraid-list" id="cc-preraid-list"></div>
+                <div class="preraid-add-row">
+                  <input type="text" class="preraid-input" id="preraid-add-input" maxlength="80" placeholder="Añadir ítem rápido…" />
+                  <button class="btn-ghost-sm" id="btn-preraid-add" title="Agregar ítem">+</button>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -445,7 +465,7 @@
   <div class="modal-backdrop" id="modal-notes">
     <div class="modal-box">
       <div class="spotlight-input-wrap" style="justify-content:space-between">
-        <strong style="font-family:var(--font-display);letter-spacing:1px;font-size:15px;color:var(--accent-gold)">NOTAS DE VERSIÓN — TTC</strong>
+        <strong id="notes-modal-title" style="font-family:var(--font-display);letter-spacing:1px;font-size:15px;color:var(--accent-gold)">NOTAS DE VERSIÓN — TTC</strong>
         <button class="icon-btn" id="btn-close-notes">✕</button>
       </div>
       <div class="spotlight-results" id="notes-body" style="padding:14px 16px;gap:10px"></div>

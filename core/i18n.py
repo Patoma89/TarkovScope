@@ -3,7 +3,7 @@ TarkovScope - Internacionalización (i18n) ES / EN
 Gestiona el idioma activo de la interfaz ('es' Español / 'en' English),
 persistido en SQLite (user_preferences) sin dependencias de UI.
 """
-from typing import Dict
+from typing import Dict, Optional
 
 from core.user_data import get_user_preference, set_user_preference
 
@@ -23,14 +23,17 @@ def get_active_lang() -> str:
     return _ACTIVE_LANG
 
 
-def set_active_lang(lang_id: str) -> str:
+def set_active_lang(lang_id: str, db_path: Optional[str] = None) -> str:
     """Valida, persiste y activa el idioma de la UI ('es' o 'en')."""
     global _ACTIVE_LANG
     clean = (lang_id or "es").strip().lower()
     if clean not in _VALID_LANGS:
         clean = "es"
     _ACTIVE_LANG = clean
-    set_user_preference("ui_lang", clean)
+    if db_path is not None:
+        set_user_preference("ui_lang", clean, db_path=db_path)
+    else:
+        set_user_preference("ui_lang", clean)
     return clean
 
 

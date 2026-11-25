@@ -95,7 +95,7 @@ class TestWebApiLayer(unittest.TestCase):
         self.assertIsInstance(hits, list)
         notes = self.api.get_patch_notes("es")
         self.assertGreaterEqual(len(notes), 5)
-        self.assertEqual(notes[0]["version"], "2.0.0")
+        self.assertEqual(notes[0]["version"], "2.1.0")
 
     def test_resolve_web_asset_path_blocks_traversal(self):
         self.assertIsNone(resolve_web_asset_path("../TarkovScope.py"))
@@ -185,6 +185,60 @@ class TestWebApiLayer(unittest.TestCase):
         self.assertEqual(len(pmc["skills"]), 35)
         self.assertEqual(self.api.set_prestige_lvl(3)["prestige_level"], 3)
         self.assertTrue(self.api.export_profile_json()["ok"])
+
+    def test_preraid_checklist_crud_and_reset(self):
+        cc = self.api.get_command_center_data()
+        items = cc["preraid_checklist"]
+        self.assertEqual(len(items), 6)
+        self.assertTrue(all(not it["checked"] for it in items))
+
+        toggled = self.api.toggle_preraid_item("keys")
+        self.assertTrue(toggled["ok"])
+        self.assertTrue(next(i for i in toggled["preraid_checklist"] if i["id"] == "keys")["checked"])
+
+        self.assertFalse(self.api.add_preraid_item("   ")["ok"])
+        added = self.api.add_preraid_item("Balas M995")
+        self.assertTrue(added["ok"])
+        custom_items = [i for i in added["preraid_checklist"] if i["custom"]]
+        self.assertEqual(len(custom_items), 1)
+        custom_id = custom_items[0]["id"]
+
+        # Reset desmarca todo pero conserva el ítem personalizado
+        self.api.toggle_preraid_item(custom_id)
+        reset_res = self.api.reset_preraid_checklist()
+        self.assertTrue(reset_res["ok"])
+        self.assertEqual(len(reset_res["preraid_checklist"]), 7)
+        self.assertTrue(all(not i["checked"] for i in reset_res["preraid_checklist"]))
+
+        # No elimina ítems base, sí elimina ítems custom
+        no_del = self.api.remove_preraid_item("keys")
+        self.assertEqual(len(no_del["preraid_checklist"]), 7)
+        after_del = self.api.remove_preraid_item(custom_id)
+        self.assertEqual(len(after_del["preraid_checklist"]), 6)
+
+    def test_global_hotkey_parser_and_safe_lifecycle(self):
+        import core.global_hotkey as gh
+
+        with open(gh.__file__, "r", encoding="utf-8") as fh:
+            src = fh.read().lower()
+        self.assertNotIn("import tkinter", src)
+        self.assertNotIn("import customtkinter", src)
+        self.assertNotIn("import webview", src)
+
+        mods, vk = gh.parse_hotkey_spec("Ctrl+Alt+T")
+        self.assertEqual(mods, gh.MOD_CONTROL | gh.MOD_ALT | gh.MOD_NOREPEAT)
+        self.assertEqual(vk, ord("T"))
+
+        mods_fn, vk_fn = gh.parse_hotkey_spec("Ctrl+Shift+F9")
+        self.assertEqual(mods_fn, gh.MOD_CONTROL | gh.MOD_SHIFT | gh.MOD_NOREPEAT)
+        self.assertEqual(vk_fn, 0x78)
+
+        with self.assertRaises(ValueError):
+            gh.parse_hotkey_spec("")
+        with self.assertRaises(ValueError):
+            gh.parse_hotkey_spec("Ctrl+Alt")
+        with self.assertRaises(ValueError):
+            gh.parse_hotkey_spec("Ctrl+A+B")
 
 
 if __name__ == "__main__":

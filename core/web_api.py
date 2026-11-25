@@ -28,11 +28,16 @@ from core.sync_service import SyncService
 from core.tarkov_time import get_tarkov_raid_times
 from core.updater import check_github_release, download_installer, launch_installer
 from core.user_data import (
+    add_preraid_item,
     get_owned_key_ids,
+    get_preraid_checklist,
     get_prestige_level,
     get_unlocked_achievement_ids,
     get_user_preference,
+    remove_preraid_item,
+    reset_preraid_checklist,
     set_user_preference,
+    toggle_preraid_item,
 )
 from core.weapons_data import GUNSMITH_GUIDES_DATA, KAPPA_COLLECTOR_ITEMS
 from core.web_api_combat import WebAPICombatMixin
@@ -103,7 +108,7 @@ class TTCWebAPI(
             skin_id = "tarkov_classic"
         saved_lang = get_user_preference("ui_lang", "", db_path=self._db_path)
         if saved_lang in SUPPORTED_LANGS:
-            set_active_lang(saved_lang)
+            set_active_lang(saved_lang, db_path=self._db_path)
         lang = get_active_lang()
         collapsed = get_user_preference("sidebar_collapsed", "0", db_path=self._db_path) == "1"
         try:
@@ -132,6 +137,7 @@ class TTCWebAPI(
             "sidebar_collapsed": collapsed,
             "pmc_level": pmc_level,
             "always_on_top": self._always_on_top,
+            "global_hotkey": "Ctrl+Alt+T",
             "command_center": self.get_command_center_data(),
         }
 
@@ -145,7 +151,7 @@ class TTCWebAPI(
         unlocked_count = len(correlative)
 
         next_quests: List[Dict[str, Any]] = []
-        for q in correlative[:12]:
+        for q in correlative[:20]:
             trader = q.get("trader_name", "Prapor")
             next_quests.append({
                 "id": int(q.get("id", 0)),
@@ -299,6 +305,7 @@ class TTCWebAPI(
                 "gunsmith": {"done": gs_done, "total": gs_total, "pct": gs_pct, "next": next_gs},
             },
             "raid_clock": get_tarkov_raid_times(),
+            "preraid_checklist": get_preraid_checklist(db_path=self._db_path),
         }
 
     def toggle_quest(self, quest_id: int) -> Dict[str, Any]:
@@ -343,8 +350,7 @@ class TTCWebAPI(
         clean = (lang or "es").strip().lower()
         if clean not in SUPPORTED_LANGS:
             return {"ok": False, "error": f"Unsupported lang: {lang}"}
-        set_active_lang(clean)
-        set_user_preference("ui_lang", clean, db_path=self._db_path)
+        set_active_lang(clean, db_path=self._db_path)
         return {"ok": True, "lang": clean}
 
     def set_pmc_level(self, level: int) -> Dict[str, Any]:
@@ -423,3 +429,26 @@ class TTCWebAPI(
             "ok": bool(ok),
             "command_center": self.get_command_center_data(),
         }
+
+    def toggle_preraid_item(self, item_id: str) -> Dict[str, Any]:
+        """Alterna un ítem del checklist Pre-Raid y devuelve la lista actualizada."""
+        items = toggle_preraid_item(str(item_id or ""), db_path=self._db_path)
+        return {"ok": True, "preraid_checklist": items}
+
+    def add_preraid_item(self, label: str) -> Dict[str, Any]:
+        """Agrega un ítem personalizado al checklist Pre-Raid."""
+        clean = str(label or "").strip()
+        if not clean:
+            return {"ok": False, "error": "Etiqueta vacía"}
+        items = add_preraid_item(clean, db_path=self._db_path)
+        return {"ok": True, "preraid_checklist": items}
+
+    def remove_preraid_item(self, item_id: str) -> Dict[str, Any]:
+        """Elimina un ítem personalizado del checklist Pre-Raid."""
+        items = remove_preraid_item(str(item_id or ""), db_path=self._db_path)
+        return {"ok": True, "preraid_checklist": items}
+
+    def reset_preraid_checklist(self) -> Dict[str, Any]:
+        """Reinicia (desmarca) todos los ítems del checklist Pre-Raid."""
+        items = reset_preraid_checklist(db_path=self._db_path)
+        return {"ok": True, "preraid_checklist": items}

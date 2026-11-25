@@ -230,6 +230,52 @@ function renderCommandCenter(cc) {
       });
     });
   }
+
+  renderPreRaidChecklist(cc.preraid_checklist || []);
+}
+
+function renderPreRaidChecklist(items) {
+  const listEl = document.getElementById("cc-preraid-list");
+  const countEl = document.getElementById("cc-preraid-count");
+  if (!listEl) return;
+
+  const list = Array.isArray(items) ? items : [];
+  if (state.cc) state.cc.preraid_checklist = list;
+  const done = list.filter(it => it.checked).length;
+  const total = list.length;
+
+  if (countEl) {
+    countEl.textContent = total > 0 && done === total ? `✓ ${done}/${total}` : `${done}/${total}`;
+    countEl.classList.toggle("ready", total > 0 && done === total);
+  }
+
+  const isEn = window.TTC_LANG === "en";
+  listEl.innerHTML = list.map(it => {
+    const label = isEn ? (it.label_en || it.label_es) : (it.label_es || it.label_en);
+    return `
+      <div class="preraid-item ${it.checked ? "checked" : ""}" data-preraid-id="${escapeHtml(it.id)}">
+        <span class="preraid-box">✓</span>
+        <span class="preraid-label" title="${escapeHtml(label)}">${escapeHtml(label)}</span>
+        ${it.custom ? `<button class="preraid-del" data-preraid-del="${escapeHtml(it.id)}" title="${isEn ? "Remove item" : "Eliminar ítem"}">×</button>` : ""}
+      </div>
+    `;
+  }).join("");
+
+  listEl.querySelectorAll(".preraid-item").forEach(row => {
+    row.addEventListener("click", async () => {
+      const id = row.dataset.preraidId;
+      const res = await window.pywebview.api.toggle_preraid_item(id);
+      if (res && res.ok) renderPreRaidChecklist(res.preraid_checklist);
+    });
+  });
+
+  listEl.querySelectorAll("[data-preraid-del]").forEach(btn => {
+    btn.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      const res = await window.pywebview.api.remove_preraid_item(btn.dataset.preraidDel);
+      if (res && res.ok) renderPreRaidChecklist(res.preraid_checklist);
+    });
+  });
 }
 
 function renderKappaGrid() {
@@ -503,7 +549,12 @@ function setupLightboxControls() {
 
 async function openPatchNotes() {
   const modal = document.getElementById("modal-notes");
+  const titleEl = document.getElementById("notes-modal-title");
   const body = document.getElementById("notes-body");
+  modal.classList.remove("modal-dossier");
+  if (titleEl) {
+    titleEl.textContent = (window.TTC_LANG === "en") ? "PATCH NOTES — TTC" : "NOTAS DE VERSIÓN — TTC";
+  }
   modal.classList.add("open");
   const notes = await window.pywebview.api.get_patch_notes(state.bootstrap?.lang || "es");
   body.innerHTML = (notes || []).map(rel => `
@@ -551,6 +602,7 @@ const I18N_UI = {
     cc_hero_html: `CENTRO DE MANDO <span>TÁCTICO</span>`,
     cc_hero_sub: "Estado operativo de incursión, progreso Kappa y logística de refugio en tiempo real.",
     btn_plan_raid: "Planear Raid Óptima",
+    cc_preraid_title: "✅ Checklist Pre-Raid",
   },
   en: {
     nav_overview: "Overview",
@@ -578,6 +630,7 @@ const I18N_UI = {
     cc_hero_html: `TACTICAL <span>COMMAND CENTER</span>`,
     cc_hero_sub: "Live raid status, Kappa Collector progress and Hideout logistics in real time.",
     btn_plan_raid: "Plan Optimal Raid",
+    cc_preraid_title: "✅ Pre-Raid Checklist",
   },
 };
 
@@ -599,6 +652,19 @@ function applyLanguage(lang) {
     spotIn.placeholder = clean === "en"
       ? "Search quests, ammo (M80A1, BP), keys, bosses, barters..."
       : "Buscar quests, balas (M80A1, BP), llaves, bosses, barters...";
+  }
+  const preIn = document.getElementById("preraid-add-input");
+  if (preIn) {
+    preIn.placeholder = clean === "en" ? "Add quick item…" : "Añadir ítem rápido…";
+  }
+  const pinBtn = document.getElementById("btn-pin-top");
+  if (pinBtn) {
+    pinBtn.title = clean === "en"
+      ? "Always on top · Global hotkey: Ctrl+Alt+T"
+      : "Siempre encima · Atajo global: Ctrl+Alt+T";
+  }
+  if (state.cc?.preraid_checklist) {
+    renderPreRaidChecklist(state.cc.preraid_checklist);
   }
 }
 
@@ -772,6 +838,43 @@ document.addEventListener("DOMContentLoaded", () => {
     if (res?.ok && res.command_center) {
       renderCommandCenter(res.command_center);
       showToast("✓ Datos sincronizados en caché RAM");
+    }
+  });
+
+  document.getElementById("btn-pin-top")?.addEventListener("click", async () => {
+    const res = await window.pywebview.api.toggle_always_on_top();
+    if (res && res.ok) {
+      document.getElementById("btn-pin-top")?.classList.toggle("active", Boolean(res.always_on_top));
+      const isEn = window.TTC_LANG === "en";
+      showToast(res.always_on_top
+        ? (isEn ? "📌 Always on top ON (Hotkey: Ctrl+Alt+T)" : "📌 Siempre encima activado (Atajo: Ctrl+Alt+T)")
+        : (isEn ? "📌 Always on top OFF" : "📌 Siempre encima desactivado"));
+    }
+  });
+
+  document.getElementById("btn-preraid-reset")?.addEventListener("click", async () => {
+    const res = await window.pywebview.api.reset_preraid_checklist();
+    if (res && res.ok) {
+      renderPreRaidChecklist(res.preraid_checklist);
+      showToast(window.TTC_LANG === "en" ? "↺ Pre-Raid checklist reset" : "↺ Checklist Pre-Raid reiniciado");
+    }
+  });
+
+  const addPreRaid = async () => {
+    const inp = document.getElementById("preraid-add-input");
+    const val = (inp?.value || "").trim();
+    if (!val) return;
+    const res = await window.pywebview.api.add_preraid_item(val);
+    if (res && res.ok) {
+      inp.value = "";
+      renderPreRaidChecklist(res.preraid_checklist);
+    }
+  };
+  document.getElementById("btn-preraid-add")?.addEventListener("click", addPreRaid);
+  document.getElementById("preraid-add-input")?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      addPreRaid();
     }
   });
 

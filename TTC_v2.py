@@ -25,6 +25,7 @@ import webview
 from core.config import APP_VERSION, BUNDLE_DIR, CACHE_DIR
 from core.database import init_db, is_db_populated
 from core.datastore import get_datastore
+from core.global_hotkey import WindowsGlobalHotkey
 from core.web_api import TTCWebAPI, resolve_web_asset_path
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
@@ -148,6 +149,31 @@ def main() -> None:
         background_color="#090C12",
     )
     window_holder[0] = window
+    window_visible = [True]
+
+    def _toggle_window_visibility() -> None:
+        win = window_holder[0]
+        if win is None:
+            return
+        try:
+            if window_visible[0]:
+                win.hide()
+                window_visible[0] = False
+            else:
+                win.show()
+                try:
+                    win.restore()
+                except Exception:
+                    pass
+                if not api._always_on_top:
+                    win.on_top = True
+                    win.on_top = False
+                window_visible[0] = True
+        except Exception as exc:
+            logger.warning("No se pudo alternar visibilidad con atajo global: %s", exc)
+
+    hotkey = WindowsGlobalHotkey("Ctrl+Alt+T", _toggle_window_visibility)
+    hotkey.start()
 
     wv_cache_dir = os.path.join(CACHE_DIR, "webview2_cache")
     os.makedirs(wv_cache_dir, exist_ok=True)
@@ -159,6 +185,7 @@ def main() -> None:
             storage_path=wv_cache_dir,
         )
     finally:
+        hotkey.stop()
         httpd.shutdown()
 
 

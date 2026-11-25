@@ -43,32 +43,66 @@ window.TTCViews.renderQuestsView = async function (container) {
     if (!res || !res.ok) return;
     const q = res.quest, g = res.guide || {};
     const modal = document.getElementById("modal-notes");
+    const titleEl = document.getElementById("notes-modal-title");
     const mBody = document.getElementById("notes-body");
+    modal.classList.add("modal-dossier");
+    if (titleEl) titleEl.textContent = "📖 DOSSIER TÁCTICO DE MISIÓN";
     modal.classList.add("open");
+
+    const steps = g.walkthrough_steps || [];
+    const hasSteps = steps.length > 0;
+
     mBody.innerHTML = `
-      <div class="glass-card" style="padding:14px">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+      <div class="glass-card" style="padding:18px 20px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
           <div>
-            <h3 style="font-family:var(--font-display);font-size:19px;color:var(--accent-gold)">${escapeHtml(q.title)}</h3>
-            <div style="font-size:12px;color:var(--text-muted)">${escapeHtml(q.trader_name)} · 📍 ${escapeHtml(q.primary_map)} · Nv.${q.level_req} · +${q.exp.toLocaleString("es-AR")} XP</div>
+            <h3 style="font-family:var(--font-display);font-size:23px;letter-spacing:0.5px;color:var(--accent-gold);line-height:1.15">${escapeHtml(q.title)}</h3>
+            <div style="font-size:13.5px;color:var(--text-muted);margin-top:4px">${escapeHtml(q.trader_name)} · 📍 ${escapeHtml(q.primary_map)} · Nv.${q.level_req} · +${q.exp.toLocaleString("es-AR")} XP</div>
           </div>
-          ${q.is_kappa ? `<span class="kappa-tag">REQUERIDA KAPPA</span>` : ""}
+          <div style="display:flex;gap:8px;align-items:center">
+            ${q.is_kappa ? `<span class="kappa-tag" style="font-size:11.5px;padding:4px 10px">REQUERIDA KAPPA</span>` : ""}
+            ${q.is_lightkeeper ? `<span class="kappa-tag" style="font-size:11.5px;padding:4px 10px;color:var(--accent-blue);border-color:rgba(56,189,248,.4)">LIGHTKEEPER</span>` : ""}
+          </div>
         </div>
-        ${res.map_image_url ? `<img src="${escapeHtml(res.map_image_url)}" style="width:100%;max-height:240px;object-fit:contain;border-radius:10px;margin-top:10px;background:#06080d" />` : ""}
+        ${res.map_image_url ? `
+          <div class="zoomable-img-wrap" id="dossier-map-wrap" style="margin-top:14px" title="Click para ampliar con zoom">
+            <img src="${escapeHtml(res.map_image_url)}" style="width:100%;max-height:390px;object-fit:contain;display:block;border-radius:10px;background:#06080d" />
+            <span class="zoomable-hint">🔍 Click para ampliar mapa con zoom</span>
+          </div>
+        ` : ""}
       </div>
-      <div class="info-box">
-        <strong style="color:var(--accent-gold)">📋 Objetivos:</strong>
-        <ul style="margin:6px 0 0 18px;color:var(--text-soft);line-height:1.5">${(q.objectives_lines || []).map(l => `<li>${escapeHtml(l)}</li>`).join("")}</ul>
-      </div>
-      ${(g.walkthrough_steps || []).length ? `<div class="info-box"><strong style="color:var(--accent-emerald)">🧭 Guía Paso a Paso (Offline):</strong><ol style="margin:6px 0 0 18px;color:var(--text-soft);line-height:1.55">${g.walkthrough_steps.map(s => `<li>${escapeHtml(typeof s === "string" ? s : (s.detail || s.title || ""))}</li>`).join("")}</ol></div>` : ""}
-      ${(q.rewards_lines || []).length ? `<div class="info-box"><strong style="color:var(--accent-blue)">🎁 Recompensas:</strong><div style="margin-top:4px;color:var(--text-soft)">${escapeHtml(q.rewards_lines.join(" · "))}</div></div>` : ""}
-      ${(q.prereq_titles || []).length || (q.unlocks_titles || []).length ? `
-        <div class="info-box" style="font-size:12px;color:var(--text-muted)">
-          ${(q.prereq_titles || []).length ? `<div><strong>⬅ Prerrequisitos:</strong> ${escapeHtml(q.prereq_titles.join(", "))}</div>` : ""}
-          ${(q.unlocks_titles || []).length ? `<div style="margin-top:4px"><strong>➡ Desbloquea:</strong> ${escapeHtml(q.unlocks_titles.join(", "))}</div>` : ""}
+      <div class="${hasSteps ? "dossier-grid" : ""}" style="${hasSteps ? "" : "display:flex;flex-direction:column;gap:12px"}">
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div class="info-box dossier-section">
+            <h4 style="color:var(--accent-gold)">📋 Objetivos</h4>
+            <ul style="margin:0 0 0 18px;color:var(--text-soft)">${(q.objectives_lines || []).map(l => `<li style="margin-bottom:4px">${escapeHtml(l)}</li>`).join("")}</ul>
+          </div>
+          ${(q.rewards_lines || []).length ? `
+            <div class="info-box dossier-section">
+              <h4 style="color:var(--accent-blue)">🎁 Recompensas</h4>
+              <div style="color:var(--text-soft)">${escapeHtml(q.rewards_lines.join(" · "))}</div>
+            </div>
+          ` : ""}
+          ${(q.prereq_titles || []).length || (q.unlocks_titles || []).length ? `
+            <div class="info-box dossier-section" style="color:var(--text-muted)">
+              <h4 style="color:var(--text-soft)">🔗 Cadena de Progresión</h4>
+              ${(q.prereq_titles || []).length ? `<div><strong>⬅ Prerrequisitos:</strong> ${escapeHtml(q.prereq_titles.join(", "))}</div>` : ""}
+              ${(q.unlocks_titles || []).length ? `<div style="margin-top:6px"><strong>➡ Desbloquea:</strong> ${escapeHtml(q.unlocks_titles.join(", "))}</div>` : ""}
+            </div>
+          ` : ""}
         </div>
-      ` : ""}
+        ${hasSteps ? `
+          <div class="info-box dossier-section">
+            <h4 style="color:var(--accent-emerald)">🧭 Guía Paso a Paso (Offline)</h4>
+            <ol style="margin:0 0 0 18px;color:var(--text-soft)">${steps.map(s => `<li style="margin-bottom:6px">${escapeHtml(typeof s === "string" ? s : (s.detail || s.title || ""))}</li>`).join("")}</ol>
+          </div>
+        ` : ""}
+      </div>
     `;
+
+    mBody.querySelector("#dossier-map-wrap")?.addEventListener("click", () => {
+      window.openImageLightbox?.(res.map_image_url, q.title, `${q.trader_name} · ${q.primary_map}`);
+    });
   }
 
   async function renderQuestsTab() {

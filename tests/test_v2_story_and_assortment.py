@@ -4,6 +4,7 @@ y Calibración de Spawns de Bosses (Kollontay y Reshala).
 """
 import os
 import sys
+import tempfile
 import unittest
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -19,14 +20,26 @@ from core.trader_assortment_data import (
     get_trader_requirements
 )
 from core.bosses_data import BOSSES_DATA
-from core.datastore import get_datastore
+from core.datastore import DataStore
 from core.database import init_db
 
 
 class TestStoryAndAssortment(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        init_db()
+        fd, cls._db_path = tempfile.mkstemp(suffix=".db")
+        os.close(fd)
+        init_db(cls._db_path)
+
+    @classmethod
+    def tearDownClass(cls):
+        for suffix in ("", "-wal", "-shm"):
+            p = cls._db_path + suffix
+            if os.path.exists(p):
+                try:
+                    os.remove(p)
+                except OSError:
+                    pass
 
     def test_story_quests_data_integrity(self):
         """Valida que existan las 72 misiones principales completas con los 10 capítulos oficiales."""
@@ -46,7 +59,8 @@ class TestStoryAndAssortment(unittest.TestCase):
 
     def test_datastore_story_quests_toggle(self):
         """Valida la persistencia en DB del progreso de quests de historia."""
-        ds = get_datastore()
+        ds = DataStore(self._db_path)
+        ds.ensure_loaded()
         sq_list = ds.get_story_quests()
         self.assertGreaterEqual(len(sq_list), 10)
 

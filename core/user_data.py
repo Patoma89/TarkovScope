@@ -397,3 +397,95 @@ def import_user_profile(profile_data: Dict[str, Any], db_path: str = DB_PATH) ->
             pass
 
     return True
+
+
+DEFAULT_PRERAID_CHECKLIST: List[Dict[str, Any]] = [
+    {"id": "keys", "label_es": "Llaves del mapa / SICC / Docs", "label_en": "Map Keys / SICC / Docs", "checked": False, "custom": False},
+    {"id": "meds", "label_es": "Médicos, CMS / Surv12 & Painkillers", "label_en": "Meds, CMS / Surv12 & Painkillers", "checked": False, "custom": False},
+    {"id": "food", "label_es": "Comida y Agua (Energía / Hidratación)", "label_en": "Food & Water (Energy / Hydration)", "checked": False, "custom": False},
+    {"id": "ammo", "label_es": "Munición, Cargadores & Balas extra", "label_en": "Ammo, Mags & Spare Stack", "checked": False, "custom": False},
+    {"id": "nades", "label_es": "Granadas, Stims & Contenedor Seguro", "label_en": "Grenades, Stims & Secure Container", "checked": False, "custom": False},
+    {"id": "insure", "label_es": "Seguro de equipo & Modo de disparo", "label_en": "Gear Insurance & Fire Mode", "checked": False, "custom": False},
+]
+
+
+def _normalize_preraid_item(item: Dict[str, Any]) -> Dict[str, Any]:
+    label_es = str(item.get("label_es") or item.get("label_en") or "").strip()
+    label_en = str(item.get("label_en") or label_es).strip()
+    return {
+        "id": str(item.get("id", "")).strip(),
+        "label_es": label_es,
+        "label_en": label_en,
+        "checked": bool(item.get("checked", False)),
+        "custom": bool(item.get("custom", False)),
+    }
+
+
+def get_preraid_checklist(db_path: str = DB_PATH) -> List[Dict[str, Any]]:
+    """Devuelve el checklist rápido Pre-Raid persistido (o los 6 ítems base por defecto)."""
+    raw = get_user_preference("preraid_checklist", "", db_path=db_path)
+    if raw:
+        try:
+            parsed = json.loads(raw)
+            if isinstance(parsed, list) and parsed:
+                cleaned = [
+                    _normalize_preraid_item(it)
+                    for it in parsed
+                    if isinstance(it, dict) and str(it.get("id", "")).strip() and (it.get("label_es") or it.get("label_en"))
+                ]
+                if cleaned:
+                    return cleaned
+        except (TypeError, ValueError):
+            pass
+    return [dict(item) for item in DEFAULT_PRERAID_CHECKLIST]
+
+
+def _save_preraid_checklist(items: List[Dict[str, Any]], db_path: str = DB_PATH) -> List[Dict[str, Any]]:
+    set_user_preference("preraid_checklist", json.dumps(items, ensure_ascii=False), db_path=db_path)
+    return items
+
+
+def toggle_preraid_item(item_id: str, db_path: str = DB_PATH) -> List[Dict[str, Any]]:
+    """Alterna el estado marcado de un ítem del checklist Pre-Raid."""
+    target = str(item_id or "").strip()
+    items = get_preraid_checklist(db_path=db_path)
+    for item in items:
+        if item["id"] == target:
+            item["checked"] = not item["checked"]
+            break
+    return _save_preraid_checklist(items, db_path=db_path)
+
+
+def add_preraid_item(label: str, db_path: str = DB_PATH) -> List[Dict[str, Any]]:
+    """Agrega un ítem personalizado al checklist Pre-Raid (máximo 20 ítems)."""
+    clean_label = str(label or "").strip()[:80]
+    items = get_preraid_checklist(db_path=db_path)
+    if not clean_label or len(items) >= 20:
+        return items
+    new_id = f"custom_{int(datetime.now().timestamp() * 1000)}_{len(items)}"
+    items.append({
+        "id": new_id,
+        "label_es": clean_label,
+        "label_en": clean_label,
+        "checked": False,
+        "custom": True,
+    })
+    return _save_preraid_checklist(items, db_path=db_path)
+
+
+def remove_preraid_item(item_id: str, db_path: str = DB_PATH) -> List[Dict[str, Any]]:
+    """Elimina un ítem personalizado del checklist Pre-Raid (protege los ítems base)."""
+    target = str(item_id or "").strip()
+    items = get_preraid_checklist(db_path=db_path)
+    filtered = [it for it in items if not (it["id"] == target and it.get("custom"))]
+    if len(filtered) == len(items):
+        return items
+    return _save_preraid_checklist(filtered, db_path=db_path)
+
+
+def reset_preraid_checklist(db_path: str = DB_PATH) -> List[Dict[str, Any]]:
+    """Desmarca todos los ítems del checklist Pre-Raid manteniendo los ítems personalizados."""
+    items = get_preraid_checklist(db_path=db_path)
+    for item in items:
+        item["checked"] = False
+    return _save_preraid_checklist(items, db_path=db_path)
